@@ -1,0 +1,107 @@
+<clr-main-container>
+    <clr-header class="header-6">
+        <div class="branding">
+            <a class="nav-link">
+                <!-- <clr-icon shape="layers"></clr-icon> -->
+                <img src="./assets/images/logomoph.png" alt="" width="40" style="margin-right:10px;">
+                <span class="title">Purchasing</span>
+            </a>
+        </div>
+        <div class="header-nav">
+            <a class=" nav-link nav-icon" href="{{homeUrl}}" routerLinkActive='active'>
+                <clr-icon shape="home"></clr-icon>
+            </a>
+            <a class=" nav-link nav-icon" routerLink='/purchasing/dashboard' routerLinkActive='active'>
+                <clr-icon shape="analytics"></clr-icon>
+            </a>
+            <a class=" nav-link nav-icon" routerLink='/purchasing/orderform' routerLinkActive='active'>
+                <clr-icon shape="shopping-cart"></clr-icon>
+            </a>
+
+        </div>
+        <div class="header-actions">
+            <a href="javascript://" class="nav-link nav-icon" style="color:greenyellow;font-weight:bold;font-size:23px;">
+                B1280
+            </a>
+            <clr-dropdown class="dropdown bottom-right">
+                <button class="nav-text" clrDropdownToggle>
+                        <clr-icon shape="cog"></clr-icon>
+                    <clr-icon shape="caret down"></clr-icon>
+                </button>
+                <div class="dropdown-menu">
+                    <a href="javascript://" clrDropdownItem>Preferences</a>
+                    <a (click)="logout()" clrDropdownItem>Log out</a>
+                </div>
+            </clr-dropdown>
+        </div>
+    </clr-header>
+
+
+    <div class="content-container">
+        <div class="content-area">
+            <router-outlet></router-outlet>
+        </div>
+
+        <clr-vertical-nav [clrVerticalNavCollapsible]="collapsible">
+
+            <a clrVerticalNavLink routerLink="/purchase/order-form" routerLinkActive="active">
+                <clr-icon clrVerticalNavIcon shape="plus"></clr-icon>
+                ออกใบสั่งซื้อ
+
+            </a>
+            <a clrVerticalNavLink routerLink="/purchase/orders" routerLinkActive="active">
+                <clr-icon clrVerticalNavIcon shape="bolt"></clr-icon>
+                รายการสั่งซื้อ
+            </a>
+            <a clrVerticalNavLink routerLink="./poison" routerLinkActive="active">
+                <clr-icon clrVerticalNavIcon shape="happy-face"></clr-icon>
+                สถานะการสั่งซื้อ
+            </a>
+            <a clrVerticalNavLink routerLink="./grass" routerLinkActive="active">
+                <clr-icon clrVerticalNavIcon shape="bug"></clr-icon>
+                Grass
+            </a>
+            <a clrVerticalNavLink routerLink="./fighting" routerLinkActive="active">
+                <clr-icon clrVerticalNavIcon shape="shield"></clr-icon>
+                Fighting
+            </a>
+            <a clrVerticalNavLink routerLink="./credit" routerLinkActive="active">
+                <clr-icon clrVerticalNavIcon shape="certificate"></clr-icon>
+                Credit
+            </a>
+
+            <clr-vertical-nav-group routerLinkActive="active">
+                <a clrVerticalNavLink routerLink="./normal" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">
+                    <clr-icon shape="printer" clrVerticalNavIcon></clr-icon>
+                    รายงาน
+                </a>
+                <clr-vertical-nav-group-children *clrIfExpanded="false">
+                    <a clrVerticalNavLink routerLink="./normal/pidgey" routerLinkActive="active">
+                                รายงาน 01
+                            </a>
+                    <a clrVerticalNavLink routerLink="./normal/snorlax" routerLinkActive="active">
+                            รายงาน 02
+                    </a>
+                </clr-vertical-nav-group-children>
+            </clr-vertical-nav-group>
+
+            <clr-vertical-nav-group>
+                <a clrVerticalNavLink routerLink="./normal" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">
+                    <clr-icon shape="cog" clrVerticalNavIcon></clr-icon>
+                    ตั้งค่า
+                </a>
+                <clr-vertical-nav-group-children *clrIfExpanded="false">
+                    <a clrVerticalNavLink routerLink="./normal/pidgey" routerLinkActive="active">
+                            ชุดกรรมการ
+                        </a>
+                    <a clrVerticalNavLink routerLink="./normal/snorlax" routerLinkActive="active">
+                    ตั้งค่าพื้นฐาน
+                </a>
+                </clr-vertical-nav-group-children>
+            </clr-vertical-nav-group>
+
+        </clr-vertical-nav>
+
+    </div>
+
+</clr-main-container>

@@ -1,0 +1,50 @@
+<div style="padding:5px;">
+  <clr-datagrid [(clrDgLoading)]="loading">
+    <clr-dg-column [style.width.px]="130" [clrDgField]="'generic_id'">
+      รหัสสินค้า
+    </clr-dg-column>
+    <clr-dg-column [clrDgField]="'generic_name'">
+      รายละเอียด
+    </clr-dg-column>
+    <clr-dg-column [style.width.px]="100">
+      จำนวน
+    </clr-dg-column>
+    <clr-dg-column [style.width.px]="180">
+      ขนาดบรรจุ
+    </clr-dg-column>
+    <clr-dg-column [style.width.px]="150">
+      จำนวนรวม
+    </clr-dg-column>
+    <clr-dg-column [style.width.px]="100">
+      ราคาต่อหน่วย
+    </clr-dg-column>
+
+    <clr-dg-column [style.width.px]="100">
+      ราคารวม
+    </clr-dg-column>
+
+    <clr-dg-row *clrDgItems="let p of purchaseOrderItems" [clrDgItem]="p">
+      <clr-dg-cell>
+        <span *ngIf="p.total_price==0" class="text-warning">{{p.generic_id}}*</span>
+        <span *ngIf="p.total_price>0">{{p.generic_id}}</span>
+      </clr-dg-cell>
+      <clr-dg-cell>{{p.fullname}} </clr-dg-cell>
+      <clr-dg-cell class="text-right">{{p.qty | number}} </clr-dg-cell>
+      <clr-dg-cell class="text-left">{{p.from_unit_name}} ({{(p.small_qty) | number}} {{p.to_unit_name}})</clr-dg-cell>
+      <clr-dg-cell class="text-right">{{p.total_small_qty | number}} {{p.to_unit_name}}</clr-dg-cell>
+      <clr-dg-cell class="text-right">{{p.unit_price | number:'.2'}} </clr-dg-cell>
+      <clr-dg-cell class="text-right">
+        <span class="text-success">{{ p.qty*p.unit_price | number:'.2'}}</span>
+      </clr-dg-cell>
+    </clr-dg-row>
+
+    <clr-dg-footer>
+      ราคารวม: {{totalPrice | number:'1.2'}} ส่วนลด({{purchaseOrder.discount_percent}}%) {{(purchaseOrder.discount_percent*totalPrice
+      / 100) | number:'1.2'}} ส่วนลดเงินสด: {{purchaseOrder.discount_cash | number:'1.2'}} ภาษี ({{purchaseOrder.vat_rate}}%):
+      {{totalPrice*purchaseOrder.vat_rate/100 | number:'1.2'}} ราคารวมสุทธิ:
+      <strong class="text-success">{{totalPrice+(totalPrice*purchaseOrder.vat_rate/100) | number:'1.2'}}</strong> | {{pagination.firstItem + 1}} - {{pagination.lastItem
+      + 1}} จาก {{pagination.totalItems}} รายการ
+      <clr-dg-pagination #pagination [clrDgPageSize]="20"></clr-dg-pagination>
+    </clr-dg-footer>
+  </clr-datagrid>
+</div>

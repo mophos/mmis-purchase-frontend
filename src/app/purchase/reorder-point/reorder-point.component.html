@@ -1,0 +1,74 @@
+<!-- <h3 style="margin-top:0;margin-bottom:10px;">รายการสินค้าที่ถึงจุดสั่งซื้อ</h3> -->
+<nav class="breadcrumb">
+  <a class="breadcrumb-item" href="javascript://" routerLink="/">หน้าหลัก</a>
+  <span class="breadcrumb-item active">รายการสินค้าที่ถึงจุดสั่งซื้อ</span>
+</nav>
+<div class="card">
+  <div class="card-block">
+    <button (click)="createPurchaseOrders()" [disabled]="!products.length" class="btn btn-success btn-sm">
+      <clr-icon shape="plus"></clr-icon>สร้างใบสั่งซื้อ</button> |
+    <label for="query">คำค้น</label>
+    <input (keydown)="handleKeyDown($event)" class="form-control" type="text" name="query" [(ngModel)]="query" id="query" size="15">
+
+    <label>ประเภท</label>
+    <div class="select" style="width:100px;display:inline-block">
+      <select name="generic_type_id" [(ngModel)]="generic_type_id">
+        <option *ngFor="let g of generictsType" [value]="g.generic_type_id">{{g.generic_type_name}}</option>
+      </select>
+    </div>
+<!-- 
+    <label>จุดสั่งซื้อ</label>
+    <div class="select" style="width:100px;display:inline-block">
+      <select name="min_max" [(ngModel)]="minMaxFilter">
+        <option value="min"> ใช่ </option>
+        <option value="all"> ทั้งหมด </option>
+      </select>
+    </div> -->
+
+    <clr-button-group class="btn-sm" [clrMenuPosition]="'bottom-right '">
+      <clr-button class="btn" (click)="search()">
+        <clr-icon shape="search"></clr-icon> ค้นหา </clr-button>
+      <!-- <clr-button class="btn" [clrInMenu]="true">คำนวณยอดการเติม</clr-button> -->
+    </clr-button-group>
+  </div>
+</div>
+<br>
+
+<clr-datagrid [style.height.%]="80" class="grid-order" (clrDgRefresh)="refresh($event)">
+  <clr-dg-column [style.width.px]="100"><ng-container *clrDgHideableColumn="{hidden: false}">Working Code</ng-container></clr-dg-column>
+  <clr-dg-column>Generic Name</clr-dg-column>
+  <clr-dg-column [style.width.px]="100"><ng-container *clrDgHideableColumn="{hidden: false}">MIN</ng-container></clr-dg-column>
+  <clr-dg-column [style.width.px]="100"><ng-container *clrDgHideableColumn="{hidden: false}">MAX</ng-container></clr-dg-column>
+  <clr-dg-column [style.width.px]="100"><ng-container *clrDgHideableColumn="{hidden: false}">คงเหลือ</ng-container></clr-dg-column>
+  <clr-dg-column [style.width.px]="100"><ng-container *clrDgHideableColumn="{hidden: false}">รออนุมัติ</ng-container></clr-dg-column>
+  <clr-dg-column [style.width.px]="70"><ng-container *clrDgHideableColumn="{hidden: false}">Base Unit</ng-container></clr-dg-column>
+  <clr-dg-column [style.width.px]="100"><ng-container *clrDgHideableColumn="{hidden: false}">ยอดสั่งซื้อ</ng-container></clr-dg-column>
+  <clr-dg-column [style.width.px]="200"><ng-container *clrDgHideableColumn="{hidden: false}">ประเภทยา</ng-container></clr-dg-column>
+
+  <clr-dg-row *ngFor="let p of products;let idx=index;" [clrDgItem]="p">
+
+    <app-grid-reorder-point-products [productItems]="p.items" [baseUnitName]="p.primary_unit_name" (onSuccess)="onSuccessReorderPoint($event)" [genericId]="p.generic_id" *clrIfExpanded ngProjectAs="clr-dg-row-detail"></app-grid-reorder-point-products>
+    <clr-dg-cell>{{p.working_code}} </clr-dg-cell>
+    <clr-dg-cell>{{p.generic_name}}</clr-dg-cell>
+    <clr-dg-cell class="text-right">{{ p.min_qty | number }}</clr-dg-cell>
+    <clr-dg-cell class="text-right">{{ p.max_qty | number }}</clr-dg-cell>
+    <clr-dg-cell class="text-right">
+      <span  style="color: #F52F22; font-weight:bold;">{{ p.remain_qty || 0 | number }}</span>
+    </clr-dg-cell>
+    <clr-dg-cell class="text-right">
+      <span style="color: #0065AB; font-weight:bold;">{{ p.total_purchased || 0 | number }}</span>
+    </clr-dg-cell>
+    <clr-dg-cell>{{p.primary_unit_name}}</clr-dg-cell>
+    <clr-dg-cell class="text-right">
+      <span class="badge" [ngClass]="{'badge-success': p.order_qty>p.max_qty, 'badge-danger': p.order_qty<p.max_qty}" >{{p.order_qty || 0 | number}}</span>
+    </clr-dg-cell>
+    <clr-dg-cell>{{ p.generic_type_name }}</clr-dg-cell>
+  </clr-dg-row>
+
+  <clr-dg-footer>
+    {{pagination.firstItem + 1}} - {{pagination.lastItem + 1}} จาก {{pagination.totalItems}} รายการ
+    <clr-dg-pagination #pagination [clrDgPageSize]="perPage" [clrDgTotalItems]="total"></clr-dg-pagination>
+  </clr-dg-footer>
+</clr-datagrid>
+
+<app-modal-loading #modalLoading></app-modal-loading> 

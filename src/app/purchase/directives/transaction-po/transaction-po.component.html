@@ -1,0 +1,28 @@
+<clr-datagrid class="grid-order" [(clrDgLoading)]="loading" style="padding-top:15px;">
+  <clr-dg-column class="header-center">วันที่</clr-dg-column>
+  <clr-dg-column class="header-center">เลขที่ใบสั่งซื้อ</clr-dg-column>
+  <clr-dg-column class="header-center">งบประมาณ</clr-dg-column>
+  <clr-dg-column class="header-center">ยอดคงเหลือยกมา</clr-dg-column>
+  <clr-dg-column class="header-center">ยอดจัดซื้อ</clr-dg-column>
+  <clr-dg-column class="header-center">ส่วนต่าง</clr-dg-column>
+  <clr-dg-column class="header-center">ยอดคงเหลือ</clr-dg-column>
+  <clr-dg-row *clrDgItems="let p of transactionPo;" [clrDgItem]="p">
+    <clr-dg-cell>
+      <clr-icon shape="new" class="is-success" size=""></clr-icon>
+      {{p.date_time | toThaiDate}}
+    </clr-dg-cell>
+    <clr-dg-cell>{{p.purchase_order_number}}</clr-dg-cell>
+    <clr-dg-cell>{{p.bgtype_name}} - {{p.bgtypesub_name}}</clr-dg-cell>
+    <clr-dg-cell>{{p.incoming_balance | number:'1.2-2'}}</clr-dg-cell>
+    <clr-dg-cell>{{p.amount | number:'1.2-2'}}</clr-dg-cell>
+    <clr-dg-cell>{{p.difference | number:'1.2-2'}}</clr-dg-cell>
+    <clr-dg-cell>{{p.balance | number:'1.2-2'}}</clr-dg-cell>
+  </clr-dg-row>
+  <clr-dg-footer>
+    จำนวนทั้งหมด
+    <strong>
+      <span class="badge"> {{transactionPo.length}}</span>
+    </strong> รายการ
+    <clr-dg-pagination #pagination [clrDgPageSize]="20"></clr-dg-pagination>
+  </clr-dg-footer>
+</clr-datagrid>

@@ -1,0 +1,17 @@
+<clr-modal [(clrModalOpen)]="modalOpen" [clrModalSize]="'lg'" (clrModalOpenChange)="formOpenChange($event)">
+    <h3 class="modal-title">ยกเลิกใบสั่งซื้อ</h3>
+    <div class="modal-body">
+        <form>
+            <section class="form-block">
+                <div class="form-group">
+                    <label for="cancel_comment">หมายเหตุ</label>
+                    <textarea id="cancel_comment" name="cancel_comment" [(ngModel)]="cancel_comment" rows="2"></textarea>
+                </div>
+            </section>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button (click)="closeModal()" type="button" class="btn btn-outline">ยกเลิก</button>
+        <button [disabled]="!cancel_comment" (click)="onSave()" type="submit" class="btn btn-primary">ยกเลิกใบสั่งซื้อ</button>
+    </div>
+</clr-modal>

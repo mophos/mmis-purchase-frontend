@@ -1,0 +1,11 @@
+<input type="text" [disabled]="_disabled" [value]="query" (keyup)="clearSelected($event)"
+style="width: 100%;" placeholder="ค้นหาสินค้า..." 
+agxTypeahead 
+[taUrl]="searchProductUrl"
+taApi="http" 
+[taItemTpl]="itemTpl"
+(taSelected)="handleResultSelected($event)">
+
+<ng-template #itemTpl let-result>
+ {{ result.result.product_name }} ({{ result.result.generic_name }})
+</ng-template>

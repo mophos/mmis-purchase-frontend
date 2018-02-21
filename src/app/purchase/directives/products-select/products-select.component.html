@@ -1,0 +1,47 @@
+<clr-modal [(clrModalOpen)]="formOpen" [clrModalSize]="modalSize" (clrModalOpenChange)="clrModalOpenChange($event)">
+    <h3 class="modal-title">ค้นรายการสินค้า ({{labelerDetail.labeler_name}})</h3>
+    <div class="modal-body">
+
+        <div class="card" style="margin-bottom:7px;">
+            <div class="card-block">
+                <div class="form-group">
+                    <input class="form-control" type="text" id="query" name="query" [(ngModel)]="query" (keyup)="search()" (keypress)="search()" placeholder="ค้นหาสินค้า...">
+                </div>
+            </div>
+        </div>
+
+        <clr-datagrid [(clrDgLoading)]="loadingProducts" [(clrDgSelected)]="productsSelected">
+            <clr-dg-column [style.width.px]="100">
+                เลือก
+            </clr-dg-column>
+            <clr-dg-column [style.width.px]="120" [clrDgField]="'product_id'">
+                รหัสสินค้า
+            </clr-dg-column>
+            <clr-dg-column [clrDgField]="'product_name'">
+                ชื่อสินค้า
+            </clr-dg-column>
+            <clr-dg-column [style.width.px]="120">
+                ขนาดบรรจุ
+            </clr-dg-column>
+
+            <clr-dg-row *clrDgItems="let p of products" [clrDgItem]="p">
+                <clr-dg-cell><span (click)="selected(p)" class="label clickable"> <clr-icon shape="plus"></clr-icon> เลือก</span></clr-dg-cell>
+                <clr-dg-cell>{{p.product_id}} </clr-dg-cell>
+                <clr-dg-cell>{{p.product_name}} [{{p.generic_name}}] </clr-dg-cell>
+                <clr-dg-cell>{{p.large_qty}} {{p.large_unit}} x {{p.small_qty}} {{p.small_unit}}</clr-dg-cell>
+            </clr-dg-row>
+
+            <clr-dg-footer>
+                {{pagination.firstItem + 1}} - {{pagination.lastItem + 1}} of {{pagination.totalItems}} รายการ
+                <clr-dg-pagination #pagination [clrDgPageSize]="50"></clr-dg-pagination>
+            </clr-dg-footer>
+        </clr-datagrid>
+
+
+
+    </div>
+    <div class="modal-footer">
+        <button type="button" (click)="selectedProductModal=false" class="btn btn-outline">ปิดหน้าต่าง</button>
+        <button [disabled]="!(productsSelected.length > 1)" (click)="multiSelected()" type="button" class="btn btn-primary"><clr-icon shape="plus"></clr-icon> เพิ่มรายการ ({{productsSelected.length}})</button>
+    </div>
+</clr-modal>

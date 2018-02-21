@@ -1,0 +1,74 @@
+<clr-datagrid class="grid-order" [(clrDgLoading)]="loading"  style="padding-top:15px;">
+
+    <clr-dg-column class="header-right" [style.width.px]="100">
+        <ng-container *clrDgHideableColumn="{hidden: false}">
+            วันที่
+        </ng-container>
+    </clr-dg-column>
+
+    <clr-dg-column class="header-right" [style.width.px]="100">
+        <ng-container *clrDgHideableColumn="{hidden: false}">
+            จำนวน
+        </ng-container>
+    </clr-dg-column>
+
+    <clr-dg-column class="header-right" [style.width.px]="150">
+        <ng-container *clrDgHideableColumn="{hidden: false}">
+            ขนาดบรรจุ
+        </ng-container>
+    </clr-dg-column>
+
+    <clr-dg-column class="header-right" [style.width.px]="80">
+        <ng-container *clrDgHideableColumn="{hidden: false}">
+            จำนวนรวม
+        </ng-container>
+    </clr-dg-column>
+
+    <clr-dg-column class="header-right" [style.width.px]="100">
+        <ng-container *clrDgHideableColumn="{hidden: false}">
+            ราคาต่อหน่วย
+        </ng-container>
+    </clr-dg-column>
+
+    <clr-dg-column class="header-right">
+        <ng-container *clrDgHideableColumn="{hidden: false}">
+            ราคารวม
+        </ng-container>
+    </clr-dg-column>
+
+
+    <clr-dg-row *clrDgItems="let p of products; let idx=index;" [clrDgItem]="p">
+
+        <clr-dg-cell class="text-right">
+            {{p.created_date | toThaiDate}}
+        </clr-dg-cell>
+
+        <clr-dg-cell class="text-right">
+            {{p.qty}}
+        </clr-dg-cell>
+
+        <clr-dg-cell class="text-left">
+           {{p.large_unit}} x {{p.small_qty}} {{p.small_unit}}
+        </clr-dg-cell>
+
+        <clr-dg-cell class="text-right">
+            {{p.total_small_qty | number}}
+        </clr-dg-cell>
+
+        <clr-dg-cell class="text-right">
+           <strong class="text-success"> {{p.unit_price | number:'1.2-2'}}</strong>
+        </clr-dg-cell>
+
+        <clr-dg-cell class="text-right">
+            {{ p.total_price | number:'1.2'}}
+        </clr-dg-cell>
+
+       
+
+    </clr-dg-row>
+
+    <clr-dg-footer>
+        จำนวนทั้งหมด <strong><span class="badge"> {{products.length}}</span></strong> รายการ
+        <clr-dg-pagination #pagination [clrDgPageSize]="20"></clr-dg-pagination>
+    </clr-dg-footer>
+</clr-datagrid>

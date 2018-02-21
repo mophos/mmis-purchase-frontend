@@ -1,0 +1,157 @@
+<clr-main-container>
+    <clr-header class="header-6">
+        <div class="branding">
+            <a class="nav-link">
+                <img src="./assets/images/logo.png" alt="" width="80" style="margin-right:10px;">
+                <span class="title">Purchasing</span>
+            </a>
+        </div>
+        <div class="header-nav">
+            <a class=" nav-link nav-icon" href="{{homeUrl}}" routerLinkActive='active'>
+                <clr-icon shape="home"></clr-icon>
+            </a>
+            <!-- <a class=" nav-link nav-icon" routerLink='/purchasing/dashboard' routerLinkActive='active'>
+                <clr-icon shape="analytics"></clr-icon>
+            </a> -->
+
+        </div>
+        <div class="header-actions">
+        <clr-dropdown class="dropdown bottom-right">
+            <button class="nav-text" clrDropdownToggle>
+                        <!-- <clr-icon shape="user"></clr-icon> -->
+                        {{ fullname }}
+                        <clr-icon shape="caret down"></clr-icon>
+                    </button>
+            <div class="dropdown-menu">
+              <!-- <a (click)="downloadManual()" clrDropdownItem>คู่มือ</a> -->
+                <a href="javascript://" (click)="openChangePasswordModal()" clrDropdownItem>เปลี่ยนรหัสผ่าน</a>
+                <a (click)="logout()" clrDropdownItem>ออกจากระบบ</a>
+            </div>
+        </clr-dropdown>
+      </div>
+    </clr-header>
+
+    <div class="content-container">
+        <div class="content-area">
+            <router-outlet></router-outlet>
+        </div>
+
+        <clr-vertical-nav [clrVerticalNavCollapsible]="collapsible" [(clrVerticalNavCollapsed)]="collapsed">
+
+            <a clrVerticalNavLink routerLink="/purchase/order-form" routerLinkActive="active">
+                <clr-icon clrVerticalNavIcon shape="plus"></clr-icon>
+                ออกใบสั่งซื้อ
+            </a>
+            <a clrVerticalNavLink routerLink="/purchase/reorder-point" routerLinkActive="active">
+                <clr-icon clrVerticalNavIcon shape="warning-standard"></clr-icon>
+                รายการที่ถึงจุดสั่งซื้อ
+            </a>
+
+            <a clrVerticalNavLink routerLink="/purchase/orders" routerLinkActive="active">
+                <clr-icon clrVerticalNavIcon shape="shopping-bag"></clr-icon>
+                รายการสั่งซื้อ
+            </a>
+
+            <!-- <clr-vertical-nav-group routerLinkActive="active">
+                <a clrVerticalNavLink routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">
+                    <clr-icon shape="add-text" clrVerticalNavIcon></clr-icon>
+                    รายการสั่งซื้อ
+                </a>
+                <clr-vertical-nav-group-children *clrIfExpanded="false">
+                    <a clrVerticalNavLink routerLink="/purchase/orders" routerLinkActive="active">
+                        <clr-icon clrVerticalNavIcon shape="bolt"></clr-icon>
+                        เตรียมสั่งซื้อ
+                    </a>
+                    <a clrVerticalNavLink routerLink="/purchase/orders-approve" routerLinkActive="active">
+                        <clr-icon clrVerticalNavIcon shape="happy-face"></clr-icon>
+                        อนุมัติแล้ว
+                    </a>
+                    <a clrVerticalNavLink routerLink="/purchase/orders-warehouse" routerLinkActive="active">
+                        <clr-icon clrVerticalNavIcon shape="store"></clr-icon>
+                        รับเข้าคลัง
+                    </a>
+                    <a clrVerticalNavLink routerLink="/purchase/orders-cancel" routerLinkActive="active">
+                        <clr-icon clrVerticalNavIcon shape="no-access"></clr-icon>
+                        ยกเลิก
+                    </a>
+                </clr-vertical-nav-group-children>
+            </clr-vertical-nav-group> -->
+            <!-- <a clrVerticalNavLink routerLink="/purchase/report/purchase-order" routerLinkActive="active">
+                <clr-icon clrVerticalNavIcon shape="printer"></clr-icon>
+                รายงาน
+            </a> -->
+            <clr-vertical-nav-group routerLinkActive="active">
+                <a clrVerticalNavLink routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">
+                    <clr-icon shape="printer" clrVerticalNavIcon></clr-icon>
+                    รายงาน
+                </a>
+                <clr-vertical-nav-group-children *clrIfExpanded="false">
+                    <a clrVerticalNavLink  routerLink="/purchase/report/purchase-order" [queryParams]="{id: '01'}"  routerLinkActive="active">
+                        รายงานสั่งซื้อเวชภัณฑ์
+                    </a>
+                    
+                </clr-vertical-nav-group-children>
+            </clr-vertical-nav-group>
+
+            <clr-vertical-nav-group>
+                <a clrVerticalNavLink routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">
+                    <clr-icon shape="cog" clrVerticalNavIcon></clr-icon>
+                    ตั้งค่า
+                </a>
+                <clr-vertical-nav-group-children *clrIfExpanded="false">
+                    <a clrVerticalNavLink routerLink="/purchase/committee" routerLinkActive="active">
+                            ชุดกรรมการ
+                    </a>
+                    <a clrVerticalNavLink routerLink="/purchase/mapping-committee" routerLinkActive="active">
+                        จับคู่กรรมการและการจัดซื้อ
+                    </a>
+                    <a clrVerticalNavLink routerLink="/purchase/officer" routerLinkActive="active">
+                        ข้อมูลเจ้าหน้าที่พัสดุ
+                    </a>
+                    <!-- <a clrVerticalNavLink routerLink="./normal/snorlax" routerLinkActive="active">
+                    ตั้งค่าพื้นฐาน
+                </a> -->
+                </clr-vertical-nav-group-children>
+            </clr-vertical-nav-group>
+
+        </clr-vertical-nav>
+
+    </div>
+
+</clr-main-container>
+
+<clr-modal [(clrModalOpen)]="ChangePasswordModal" [clrModalClosable]="false" [clrModalSize]="'md'">
+    <h3 class="modal-title">เปลี่ยนรหัสผ่าน</h3>
+    <div class="modal-body" style="height:205px;">
+  
+      <form>
+        <section class="form-block">
+          <!-- <label>เปลี่ยนรหัสผ่านผู้ใช้งาน</label> -->
+          <div class="form-group" >
+            <label for="password" class="required">ระบุรหัสผ่านใหม่</label>
+            <input type="password" name="password" placeholder="**********" [(ngModel)]="password">
+            <input type="password" name="password2" placeholder="**********" [(ngModel)]="password2">
+          </div>
+          <!-- <div class="form-group"> -->
+            <div class="row form-group">
+              <div class="col-md-12">
+                <label *ngIf="password.length <= 3 && password != ''">**รหัสผ่านต้องมากกว่า 4 ตัวอักษร</label>
+              </div>
+              <div class="col-md-12">
+                <label *ngIf="password != password2 && password2 != null">***รหัสผ่านไม่ตรงกัน</label>
+              </div>
+            </div>
+          <!-- </div> -->
+        </section>
+      </form>
+  
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-success btn-sm" (click)="chanagePassword()" [disabled]="!password || password.length <= 3 || isSaving || password!=password2">
+        เปลี่ยนรหัสผ่าน
+      </button>
+      <button type="button" class="btn btn-danger btn-sm" (click)="closeModal()">
+        ปิดหน้าต่าง
+      </button>
+    </div>
+  </clr-modal>

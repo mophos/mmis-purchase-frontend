@@ -1,0 +1,184 @@
+<clr-wizard #wizardCommittee [(clrWizardOpen)]="wizardCommitteeOpen" (clrWizardOnCancel)="doCancel()">
+    <clr-wizard-title>สร้างชุดกรรมการ
+        <span class="label label-light-blue">{{isUpdate? 'Update': 'New'}}</span>
+    </clr-wizard-title>
+
+    <clr-wizard-button [type]="'cancel'">Cancel</clr-wizard-button>
+    <clr-wizard-button [type]="'previous'">Back</clr-wizard-button>
+    <clr-wizard-button [type]="'next'">Next</clr-wizard-button>
+    <clr-wizard-button [type]="'finish'">Save</clr-wizard-button>
+
+    <clr-wizard-page #pageOne [clrWizardPageNextDisabled]=" !formCommittee.valid">
+        <ng-template clrPageTitle>รายละเอียดชุดกรรมการ</ng-template>
+        <form #formCommittee="ngForm" [formGroup]="committee">
+            <div class="form-group row">
+                <div class="col-lg-2 col-md-12 col-sm-12 col-xs-12">
+                    <label>ชื่อชุดคณะกรรมการ</label>
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                    <label for="txtCommitteeName" aria-haspopup="true" role="tooltip" class="tooltip tooltip-validation tooltip-md tooltip-bottom-right"
+                        [class.invalid]="committee.get('committee_name').invalid
+                    && (committee.get('committee_name').dirty || committee.get('committee_name').touched)">
+                        <input type="text" id="txtCommitteeName" formControlName="committee_name" size="30">
+                        <span class="tooltip-content">This field cannot be empty!</span>
+                    </label>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-lg-2 col-md-12 col-sm-12 col-xs-12">
+                    <label>ประเภทกรรมการ</label>
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                    <div class="radio-inline">
+                        <input formControlName="committee_type" type="radio" value="1" name="committee_type" id="rdoCommittee_type_1">
+                        <label for="rdoCommittee_type_1">สอบราคา</label>
+                    </div>
+                    <div class="radio-inline">
+                        <input formControlName="committee_type" type="radio" value="2" name="committee_type" id="rdoCommittee_type_2" checked>
+                        <label for="rdoCommittee_type_2">ตรวจรับ</label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-lg-2 col-md-12 col-sm-12 col-xs-12">
+                    <label for="gForm_1">ระบุเวลา</label>
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                    <label for="txtCommitteeName" aria-haspopup="true" role="tooltip" [class.invalid]="committee.get('datetime_start').invalid
+                    && (committee.get('datetime_start').dirty || committee.get('datetime_start').touched)" class="tooltip tooltip-validation tooltip-md tooltip-bottom-right">
+                        <my-date-picker-th formControlName="datetime_start" [options]="myDatePickerOptions" required></my-date-picker-th>
+                        <span class="tooltip-content">This field cannot be empty!</span>
+                    </label>
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                    <label for="txtCommitteeName" aria-haspopup="true" role="tooltip" [class.invalid]="committee.get('datetime_end').invalid
+                    && (committee.get('datetime_end').dirty || committee.get('datetime_end').touched)" class="tooltip tooltip-validation tooltip-md tooltip-bottom-right">
+                        <my-date-picker-th formControlName="datetime_end" [options]="myDatePickerOptions" required></my-date-picker-th>
+                        <span class="tooltip-content">This field cannot be empty!</span>
+                    </label>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-lg-2 col-md-12 col-sm-12 col-xs-12">
+                    <label>สถานะ</label>
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                    <div class="radio-inline">
+                        <input formControlName="committee_status" type="radio" value="T" name="committee_status" id="rdoCommittee_status_1">
+                        <label for="rdoCommittee_status_1">เปิด</label>
+                    </div>
+                    <div class="radio-inline">
+                        <input formControlName="committee_status" type="radio" value="F" name="committee_status" id="rdoCommittee_status_2" checked>
+                        <label for="rdoCommittee_status_2">ปิด</label>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </clr-wizard-page>
+
+    <clr-wizard-page #pageTwo>
+        <ng-template clrPageTitle>รายชื่อชุดกรรมการ</ng-template>
+        <div class="row">
+            <div class="col-md-5">
+                <label>รายชื่อเจ้าหน้าที่</label>
+                <clr-datagrid style="height:280px" [(clrDgSelected)]="peoplesSourceSelected">
+
+                    <clr-dg-column [clrDgField]="'fullname'">
+                        <ng-container *clrDgHideableColumn="{hidden: false}">
+                            ชื่อ-นามสกุล
+                        </ng-container>
+                    </clr-dg-column>
+
+                    <clr-dg-row *clrDgItems="let people of peoplesSource" [clrDgItem]="people">
+                        <clr-dg-cell>
+                            {{people.fullname}}
+                            <label style="display:block;color:#747474;font-size:10px;">{{people.position_name}}</label>
+                        </clr-dg-cell>
+                    </clr-dg-row>
+                    <clr-dg-footer>
+                        {{pagination1.firstItem + 1}} - {{pagination1.lastItem + 1}} of {{pagination1.totalItems}} users
+                        <clr-dg-pagination #pagination1 [clrDgPageSize]="30"></clr-dg-pagination>
+                    </clr-dg-footer>
+                </clr-datagrid>
+            </div>
+
+            <div class="col-md-2">
+                <button (click)="selectedPeople()" [disabled]="!(peoplesSourceSelected.length >= 1)" type="submit" class="btn btn-block btn-sm"
+                    style="margin-top:70px;">เลือก
+                    <clr-icon shape="caret right"></clr-icon>
+                </button>
+                <button (click)="selectedPeopleAll()" [disabled]="peoplesSource.length == 0" type="submit" class="btn btn-block btn-sm">เลือกทั้งหมด
+                    <clr-icon shape="caret right"></clr-icon>
+                    <clr-icon shape="caret right"></clr-icon>
+                </button>
+                <br>
+                <button (click)="revokePeople()" [disabled]="!(peoplesTargetSelected.length >= 1)" type="submit" class="btn btn-block btn-sm">
+                    <clr-icon shape="caret left"></clr-icon>ยกเลิก </button>
+                <button (click)="revokePeopleAll()" [disabled]="peoplesTarget.length == 0" type="submit" class="btn btn-block btn-sm">
+                    <clr-icon shape="caret left"></clr-icon>
+                    <clr-icon shape="caret left"></clr-icon>ยกเลิกทังหมด </button>
+            </div>
+
+            <div class="col-md-5">
+                <label>ชุดคณะกรรมการ</label>
+                <clr-datagrid style="height:280px" [(clrDgSelected)]="peoplesTargetSelected">
+                    <clr-dg-column [clrDgField]="'fullname'">
+
+                        ชื่อ-นามสกุล
+
+                    </clr-dg-column>
+                    <clr-dg-row *clrDgItems="let pis of peoplesTarget" [clrDgItem]="pis">
+                        <clr-dg-cell>
+                            {{pis.fullname}}
+                            <label style="display:block;color:#747474;font-size:10px;">{{pis.position_name}}</label>
+                        </clr-dg-cell>
+                    </clr-dg-row>
+                    <clr-dg-footer>
+                        {{pagination2.firstItem + 1}} - {{pagination2.lastItem + 1}} of {{pagination2.totalItems}} users
+                        <clr-dg-pagination #pagination2 [clrDgPageSize]="30"></clr-dg-pagination>
+                    </clr-dg-footer>
+                </clr-datagrid>
+            </div>
+        </div>
+    </clr-wizard-page>
+    <clr-wizard-page #pageThree (clrWizardPageOnCommit)="onCommitWizard3()" (clrWizardPageOnCancel)="doCancel()">
+        <ng-template clrPageTitle>เลือกประธาน</ng-template>
+        <!-- <clr-datagrid style="height:280px" [(clrDgSingleSelected)]="committeeNewPosition" (clrDgSingleSelectedChange)="singleSelectedChange($event)"> -->
+        <clr-datagrid>
+            <clr-dg-column [clrDgField]="'fullname'">
+                <ng-container *clrDgHideableColumn="{hidden: false}">
+                    ชื่อ-นามสกุล
+                </ng-container>
+            </clr-dg-column>
+            <clr-dg-column [clrDgField]="'cp_position_name'">
+                ตำแหน่งในชุดกรรมการ
+            </clr-dg-column>
+            <clr-dg-column>
+
+            </clr-dg-column>
+            <clr-dg-row *ngFor="let pis of peoplesTarget; let idx=index;" [clrDgItem]="pis">
+                <clr-dg-cell>{{pis.fullname}}
+                    <label style="display:block;color:#747474;font-size:10px;">{{pis.position_name}}</label>
+                </clr-dg-cell>
+                <clr-dg-cell>
+                    <label *ngIf="idx == 0">ประธาน</label>
+                    <label *ngIf="idx > 0">กรรมการ</label>
+                </clr-dg-cell>
+                <clr-dg-cell style="text-align: center;">
+                    <button title="เลื่อนขึ้น" class="btn btn-sm btn-icon btn-success wm-small-btn" (click)="productUp(pis)">
+                        <clr-icon shape="caret up"></clr-icon>
+                        <!-- เลื่อนขึ้น -->
+                    </button>
+                    <button title="เลื่อนลง" class="btn btn-sm btn-icon btn-success wm-small-btn" (click)="productDown(pis)">
+                        <clr-icon shape="caret down"></clr-icon>
+                        <!-- เลื่อนลง -->
+                    </button>
+                </clr-dg-cell>
+            </clr-dg-row>
+            <clr-dg-footer>
+                {{pagination3.firstItem + 1}} - {{pagination3.lastItem + 1}} of {{pagination3.totalItems}} users
+                <clr-dg-pagination #pagination3 [clrDgPageSize]="30"></clr-dg-pagination>
+            </clr-dg-footer>
+        </clr-datagrid>
+    </clr-wizard-page>
+</clr-wizard>`

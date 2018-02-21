@@ -1,0 +1,58 @@
+<!-- <div class="card">
+    <div class="card-block">
+      <div class="form-block">
+            <div style="width:160px; display:inline-block;">
+              <my-date-picker-th (dateChanged)="onDateStartChanged($event)" name="start_date" placeholder="วันที่เริ่ม" [(ngModel)]="start_date" [options]="myDatePickerOptions" ></my-date-picker-th>
+            </div>
+
+            <div style="width:160px; display:inline-block;">
+              <my-date-picker-th (dateChanged)="onDateEndChanged($event)" name="end_date"  placeholder="วันที่สิ้นสุด" [(ngModel)]="end_date" [options]="myDatePickerOptions" ></my-date-picker-th>
+            </div>
+            
+            <button type="button" (click)="print()" class="btn btn-primary btn-md" style="margin-top:-28px;">
+              <clr-icon shape="search"></clr-icon> ค้นหา 
+            </button>
+            
+      </div>
+    </div>
+</div> -->
+<form>
+    <section class="form-block">
+      <div class="form-group row">
+        <div class="col-lg-1 col-md-1 col-sm-12 col-xs-12">
+          <label for="startDate" class="required">ตั้งแต่</label>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+          <my-date-picker-th name="mydate" [options]="myDatePickerOptions" [(ngModel)]="startDate" required></my-date-picker-th>
+        </div>
+        <div class="col-lg-1 col-md-1 col-sm-12 col-xs-12">
+          <label for="endDate" class="required">ถึง</label>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+          <my-date-picker-th name="mydate" [options]="myDatePickerOptions" [(ngModel)]="endDate" required></my-date-picker-th>
+        </div>
+        <div class="col-md-2">
+          <button class="btn btn-primary" [disabled]="isPreview" (click)="showReport()">แสดงรายงาน</button>
+        </div>
+      </div>
+    </section>
+  </form>
+  <span class="spinner spinner-inline" *ngIf="isPreview">
+      Loading...
+  </span>
+  <span *ngIf="isPreview">
+      Loading...
+  </span>
+  
+  <app-html-preview  #htmlPreview></app-html-preview>
+  <!-- <clr-modal [(clrModalOpen)]="isPreview" [clrModalSize]="'xl'" [clrModalClosable]="false">
+      <h3 class="modal-title">เพิ่ม Shipping Network</h3>
+      <div class="modal-body">
+        <form>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary btn-lg" (click)="saveNetwork()" [disabled]="!selectNetwork || !inventory || !inventory1">บันทึก</button>
+        <button type="button" class="btn btn-outline-danger btn-lg " (click)="isPreview = false">ปิด</button>
+      </div>
+    </clr-modal> -->

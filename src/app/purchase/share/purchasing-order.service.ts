@@ -1,0 +1,244 @@
+import { Injectable, Inject } from '@angular/core';
+import { AuthHttp } from 'angular2-jwt';
+import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/toPromise';
+
+@Injectable()
+export class PurchasingOrderService {
+
+  apiName: string = 'purchasing-order';
+
+  constructor(
+    @Inject('API_URL') private url: string,
+    private authHttp: AuthHttp
+  ) { }
+
+  budgetsYear(year: string, budget_type_id: string) {
+    return new Promise((resolve, reject) => {
+      this.authHttp.get(`${this.url}/${this.apiName}/budgetyear/${year}/${budget_type_id}`)
+        .map(res => res.json())
+        .subscribe(data => {
+          resolve(data);
+        }, error => {
+          reject(error);
+        });
+    });
+  }
+
+  ordercontract(status: string = null) {
+    return new Promise((resolve, reject) => {
+      this.authHttp.get(`${this.url}/${this.apiName}/ordercontract/${status}`)
+        .map(res => res.json())
+        .subscribe(data => {
+          resolve(data);
+        }, error => {
+          reject(error);
+        });
+    });
+  }
+
+  ordernocontracts() {
+    return new Promise((resolve, reject) => {
+      this.authHttp.get(`${this.url}/${this.apiName}/nocontracts`)
+        .map(res => res.json())
+        .subscribe(data => {
+          resolve(data);
+        }, error => {
+          reject(error);
+        });
+    });
+  }
+
+  ordernocontractsByRequisition(id: string) {
+    return new Promise((resolve, reject) => {
+      this.authHttp.get(`${this.url}/${this.apiName}/nocontracts-by-requisition/${id}`)
+        .map(res => res.json())
+        .subscribe(data => {
+          resolve(data);
+        }, error => {
+          reject(error);
+        });
+    });
+  }
+
+  contracts() {
+    return new Promise((resolve, reject) => {
+      this.authHttp.get(`${this.url}/${this.apiName}/contracts`)
+        .map(res => res.json())
+        .subscribe(data => {
+          resolve(data);
+        }, error => {
+          reject(error);
+        });
+    });
+  }
+
+  all() {
+    return new Promise((resolve, reject) => {
+      this.authHttp.get(`${this.url}/${this.apiName}`)
+        .map(res => res.json())
+        .subscribe(data => {
+          resolve(data);
+        }, error => {
+          reject(error);
+        });
+    });
+  }
+
+  byStatus(status: Array<any>, contract: string = "ALL", query: string = '', start_date: string = '', end_date: string = '',
+    number_start: string = '', number_end: string = '') {
+    return new Promise((resolve, reject) => {
+      this.authHttp.post(`${this.url}/${this.apiName}/by-status`, {
+        status, contract, query, start_date, end_date,
+        number_start, number_end
+      })
+        .map(res => res.json())
+        .subscribe(data => {
+          resolve(data);
+        }, error => {
+          reject(error);
+        });
+    });
+  }
+
+  isCancel() {
+    return new Promise((resolve, reject) => {
+      this.authHttp.get(`${this.url}/${this.apiName}/by-cancel`)
+        .map(res => res.json())
+        .subscribe(data => {
+          resolve(data);
+        }, error => {
+          reject(error);
+        });
+    });
+  }
+  getPOid(s_id: any, e_id: any, genericTypeId: any, statusFilter: any) {
+    return new Promise((resolve, reject) => {
+      this.authHttp.get(`${this.url}/${this.apiName}/getpoId/${s_id}/${e_id}/${genericTypeId}/${statusFilter}`)
+        .map(res => res.json())
+        .subscribe(data => {
+          resolve(data);
+        }, error => {
+          reject(error);
+        });
+    });
+  }
+  getPrintDate(start_date: any, end_date: any, genericTypeId: any, statusFilter: any) {
+    return new Promise((resolve, reject) => {
+      this.authHttp.get(`${this.url}/${this.apiName}/getPrintDate/${start_date}/${end_date}/${genericTypeId}/${statusFilter}`)
+        .map(res => res.json())
+        .subscribe(data => {
+          resolve(data);
+        }, error => {
+          reject(error);
+        });
+    });
+  }
+  getGenericTypes() {
+    return new Promise((resolve, reject) => {
+      this.authHttp.get(`${this.url}/${this.apiName}/getgenerictypes`)
+        .map(res => res.json())
+        .subscribe(data => {
+          resolve(data);
+        }, error => {
+          reject(error);
+        });
+    });
+  }
+
+  detail(id: string) {
+    return new Promise((resolve, reject) => {
+      this.authHttp.get(`${this.url}/${this.apiName}/detail?id=${id}`)
+        .map(res => res.json())
+        .subscribe(data => {
+          resolve(data);
+        }, error => {
+          reject(error);
+        });
+    });
+  }
+
+  lastOrderByLebelerID(id: string) {
+    return new Promise((resolve, reject) => {
+      this.authHttp.get(`${this.url}/${this.apiName}/lastorder/${id}`)
+        .map(res => res.json())
+        .subscribe(data => {
+          resolve(data);
+        }, error => {
+          reject(error);
+        });
+    });
+  }
+
+  async save(summary: any, items: any) {
+    let rs: any = await this.authHttp.post(`${this.url}/${this.apiName}`, { items: items, summary: summary }).toPromise();
+    return rs.json();
+  }
+
+  async update(id: any, summary: any, items: any) {
+    let rs: any = await this.authHttp.put(`${this.url}/${this.apiName}/${id}`, { items: items, summary: summary }).toPromise();
+    return rs.json();
+  }
+
+  async updateStatus(items: any) {
+    let rs: any = await this.authHttp.put(`${this.url}/${this.apiName}/update-purchase/status`, {items: items}).toPromise();
+    return rs.json();
+  }
+
+  async saveWithOrderPoint(poItems: any, productItems: any) {
+    let rs: any = await this.authHttp.post(`${this.url}/${this.apiName}/purchase-reorder`, {
+      poItems: poItems,
+      productItems: productItems
+    }).toPromise();
+    return rs.json();
+  }
+
+
+
+  // update(id: string, data: object) {
+  //   return new Promise((resolve, reject) => {
+  //     this.authHttp.put(`${this.url}/${this.apiName}/${id}`, {data})
+  //       .map(res => res.json())
+  //       .subscribe(data => {
+  //         resolve(data);
+  //       }, error => {
+  //         reject(error);
+  //       });
+  //   });
+  // }
+
+  newponumber(id: string, data: object) {
+    return new Promise((resolve, reject) => {
+      this.authHttp.put(`${this.url}/${this.apiName}/newponumber/${id}`, { data })
+        .map(res => res.json())
+        .subscribe(data => {
+          resolve(data);
+        }, error => {
+          reject(error);
+        });
+    });
+  }
+
+  remove(id: string) {
+    return new Promise((resolve, reject) => {
+      this.authHttp.delete(`${this.url}/${this.apiName}/${id}`)
+        .map(res => res.json())
+        .subscribe(data => {
+          resolve(data);
+        }, error => {
+          reject(error);
+        });
+    });
+  }
+  async getPurchaseCheckHoliday(date) {
+    const res = await this.authHttp.get(`${this.url}/${this.apiName}/check-holiday?date=${date}`)
+      .toPromise();
+    return res.json();
+  }
+  async getPeriodStatus(date) {
+    const res = await this.authHttp.get(`${this.url}/${this.apiName}/period/status?date=${date}`)
+      .toPromise();
+    return res.json();
+  }
+
+}

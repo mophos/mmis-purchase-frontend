@@ -1,0 +1,19 @@
+<!-- <button class="btn btn-sm btn-success" *ngIf="reportURL" (click)="print()">Print</button> ิ -->
+
+<div id="id01" class="w3-modal" [ngClass]="{'show': isShow,'hidden':!isShow}">
+  <div class="w3-modal-content" style="height: 100%">
+    <div class="w3-container" style="height: 100%">
+      <span (click)="isShow=false" class="w3-button w3-display-topright">X</span>
+      <iframe 
+      id="printf" 
+      style="border: 5px solid gray;" 
+      *ngIf="reportURL" 
+      [src]="reportURL" 
+      method="POST"
+      frameborder="0" 
+      width="100%" 
+      height="100%">
+    </iframe>
+    </div>
+  </div>
+</div>

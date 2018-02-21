@@ -1,0 +1,13 @@
+<nav class="breadcrumb">
+  <a class="breadcrumb-item" href="javascript://" routerLink="/">หน้าหลัก</a>
+  <span class="breadcrumb-item active">{{reportName}}</span>
+
+</nav>
+<app-print-form (onClickSearch)="onClickSearch($event)"></app-print-form>
+
+<div class="card" style="height:100%;">
+  <iframe #iframe style="border: none;" width="100%" [src]="reportURL" height="100%">
+  </iframe>
+
+</div>
+<app-html-preview #print></app-html-preview>

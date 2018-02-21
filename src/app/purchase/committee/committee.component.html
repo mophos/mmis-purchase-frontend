@@ -1,0 +1,93 @@
+<!-- <h3 style="margin-top:0px;">คณะกรรมการ</h3> -->
+<nav class="breadcrumb">
+        <a class="breadcrumb-item" href="javascript://" routerLink="/">หน้าหลัก</a>
+        <span class="breadcrumb-item active">คณะกรรมการ</span>
+    </nav>
+<clr-tabs>
+    <clr-tab>
+        <button clrTabLink>ชุดกรรมการ</button>
+        <clr-tab-content id="content1" *clrIfActive="true">
+            <div style="padding:10px 0">
+                <!-- <div class="btn-group btn-sm" style="float:right;">
+                    <div class="radio btn">
+                        <input checked type="radio" name="committee_type" id="committee_type-0">
+                        <label for="committee_type-0">ทังหมด</label>
+                    </div>
+                    <div class="radio btn">
+                        <input type="radio" name="committee_type" id="committee_type-1">
+                        <label for="committee_type-1">ตรวจรับ</label>
+                    </div>
+                    <div class="radio btn">
+                        <input type="radio" name="committee_type" id="committee_type-2">
+                        <label for="committee_type-2">สอบราคา</label>
+                    </div>
+                </div> -->
+                <button style="margin-top:-2px;" type="button" class="btn btn-sm btn-success" (click)="newCommittee()"> 
+                    <clr-icon shape="add" size="12"></clr-icon>
+                    สร้างชุดกรรมการ  
+                  </button>
+                <app-committee-form #cmt [(isUpdate)]="committeeIsUpdate" (affterSave)="affterSaveCommittee($event)" (wizardOnCancel)="onCommitteeCancle($event)"></app-committee-form>
+            </div>
+            <clr-datagrid [(clrDgLoading)]="loading">
+
+                <clr-dg-column [clrDgField]="'committee_name'">ชื่อชุดคณะกรรมการ</clr-dg-column>
+                <clr-dg-column>วันที่เริ่มต้น</clr-dg-column>
+                <clr-dg-column>วันที่สิ้นสุด</clr-dg-column>
+                <clr-dg-column [style.width.px]="80">สถานะ</clr-dg-column>
+
+                <clr-dg-row style="cursor:pointer;" (dblclick)="cmt.updateCommittee(c)" *clrDgItems="let c of committees" [clrDgItem]="c">
+
+                    <clr-dg-action-overflow>
+                        <button class="action-item" (click)="cmt.updateCommittee(c)">แก้ไข</button>
+                        <button class="action-item" (click)="deleteComittee(c)">ลบ</button>
+                    </clr-dg-action-overflow>
+
+                    <clr-dg-cell>{{c.committee_name}}</clr-dg-cell>
+                    <clr-dg-cell>{{c.datetime_start | toThaiDate}}</clr-dg-cell>
+                    <clr-dg-cell>{{c.datetime_end | toThaiDate}}</clr-dg-cell>
+
+                    <clr-dg-cell>
+                        <clr-icon *ngIf="c.committee_status==='T' " shape="check" class="is-success" size="25"></clr-icon>
+                        <clr-icon *ngIf="c.committee_status==='F' " shape="times" class="is-warning" size="25"></clr-icon>
+                    </clr-dg-cell>
+
+                </clr-dg-row>
+            </clr-datagrid>
+        </clr-tab-content>
+    </clr-tab>
+
+    <clr-tab>
+        <button clrTabLink>บุคลากร</button>
+        <clr-tab-content *clrIfActive>
+            <br>
+            <clr-datagrid>
+
+                <clr-dg-column [clrDgField]="'fullname'">
+                    <ng-container *clrDgHideableColumn="{hidden: false}">
+                        ชื่อ-นามสกุล
+                    </ng-container>
+                </clr-dg-column>
+
+                <clr-dg-column [clrDgField]="'fullname'">
+                    <ng-container *clrDgHideableColumn="{hidden: false}">
+                        ตำแหน่ง
+                    </ng-container>
+                </clr-dg-column>
+
+                <clr-dg-row *clrDgItems="let pis of peoples" [clrDgItem]="pis">
+                    <clr-dg-cell>
+                        {{pis.fullname}}
+                    </clr-dg-cell>
+                    <clr-dg-cell>
+                        {{pis.position_name}}
+                    </clr-dg-cell>
+                </clr-dg-row>
+
+                <clr-dg-footer>
+                    {{pagination2.firstItem + 1}} - {{pagination2.lastItem + 1}} of {{pagination2.totalItems}} รายการ
+                    <clr-dg-pagination #pagination2 [clrDgPageSize]="10"></clr-dg-pagination>
+                </clr-dg-footer>
+            </clr-datagrid>
+        </clr-tab-content>
+    </clr-tab>
+</clr-tabs>

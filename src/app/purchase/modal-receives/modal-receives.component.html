@@ -1,0 +1,30 @@
+<clr-modal [(clrModalOpen)]="open" [clrModalSize]="'xl'" [clrModalClosable]="false">
+  <h3 class="modal-title">รายการรับเข้าคลัง : {{purchaseOrderCode}}</h3>
+  <div class="modal-body">
+    <clr-datagrid [clrDgLoading]="loading">
+      <clr-dg-column>เลขที่ใบรับ</clr-dg-column>
+      <clr-dg-column>วันที่รับ</clr-dg-column>
+      <clr-dg-column>ผู้จำหน่าย</clr-dg-column>
+      <clr-dg-column>วันที่ส่งของ</clr-dg-column>
+      <clr-dg-column>จำนวนรายการ</clr-dg-column>
+      <clr-dg-column>มูลค่า</clr-dg-column>
+    
+      <clr-dg-row *ngFor="let r of receives">
+        <clr-dg-cell>{{r.receive_code}}</clr-dg-cell>
+        <clr-dg-cell>{{r.receive_date | toThaiDate}}</clr-dg-cell>
+        <clr-dg-cell>{{r.labeler_name}}</clr-dg-cell>
+        <clr-dg-cell>{{r.delivery_date | toThaiDate}}</clr-dg-cell>
+        <clr-dg-cell>{{r.total_items | number}}</clr-dg-cell>
+        <clr-dg-cell style="text-align: right;">{{r.total_cost | number :'1.2-2'}}</clr-dg-cell>
+
+        <app-expand-receive-items [receiveId]="r.receive_id" *clrIfExpanded ngProjectAs="clr-dg-row-detail"></app-expand-receive-items>
+
+      </clr-dg-row>
+    
+      <clr-dg-footer>{{receives.length}} รายการ</clr-dg-footer>
+    </clr-datagrid>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-sm btn-danger" (click)="open = false">ปิดหน้าต่าง</button>
+  </div>
+</clr-modal>

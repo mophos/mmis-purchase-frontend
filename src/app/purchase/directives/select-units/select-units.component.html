@@ -1,0 +1,8 @@
+<div class="select" style="width:100%">
+    <span *ngIf="loading" class="spinner spinner-sm">
+        Loading...
+    </span>
+    <select *ngIf="!loading" #selectProduct (change)="onChangeUnit(selectProduct.value)" [(ngModel)]="unitId">
+      <option *ngFor="let u of units"  [value]="u.unit_generic_id" >{{ u.unitname_from }} x {{u.qty}} {{u.unitname_to}}</option>
+    </select>
+</div>

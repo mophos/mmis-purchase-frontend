@@ -1,0 +1,22 @@
+<nav class="breadcrumb">
+  <a class="breadcrumb-item" href="javascript://" routerLink="/admin">หน้าหลัก</a>
+  <span class="breadcrumb-item active">จับคู่ชุดกรรมการจัดซื้อ</span>
+</nav>
+
+
+<clr-datagrid  [(clrDgLoading)]="loading" [style.height.%]="70">
+  <clr-dg-column >ชุดกรรมการ</clr-dg-column>
+  <clr-dg-column >ประเภทการจัดซื้อ</clr-dg-column>
+
+  <clr-dg-row *ngFor="let c of committees; let idx = index;">
+    <clr-dg-cell>{{c.committee_name}}</clr-dg-cell>
+    <clr-dg-cell>
+      <div class="select">
+      <select [(ngModel)]="c.bid_id" (change)="select($event,c.committee_id)">
+        <option *ngFor="let item of listbidtypes" [value]="item.bid_id" >{{item.bid_name}}</option>
+      </select></div>
+    </clr-dg-cell>
+    </clr-dg-row>
+   
+
+</clr-datagrid>

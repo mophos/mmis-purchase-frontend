@@ -1,0 +1,11 @@
+<div class="select" style="width:100%">
+    <span *ngIf="loading" class="spinner spinner-sm">
+        Loading...
+    </span>
+    <select *ngIf="!loading" #selectOfficer (change)="onChangeOfficer($event,selectOfficer.value)" [(ngModel)]="officer_id">
+      <option *ngFor="let o of officers"  [value]="o.people_id" >
+        {{ o.fullname }} 
+        <small>{{o.type_name}}</small>
+      </option>
+    </select>
+</div>

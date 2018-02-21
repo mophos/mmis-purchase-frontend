@@ -1,0 +1,27 @@
+<clr-datagrid class="grid-order" [(clrDgLoading)]="loading" style="padding-top:15px;">
+  <clr-dg-column class="header-center" [style.width.px]="100">วันที่</clr-dg-column>
+  <clr-dg-column class="header-center" [style.width.px]="100">งบประมาณ</clr-dg-column>
+  <clr-dg-column class="header-center" [style.width.px]="150">เลขที่ใบสั่งซื้อ</clr-dg-column>
+  <clr-dg-column class="header-center" [style.width.px]="80">ยอดคงเหลือยกมา</clr-dg-column>
+  <clr-dg-column class="header-center" [style.width.px]="100">ยอดจัดซื้อ</clr-dg-column>
+  <clr-dg-column class="header-center">ยอดจัดซื้อ(ยกเลิก)</clr-dg-column>
+  <clr-dg-column class="header-center">ยอดคงเหลือ</clr-dg-column>
+  <clr-dg-column class="header-center">หมายเหตุ</clr-dg-column>
+  <clr-dg-row *clrDgItems="let p of bgTransection;" [clrDgItem]="p">
+    <clr-dg-cell>{{p.date_time | toThaiDate}}</clr-dg-cell>
+    <clr-dg-cell>{{p.budget_name}}</clr-dg-cell>
+    <clr-dg-cell>{{p.purchase_order_number}}</clr-dg-cell>
+    <clr-dg-cell>{{p.incoming_balance | number:'1.2-2'}}</clr-dg-cell>
+    <clr-dg-cell>{{p.spend_amount | number:'1.2-2'}}</clr-dg-cell>
+    <clr-dg-cell>{{p.revoke_amount | number:'1.2-2'}}</clr-dg-cell>
+    <clr-dg-cell>{{p.balance | number:'1.2-2'}}</clr-dg-cell>
+    <clr-dg-cell>{{p.type_desc}}</clr-dg-cell>
+  </clr-dg-row>
+  <clr-dg-footer>
+    จำนวนทั้งหมด
+    <strong>
+      <span class="badge"> {{bgTransection.length}}</span>
+    </strong> รายการ
+    <clr-dg-pagination #pagination [clrDgPageSize]="20"></clr-dg-pagination>
+  </clr-dg-footer>
+</clr-datagrid>
