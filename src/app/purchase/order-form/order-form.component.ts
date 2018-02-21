@@ -46,6 +46,7 @@ import { IProductOrderItem, IGenericUnit, IProductOrderItems } from 'app/interfa
 import { log } from 'util';
 import { tokenNotExpired, JwtHelper } from 'angular2-jwt';
 import { ModalLoadingComponent } from 'app/modal-loading/modal-loading.component';
+import { SelectSubBudgetComponent } from '../../select-boxes/select-sub-budget/select-sub-budget.component';
 @Component({
   selector: 'app-order-form',
   templateUrl: './order-form.component.html'
@@ -60,6 +61,7 @@ export class OrderFormComponent implements OnInit {
   @ViewChild('bgTransection') bgTransection: BudgetransectionComponent;
   @ViewChild('transactionPo') transactionPo: TransactionPoComponent;
   @ViewChild('modalLoading') modalLoading: ModalLoadingComponent;
+  @ViewChild('subBudgetList') subBudgetList: SelectSubBudgetComponent;
 
   detailActive: boolean = true;
   otherActive: boolean;
@@ -100,7 +102,8 @@ export class OrderFormComponent implements OnInit {
   budgettype_id: string;
   budget_detail_id: string;
   generic_type_id: string;
-  budget_year: string;
+  budgetYear: string;
+  budgetTypeId: any;
   is_reorder: number;
   budget_type: string;
   holiday: any = {};
@@ -124,12 +127,12 @@ export class OrderFormComponent implements OnInit {
   is_contract: string;
   is_cancel: string;
   contract_ref: string;
-  contract_id: string;
+  contractId: string;
   prepare_date: any;
   project_name: string;
   project_id: string;
   project_control_id: string;
-  verify_committee_id: string;
+  verifyCommitteeId: string;
   check_price_committee_id: string;
 
   egp_id: string;
@@ -242,6 +245,13 @@ export class OrderFormComponent implements OnInit {
         this.isUpdate = true;
       }
     });
+
+    let token = sessionStorage.getItem('token');
+    let decoded = this.jwtHelper.decodeToken(token);
+
+    this.vat_rate = decoded.PC_VAT ? decoded.PC_VAT : 7;
+    this.delivery = decoded.PC_SHIPPING_DATE ? decoded.PC_SHIPPING_DATE : 30;
+    this.budgetYear = decoded.PC_DEFAULT_BUDGET_YEAR;
   }
 
   async ngOnInit() {
@@ -253,19 +263,14 @@ export class OrderFormComponent implements OnInit {
     }
 
     await this.getProductType();
-    await this.getOfficer();
-    await this.settings('PC');
   }
 
-  /************************** satit ***************************/
   productSearchSelected(product: IProductOrderItem) {
-    // console.log(product);
     this.selectedProduct = product;
     this.selectBoxUnit.setGenericId(product.generic_id);
   }
 
   onSelectedUnits(unit: IGenericUnit) {
-    // console.log(unit);
     this.selectedUnit = unit;
     this.selectedCost = unit.cost;
   }
@@ -427,23 +432,42 @@ export class OrderFormComponent implements OnInit {
     }
   }
 
-  async loadLib() {
-    await this.getBidType();
-    await this.getCommittee();
-    await this.getLabeler();
-    await this.getBudgetType();
-    await this.getPeople();
-    await this.getBidProcess();
-  }
-
   navigateUrlError() {
     this.alertService.error('ไม่พบรายการใบสั่งซื้อ!...');
   }
 
-  onChangeBudgetTypeId(budget_type_id: string) {
-    this.tempPrice = false;
-    this.budgetsYear(this.budget_year, budget_type_id);
+  onChangeBudgetType(event: any) {
+    this.budgetTypeId = event.bgtype_id;
   }
+
+  onChangeSubBudget(event: any) {
+    console.log(event);
+    this.budgetDetailId = event ? event.bgdetail_id : null;
+    console.log('xxxxxx', this.budgetDetailId)
+  }
+
+  // budgetsYear(year: string, budget_type_id: string) {
+  //   this.purchasingOrderService.budgetsYear(year, budget_type_id)
+  //     .then((results: any) => {
+  //       this.budgets = results.rows;
+  //       if (this.isUpdate) {
+  //         this.getAmountBudgetTransection(this.budget_detail_id, year);
+  //         this.setActiveBudget(+this.budget_detail_id);
+  //       } else {
+  //         if (this.budgets.length > 0) {
+  //           this.setActiveBudget(+this.budgets[0].bgdetail_id);
+  //           this.budget_detail_id = this.budget_detail_id ? this.budget_detail_id : this.budgets[0].bgdetail_id;
+  //           this.getAmountBudgetTransection(this.budget_detail_id, year);
+  //         }
+  //       }
+  //       this.ref.detectChanges();
+  //     })
+  //     .catch(error => {
+  //       this.budgets = [];
+  //       this.alertService.serverError(error);
+  //     });
+  // }
+
   onChangeGenericType(generic_type_id: string) {
     this.tempPrice = false;
     this.generic_type_id = generic_type_id;
@@ -451,8 +475,8 @@ export class OrderFormComponent implements OnInit {
 
   async onChangeBudgetSoruce(e) {
     this.tempPrice = false;
-    this.setActiveBudget(+e.target.value);
-    await this.getAmountBudgetTransection(+e.target.value, this.budget_year)
+    // this.setActiveBudget(+e.target.value);
+    await this.getAmountBudgetTransection(+e.target.value, this.budgetYear)
     await this.bgTransection.getbgTransection(+e.target.value);
   }
   onChangeBidAmount(e) {
@@ -506,10 +530,6 @@ export class OrderFormComponent implements OnInit {
 
   onMultiSelectedProduct(data: any) {
     // console.log(data);
-  }
-
-  onChangeCommittee(comitteeId: any) {
-    this.getCommitteePeople(comitteeId);
   }
 
   onChangeLabeler(id: any, oldValue: string) {
@@ -583,7 +603,7 @@ export class OrderFormComponent implements OnInit {
     this.purchase_order_number = data.purchase_order_number;
     this.requisition_id = data.requisition_id;
     this.generic_type_id = data.generic_type_id;
-    this.contract_id = data.contract_id;
+    this.contractId = data.contract_id;
     this.contract_ref = data.contract_ref;
     this.purchase_method = data.purchase_method;
     this.purchase_order_id = data.purchase_order_id;
@@ -594,7 +614,7 @@ export class OrderFormComponent implements OnInit {
     this.budgettype_id = data.budgettype_id;
     this.budget_detail_id = data.budget_detail_id;
     this.labelerId = data.labeler_id;
-    this.verify_committee_id = data.verify_committee_id;
+    this.verifyCommitteeId = data.verify_committee_id;
     this.check_price_committee_id = data.check_price_committee_id;
 
 
@@ -621,7 +641,7 @@ export class OrderFormComponent implements OnInit {
     this.buyer_position = data.buyer_position;
     this.chief_id = data.chief_id;
     this.buyer_id = data.buyer_id;
-    this.budget_year = data.budget_year;
+    this.budgetYear = data.budget_year || moment().get('year');
     this.is_reorder = data.is_reorder;
     // console.log(data.is_reorder)
     this.order_date = {
@@ -631,6 +651,7 @@ export class OrderFormComponent implements OnInit {
         day: moment(data.order_date).get('date')
       }
     };
+
   }
   async save() {
     this.isSaving = true;
@@ -685,7 +706,7 @@ export class OrderFormComponent implements OnInit {
       let countQty: number = 0;
       let promise;
 
-      if (!this.budgettype_id || !this.budget_detail_id || !this.purchase_type || !this.purchase_method || !this.verify_committee_id) {
+      if (!this.budgettype_id || !this.budget_detail_id || !this.purchase_type || !this.purchase_method || !this.verifyCommitteeId) {
         this.alertService.error('กรุณากรอกข้อมูลให้ครบ.!');
         return false;
       }
@@ -709,7 +730,7 @@ export class OrderFormComponent implements OnInit {
         budgetTransection = {
           purchase_order_id: this.purchase_order_id,
           bgdetail_id: this.budget_detail_id,
-          budget_year: this.budget_year,
+          budget_year: this.budgetYear,
           type: this.budget_type,
           incoming_balance: this.incoming_balance,
           amount: this.total_price,
@@ -745,7 +766,7 @@ export class OrderFormComponent implements OnInit {
           purchase_order_status: this.purchase_order_status,
           purchasing_id: this.purchasing_id,
           labeler_id: this.labelerId,
-          verify_committee_id: this.verify_committee_id,
+          verify_committee_id: this.verifyCommitteeId,
           check_price_committee_id: this.check_price_committee_id,
           egp_id: this.egp_id,
           is_contract: this.is_contract,
@@ -774,7 +795,7 @@ export class OrderFormComponent implements OnInit {
           buyer_position: this.buyer_position,
           chief_id: this.chief_id,
           buyer_id: this.buyer_id,
-          budget_year: this.budget_year,
+          budget_year: this.budgetYear,
           is_reorder: this.is_reorder === 1 ? 2 : this.is_reorder
         };
 
@@ -876,30 +897,8 @@ export class OrderFormComponent implements OnInit {
     this.contractService.detail(id)
       .then((results: any) => {
         this.contractDetail = results.detail;
-        this.contract_amount = this.contractDetail.amount; //numeral(this.contractDetail.amount).format('0,0.00');
-        this.amount_spent = this.contractDetail.amount_spent; //numeral(this.contractDetail.amount_spent).format('0,0.00');
-        //this.contract_balance = numeral(parseFloat(this.contractDetail.amount) - parseFloat(this.contractDetail.amount_spent)).format('0,0.00');
-      })
-      .catch(error => {
-        this.alertService.serverError(error);
-      });
-  }
-
-  getPackage() {
-    this.packageService.all()
-      .then((results: any) => {
-        this.packages = results.rows;
-        this.ref.detectChanges();
-      })
-      .catch(error => {
-        this.alertService.serverError(error);
-      });
-  }
-
-  getBidProcess() {
-    this.bidProcessService.all()
-      .then((results: any) => {
-        this.bidProcess = results.rows;
+        this.contract_amount = this.contractDetail.amount;
+        this.amount_spent = this.contractDetail.amount_spent;
       })
       .catch(error => {
         this.alertService.serverError(error);
@@ -933,50 +932,50 @@ export class OrderFormComponent implements OnInit {
     }
   }
 
-  getPeople() {
-    this.peopleService.all()
-      .then((results: any) => {
-        this.peoples = results.rows;
-        this.ref.detectChanges();
-      })
-      .catch(error => {
-        this.alertService.serverError(error);
-      });
-  }
+  // getPeople() {
+  //   this.peopleService.all()
+  //     .then((results: any) => {
+  //       this.peoples = results.rows;
+  //       this.ref.detectChanges();
+  //     })
+  //     .catch(error => {
+  //       this.alertService.serverError(error);
+  //     });
+  // }
 
-  getCommittee() {
-    this.committeeService.active()
-      .then((results: any) => {
-        this.committees = results.rows;
-        if (this.committees.length > 0 && this.isUpdate === false) {
-          this.verify_committee_id = this.committees[0].committee_id;
-          this.getCommitteePeople(this.verify_committee_id);
-        }
-      })
-      .catch(error => {
-        this.alertService.serverError(error);
-      });
-  }
+  // getCommittee() {
+  //   this.committeeService.active()
+  //     .then((results: any) => {
+  //       this.committees = results.rows;
+  //       if (this.committees.length > 0 && this.isUpdate === false) {
+  //         this.verify_committee_id = this.committees[0].committee_id;
+  //         this.getCommitteePeople(this.verify_committee_id);
+  //       }
+  //     })
+  //     .catch(error => {
+  //       this.alertService.serverError(error);
+  //     });
+  // }
 
-  async getLabeler() {
-    try {
-      let res = await this.labelerService.all();
-      this.labelers = res.ok ? res.rows : [];
-    } catch (error) {
-      this.alertService.error(error.message);
-    }
-  }
+  // async getLabeler() {
+  //   try {
+  //     let res = await this.labelerService.all();
+  //     this.labelers = res.ok ? res.rows : [];
+  //   } catch (error) {
+  //     this.alertService.error(error.message);
+  //   }
+  // }
 
-  getProduct(labelerId: string) {
-    this.productService.productsByLabeler(labelerId)
-      .then((results: any) => {
-        this.products = results.rows;
-        this.ref.detectChanges();
-      })
-      .catch(error => {
-        this.alertService.serverError(error);
-      });
-  }
+  // getProduct(labelerId: string) {
+  //   this.productService.productsByLabeler(labelerId)
+  //     .then((results: any) => {
+  //       this.products = results.rows;
+  //       this.ref.detectChanges();
+  //     })
+  //     .catch(error => {
+  //       this.alertService.serverError(error);
+  //     });
+  // }
 
   getPurchasing(purchasing_id: string) {
     this.loading = true;
@@ -992,24 +991,15 @@ export class OrderFormComponent implements OnInit {
       });
   }
 
-  // changePrice(idx: any, price: any) {
-  //   console.log(price);
-  //   this.purchaseOrderItems[idx].unit_price = +price;
-  //   this.purchaseOrderItems[idx].total_price = this.purchaseOrderItems[idx].qty * price;
-  //   this.calAmount();
-  // }
-
   async getPurchaseOrderDetail(orderId: string) {
     this.loading = true;
     this.modalLoading.show();
     this.purchasingOrderService.detail(orderId)
       .then(async (results: any) => {
         if (results) {
-          // console.log(results.detail);
           this.purchaseOrder = results.detail;
           this.isContract = results.detail.is_contract === 'T' ? true : false;
           await this.loadFormPO(results.detail);
-          await this._getCommittee(this.verify_committee_id);
           await this.getLastOrderByLeberID(this.purchaseOrder.labeler_id);
           // 
           await this.getBidAmount(results.detail.purchase_method);
@@ -1018,7 +1008,7 @@ export class OrderFormComponent implements OnInit {
           await this.getBudgetTransectionDetail(this.purchaseOrder.purchase_order_id);
 
           if (this.purchaseOrder.verify_committee_id) {
-            this.getCommitteePeople(this.purchaseOrder.verify_committee_id);
+            // this.getCommitteePeople(this.purchaseOrder.verify_committee_id);
           }
 
           if (this.contract_ref) {
@@ -1076,23 +1066,6 @@ export class OrderFormComponent implements OnInit {
     }
   }
 
-  getBudgetType(active: boolean = false) {
-    let promise = active ? this.budgetTypeService.allActive() : this.budgetTypeService.all();
-    promise.then((results: any) => {
-      this.budgetTypes = results.rows;
-
-      if (this.isUpdate) {
-        this.onChangeBudgetTypeId(this.budgettype_id);
-      }
-      else {
-        this.onChangeBudgetTypeId(this.budgetTypes[0].bgtype_id);
-      }
-    })
-      .catch(error => {
-        this.alertService.serverError(error);
-      });
-  }
-
   getLastOrderByLeberID(labeler_id: string) {
     this.purchasingOrderService.lastOrderByLebelerID(labeler_id)
       .then((results: any) => {
@@ -1105,7 +1078,7 @@ export class OrderFormComponent implements OnInit {
             this.purchase_method = this.lastOrder.purchase_method;
             this.buyer_id = this.lastOrder.buyer_id;
             this.chief_id = this.lastOrder.chief_id;
-            this.verify_committee_id = this.lastOrder.verify_committee_id;
+            this.verifyCommitteeId = this.lastOrder.verify_committee_id;
           }
         }
         this.ref.detectChanges();
@@ -1131,6 +1104,7 @@ export class OrderFormComponent implements OnInit {
         this.budgetTransectionDetail = {};
       });
   }
+
   getAmountBudgetTransection(bgdetail_id: any, year: any) {
     this.budgetTransectionService._detail(bgdetail_id, year)
       .then((results: any) => {
@@ -1144,125 +1118,17 @@ export class OrderFormComponent implements OnInit {
       });
   }
 
-  getBidType() {
-    this.bidtypeService.all()
-      .then((results: any) => {
-        this.bidType = results.rows;
-        this.purchase_type = this.bidType ? this.bidType[0].bid_id : null;
-        this.ref.detectChanges();
-      })
-      .catch(error => {
-        this.bidType = [];
-        this.alertService.serverError(error);
-      });
-  }
-
-  _getCommittee(id: any) {
-    if(!this.isUpdate){
-    this.committeeService._getCommittee(id)
-      .then((results: any) => {
-        if (results.rows.length) {
-          this.verify_committee_id = results.rows[0].committee_id
-          this.committeePeopleService.allByCommitteeId(results.rows[0].committee_id)
-            .then((res: any) => {
-              this.committeeSelected = res.rows;
-            })
-            .catch(error => {
-
-            })
-        }
-      })
-      .catch(error => {
-
-      });
-    } else { 
-      this.committeePeopleService.allByCommitteeId(id)
-      .then((res: any) => {
-        this.committeeSelected = res.rows;
-      })
-      .catch(error => {
-
-      })
-    }
-    
-  }
-
-  setActiveBudget(bgdetail_id: number) {
-    const budget: any = _.find(this.budgets, { 'bgdetail_id': bgdetail_id });
-    if (budget) {
-      this.budget_year = budget.bg_year;
-      this.budgetTypeDetail = {
-        bgtype_name: budget.bgtype_name,
-        bgsubtype_name: budget.bgtypesub_name,
-        amount: budget.amount
-      };
-    }
-  }
-
-  budgetsYear(year: string, budget_type_id: string) {
-    this.purchasingOrderService.budgetsYear(year, budget_type_id)
-      .then((results: any) => {
-        this.budgets = results.rows;
-        if (this.isUpdate) {
-          this.getAmountBudgetTransection(this.budget_detail_id, year);
-          this.setActiveBudget(+this.budget_detail_id);
-        } else {
-          if (this.budgets.length > 0) {
-            this.setActiveBudget(+this.budgets[0].bgdetail_id);
-            this.budget_detail_id = this.budget_detail_id ? this.budget_detail_id : this.budgets[0].bgdetail_id;
-            this.getAmountBudgetTransection(this.budget_detail_id, year);
-          }
-        }
-        this.ref.detectChanges();
-      })
-      .catch(error => {
-        this.budgets = [];
-        this.alertService.serverError(error);
-      });
-  }
-
-  async settings(module: string) {
-    this.settingService.byModule(module)
-      .then(async (results: any) => {
-        this.settingConfig = results.rows;
-        if (this.isUpdate === false) {
-          const delivery = _.find(this.settingConfig, { 'action_name': 'PC_SHIPPING_DATE' });
-          this.delivery = delivery.value;
-
-          const vat = _.find(this.settingConfig, { 'action_name': 'PC_VAT' });
-          this.vat_rate = (vat.value == null || vat.value == '') ? vat.default : vat.value;
-        }
-        await this.loadLib();
-        const budgetYear = _.find(this.settingConfig, { 'action_name': 'PC_DEFAULT_BUDGET_YEAR' });
-        if (budgetYear) {
-          this.defaultBudgetYear = budgetYear.value;
-          if (this.isUpdate === false) {
-            this.budget_year = budgetYear.value;
-          }
-        }
-        this.ref.detectChanges();
-      })
-      .catch(error => {
-        this.alertService.serverError(error);
-      });
-
-  }
-
-  getCommitteePeople(committeeId: string) {
-    this.loadingCommittee = true;
-    this.committeePeopleService.allByCommitteeId(committeeId)
-      .then((results: any) => {
-        this.committeeSelected = results.rows;
-        this.loadingCommittee = false;
-      })
-      .catch((error) => {
-        this.alertService.error(error);
-      });
-  }
-
-  isContaract() {
-    return this.contract_id ? true : false;
-  }
+  // setActiveBudget(bgdetail_id: number) {
+  //   const budget: any = _.find(this.budgets, { 'bgdetail_id': bgdetail_id });
+  //   if (budget) {
+  //     this.budgetYear = budget.bg_year;
+  //     this.budgetTypeDetail = {
+  //       bgtype_name: budget.bgtype_name,
+  //       bgsubtype_name: budget.bgtypesub_name,
+  //       amount: budget.amount
+  //     };
+  //   }
+  // }
 
   printPurchaseOrder(row: any) {
     this.htmlPrview.printPurchaseOrder(row);
@@ -1387,32 +1253,57 @@ export class OrderFormComponent implements OnInit {
   //     })
   // }
 
+  changeCommittee(event: any) {
+    this.verifyCommitteeId = event.committee_id;
+    this.getCommitteePeople(event.committee_id);
+  }
 
-  async getOfficer() {
-
-    const rs = await this.officerService.findAll();
-    const _officer = rs.rows
-    this.officer = _.filter(_officer, { 'type_id': 3 });
-    this.officer1 = _.filter(_officer, { 'type_id': 4 });
-
-    this.office = this.office ? +this.office : +this.officer[0].people_id;
-    this.office1 = this.office1 ? +this.office1 : +this.officer1[0].people_id;
-
-    if (this.isUpdate) {
-      this.office = this.purchaseOrder.chief_id ? this.purchaseOrder.chief_id : 0
-      this.office1 = this.purchaseOrder.buyer_id ? this.purchaseOrder.chief_id : 0
+  async getCommitteePeople(committeeId: string) {
+    this.modalLoading.show();
+    try {
+      let rs: any = await this.committeePeopleService.allByCommitteeId(committeeId);
+      this.modalLoading.hide();
+      if (rs.ok) {
+        this.committeeSelected = rs.rows;
+      } else {
+        this.alertService.error(rs.error);
+      }
+    } catch (error) {
+      this.modalLoading.hide();
+      this.alertService.error(JSON.stringify(error));
     }
   }
+
+  changeOfficer(event: any) {
+    this.office = event ? event.people_id : null;
+  }
+
+  changeOffice(event: any) {
+    this.office1 = event ? event.people_id : null;
+  }
+
   async getProductType() {
     const token = sessionStorage.getItem('token');
     const decodedToken = this.jwtHelper.decodeToken(token);
-    const productGroup = decodedToken.generic_type_id.split(',');
-    // console.log(productGroup);
-    const rs: any = await this.productService.type(productGroup);
-    this.productType = rs.rows;
-    this.generic_type_id = this.productType[0].generic_type_id;
+    try {
+      const productGroup = decodedToken.generic_type_id.split(',');
+      this.modalLoading.show();
+      const rs: any = await this.productService.type(productGroup);
+      this.modalLoading.hide();
+      if (rs.rows) {
+        this.productType = rs.rows;
+        this.generic_type_id = this.productType.length ? this.productType[0].generic_type_id : null;
+      } else {
+        this.alertService.error(rs.error);
+      }
+      
+    } catch (error) {
+      this.alertService.error(JSON.stringify(error))
+    }
   }
+
   reset() {
     this.newOrder();
   }
+
 }

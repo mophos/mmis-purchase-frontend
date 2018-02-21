@@ -1,24 +1,25 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import * as _ from 'lodash';
-import { IBudgetType } from 'app/interfaces';
-import { StandardService } from 'app/services/standard.service';
+import { OfficerService } from '../../purchase/share/officer.service';
 import { AlertService } from 'app/alert.service';
 
 @Component({
-  selector: 'po-select-budget',
-  templateUrl: './select-budget.component.html',
+  selector: 'po-select-officer',
+  templateUrl: './select-officer.component.html',
   styles: []
 })
-export class SelectBudgetComponent implements OnInit {
+export class SelectOfficerComponent implements OnInit {
 
   @Input() public selectedId: any;
   @Input() public disabled: any;
+  @Input() public officerTypeId: any;
+
   @Output('onChange') onChange: EventEmitter<any> = new EventEmitter<any>();
 
   loading = false;
-  items: IBudgetType[] = [];
+  items: any[] = [];
 
-  constructor(private stdService: StandardService, private alertService: AlertService) { }
+  constructor(private officeService: OfficerService, private alertService: AlertService) { }
 
   async ngOnInit() {
     await this.getItems();
@@ -27,20 +28,20 @@ export class SelectBudgetComponent implements OnInit {
   async getItems() {
     try {
       this.loading = true;
-      let rs: any = await this.stdService.getBudgetType();
+      let rs: any = await this.officeService.findAll();
       this.loading = false;
       if (rs.ok) {
-        this.items = rs.rows;
+        this.items = _.filter(rs.rows, { 'type_id': +this.officerTypeId });
         if (this.items.length) {
           if (this.selectedId) {
-            const idx = _.findIndex(this.items, { bgtype_id: this.selectedId });
+            const idx = _.findIndex(this.items, { people_id: +this.selectedId });
             if (idx > -1) {
               this.onChange.emit(this.items[idx]);
             } else {
               this.onChange.emit(this.items[0]);
             }
           } else {
-            this.selectedId = this.items[0].bgtype_id;
+            this.selectedId = this.items[0].people_id;
             this.onChange.emit(this.items[0]);
           }
         }
@@ -55,10 +56,9 @@ export class SelectBudgetComponent implements OnInit {
   }
 
   setSelected(event: any) {
-    const idx = _.findIndex(this.items, { bgtype_id: +event.target.value });
+    const idx = _.findIndex(this.items, { people_id: +event.target.value });
     if (idx > -1) {
       this.onChange.emit(this.items[idx]);
     }
   }
-
 }

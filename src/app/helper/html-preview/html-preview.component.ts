@@ -17,11 +17,8 @@ export class HtmlPreviewComponent implements OnInit {
 
   constructor(
     private santizer: DomSanitizer,
-    @Inject('API_URL') public url: String,
-    @Inject('MODE') private mode: String,
-  ) {
-    // console.log(mode);
-  }
+    @Inject('API_URL') public url: String
+  ) { }
 
   showReport(url: any) {
     this.isShow = true;

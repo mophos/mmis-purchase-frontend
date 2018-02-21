@@ -1,0 +1,8 @@
+<span class="spinner spinner-inline" *ngIf="loading">
+  Loading...
+</span>
+<div class="select" *ngIf="!loading" style="width: 100%">
+  <select name="peopleId" id="peopleId" [disabled]="disabled" [(ngModel)]="selectedId" (change)="setSelected($event)">
+    <option *ngFor="let item of items" [value]="item.people_id">{{ item.fullname }}</option>
+  </select>
+</div>

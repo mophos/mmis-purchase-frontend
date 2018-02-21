@@ -76,6 +76,7 @@ import { ModalReceivesComponent } from './modal-receives/modal-receives.componen
 import { ExpandReceiveItemsComponent } from './expand-receive-items/expand-receive-items.component';
 import { ReceiveService } from 'app/purchase/share/receive.service';
 import { TransactionPoComponent } from './directives/transaction-po/transaction-po.component';
+import { BudgetRemainComponent } from './directives/budget-remain/budget-remain.component';
 
 @NgModule({
   imports: [
@@ -90,6 +91,7 @@ import { TransactionPoComponent } from './directives/transaction-po/transaction-
     AutocompleteModule,
     SelectBoxesModule,
     PurchaseRoutingModule,
+    SelectBoxesModule
   ],
   declarations: [
     PurchaseCancelComponent,
@@ -125,7 +127,8 @@ import { TransactionPoComponent } from './directives/transaction-po/transaction-
     BudgetransectionComponent,
     ModalReceivesComponent,
     ExpandReceiveItemsComponent,
-    TransactionPoComponent
+    TransactionPoComponent,
+    BudgetRemainComponent
   ],
   providers: [
     BudgetTransectionService,

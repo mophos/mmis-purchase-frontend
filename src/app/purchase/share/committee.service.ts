@@ -125,7 +125,8 @@ export class CommitteeService {
         });
     });
   }
-  _getCommittee(bidId: any) {
+
+  getCommittee(bidId: any) {
     return new Promise((resolve, reject) => {
       this.authHttp.get(`${this.url}/${this.apiName}/getcommittee/${bidId}`)
         .map(res => res.json())

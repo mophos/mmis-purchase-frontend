@@ -16,6 +16,7 @@ export class OfficerService {
       const response = await this.authHttp.get(`${this.url}/${this.apiName}/officers`).toPromise();
       return response.json();
     }
+  
     async findAllByTypeId(id:number) {
       const response = await this.authHttp.get(`${this.url}/${this.apiName}/officers-by-officeid/${id}`).toPromise();
       return response.json();
