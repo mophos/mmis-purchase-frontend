@@ -446,28 +446,6 @@ export class OrderFormComponent implements OnInit {
     console.log('xxxxxx', this.budgetDetailId)
   }
 
-  // budgetsYear(year: string, budget_type_id: string) {
-  //   this.purchasingOrderService.budgetsYear(year, budget_type_id)
-  //     .then((results: any) => {
-  //       this.budgets = results.rows;
-  //       if (this.isUpdate) {
-  //         this.getAmountBudgetTransection(this.budget_detail_id, year);
-  //         this.setActiveBudget(+this.budget_detail_id);
-  //       } else {
-  //         if (this.budgets.length > 0) {
-  //           this.setActiveBudget(+this.budgets[0].bgdetail_id);
-  //           this.budget_detail_id = this.budget_detail_id ? this.budget_detail_id : this.budgets[0].bgdetail_id;
-  //           this.getAmountBudgetTransection(this.budget_detail_id, year);
-  //         }
-  //       }
-  //       this.ref.detectChanges();
-  //     })
-  //     .catch(error => {
-  //       this.budgets = [];
-  //       this.alertService.serverError(error);
-  //     });
-  // }
-
   onChangeGenericType(generic_type_id: string) {
     this.tempPrice = false;
     this.generic_type_id = generic_type_id;
@@ -475,7 +453,6 @@ export class OrderFormComponent implements OnInit {
 
   async onChangeBudgetSoruce(e) {
     this.tempPrice = false;
-    // this.setActiveBudget(+e.target.value);
     await this.getAmountBudgetTransection(+e.target.value, this.budgetYear)
     await this.bgTransection.getbgTransection(+e.target.value);
   }
