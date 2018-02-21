@@ -440,9 +440,7 @@
   <hr class="hr">
 
   <div class="text-right">
-    <!-- <button type="button" class="btn btn-default"  (click)="printRequistion(purchaseOrder)" > <clr-icon shape="printer" ></clr-icon> พิมพ์ใบขอสั่งซื้อ</button>
-        <button type="button" class="btn btn-default" (click)="printPurchaseOrder(purchaseOrder)" > <clr-icon shape="printer" ></clr-icon> พิมพ์ใบสั่งซื้อ</button> -->
-    <button type="button" [disabled]="isUpdate" (click)="reset()" class="btn btn-outline-danger btn-sm">
+   <button type="button" [disabled]="isUpdate" (click)="reset()" class="btn btn-outline-danger btn-sm">
       <clr-icon shape="refresh"></clr-icon> รีเซ็ต</button>
     <button [disabled]="disableSave() || isSaving" type="button" (click)="save()" class="btn btn-sm btn-success">
       <clr-icon shape="floppy"></clr-icon> บันทึก</button>
@@ -450,7 +448,6 @@
       <clr-icon shape="home"></clr-icon> กลับหน้าหลัก</button>
 
   </div>
-
 
   <app-products-select #productsSelect (onSelectedChange)="onSelectedProduct($event)" (onMultiSelectedChange)="onMultiSelectedProduct($event)">
   </app-products-select>
