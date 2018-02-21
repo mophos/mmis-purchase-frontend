@@ -1,3 +1,8 @@
-<p>
-  select-budget works!
-</p>
+<span class="spinner spinner-inline" *ngIf="loading">
+  Loading...
+</span>
+<div class="select" *ngIf="!loading" style="width: 100%">
+  <select name="budgetTypeId" id="budgetTypeId" [disabled]="disabled" [(ngModel)]="selectedId" (change)="setSelected($event)">
+    <option *ngFor="let item of items" [value]="item.bgtype_id">{{ item.bgtype_name }}</option>
+  </select>
+</div>
