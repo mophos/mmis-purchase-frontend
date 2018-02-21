@@ -465,12 +465,13 @@ export class OrderFormComponent implements OnInit {
     let discount: number = 0;
     let checkloop = 0;
     let _purchaseOrderItems: any = [];
+    
     this.purchaseOrderItems.forEach(v => {
       if (v.is_giveaway == "N") {
         _purchaseOrderItems.push(v.total_cost)
       }
+    });
 
-    })
     this.sub_total = _.sum(_purchaseOrderItems);
     discount = this.calDiscount(this.sub_total);
     afterDiscount = this.sub_total - discount;
