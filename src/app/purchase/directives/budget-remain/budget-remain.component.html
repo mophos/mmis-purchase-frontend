@@ -1,37 +1,47 @@
 <div class="card" style="min-height:255px;">
   <div class="card-block  form-right">
-    <div class="form-group">
-      <label for="amount">งบประมาณ</label>
-      <input type="text" class="form-control" value="0" readonly>
+    <div class="row">
+      <div class="col-md-5">งบประมาณ</div>
+      <div class="col-md-7" style="text-align: right;">
+        <span class="p4" style="color: #F52F22; font-size: 14px;">{{budgetName}}</span>
+      </div>
     </div>
-    <div class="form-group">
-      <label for="amount">ยอดที่จัดสรร</label>
-      <input type="text" class="form-control" value="" readonly>
+    <div class="row">
+      <div class="col-md-5">ยอดที่จัดสรร</div>
+      <div class="col-md-7" style="text-align: right;">
+        <span style="font-weight: bold;">{{budgetAmount | number: '1.2-2'}}</span>
+      </div>
     </div>
-    <div class="form-group">
-      <label for="amount">ยอดที่จัดซื้อแล้ว</label>
-      <input type="text" value="" class="form-control" readonly>
+    <div class="row">
+      <div class="col-md-5">ยอดคงเหลือยกมา</div>
+      <div class="col-md-7" style="text-align: right;">
+        <span style="color: #0065AB; font-weight: bold;">{{budgetRemain | number: '1.2-2'}}</span>
+      </div>
     </div>
-    <div class="form-group">
-      <label for="amount">ยอดคงเหลือยกมา</label>
-      <input type="text" value="" class="form-control" readonly>
+    <div class="row">
+      <div class="col-md-5">ยอดจัดซื้อครั้งนี้</div>
+      <div class="col-md-7" style="text-align: right;">
+        <span style="color: #318700; font-weight: bold;">{{totalPurchaseAmount | number: '1.2-2'}}</span>
+      </div>
     </div>
-    <div class="form-group">
-      <label for="amount">ยอดจัดซื้อครั้งนี้</label>
-      <input type="text" value="" class="form-control" readonly>
-    </div>
-    <div class="form-group">
-      <label for="amount">ยอดคงเหลือครั้งนี้</label>
-      <input type="text" value="" class="form-control" readonly>
+    <div class="row">
+      <div class="col-md-5">ยอดคงเหลือครั้งนี้</div>
+      <div class="col-md-7" style="text-align: right;">
+        <span style="color: #781DA0; font-weight: bold;">{{budgetAmount | number: '1.2-2'}}</span>
+      </div>
     </div>
     <hr class="hr">
-    <div class="form-group">
-      <label for="amount">เลขที่สัญญา</label>
-      <input type="text" class="form-control" value="0" readonly>
+    <div class="row">
+      <div class="col-md-5">เลขที่สัญญา</div>
+      <div class="col-md-7" style="text-align: right;">
+        <span class="p4">{{contractNo}}</span>
+      </div>
     </div>
-    <div class="form-group">
-      <label for="amount">วงเงินในสัญญา</label>
-      <input type="text" class="form-control" value="0" readonly>
+    <div class="row">
+      <div class="col-md-5">วงเงินในสัญญา</div>
+      <div class="col-md-7" style="text-align: right;">
+        <span style="color: #F52F22; font-weight: bold;">{{budgetAmount | number: '1.2-2'}}</span>
+      </div>
     </div>
   </div>
 </div>

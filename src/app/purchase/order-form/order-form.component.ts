@@ -32,13 +32,13 @@ import { PurchasingOrderService } from '../share/purchasing-order.service';
 import { PurchasingOrderItemService } from '../share/purchasing-orderitem.service';
 import { UploadFormComponent } from './../directives/upload-form/upload-form.component';
 import { CommitteePeopleService } from '../share/committee-people.service';
-import { CompleterService } from 'ag2-completer';
-import { Subject } from 'rxjs';
+// import { CompleterService } from 'ag2-completer';
+// import { Subject } from 'rxjs';
 import { SearchProductVendorComponent } from '../../autocomplete/search-product-vendor/search-product-vendor.component';
 import * as numeral from 'numeral';
 import * as moment from 'moment';
 import * as _ from 'lodash';
-import { forEach } from '@angular/router/src/utils/collection';
+// import { forEach } from '@angular/router/src/utils/collection';
 import { SelectBoxUnitsComponent } from 'app/select-boxes/select-box-units/select-box-units.component';
 import { BudgetransectionComponent } from 'app/purchase/directives/budgetransection/budgetransection.component';
 import { TransactionPoComponent } from 'app/purchase/directives/transaction-po/transaction-po.component';
@@ -47,6 +47,7 @@ import { log } from 'util';
 import { tokenNotExpired, JwtHelper } from 'angular2-jwt';
 import { ModalLoadingComponent } from 'app/modal-loading/modal-loading.component';
 import { SelectSubBudgetComponent } from '../../select-boxes/select-sub-budget/select-sub-budget.component';
+import { SearchVendorComponent } from '../../autocomplete/search-vendor/search-vendor.component';
 @Component({
   selector: 'app-order-form',
   templateUrl: './order-form.component.html'
@@ -62,6 +63,7 @@ export class OrderFormComponent implements OnInit {
   @ViewChild('transactionPo') transactionPo: TransactionPoComponent;
   @ViewChild('modalLoading') modalLoading: ModalLoadingComponent;
   @ViewChild('subBudgetList') subBudgetList: SelectSubBudgetComponent;
+  @ViewChild('searchVendor') searchVendor: SearchVendorComponent;
 
   detailActive: boolean = true;
   otherActive: boolean;
@@ -83,21 +85,19 @@ export class OrderFormComponent implements OnInit {
   amount_spent: string;
   contract_balance: string;
 
-  bidProcess: Array<any> = [];
-  packages: Array<any> = [];
-  peoples: Array<any> = [];
+  // bidProcess: Array<any> = [];
+  // packages: Array<any> = [];
+  // peoples: Array<any> = [];
   products: Array<any> = [];
-  committees: Array<any> = [];
-  labelers: Array<any> = [];
-  contracts: Array<any> = [];
-  budgetTypes: Array<any> = [];
+  // contracts: Array<any> = [];
+  // budgetTypes: Array<any> = [];
   productType: Array<any> = [];
   budgetTypeDetail: any = {};
-  lastOrder: any = {};
+  // lastOrder: any = {};
   budgetTransectionDetail: any = {};
   TransectionDetail: any = {};
-  budgets: Array<any> = [];
-  product: Array<any> = [];
+  // budgets: Array<any> = [];
+  // product: Array<any> = [];
   defaultBudgetYear: string;
   budgettype_id: string;
   budget_detail_id: string;
@@ -136,9 +136,10 @@ export class OrderFormComponent implements OnInit {
   check_price_committee_id: string;
 
   egp_id: string;
-  purchase_method: number;
+  purchaseMethod: number;
   purchase_type: number;
   labelerId: string;
+  oldLabelerId: string;
   labeler_name: string;
   purchasing_created_date: string;
   vendor_contact_name: string;
@@ -153,7 +154,7 @@ export class OrderFormComponent implements OnInit {
   include_vat: boolean = false;
   vat: number = 0;
   total_price: number = 0;
-  incoming_balance: number = 0;
+  incomingBalance: number = 0;
   bgdetail_id: number = 10;
   budgetDetailId: number;
   amount: number = 0;
@@ -217,18 +218,18 @@ export class OrderFormComponent implements OnInit {
     private holidayService: HolidayService,
     private budgetTypeService: BudgetTypeService,
     private budgetTransectionService: BudgetTransectionService,
-    private committeeService: CommitteeService,
-    private peopleService: PeopleService,
-    private contractService: ContractService,
-    private packageService: PackageService,
+    // private committeeService: CommitteeService,
+    // private peopleService: PeopleService,
+    // private contractService: ContractService,
+    // private packageService: PackageService,
     private purchasingService: PurchasingService,
     private purchasingOrderService: PurchasingOrderService,
     private purchasingOrderItemService: PurchasingOrderItemService,
     private committeePeopleService: CommitteePeopleService,
-    private completerService: CompleterService,
-    private unitService: UnitService,
-    private http: AuthHttp,
-    private officerService: OfficerService,
+    // private completerService: CompleterService,
+    // private unitService: UnitService,
+    // private http: AuthHttp,
+    // private officerService: OfficerService,
     @Inject('DOC_URL') public docUrl: string,
     @Inject('PO_PREFIX') public documentPoPrefix: string,
     @Inject('PR_PREFIX') public documentPrPrefix: string,
@@ -270,13 +271,18 @@ export class OrderFormComponent implements OnInit {
     this.selectBoxUnit.setGenericId(product.generic_id);
   }
 
-  onSelectedUnits(unit: IGenericUnit) {
-    this.selectedUnit = unit;
-    this.selectedCost = unit.cost;
+  // onSelectedUnits(unit: IGenericUnit) {
+  //   this.selectedUnit = unit;
+  //   this.selectedCost = unit.cost;
+  // }
+
+  onChangeUnit(event: any) {
+    this.selectedUnit = event;
+    this.selectedCost = +event.cost;
   }
 
   onChangeGiveaway(e: any) {
-    this.getBidAmount(+e.target.checked);
+    // this.getBidAmount(+e.target.checked);
   }
 
   addProductSelected() {
@@ -343,6 +349,7 @@ export class OrderFormComponent implements OnInit {
     this.isGiveaway = false;
     this.selectedCost = null;
     this.selectedQty = null;
+    this.selectedUnit = {};
     this.selectBoxUnit.clearUnits();
     this.searchProductLabeler.clearProductSearch();
   }
@@ -441,9 +448,8 @@ export class OrderFormComponent implements OnInit {
   }
 
   onChangeSubBudget(event: any) {
-    console.log(event);
+      // คำนวณการใช้งบประมาณใหม่
     this.budgetDetailId = event ? event.bgdetail_id : null;
-    console.log('xxxxxx', this.budgetDetailId)
   }
 
   onChangeGenericType(generic_type_id: string) {
@@ -456,16 +462,17 @@ export class OrderFormComponent implements OnInit {
     await this.getAmountBudgetTransection(+e.target.value, this.budgetYear)
     await this.bgTransection.getbgTransection(+e.target.value);
   }
-  onChangeBidAmount(e) {
-    this.getBidAmount(+e.target.value)
-  }
+
+  // onChangeBidAmount(e) {
+  //   this.getBidAmount(+e.target.value)
+  // }
 
   calAmount() {
     let afterDiscount: number = 0;
     let discount: number = 0;
     let checkloop = 0;
     let _purchaseOrderItems: any = [];
-    
+
     this.purchaseOrderItems.forEach(v => {
       if (v.is_giveaway == "N") {
         _purchaseOrderItems.push(v.total_cost)
@@ -537,25 +544,24 @@ export class OrderFormComponent implements OnInit {
   }
 
   newOrder() {
-    this.tempPrice = false;
+    // this.tempPrice = false;
     this.isUpdate = false;
-    let d = new Date();
-    let i: number = 0;
-    const purchasingID = d.getTime().toString() + i++;
-    const purchasingOrderID = d.getTime().toString() + i++;
-    const budgetTransectionId = d.getTime().toString() + i++;
-    this.purchasing_id = purchasingID;
-    this.purchase_order_id = purchasingOrderID;
+    // let d = new Date();
+    // let i: number = 0;
+    // const purchasingID = d.getTime().toString() + i++;
+    // const purchasingOrderID = d.getTime().toString() + i++;
+    // const budgetTransectionId = d.getTime().toString() + i++;
+
+    // this.purchasing_id = purchasingID;
+    // this.purchase_order_id = purchasingOrderID;
     this.purchaseOrderItems = [];
     this.purchase_order_number = null;
     this.sub_total = 0;
     this.discount_percent = null;
     this.discount_cash = 0;
-    this.vat = 0;
+    // this.vat = 0;
     this.budgettype_id = '1';
     this.total_price = 0;
-    this.purchase_method = 1;
-    this.purchase_type = 1;
     this.labelerName = null;
 
     this.order_date = {
@@ -565,15 +571,16 @@ export class OrderFormComponent implements OnInit {
         day: moment().get('date')
       }
     };
+
     this.budget_type = 'spend';
-    this.getBidAmount(this.purchase_method);
+    // this.getBidAmount(this.purchase_method);
   }
 
   addItem() {
     //
   }
 
-  async loadFormPO(data: any) {
+  async setOrderDetail(data: any) {
     this.labelerName = data.labeler_name;
     this.isUpdate = true;
     this.purchasing_id = data.purchasing_id;
@@ -583,7 +590,7 @@ export class OrderFormComponent implements OnInit {
     this.generic_type_id = data.generic_type_id;
     this.contractId = data.contract_id;
     this.contract_ref = data.contract_ref;
-    this.purchase_method = data.purchase_method;
+    this.purchaseMethod = data.purchase_method;
     this.purchase_order_id = data.purchase_order_id;
     this.purchase_type = data.purchase_type;
     this.purchase_order_status = data.purchase_order_status;
@@ -631,6 +638,7 @@ export class OrderFormComponent implements OnInit {
     };
 
   }
+
   async save() {
     this.isSaving = true;
     const _order_date = this.order_date ?
@@ -639,7 +647,8 @@ export class OrderFormComponent implements OnInit {
     try {
       const rs = await this.purchasingOrderService.getPeriodStatus(_order_date);
       if (rs.rows[0].status_close === 'Y') {
-        this.alertService.error('ปิดรอบบัญชีแล้ว ไม่สามารถสั่งซื้อได้')
+        this.alertService.error('ปิดรอบบัญชีแล้ว ไม่สามารถสั่งซื้อได้');
+        this.isSaving = false;
       } else {
         let is_error = false;
 
@@ -684,8 +693,9 @@ export class OrderFormComponent implements OnInit {
       let countQty: number = 0;
       let promise;
 
-      if (!this.budgettype_id || !this.budget_detail_id || !this.purchase_type || !this.purchase_method || !this.verifyCommitteeId) {
+      if (!this.budgettype_id || !this.budget_detail_id || !this.purchase_type || !this.purchaseMethod || !this.verifyCommitteeId) {
         this.alertService.error('กรุณากรอกข้อมูลให้ครบ.!');
+        this.isSaving = false;
         return false;
       }
 
@@ -698,6 +708,7 @@ export class OrderFormComponent implements OnInit {
 
       if (isError) {
         this.alertService.error('กรุณาเพิ่มข้อมูลรายการชื่อยาให้ครบถ้วน.!');
+        this.isSaving = false;
       } else {
         dataPurchasing = {
           purchasing_id: this.purchasing_id,
@@ -710,7 +721,7 @@ export class OrderFormComponent implements OnInit {
           bgdetail_id: this.budget_detail_id,
           budget_year: this.budgetYear,
           type: this.budget_type,
-          incoming_balance: this.incoming_balance,
+          incoming_balance: this.incomingBalance,
           amount: this.total_price,
           balance: this.balance,
           // date_time: moment().format('YYYY-MM-DD H:i:s')
@@ -748,7 +759,7 @@ export class OrderFormComponent implements OnInit {
           check_price_committee_id: this.check_price_committee_id,
           egp_id: this.egp_id,
           is_contract: this.is_contract,
-          purchase_method: this.purchase_method,
+          purchase_method: this.purchaseMethod,
           budgettype_id: this.budgettype_id,
           budget_detail_id: this.budget_detail_id,
           generic_type_id: this.generic_type_id,
@@ -802,8 +813,6 @@ export class OrderFormComponent implements OnInit {
   }
 
   async _savePurchase(summary: any, budgetTransection: any) {
-    // let rsPurchase: any;
-    // let rsBudget: any;
 
     try {
       if (this.isUpdate) {
@@ -816,14 +825,15 @@ export class OrderFormComponent implements OnInit {
         let rs: any = await this.purchasingOrderService.update(this.purchase_order_id, summary, this.purchaseOrderItems);
         if (rs.ok) {
           let rsBudget: any = await this.budgetTransectionService.save(budgetTransection);
+
+          this.isSaving = false;
+
           if (rsBudget.ok) {
-            this.isSaving = false;
             this.alertService.success();
             this.alertService.success('ดำเนินการเสร็จเรียบร้อย');
             this.router.navigate(['/purchase/orders']);
           } else {
             this.modalLoading.hide();
-            this.isSaving = false;
             this.alertService.error(rsBudget.error);
           }
         } else {
@@ -838,6 +848,9 @@ export class OrderFormComponent implements OnInit {
         let rs: any = await this.purchasingOrderService.save(summary, this.purchaseOrderItems);
         if (rs.ok) {
           let rsBudget: any = await this.budgetTransectionService.save(budgetTransection);
+          this.isSaving = false;
+          this.modalLoading.hide();
+          
           if (rsBudget.ok) {
             this.alertService.success();
             this.alertService.success('ดำเนินการเสร็จเรียบร้อย');
@@ -848,9 +861,6 @@ export class OrderFormComponent implements OnInit {
         } else {
           this.alertService.error(rs.error);
         }
-        
-        this.isSaving = false;
-        this.modalLoading.hide();
       }
 
     } catch (error) {
@@ -860,101 +870,7 @@ export class OrderFormComponent implements OnInit {
     }
 
   }
-
-  getContract() {
-    this.contractService.all()
-      .then((results: any) => {
-        this.contracts = results.rows;
-      })
-      .catch(error => {
-        this.alertService.serverError(error);
-      });
-  }
-
-  getDetailContract(id: string) {
-    this.contractService.detail(id)
-      .then((results: any) => {
-        this.contractDetail = results.detail;
-        this.contract_amount = this.contractDetail.amount;
-        this.amount_spent = this.contractDetail.amount_spent;
-      })
-      .catch(error => {
-        this.alertService.serverError(error);
-      });
-  }
-
-  async getBidAmount(id: any) {
-    if (id) {
-      let rs: any = await this.bidProcessService.bidAmount(id);
-      if (rs.ok) {
-        this.bidAmount = rs.rows.length ? rs.rows[0].f_amount : 0;
-      }
-    } else {
-      this.bidProcessService.all()
-        .then(async (results: any) => {
-          this.bidProcess = results.rows;
-          if (this.bidProcess.length) {
-            let idx = this.bidProcess[0].id;
-            let rs: any = await this.bidProcessService.bidAmount(idx);
-            if (rs.ok) {
-              this.bidAmount = rs.rows.length ? rs.rows[0].f_amount : 0;
-            } else {
-              this.alertService.error(rs.error);
-            }
-          }
-
-        })
-        .catch(error => {
-          this.alertService.serverError(error);
-        });
-    }
-  }
-
-  // getPeople() {
-  //   this.peopleService.all()
-  //     .then((results: any) => {
-  //       this.peoples = results.rows;
-  //       this.ref.detectChanges();
-  //     })
-  //     .catch(error => {
-  //       this.alertService.serverError(error);
-  //     });
-  // }
-
-  // getCommittee() {
-  //   this.committeeService.active()
-  //     .then((results: any) => {
-  //       this.committees = results.rows;
-  //       if (this.committees.length > 0 && this.isUpdate === false) {
-  //         this.verify_committee_id = this.committees[0].committee_id;
-  //         this.getCommitteePeople(this.verify_committee_id);
-  //       }
-  //     })
-  //     .catch(error => {
-  //       this.alertService.serverError(error);
-  //     });
-  // }
-
-  // async getLabeler() {
-  //   try {
-  //     let res = await this.labelerService.all();
-  //     this.labelers = res.ok ? res.rows : [];
-  //   } catch (error) {
-  //     this.alertService.error(error.message);
-  //   }
-  // }
-
-  // getProduct(labelerId: string) {
-  //   this.productService.productsByLabeler(labelerId)
-  //     .then((results: any) => {
-  //       this.products = results.rows;
-  //       this.ref.detectChanges();
-  //     })
-  //     .catch(error => {
-  //       this.alertService.serverError(error);
-  //     });
-  // }
-
+ 
   getPurchasing(purchasing_id: string) {
     this.loading = true;
     this.purchasingService.detail(purchasing_id)
@@ -977,10 +893,10 @@ export class OrderFormComponent implements OnInit {
         if (results) {
           this.purchaseOrder = results.detail;
           this.isContract = results.detail.is_contract === 'T' ? true : false;
-          await this.loadFormPO(results.detail);
-          await this.getLastOrderByLeberID(this.purchaseOrder.labeler_id);
+          await this.setOrderDetail(results.detail);
+          // await this.getLastOrderByLeberID(this.purchaseOrder.labeler_id);
           // 
-          await this.getBidAmount(results.detail.purchase_method);
+          // await this.getBidAmount(results.detail.purchase_method);
           await this.searchProductLabeler.setApiUrl(results.detail.labeler_id);
           await this.getPurchaseOrderItems(this.purchaseOrder.purchase_order_id);
           await this.getBudgetTransectionDetail(this.purchaseOrder.purchase_order_id);
@@ -990,7 +906,7 @@ export class OrderFormComponent implements OnInit {
           }
 
           if (this.contract_ref) {
-            this.getDetailContract(this.contract_ref);
+            // this.getDetailContract(this.contract_ref);
           }
         } else {
           this.navigateUrlError();
@@ -1044,39 +960,37 @@ export class OrderFormComponent implements OnInit {
     }
   }
 
-  getLastOrderByLeberID(labeler_id: string) {
-    this.purchasingOrderService.lastOrderByLebelerID(labeler_id)
-      .then((results: any) => {
-        this.lastOrder = results.detail;
-        if (this.purchaseOrder.is_reorder === 1) {
-          if (this.lastOrder) {
-            this.budgettype_id = this.lastOrder.budgettype_id;
-            this.budget_detail_id = this.lastOrder.budget_detail_id;
-            this.purchase_type = this.lastOrder.purchase_type;
-            this.purchase_method = this.lastOrder.purchase_method;
-            this.buyer_id = this.lastOrder.buyer_id;
-            this.chief_id = this.lastOrder.chief_id;
-            this.verifyCommitteeId = this.lastOrder.verify_committee_id;
-          }
-        }
-        this.ref.detectChanges();
-      })
-      .catch(error => {
-        this.alertService.serverError(error);
-      });
-  }
+  // getLastOrderByLeberID(labeler_id: string) {
+  //   this.purchasingOrderService.lastOrderByLebelerID(labeler_id)
+  //     .then((results: any) => {
+  //       this.lastOrder = results.detail;
+  //       if (this.purchaseOrder.is_reorder === 1) {
+  //         if (this.lastOrder) {
+  //           this.budgettype_id = this.lastOrder.budgettype_id;
+  //           this.budget_detail_id = this.lastOrder.budget_detail_id;
+  //           this.purchase_type = this.lastOrder.purchase_type;
+  //           this.purchaseMethod = this.lastOrder.purchase_method;
+  //           this.buyer_id = this.lastOrder.buyer_id;
+  //           this.chief_id = this.lastOrder.chief_id;
+  //           this.verifyCommitteeId = this.lastOrder.verify_committee_id;
+  //         }
+  //       }
+  //       this.ref.detectChanges();
+  //     })
+  //     .catch(error => {
+  //       this.alertService.serverError(error);
+  //     });
+  // }
 
   getBudgetTransectionDetail(purchase_order_id: number) {
     this.budgetTransectionService.detail(purchase_order_id)
       .then((results: any) => {
         this.budgetTransectionDetail = results.detail;
         if (this.budgetTransectionDetail) {
-          this.incoming_balance = this.budgetTransectionDetail.incoming_balance;
+          this.incomingBalance = this.budgetTransectionDetail.incoming_balance;
           this.balance = this.budgetTransectionDetail.balance;
           this.budget_type = this.budgetTransectionDetail.type;
         }
-        // console.log(this.budgetTransectionDetail);
-        this.ref.detectChanges();
       })
       .catch(error => {
         this.budgetTransectionDetail = {};
@@ -1084,7 +998,7 @@ export class OrderFormComponent implements OnInit {
   }
 
   getAmountBudgetTransection(bgdetail_id: any, year: any) {
-    this.budgetTransectionService._detail(bgdetail_id, year)
+    this.budgetTransectionService.getDetail(bgdetail_id, year)
       .then((results: any) => {
         this.TransectionDetail = results.detail;
         // console.log(this.TransectionDetail);
@@ -1116,18 +1030,18 @@ export class OrderFormComponent implements OnInit {
     this.htmlPrview.printRequistion(row);
   }
 
-  onLabelerSelected(event: any) {
-    // console.log(event);
-    const oldLabelerID: string = this.labelerId;
-    this.labelerName = event.labeler_name;
-    this.labelerId = event.labeler_id;
-    this.searchProductLabeler.setApiUrl(event.labeler_id);
-    if (this.purchaseOrderItems.length === 0) {
-      this.addItem();
-    } else {
-      this.onChangeLabeler(this.labelerId, oldLabelerID);
-    }
-  }
+  // onLabelerSelected(event: any) {
+  //   // console.log(event);
+  //   const oldLabelerID: string = this.labelerId;
+  //   this.labelerName = event.labeler_name;
+  //   this.labelerId = event.labeler_id;
+  //   this.searchProductLabeler.setApiUrl(event.labeler_id);
+  //   if (this.purchaseOrderItems.length === 0) {
+  //     this.addItem();
+  //   } else {
+  //     this.onChangeLabeler(this.labelerId, oldLabelerID);
+  //   }
+  // }
 
   cancel() {
     this.router.navigateByUrl('/purchase/orders');
@@ -1172,21 +1086,12 @@ export class OrderFormComponent implements OnInit {
   }
 
   disableSave() {
-    if (this.tempPrice) return this.tempPrice;
+    // if (this.tempPrice) return this.tempPrice;
 
-    if (!this.labelerId) {
-      return true;
-    }
-    if (this.purchaseOrderItems.length == 0) {
-      return true;
-    }
-    if (this.purchase_order_status === 'COMPLETED') {
-      return true;
-    }
-
-    if (this.is_cancel === '1') {
-      return true;
-    }
+    if (!this.labelerId) return true;
+    if (this.purchaseOrderItems.length == 0)  return true;
+    if (this.purchase_order_status === 'COMPLETED') return true;
+    if (this.is_cancel === '1')  return true;
 
     if (this.purchase_order_status === 'APPROVED') {
       if (this.accessCheck.can('PO_EDIT_AFFTER_APPREVE')) {
@@ -1280,8 +1185,35 @@ export class OrderFormComponent implements OnInit {
     }
   }
 
+  onChangePurchaseMethod(event: any) {
+    this.purchaseMethod = event ? event.id : null;
+    this.bidAmount = event ? event.f_amount : 0;
+  }
+
   reset() {
     this.newOrder();
+  }
+
+  // search vendor
+  onChangeVendor(event: any) {
+    if (event) {
+      // console.log(this.labelerId);
+      this.labelerId = null;
+    }
+  }
+
+  onSelectVendor(event: any) {
+    if (event) {
+
+      if (this.oldLabelerId !== event.labeler_id) {
+        this.purchaseOrderItems = [];
+      }
+
+      this.labelerId = event.labeler_id;
+      this.oldLabelerId = event.labeler_id;
+      
+      this.searchProductLabeler.setApiUrl(this.labelerId);
+    }
   }
 
 }

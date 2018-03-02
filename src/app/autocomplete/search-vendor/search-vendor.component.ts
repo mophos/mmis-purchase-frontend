@@ -1,22 +1,14 @@
-import { Component, OnInit, Inject, Output, EventEmitter, Input } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input, Inject } from '@angular/core';
 
 @Component({
-  selector: 'app-search-product-vendor',
-  templateUrl: './search-product-vendor.component.html',
+  selector: 'po-search-vendor',
+  templateUrl: './search-vendor.component.html',
   styles: []
 })
-export class SearchProductVendorComponent implements OnInit {
-
-  private _labelerId: string;
+export class SearchVendorComponent implements OnInit {
 
   @Output('onSelect') onSelect: EventEmitter<any> = new EventEmitter<any>();
   @Output('onChange') onChange: EventEmitter<any> = new EventEmitter<any>();
-
-  @Input() labelerId;
-  set setLabelerId(value: string) {
-    this._labelerId = value;
-    this.setApiUrl(value);
-  }
 
   _disabled: boolean = false;
 
@@ -31,12 +23,9 @@ export class SearchProductVendorComponent implements OnInit {
 
   constructor(
     @Inject('API_URL') private apiUrl: string) {
-    this.token = sessionStorage.getItem('token');
-    this.url = `${this.apiUrl}/products/search/autocomplete-labeler?token=${this.token}&labelerId=${this._labelerId}`;
-  }
 
-  setApiUrl(labelerId: any) {
-    this.url = `${this.apiUrl}/products/search/autocomplete-labeler?token=${this.token}&labelerId=${labelerId}`;
+    this.token = sessionStorage.getItem('token');
+    this.url = `${this.apiUrl}/labeler/autocomplete?token=${this.token}`;
   }
 
   ngOnInit() {
@@ -56,12 +45,19 @@ export class SearchProductVendorComponent implements OnInit {
     } else {
       this.onChange.emit(false);
     }
-    
   }
 
   handleResultSelected(event: any) {
-    this.onSelect.emit(event);
-    this.query = event.product_name;
+    if (event) {
+      this.onSelect.emit(event);
+      this.query = event.labeler_name;
+    } else {
+      this.query = null;
+    }
+  }
+
+  setSelected(labelerName: any) {
+    this.query = labelerName;
   }
 
 }

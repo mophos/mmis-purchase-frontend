@@ -1,4 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { BudgetTransectionService } from 'app/purchase/share/budget-transection.service';
+import { AlertService } from 'app/alert.service';
 
 @Component({
   selector: 'po-budget-remain',
@@ -10,6 +12,18 @@ export class BudgetRemainComponent implements OnInit {
   _contractId: any;
   _contractAmount: number = 0;
   _budgetYear: any;
+
+  totalPurchaseAmount: number = 0;
+  budgetAmount: number = 0;
+  budgetRemain: number = 0;
+  budgetName: string;
+  contractNo: string;
+
+  @Input('purchaseAmount')
+  set setPurchaseAmount(value: any) {
+    this.totalPurchaseAmount = value;
+  } 
+  
 
   @Input('budgetYear')
   set setBudgetYear(value: any) {
@@ -29,12 +43,36 @@ export class BudgetRemainComponent implements OnInit {
 
   @Output('onCalculated') onChange: EventEmitter<any> = new EventEmitter<any>();
   
-  constructor() {  }
+  constructor(private budgetTransactionService: BudgetTransectionService, private alertService: AlertService) {  }
 
-  ngOnInit() { }
-
-  getBudgetRemain() {
-    console.log(+this._budgetDetailId);
-    console.log(+this._budgetYear);
+  ngOnInit() { 
+    this.getBudgetRemain();
   }
+
+  async getBudgetRemain() {
+    try {
+      let rs: any = await this.budgetTransactionService.getBudgetTransection(this._budgetYear, this._budgetDetailId);
+      if (rs.ok) {
+        console.log(rs);
+        this.budgetAmount = rs.detail ? rs.detail.amount : 0;
+        this.budgetName = rs.detail ? `${rs.detail.bgtype_name} (${rs.detail.bgtypesub_name})` : '-';
+      } else {
+        this.alertService.error(rs.error);
+      }
+    } catch (error) {
+      this.alertService.error(JSON.stringify(error))
+    }
+  }
+
+    // getDetailContract(id: string) {
+  //   this.contractService.detail(id)
+  //     .then((results: any) => {
+  //       this.contractDetail = results.detail;
+  //       this.contract_amount = this.contractDetail.amount;
+  //       this.amount_spent = this.contractDetail.amount_spent;
+  //     })
+  //     .catch(error => {
+  //       this.alertService.serverError(error);
+  //     });
+  // }
 }

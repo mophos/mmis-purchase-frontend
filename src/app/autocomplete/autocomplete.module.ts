@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { SearchProductVendorComponent } from './search-product-vendor/search-product-vendor.component';
 import { AgxTypeaheadModule } from '@siteslave/agx-typeahead';
 import { FormsModule } from '@angular/forms';
+import { SearchVendorComponent } from './search-vendor/search-vendor.component';
 
 @NgModule({
   imports: [
@@ -10,7 +11,7 @@ import { FormsModule } from '@angular/forms';
     AgxTypeaheadModule,
     FormsModule
   ],
-  declarations: [SearchProductVendorComponent],
-  exports: [SearchProductVendorComponent]
+  declarations: [SearchProductVendorComponent, SearchVendorComponent],
+  exports: [SearchProductVendorComponent, SearchVendorComponent]
 })
 export class AutocompleteModule { }
