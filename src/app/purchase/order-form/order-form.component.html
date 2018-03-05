@@ -188,7 +188,7 @@
       </clr-dg-column>
       <clr-dg-row *ngFor="let p of purchaseOrderItems; let idx=index;" [clrDgItem]="p">
         <clr-dg-cell>
-          {{p.product_name}}
+          {{idx + 1}}. {{p.product_name}}
         </clr-dg-cell>
         <clr-dg-cell>
           <input type="text" name="qty" class="wm-edit-box-number" style="background-color: #FFF9C4" [value]="p.qty" #qty (keyup)="onChangeEditQty(qty.value, idx)"
