@@ -71,7 +71,6 @@ import { PurchasingofficerComponent } from './officer/officer.component';
 import { PurchaseOrderComponent } from './report/purchase-order/purchase-order.component';
 import { GridReorderPointProductsComponent } from 'app/purchase/directives/grid-reorder-point-products/grid-reorder-point-products.component';
 import { ModalLoadingComponent } from 'app/modal-loading/modal-loading.component';
-import { BudgetransectionComponent } from './directives/budgetransection/budgetransection.component';
 import { ModalReceivesComponent } from './modal-receives/modal-receives.component';
 import { ExpandReceiveItemsComponent } from './expand-receive-items/expand-receive-items.component';
 import { ReceiveService } from 'app/purchase/share/receive.service';
@@ -125,7 +124,6 @@ import { TransactionHistoryComponent } from './directives/transaction-history/tr
     PurchaseOrderComponent,
     GridReorderPointProductsComponent,
     ModalLoadingComponent,
-    BudgetransectionComponent,
     ModalReceivesComponent,
     ExpandReceiveItemsComponent,
     TransactionPoComponent,
