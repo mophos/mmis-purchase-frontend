@@ -155,9 +155,9 @@
         class="action-item">
         <clr-icon shape="cancel"></clr-icon> ยกเลิก
       </button>
-      <button *ngIf="pro.purchase_order_status==='APPROVED' || pro.is_cancel === 'Y'" (click)="changeToPrepare(pro)" class="action-item">
+      <!-- <button *ngIf="pro.purchase_order_status==='APPROVED' || pro.is_cancel === 'Y'" (click)="changeToPrepare(pro)" class="action-item">
         <clr-icon shape="cancel"></clr-icon> เปลี่ยนสถานะเป็น เตรียมใบสั่งซื้อ
-      </button>
+      </button> -->
     </clr-dg-action-overflow>
 
     <app-expand-purchase-order *clrIfExpanded [purchaseOrderId]="pro.purchase_order_id" ngProjectAs="clr-dg-row-detail"></app-expand-purchase-order>
