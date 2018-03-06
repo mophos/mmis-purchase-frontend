@@ -573,16 +573,31 @@ export class OrderFormComponent implements OnInit {
     this.purchaseOrderBookNumber = data.purchase_order_book_number;
     this.purchaseOrderNumber = data.purchase_order_number;
     // this.requisition_id = data.requisition_id;
-    this.genericTypeId = data.generic_type_id;
+    
+    if (data.generic_type_id) {
+      this.genericTypeId = data.generic_type_id;
+    } else {
+      this.genericTypeId = this.productType.length ? this.productType[0].generic_type_id : null;
+    }
+    
     this.contractId = data.contract_id;
     this.contractRef = data.contract_ref;
-    this.purchaseMethodId = data.purchase_method_id;
     this.purchaseOrderId = data.purchase_order_id;
-    this.purchaseTypeId = data.purchase_type_id;
+   
+    if (data.purchase_method_id) {
+      this.purchaseMethodId = data.purchase_method_id;
+    }
+    if (data.purchase_type_id) {
+      this.purchaseTypeId = data.purchase_type_id;
+    }
+
     this.purchaseOrderStatus = data.purchase_order_status;
     // this.isCancel = data.is_cancel;
 
-    this.budgetDetailId = data.budget_detail_id;
+    if (data.budget_detail_id) {
+      this.budgetDetailId = data.budget_detail_id;
+    }
+
     this.labelerId = data.labeler_id;
     // this.verifyCommitteeId = data.verify_committee_id;
     this.checkPriceCommitteeId = data.check_price_committee_id;
@@ -641,6 +656,15 @@ export class OrderFormComponent implements OnInit {
   }
 
   async save() {
+    console.log('purchaseDate ', this.purchaseDate)
+    console.log('labelerId ', this.labelerId)
+    console.log('purchaseMethodId ', this.purchaseMethodId)
+    console.log('budgetTypeId ', this.budgetTypeId)
+    console.log('genericTypeId ', this.genericTypeId)
+    console.log('purchaseOrderItems ', this.purchaseOrderItems.length)
+    console.log('totalPrice ', this.totalPrice)
+    console.log('budgetDetailId ', this.budgetDetailId)
+    console.log('verifyCommitteeId ', this.verifyCommitteeId)
 
     if (this.purchaseDate && this.labelerId && this.purchaseMethodId &&
       this.budgetTypeId && this.genericTypeId && this.purchaseOrderItems.length &&
