@@ -32,5 +32,5 @@ app.use(function(err, req, res, next) {
 let port = +process.env.PORT || 3008;
 
 app.listen(port, function () {
-  console.log('Purchasing-frontend listening on port 3008!')
+  console.log(`Purchasing-frontend listening on port ${port}!`)
 })
