@@ -17,6 +17,7 @@ import { PageNotFoundComponent } from './page-not-found/page-not-found.component
 
 import '@clr/icons';
 import '@clr/icons/shapes/all-shapes';
+import { AgxTypeaheadModule } from '@siteslave/agx-typeahead';
 // import { GridReorderPointProductsComponent } from './directives/grid-reorder-point-products/grid-reorder-point-products.component';
 
 @NgModule({
@@ -34,6 +35,7 @@ import '@clr/icons/shapes/all-shapes';
     LoginModule,
     PurchaseModule,
     AppRoutingModule,
+    AgxTypeaheadModule,
   ],
   providers: [
     AuthGuard,

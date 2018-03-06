@@ -170,13 +170,21 @@ export class PurchasingOrderService {
     });
   }
 
-  async save(summary: any, items: any) {
-    let rs: any = await this.authHttp.post(`${this.url}/${this.apiName}`, { items: items, summary: summary }).toPromise();
+  async save(summary: any, items: any, budgetTransaction: any) {
+    let rs: any = await this.authHttp.post(`${this.url}/${this.apiName}`, {
+      items: items,
+      budgetTransaction: budgetTransaction,
+      summary: summary
+    }).toPromise();
     return rs.json();
   }
 
-  async update(id: any, summary: any, items: any) {
-    let rs: any = await this.authHttp.put(`${this.url}/${this.apiName}/${id}`, { items: items, summary: summary }).toPromise();
+  async update(purchaseOrderId: any, summary: any, items: any, budgetTransaction: any) {
+    let rs: any = await this.authHttp.put(`${this.url}/${this.apiName}/${purchaseOrderId}`, {
+      items: items,
+      summary: summary,
+      budgetTransaction: budgetTransaction
+    }).toPromise();
     return rs.json();
   }
 

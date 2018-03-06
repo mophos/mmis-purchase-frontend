@@ -93,23 +93,23 @@ export class PurchaseCancelComponent implements OnInit {
       type: 'revoke'
     };
 
-    try {
-      let rs: any = await this.purchasingOrderService.updateStatus(items);
-      let rs2: any = await this.budgetTransectionService.cancel(bgtData.rows[0].transection_id, budgetTransection);
-      if (rs.ok && rs2.ok) {
-        this.alertService.success();
-        this.onAfterSave.emit(true);
-        this.closeModal();
-      } else {
-        this.alertService.error(rs.error + ', ' + rs2.error);
-        this.onAfterSave.emit(true);
-        this.closeModal();
-      }
-    } catch (error) {
-      this.alertService.error(JSON.stringify(error));
-      this.onAfterSave.emit(true);
-      this.closeModal();
-    }
+    // try {
+    //   let rs: any = await this.purchasingOrderService.updateStatus(items);
+    //   let rs2: any = await this.budgetTransectionService.cancel(bgtData.rows[0].transection_id, budgetTransection);
+    //   if (rs.ok && rs2.ok) {
+    //     this.alertService.success();
+    //     this.onAfterSave.emit(true);
+    //     this.closeModal();
+    //   } else {
+    //     this.alertService.error(rs.error + ', ' + rs2.error);
+    //     this.onAfterSave.emit(true);
+    //     this.closeModal();
+    //   }
+    // } catch (error) {
+    //   this.alertService.error(JSON.stringify(error));
+    //   this.onAfterSave.emit(true);
+    //   this.closeModal();
+    // }
   }
 
 }

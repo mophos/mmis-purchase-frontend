@@ -23,10 +23,9 @@ export class BudgetransectionComponent implements OnInit {
 
   getbgTransection(detail_id: any) {
     this.loading = true;
-    this.budgetTransectionService.getBudgetTransection(this.budgetYear, detail_id)
+    this.budgetTransectionService.getBudgetTransection(detail_id)
       .then((results: any) => {
         this.bgTransection = results.rows;
-        console.log(this.bgTransection)
         this.loading = false;
       })
       .catch(error => {

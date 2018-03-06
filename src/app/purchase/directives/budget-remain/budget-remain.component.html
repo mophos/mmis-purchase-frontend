@@ -27,20 +27,20 @@
     <div class="row">
       <div class="col-md-5">ยอดคงเหลือครั้งนี้</div>
       <div class="col-md-7" style="text-align: right;">
-        <span style="color: #781DA0; font-weight: bold;">{{budgetAmount | number: '1.2-2'}}</span>
+        <span style="color: #781DA0; font-weight: bold;">{{budgetRemain - totalPurchaseAmount | number: '1.2-2'}}</span>
       </div>
     </div>
     <hr class="hr">
     <div class="row">
       <div class="col-md-5">เลขที่สัญญา</div>
       <div class="col-md-7" style="text-align: right;">
-        <span class="p4">{{contractNo}}</span>
+        <span class="p4">{{contractNo || '-'}}</span>
       </div>
     </div>
     <div class="row">
       <div class="col-md-5">วงเงินในสัญญา</div>
       <div class="col-md-7" style="text-align: right;">
-        <span style="color: #F52F22; font-weight: bold;">{{budgetAmount | number: '1.2-2'}}</span>
+        <span style="color: #F52F22; font-weight: bold;">{{0 | number: '1.2-2'}}</span>
       </div>
     </div>
   </div>

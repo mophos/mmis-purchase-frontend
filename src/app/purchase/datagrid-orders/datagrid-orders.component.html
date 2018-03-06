@@ -2,7 +2,7 @@
 <div class="card">
   <div class="card-block">
     <div class="row">
-      <div class="col-lg-8">
+      <div class="col-lg-12">
         <input placeholder="ค้นเลขที่.." (keydown)="handleKeyDown($event)" class="form-control" type="text" id="query" [(ngModel)]="query"
           name="query" size="10">
         <label>สถานะ</label>
@@ -24,7 +24,6 @@
             <option value="F"> ไม่มีสัญญา </option>
           </select>
         </div>
-        <span>&nbsp;</span>
         <label for="start_date">วันที่</label>
         <div style="width:170px; display:inline-block;vertical-align: middle;">
           <my-date-picker-th name="start_date" [(ngModel)]="start_date" [options]="myDatePickerOptions"></my-date-picker-th>
@@ -33,28 +32,33 @@
         <div style="width:170px; display:inline-block;vertical-align: middle;">
           <my-date-picker-th name="end_date" [(ngModel)]="end_date" [options]="myDatePickerOptions"></my-date-picker-th>
         </div>
+        <button type="button" (click)="search()" class="btn btn-primary btn-md">
+          <clr-icon shape="search"></clr-icon> ค้นหา
+        </button>
+
+        <clr-button-group class="btn-primary btn-md" [clrMenuPosition]="'bottom-right'" *ngIf="purchaseOrdersSelected.length">
+          <clr-button (click)="confirmAll('CONFIRMED')">ยืนยัน ({{this.purchaseOrdersSelected.length}})</clr-button>
+          <clr-button (click)="confirmAll('APPROVED')">อนุมัติ ({{this.purchaseOrdersSelected.length}})</clr-button>
+          <clr-button [clrInMenu]="true" (click)="printSelected()">
+            <clr-icon shape="printer"></clr-icon> พิมพ์ ({{this.purchaseOrdersSelected.length}})</clr-button>
+        </clr-button-group>
+        
+        <button (click)="printOrder_number()" class="btn btn-md btn-primary" *ngIf="!purchaseOrdersSelected.length">
+          <clr-icon shape="printer"></clr-icon> พิมพ์ใบสั่งซื้อ (เงื่อนไข)
+        </button>
+
       </div>
-      <div class="col-lg-4">
-        <div style="float:right;">
-          <button type="button" (click)="search()" class="btn btn-primary btn-md">
-            <clr-icon shape="search"></clr-icon> ค้นหา</button>
-          <clr-button-group [clrMenuPosition]="'bottom-right'" *ngIf="this.purchaseOrdersSelected.length">
-            <clr-button (click)="printSelected()" class="btn">
-              <clr-icon shape="printer"></clr-icon> พิมพ์ใบสั่งซื้อ ({{this.purchaseOrdersSelected.length}})</clr-button>
-            <clr-button (click)="confirmAll('CONFIRMED')" class="btn" [clrInMenu]="true">
-              <clr-icon shape="check"></clr-icon> ยืนยันการสั่งซื้อ ({{this.purchaseOrdersSelected.length}})</clr-button>
-            <clr-button (click)="confirmAll('APPROVED')" class="btn" [clrInMenu]="true">
-              <clr-icon shape="success-standard"></clr-icon> อนุมัติการสั่งซื้อ ({{this.purchaseOrdersSelected.length}})</clr-button>
-          </clr-button-group>
-          <clr-button-group [clrMenuPosition]="'bottom-right'" *ngIf="!this.purchaseOrdersSelected.length">
-            <clr-button (click)="printOrder_number()" class="btn">
-              <clr-icon shape="printer"></clr-icon> พิมพ์ใบสั่งซื้อ</clr-button>
-          </clr-button-group>
-        </div>
-      </div>
+
     </div>
   </div>
 </div>
+<!-- <div class="row">
+  <div class="col-md-12">
+    <div style="float:right; padding-top: 2px; padding-bottom: 2px;">
+      
+    </div>
+  </div>
+</div> -->
 <clr-datagrid style="height:80%;" [(clrDgSelected)]="purchaseOrdersSelected">
   <clr-dg-column class="datagrid-fixed-column" [style.width.px]="30">
     #
@@ -147,7 +151,8 @@
       <button *ngIf="pro.recieve_count > 0" (click)="getReceiveInfo(pro)" class="action-item">
         <clr-icon shape="search"></clr-icon> ดูรายละเอียดการรับ
       </button>
-      <button [disabled]="pro.purchase_order_status === 'COMPLETED' || pro.is_cancel === 1 || pro.recieve_count > 0" (click)="cancle(pro)" class="action-item">
+      <button [disabled]="pro.purchase_order_status === 'COMPLETED' || pro.is_cancel === 1 || pro.recieve_count > 0" (click)="cancle(pro)"
+        class="action-item">
         <clr-icon shape="cancel"></clr-icon> ยกเลิก
       </button>
       <button *ngIf="pro.purchase_order_status==='APPROVED' || pro.is_cancel === 1" (click)="changeToPrepare(pro)" class="action-item">
@@ -170,9 +175,9 @@
 </p>
 <clr-modal [(clrModalOpen)]="openModal" [clrModalClosable]="false">
   <h3 class="modal-title">เลือกเลขที่ใบสั่งซื้อ</h3>
-  <div class="modal-body" >
+  <div class="modal-body">
     <div class="row" style="margin:1em">
-    <label>สถานะ</label>
+      <label>สถานะ</label>
       <div class="select" style="width:120px;display:inline-block">
         <select name="status_po" [(ngModel)]="status_po">
           <option value="ALL"> ทั้งหมด </option>
@@ -195,35 +200,33 @@
       <div class="card">
         <div style="margin:0.5em">
           <input placeholder="เลขที่ตั้งต้น" (keydown)="handleKeyDown($event)" class="form-control" type="text" id="start_id" [(ngModel)]="start_id"
-          name="start_id" size="16">
-          &nbsp;&nbsp;&nbsp;
+            name="start_id" size="16"> &nbsp;&nbsp;&nbsp;
           <input placeholder="เลขที่สุดท้าย" (keydown)="handleKeyDown($event)" class="form-control" type="text" id="end_id" [(ngModel)]="end_id"
-          name="end_id" size="16">
-          &nbsp;&nbsp;&nbsp;
+            name="end_id" size="16"> &nbsp;&nbsp;&nbsp;
           <clr-button-group class="btn-sm" [clrMenuPosition]="'bottom-right '" style="display:inline-block;float:right;">
-              <clr-button class="btn" (click)="print_id()">
-                <clr-icon shape="printer"></clr-icon> พิมพ์ </clr-button>
+            <clr-button class="btn" (click)="print_id()">
+              <clr-icon shape="printer"></clr-icon> พิมพ์ </clr-button>
           </clr-button-group>
         </div>
-      </div>  
+      </div>
     </div>
     <div class="row" style="margin:1em">
-        <div class="card">
-          <div style="margin:0.5em">
-            <label for="start_date">วันที่</label>
-            <div style="width:170px; display:inline-block;vertical-align: middle;">
-              <my-date-picker-th name="start_date" [(ngModel)]="start_date" [options]="myDatePickerOptions"></my-date-picker-th>
-            </div>
-            <span>&nbsp;</span>
-            <div style="width:170px; display:inline-block;vertical-align: middle;">
-              <my-date-picker-th name="end_date" [(ngModel)]="end_date" [options]="myDatePickerOptions"></my-date-picker-th>
-            </div>
-              <clr-button-group class="btn-sm" [clrMenuPosition]="'bottom-right '" style="display:inline-block;float:right;vertical-align: middle;">
-                  <clr-button class="btn" (click)="print_date()">
-                    <clr-icon shape="printer"></clr-icon> พิมพ์ </clr-button>
-              </clr-button-group>
+      <div class="card">
+        <div style="margin:0.5em">
+          <label for="start_date">วันที่</label>
+          <div style="width:170px; display:inline-block;vertical-align: middle;">
+            <my-date-picker-th name="start_date" [(ngModel)]="start_date" [options]="myDatePickerOptions"></my-date-picker-th>
           </div>
+          <span>&nbsp;</span>
+          <div style="width:170px; display:inline-block;vertical-align: middle;">
+            <my-date-picker-th name="end_date" [(ngModel)]="end_date" [options]="myDatePickerOptions"></my-date-picker-th>
+          </div>
+          <clr-button-group class="btn-sm" [clrMenuPosition]="'bottom-right '" style="display:inline-block;float:right;vertical-align: middle;">
+            <clr-button class="btn" (click)="print_date()">
+              <clr-icon shape="printer"></clr-icon> พิมพ์ </clr-button>
+          </clr-button-group>
         </div>
+      </div>
     </div>
   </div>
   <div class="modal-footer">

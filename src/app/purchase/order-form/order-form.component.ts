@@ -54,7 +54,7 @@ import { SearchVendorComponent } from '../../autocomplete/search-vendor/search-v
 })
 export class OrderFormComponent implements OnInit {
 
-  @ViewChild('productsSelect') productsSelect: ProductsSelectComponent;
+  // @ViewChild('productsSelect') productsSelect: ProductsSelectComponent;
   @ViewChild('orderHistory') orderHistory: OrdersHistoryComponent;
   @ViewChild('htmlPrview') htmlPrview: HtmlPreviewComponent;
   @ViewChild('searchProductLabeler') searchProductLabeler: SearchProductVendorComponent;
@@ -77,7 +77,7 @@ export class OrderFormComponent implements OnInit {
   loading: boolean;
   loadingCommittee: boolean;
   loadingProducts: boolean;
-  purchase_order_id: string;
+  purchaseOrderId: string;
   tempPrice: boolean = true;
 
   contractDetail: any;
@@ -99,13 +99,16 @@ export class OrderFormComponent implements OnInit {
   // budgets: Array<any> = [];
   // product: Array<any> = [];
   defaultBudgetYear: string;
-  budgettype_id: string;
-  budget_detail_id: string;
-  generic_type_id: string;
+  // budgettype_id: string;
+  // budget_detail_id: string;
+  genericTypeId: string;
   budgetYear: string;
   budgetTypeId: any;
-  is_reorder: number;
-  budget_type: string;
+  isReorder: string;
+  budgetType: string;
+  // budget detail for this purchase
+  budgetData: any;
+
   holiday: any = {};
   holidayText: string;
   bidType: Array<any> = [];
@@ -116,57 +119,57 @@ export class OrderFormComponent implements OnInit {
 
   purchaseOrderItemsSelected: Array<any> = [];
 
-  purchasing_id: string;
-  purchase_order_book_number: string;
-  requisition_id: string;
+  purchasingId: string;
+  purchaseOrderBookNumber: string;
+  // requisition_id: string;
   comment: string;
-  note_to_vender: string;
-  purchasing_name: string;
-  purchasing_status: string;
-  purchase_order_status: string;
-  is_contract: string;
-  is_cancel: string;
-  contract_ref: string;
+  noteToVender: string;
+  // purchasing_name: string;
+  // purchasingStatus: string;
+  purchaseOrderStatus: string;
+  // isContract: string;
+  // isCancel: string;
+  contractRef: string;
   contractId: string;
-  prepare_date: any;
-  project_name: string;
-  project_id: string;
-  project_control_id: string;
+  // prepareDate: any;
+  // project_name: string;
+  // projectId: string;
+  // project_control_id: string;
   verifyCommitteeId: string;
-  check_price_committee_id: string;
+  checkPriceCommitteeId: string;
 
-  egp_id: string;
-  purchaseMethod: number;
-  purchase_type: number;
+  egpId: string;
+  purchaseMethodId: number;
+  purchaseTypeId: number;
   labelerId: string;
   oldLabelerId: string;
-  labeler_name: string;
-  purchasing_created_date: string;
-  vendor_contact_name: string;
-  ship_to: string;
+  // labelerName: string;
+  // purchasingCreatedDate: string;
+  vendorContactName: string;
+  shipTo: string;
 
-  discount_percent_amount: number = 0;
+  discountPercentAmount: number = 0;
   bidAmount: number = 0;
-  discount_percent: number = 0;
-  discount_cash: number = 0;
-  sub_total: number = 0;
-  vat_rate: number;
-  include_vat: boolean = false;
+  discountPercent: number = 0;
+  discountCash: number = 0;
+  subTotal: number = 0;
+  vatRate: number;
+  excludeVat: boolean = false;
   vat: number = 0;
-  total_price: number = 0;
-  incomingBalance: number = 0;
-  bgdetail_id: number = 10;
+  totalPrice: number = 0;
+  // incomingBalance: number = 0;
+  // bgdetail_id: number = 10;
   budgetDetailId: number;
   amount: number = 0;
   balance: number = 0;
   total: number = 0;
   totalFormat: string;
 
-  requisition_date: any;
-  purchase_order_item_id: string;
-  purchase_order_number: string;
-  order_date: any;
-  shipping_date: any;
+  // requisition_date: any;
+  // purchase_order_item_id: string;
+  purchaseOrderNumber: string;
+  purchaseDate: any;
+  shippingDate: any;
   delivery: number;
   committeePo: any;
   officer: any = [];
@@ -175,14 +178,13 @@ export class OrderFormComponent implements OnInit {
   office: any;
   office1: any;
 
-  buyer_fullname: string;
-  buyer_position: string;
-  chief_fullname: string;
-  chief_position: string;
-  labelerName: string;
-  buyer_id: number;
-  chief_id: number;
-  percent_amount: number;
+  buyerFullname: string;
+  buyerPosition: string;
+  chiefFullname: string;
+  chiefPosition: string;
+  buyerId: number;
+  chiefId: number;
+  // percent_amount: number;
   count: number = 0;
 
   isSaving = false;
@@ -203,6 +205,9 @@ export class OrderFormComponent implements OnInit {
   isGiveaway: boolean = false;
   purchaseOrderItems: Array<IProductOrderItems> = [];
   public jwtHelper: JwtHelper = new JwtHelper();
+
+  currentBudgetYear = null;
+  currentVatRate = 7;
 
   constructor(
     private accessCheck: AccessCheck,
@@ -236,11 +241,12 @@ export class OrderFormComponent implements OnInit {
     @Inject('API_URL') private url: string,
 
   ) {
-    this.activatedRoute.queryParams.subscribe(async (params: Params) => {
-      const id: string = params['id'] || null;
-      this.purchase_order_id = id;
 
-      if (id === null) {
+    this.activatedRoute.queryParams.subscribe(async (params: Params) => {
+      const purchaseOrderId: string = params['purchaseOrderId'] || null;
+      this.purchaseOrderId = purchaseOrderId;
+
+      if (purchaseOrderId === null) {
         this.isUpdate = false;
       } else {
         this.isUpdate = true;
@@ -250,31 +256,30 @@ export class OrderFormComponent implements OnInit {
     let token = sessionStorage.getItem('token');
     let decoded = this.jwtHelper.decodeToken(token);
 
-    this.vat_rate = decoded.PC_VAT ? decoded.PC_VAT : 7;
+    this.vatRate = decoded.PC_VAT ? decoded.PC_VAT : 7;
+    this.currentVatRate = decoded.PC_VAT ? decoded.PC_VAT : 7;
+
     this.delivery = decoded.PC_SHIPPING_DATE ? decoded.PC_SHIPPING_DATE : 30;
     this.budgetYear = decoded.PC_DEFAULT_BUDGET_YEAR;
+    this.currentBudgetYear = decoded.PC_DEFAULT_BUDGET_YEAR;
   }
 
   async ngOnInit() {
+    await this.getProductType();
+
     if (this.isUpdate) {
-      await this.getPurchaseOrderDetail(this.purchase_order_id);
+      await this.getPurchaseOrderDetail(this.purchaseOrderId);
     } else {
       this.newOrder();
       await this.checkIsHoliday(moment().format('YYYY-MM-DD'));
     }
 
-    await this.getProductType();
   }
 
   productSearchSelected(product: IProductOrderItem) {
     this.selectedProduct = product;
     this.selectBoxUnit.setGenericId(product.generic_id);
   }
-
-  // onSelectedUnits(unit: IGenericUnit) {
-  //   this.selectedUnit = unit;
-  //   this.selectedCost = unit.cost;
-  // }
 
   onChangeUnit(event: any) {
     this.selectedUnit = event;
@@ -389,7 +394,7 @@ export class OrderFormComponent implements OnInit {
   }
 
   onChangeEditQty(qty: number, idx: any) {
-    this.tempPrice = false;
+    // this.tempPrice = false;
     this.purchaseOrderItems[idx].qty = qty;
     this.purchaseOrderItems[idx].total_small_qty = this.purchaseOrderItems[idx].qty * this.purchaseOrderItems[idx].small_qty;
     if (this.purchaseOrderItems[idx].is_giveaway === 'Y') {
@@ -402,7 +407,7 @@ export class OrderFormComponent implements OnInit {
   }
 
   onChangeEditCost(cost: number, idx: any) {
-    this.tempPrice = false;
+    // this.tempPrice = false;
     this.purchaseOrderItems[idx].cost = cost;
     if (this.purchaseOrderItems[idx].is_giveaway === 'Y') {
       this.purchaseOrderItems[idx].total_cost = 0;
@@ -427,8 +432,6 @@ export class OrderFormComponent implements OnInit {
     this.clearSelectedProduct();
   }
 
-  /***********************************************************/
-
   onDateChanged(event: IMyDateModel) {
     // event properties are: event.date, event.jsdate, event.formatted and event.epoc
     let selectDate: string = moment(event.jsdate).format('YYYY-MM-DD');
@@ -439,33 +442,23 @@ export class OrderFormComponent implements OnInit {
     }
   }
 
-  navigateUrlError() {
-    this.alertService.error('ไม่พบรายการใบสั่งซื้อ!...');
-  }
-
   onChangeBudgetType(event: any) {
     this.budgetTypeId = event.bgtype_id;
   }
 
   onChangeSubBudget(event: any) {
-      // คำนวณการใช้งบประมาณใหม่
+    // คำนวณการใช้งบประมาณใหม่
     this.budgetDetailId = event ? event.bgdetail_id : null;
   }
 
-  onChangeGenericType(generic_type_id: string) {
+  onChangeGenericType(genericTypeId: string) {
     this.tempPrice = false;
-    this.generic_type_id = generic_type_id;
+    this.genericTypeId = genericTypeId;
   }
 
-  async onChangeBudgetSoruce(e) {
-    this.tempPrice = false;
-    await this.getAmountBudgetTransection(+e.target.value, this.budgetYear)
-    await this.bgTransection.getbgTransection(+e.target.value);
+  onBudgetCalculated(event: any) {
+    this.budgetData = event;
   }
-
-  // onChangeBidAmount(e) {
-  //   this.getBidAmount(+e.target.value)
-  // }
 
   calAmount() {
     let afterDiscount: number = 0;
@@ -479,50 +472,51 @@ export class OrderFormComponent implements OnInit {
       }
     });
 
-    this.sub_total = _.sum(_purchaseOrderItems);
-    discount = this.calDiscount(this.sub_total);
-    afterDiscount = this.sub_total - discount;
-    if (this.include_vat) {
-      if (this.isBeforeVat) {
-        this.total_price = this.sub_total;
-        this.vat = (this.total_price - discount) * (this.vat_rate / (this.vat_rate + 100));
-        this.sub_total = (this.total_price - discount) * (100 / (this.vat_rate + 100));
-      } else {
-        this.vat = afterDiscount * this.vat_rate / 100;
-        this.total_price = this.vat + afterDiscount;
-      }
+    this.subTotal = _.sum(_purchaseOrderItems);
+    discount = this.calDiscount(this.subTotal);
+    afterDiscount = this.subTotal - discount;
+
+    if (this.excludeVat) {
+      this.totalPrice = this.subTotal - discount;
+      this.vat = (this.totalPrice - discount) * (this.vatRate / 100);
+      this.subTotal = (this.totalPrice - discount) - this.vat;
+
     } else {
+      this.vat = afterDiscount * this.vatRate / 100;
+      this.totalPrice = this.vat + afterDiscount;
+      this.vatRate = null;
       this.vat = 0;
-      this.total_price = this.sub_total - discount;
-      let count: number = 0;
+      this.totalPrice = this.subTotal - discount;
+      // let count: number = 0;
     }
+    
   }
 
   calDiscount(subTotal: number): number {
-    this.discount_percent_amount = this.discount_percent * subTotal / 100;
-    return ((+this.discount_percent_amount) + (+this.discount_cash));
+    this.discountPercentAmount = this.discountPercent * subTotal / 100;
+    return ((+this.discountPercentAmount) + (+this.discountCash));
   }
 
-  openSelectedProduct(product: any = '') {
-    if (this.labelerId) {
-      this.productsSelect.open(this.labelerId, product.product_id);
-    }
-  }
+  // openSelectedProduct(product: any = '') {
+  //   if (this.labelerId) {
+  //     this.productsSelect.open(this.labelerId, product.product_id);
+  //   }
+  // }
 
-  onSelectedProduct(data: any) {
-    // console.log(data);
-  }
+  // onSelectedProduct(data: any) {
+  //   // console.log(data);
+  // }
 
-  onMultiSelectedProduct(data: any) {
-    // console.log(data);
-  }
+  // onMultiSelectedProduct(data: any) {
+  //   // console.log(data);
+  // }
 
   onChangeLabeler(id: any, oldValue: string) {
     if (this.purchaseOrderItems.length > 0) {
       this.alertService.confirm('รายการสินค้าที่เลือกไปแล้วจะถูกลบออก คุณแน่ใจใช่หรือไม่?', 'คุณต้องการเปลี่ยนผู้จำหน่าย?').then(() => {
         this.purchaseOrderItems.length = 0;
         this.calAmount();
-        this.addItem();
+        // this.addItem();
       }).catch(() => {
         this.labelerId = oldValue;
       })
@@ -535,12 +529,8 @@ export class OrderFormComponent implements OnInit {
     }
   }
 
-  loadFormPurchasing(data: any) {
-    this.purchasing_name = data.purchasing_name;
-    this.purchasing_status = data.purchasing_status;
-    this.project_id = data.project_id;
-    this.project_name = data.project_name;
-    this.project_control_id = data.project_control_id;
+  onChangePurchaseType(event: any) {
+    this.purchaseTypeId = event.bid_id;
   }
 
   newOrder() {
@@ -555,16 +545,16 @@ export class OrderFormComponent implements OnInit {
     // this.purchasing_id = purchasingID;
     // this.purchase_order_id = purchasingOrderID;
     this.purchaseOrderItems = [];
-    this.purchase_order_number = null;
-    this.sub_total = 0;
-    this.discount_percent = null;
-    this.discount_cash = 0;
+    this.purchaseOrderNumber = null;
+    this.subTotal = 0;
+    this.discountPercent = null;
+    this.discountCash = 0;
     // this.vat = 0;
-    this.budgettype_id = '1';
-    this.total_price = 0;
-    this.labelerName = null;
+    // this.budgettype_id = '1';
+    this.totalPrice = 0;
+    // this.labelerName = null;
 
-    this.order_date = {
+    this.purchaseDate = {
       date: {
         year: moment().get('year'),
         month: moment().get('month') + 1,
@@ -572,64 +562,57 @@ export class OrderFormComponent implements OnInit {
       }
     };
 
-    this.budget_type = 'spend';
+    this.budgetType = 'spend';
     // this.getBidAmount(this.purchase_method);
   }
 
-  addItem() {
-    //
-  }
-
   async setOrderDetail(data: any) {
-    this.labelerName = data.labeler_name;
+    // this.labelerName = data.labeler_name;
     this.isUpdate = true;
-    this.purchasing_id = data.purchasing_id;
-    this.purchase_order_book_number = data.purchase_order_book_number;
-    this.purchase_order_number = data.purchase_order_number;
-    this.requisition_id = data.requisition_id;
-    this.generic_type_id = data.generic_type_id;
+    this.purchasingId = data.purchasing_id;
+    this.purchaseOrderBookNumber = data.purchase_order_book_number;
+    this.purchaseOrderNumber = data.purchase_order_number;
+    // this.requisition_id = data.requisition_id;
+    this.genericTypeId = data.generic_type_id;
     this.contractId = data.contract_id;
-    this.contract_ref = data.contract_ref;
-    this.purchaseMethod = data.purchase_method;
-    this.purchase_order_id = data.purchase_order_id;
-    this.purchase_type = data.purchase_type;
-    this.purchase_order_status = data.purchase_order_status;
-    this.is_cancel = data.is_cancel;
+    this.contractRef = data.contract_ref;
+    this.purchaseMethodId = data.purchase_method_id;
+    this.purchaseOrderId = data.purchase_order_id;
+    this.purchaseTypeId = data.purchase_type_id;
+    this.purchaseOrderStatus = data.purchase_order_status;
+    // this.isCancel = data.is_cancel;
 
-    this.budgettype_id = data.budgettype_id;
-    this.budget_detail_id = data.budget_detail_id;
+    this.budgetDetailId = data.budget_detail_id;
     this.labelerId = data.labeler_id;
-    this.verifyCommitteeId = data.verify_committee_id;
-    this.check_price_committee_id = data.check_price_committee_id;
-
+    // this.verifyCommitteeId = data.verify_committee_id;
+    this.checkPriceCommitteeId = data.check_price_committee_id;
 
     // this.sub_total = data.sub_total;
-    this.discount_percent = data.discount_percent;
-    this.discount_cash = data.discount_cash;
-    this.vat_rate = data.vat_rate;
+    this.discountPercent = data.discount_percent;
+    this.discountCash = data.discount_cash;
+    this.vatRate = data.vat_rate;
     this.vat = data.vat;
-    // this.total_price = data.total_price;
+    // this.totalPrice = data.total_price;
 
-    this.vendor_contact_name = data.vendor_contact_name;
+    this.vendorContactName = data.vendor_contact_name;
     this.delivery = data.delivery;
-    this.ship_to = data.ship_to;
+    this.shipTo = data.ship_to;
     this.comment = data.comment;
-    this.note_to_vender = data.note_to_vender;
-    this.egp_id = data.egp_id;
+    this.noteToVender = data.note_to_vender;
+    this.egpId = data.egp_id;
 
-    this.office1 = data.buyer_id;
-    this.office = data.chief_id
-    this.buyer_fullname = data.buyer_fullname;
-    this.chief_fullname = data.chief_fullname;
-    this.include_vat = data.include_vat;
-    this.chief_position = data.chief_position;
-    this.buyer_position = data.buyer_position;
-    this.chief_id = data.chief_id;
-    this.buyer_id = data.buyer_id;
-    this.budgetYear = data.budget_year || moment().get('year');
-    this.is_reorder = data.is_reorder;
+    // this.buyerFullname = data.buyer_fullname;
+    // this.chiefFullname = data.chief_fullname;
+    this.excludeVat = data.exclude_vat === 'Y' ? true : false;
+    // this.isBeforeVat = data.is_before_vat === 'Y' ? true : false;
+    // this.chiefPosition = data.chief_position;
+    // this.buyerPosition = data.buyer_position;
+    this.chiefId = data.chief_id;
+    this.buyerId = data.buyer_id;
+    this.budgetYear = data.budget_year || this.currentBudgetYear;
+    // this.isReorder = data.is_reorder;
     // console.log(data.is_reorder)
-    this.order_date = {
+    this.purchaseDate = {
       date: {
         year: moment(data.order_date).get('year'),
         month: moment(data.order_date).get('month') + 1,
@@ -637,286 +620,263 @@ export class OrderFormComponent implements OnInit {
       }
     };
 
+    if (!data.budgettype_id) {
+      this.subBudgetList.setBudgetType(this.budgetTypeId);
+      this.subBudgetList.getItems();
+    } else {
+      this.budgetTypeId = data.budgettype_id;
+    }
+
+    if (this.purchaseOrder.verify_committee_id) {
+      this.verifyCommitteeId = this.purchaseOrder.verify_committee_id;
+      this.getCommitteePeople(this.purchaseOrder.verify_committee_id);
+    }
+
+    if (this.contractRef) {
+      // this.getDetailContract(this.contract_ref);
+    }
+
+    this.searchVendor.setSelected(data.labeler_name);
+
   }
 
   async save() {
-    this.isSaving = true;
-    const _order_date = this.order_date ?
-      `${this.order_date.date.year}-${this.order_date.date.month}-${this.order_date.date.day}` : null;
 
-    try {
-      const rs = await this.purchasingOrderService.getPeriodStatus(_order_date);
-      if (rs.rows[0].status_close === 'Y') {
-        this.alertService.error('ปิดรอบบัญชีแล้ว ไม่สามารถสั่งซื้อได้');
-        this.isSaving = false;
+    if (this.purchaseDate && this.labelerId && this.purchaseMethodId &&
+      this.budgetTypeId && this.genericTypeId && this.purchaseOrderItems.length &&
+      this.totalPrice > 0 && this.budgetDetailId && this.verifyCommitteeId) {
+
+      const purchaseDate = this.purchaseDate ?
+        `${this.purchaseDate.date.year}-${this.purchaseDate.date.month}-${this.purchaseDate.date.day}` :
+        `${moment().get('year')}-${moment().get('month') + 1}-${moment().get('date')}`;
+
+      let isSaveHoliday = false;
+
+      // check วันหยุด
+      const rs: any = await this.purchasingOrderService.getPurchaseCheckHoliday(purchaseDate);
+
+      if (!rs.ok) {
+        await this.alertService.confirm(rs.error).then(() => {
+          // บันทึกแม้เป็นวันหยุด
+          isSaveHoliday = true;
+        }).catch(() => {
+          isSaveHoliday = false;
+        });
       } else {
-        let is_error = false;
-
-        if (this.order_date) {
-          const _order_date = this.order_date ?
-            `${this.order_date.date.year}-${this.order_date.date.month}-${this.order_date.date.day}` : null;
-          const rs: any = await this.purchasingOrderService.getPurchaseCheckHoliday(_order_date);
-          if (!rs.ok && !is_error) {
-            await this.alertService.confirm(rs.error).then(() => {
-              is_error = false;
-              this.isSaving = false;
-              this.modalLoading.hide();
-            }).catch(() => {
-              is_error = true;
-              this.isSaving = false;
-              this.modalLoading.hide();
-            });
-          }
-
-          if (!is_error) {
-            this.saveTo();
-          }
-        }
+        isSaveHoliday = true;
       }
-    } catch (error) {
-      this.alertService.error()
-      this.modalLoading.hide();
-      this.isSaving = false;
+
+      if (isSaveHoliday) {
+        // save purchase
+        this._save();
+      } else {
+        // cancel save purchase
+      }
+    } else {
+      this.alertService.error('กรุณาระบุข้อมูลให้ครบถ้วน');
     }
+
   }
 
-  async saveTo() {
-    if (this.bidAmount < this.total_price) {
-      this.isSaving = false;
-      this.modalLoading.hide();
+  async _save() {
+    let isErrorBidAmount: boolean = this.bidAmount < this.totalPrice;
+
+    if (isErrorBidAmount) {
+      // วงเงินเกินวิธีการจัดซื้อ
       this.alertService.error('ราคารวมสุทธิเกินวงเงินที่กำหนดตามวิธีการจัดซื้อ');
     } else {
       let dataPurchasing: any = {};
       let summary: any = {};
-      let budgetTransection: any = {};
-      let count: number = 0;
-      let countQty: number = 0;
-      let promise;
 
-      if (!this.budgettype_id || !this.budget_detail_id || !this.purchase_type || !this.purchaseMethod || !this.verifyCommitteeId) {
-        this.alertService.error('กรุณากรอกข้อมูลให้ครบ.!');
-        this.isSaving = false;
-        return false;
-      }
-
+      // ตรวจสอบว่ามีรายการใดที่จำนวนจัดซื้อเป็น 0 หรือ ไม่ได้ระบุราคา
       let isError = false;
       this.purchaseOrderItems.forEach((v: IProductOrderItems) => {
-        if (!v.product_id || v.qty <= 0 || !v.generic_id && !v.cost) {
+        if (!v.product_id || v.qty <= 0 || !v.unit_generic_id && !v.cost) {
           isError = true;
         }
       });
 
       if (isError) {
-        this.alertService.error('กรุณาเพิ่มข้อมูลรายการชื่อยาให้ครบถ้วน.!');
-        this.isSaving = false;
+        this.alertService.error('กรุณาระบุรายละเอียดสินค้าให้ครบถ้วน เช่น ราคา, จำนวนจัดซื้อและหน่วยสำหรับจัดซื้อ')
       } else {
-        dataPurchasing = {
-          purchasing_id: this.purchasing_id,
-          purchasing_name: this.purchasing_name,
-          prepare_date: moment().format('YYYY-MM-DD'),
-        }
-
-        budgetTransection = {
-          purchase_order_id: this.purchase_order_id,
-          bgdetail_id: this.budget_detail_id,
-          budget_year: this.budgetYear,
-          type: this.budget_type,
-          incoming_balance: this.incomingBalance,
-          amount: this.total_price,
-          balance: this.balance,
-          // date_time: moment().format('YYYY-MM-DD H:i:s')
-        }
-
-        if (this.office != 0) {
-          const _officer = _.filter(this.officer, { 'people_id': +this.office });
-          this.chief_fullname = _officer[0].fullname;
-          this.chief_position = _officer[0].type_name;
-          this.chief_id = _officer[0].people_id;
+        // ตรวจสอบยอดสั่งซื้อกับวงเงินของงบคงเหลือ
+        if (this.budgetData.RemainAfterPurchase < 0) {
+          this.alertService.confirm('ยอดจัดซื้อครั้งนี้ เกินกว่ายอดคงเหลือของงบประมาณ ต้องการบันทึก ใช่หรือไม่?')
         } else {
-          this.chief_fullname = '';
-          this.chief_position = '';
-          this.chief_id = 0
-        }
-        if (this.office1 != 0) {
-          const _officer1 = _.filter(this.officer1, { 'people_id': +this.office1 });
-          this.buyer_fullname = _officer1[0].fullname;
-          this.buyer_position = _officer1[0].type_name;
-          this.buyer_id = _officer1[0].people_id;
-        } else {
-          this.buyer_fullname = '';
-          this.buyer_position = '';
-          this.buyer_id = 0
-        }
-
-        summary = {
-          purchase_order_id: this.purchase_order_id,
-          purchase_order_book_number: this.purchase_order_book_number,
-          purchase_order_number: this.purchase_order_number,
-          purchase_order_status: this.purchase_order_status,
-          purchasing_id: this.purchasing_id,
-          labeler_id: this.labelerId,
-          verify_committee_id: this.verifyCommitteeId,
-          check_price_committee_id: this.check_price_committee_id,
-          egp_id: this.egp_id,
-          is_contract: this.is_contract,
-          purchase_method: this.purchaseMethod,
-          budgettype_id: this.budgettype_id,
-          budget_detail_id: this.budget_detail_id,
-          generic_type_id: this.generic_type_id,
-          purchase_type: this.purchase_type,
-          sub_total: this.sub_total,
-          delivery: this.delivery,
-          discount_percent: this.discount_percent,
-          discount_cash: this.discount_cash,
-          vat_rate: this.vat_rate,
-          vat: this.vat,
-          include_vat: this.include_vat,
-          total_price: this.total_price,
-          ship_to: this.ship_to,
-          vendor_contact_name: this.vendor_contact_name,
-          order_date: moment(this.order_date.jsdate).format('YYYY-MM-DD'),
-          //shipping_date:  moment(this.shipping_date.jsdate).format('YYYY-MM-DD'),
-          comment: this.comment,
-          note_to_vender: this.note_to_vender,
-          chief_fullname: this.chief_fullname,
-          chief_position: this.chief_position,
-          buyer_fullname: this.buyer_fullname,
-          buyer_position: this.buyer_position,
-          chief_id: this.chief_id,
-          buyer_id: this.buyer_id,
-          budget_year: this.budgetYear,
-          is_reorder: this.is_reorder === 1 ? 2 : this.is_reorder
-        };
-
-        this.isSaving = true;
-        try {
-          if ((this.budgetTypeDetail.amount - this.amount) - this.total_price < 0) {
-            this.alertService.confirm('ยอดจัดซื้อครั้งนี้ เกินกว่ายอดคงเหลือของงบประมาณ ต้องการบันทึก ใช่หรือไม่?')
-              .then(async () => {
-                this._savePurchase(summary, budgetTransection);
-              })
-              .catch(() => { 
-                this.isSaving = false;
-                this.modalLoading.hide();
-              });
-          } else {
-            this._savePurchase(summary, budgetTransection);
-          }
-
-        } catch (error) {
-          this.isSaving = false;
-          this.modalLoading.hide();
-          this.alertService.error(JSON.stringify(error));
+          this.doSavePurchase();
         }
       }
+
     }
   }
+  // if (this.bidAmount < this.totalPrice) {
 
-  async _savePurchase(summary: any, budgetTransection: any) {
+  // } else {
+
+  // let budgetTransection: any = {};
+  // let count: number = 0;
+  // let countQty: number = 0;
+  // let promise;
+
+  // if (!this.budgetTypeId || !this.budgetDetailId || !this.purchaseTypeId || !this.purchaseMethodId || !this.verifyCommitteeId) {
+  //   this.alertService.error('กรุณากรอกข้อมูลให้ครบ.!');
+  //   this.isSaving = false;
+  //   return false;
+  // }
+
+
+  // if (isError) {
+  //   this.alertService.error('กรุณาเพิ่มข้อมูลรายการชื่อยาให้ครบถ้วน.!');
+  //   this.isSaving = false;
+  // } else {
+  // dataPurchasing = {
+  //   purchasing_id: this.purchasingId,
+  //   // purchasing_name: this.purchasing_name,
+  //   prepare_date: moment().format('YYYY-MM-DD'),
+  // }
+
+  // if (this.office != 0) {
+  //   const _officer = _.filter(this.officer, { 'people_id': +this.office });
+  //   this.chiefFullname = _officer[0].fullname;
+  //   this.chiefPosition = _officer[0].type_name;
+  //   this.chiefId = _officer[0].people_id;
+  // } else {
+  //   this.chiefFullname = '';
+  //   this.chiefPosition = '';
+  //   this.chiefId = null
+  // }
+  // if (this.office1 != 0) {
+  //   const _officer1 = _.filter(this.officer1, { 'people_id': +this.office1 });
+  //   this.buyerFullname = _officer1[0].fullname;
+  //   this.buyerPosition = _officer1[0].type_name;
+  //   this.buyerId = _officer1[0].people_id;
+  // } else {
+  //   this.buyerFullname = '';
+  //   this.buyerPosition = '';
+  //   this.buyerId = null
+  // }
+
+
+  // this.isSaving = true;
+
+  // try {
+  //   if ((this.budgetTypeDetail.amount - this.amount) - this.totalPrice < 0) {
+  //     this.alertService.confirm('ยอดจัดซื้อครั้งนี้ เกินกว่ายอดคงเหลือของงบประมาณ ต้องการบันทึก ใช่หรือไม่?')
+  //       .then(async () => {
+  //         this._savePurchase(summary, budgetTransection);
+  //       })
+  //       .catch(() => { 
+  //         this.isSaving = false;
+  //         this.modalLoading.hide();
+  //       });
+  //   } else {
+  //     this._savePurchase(summary, budgetTransection);
+  //   }
+
+  // } catch (error) {
+  //   this.isSaving = false;
+  //   this.modalLoading.hide();
+  //   this.alertService.error(JSON.stringify(error));
+  // }
+  // }
+  //   }
+  // }
+
+  async doSavePurchase() {
+    let summary: any = {};
 
     try {
+
+      summary = {
+        // purchase_order_id: this.purchaseOrderId,
+        purchase_order_book_number: this.purchaseOrderBookNumber,
+        purchase_order_number: this.purchaseOrderNumber,
+        purchase_order_status: this.purchaseOrderStatus,
+        // purchasing_id: this.purchasingId,
+        labeler_id: this.labelerId,
+        verify_committee_id: this.verifyCommitteeId,
+        check_price_committee_id: this.checkPriceCommitteeId,
+        egp_id: this.egpId,
+        is_contract: this.isContract,
+        purchase_method_id: this.purchaseMethodId,
+        budgettype_id: this.budgetTypeId,
+        budget_detail_id: this.budgetDetailId,
+        generic_type_id: this.genericTypeId,
+        purchase_type_id: this.purchaseTypeId,
+        sub_total: this.subTotal,
+        delivery: this.delivery,
+        discount_percent: this.discountPercent,
+        discount_cash: this.discountCash,
+        vat_rate: this.vatRate,
+        vat: this.vat,
+        exclude_vat: this.excludeVat ? 'Y' : 'N',
+        // is_before_vat: this.isBeforeVat ? 'Y' : 'N',
+        total_price: this.totalPrice,
+        ship_to: this.shipTo,
+        vendor_contact_name: this.vendorContactName,
+        order_date: moment(this.purchaseDate.jsdate).format('YYYY-MM-DD'),
+        comment: this.comment,
+        note_to_vender: this.noteToVender,
+        chief_id: this.chiefId,
+        buyer_id: this.buyerId,
+        budget_year: this.budgetYear,
+        // is_reorder: this.isReorder === 'Y' ? 2 : this.isReorder
+      };
+
+      this.isSaving = true;
+      this.modalLoading.show();
+
+      let rs: any;
+
       if (this.isUpdate) {
-        if (this.purchase_order_status === 'ORDERPOINT') {
+        if (this.purchaseOrderStatus === 'ORDERPOINT') {
           summary.from_status = 'ORDERPOINT';
           summary.purchase_order_status = 'PREPARED';
         }
-        this.isSaving = true;
-        this.modalLoading.show();
-        let rs: any = await this.purchasingOrderService.update(this.purchase_order_id, summary, this.purchaseOrderItems);
-        if (rs.ok) {
-          let rsBudget: any = await this.budgetTransectionService.save(budgetTransection);
-
-          this.isSaving = false;
-
-          if (rsBudget.ok) {
-            this.alertService.success();
-            this.alertService.success('ดำเนินการเสร็จเรียบร้อย');
-            this.router.navigate(['/purchase/orders']);
-          } else {
-            this.modalLoading.hide();
-            this.alertService.error(rsBudget.error);
-          }
-        } else {
-          this.modalLoading.hide();
-          this.isSaving = false;
-          this.alertService.error(rs.error);
-        }
+        rs = await this.purchasingOrderService.update(this.purchaseOrderId, summary, this.purchaseOrderItems, this.budgetData);
       } else {
-        this.modalLoading.show();
-        this.isSaving = true;
-
-        let rs: any = await this.purchasingOrderService.save(summary, this.purchaseOrderItems);
-        if (rs.ok) {
-          let rsBudget: any = await this.budgetTransectionService.save(budgetTransection);
-          this.isSaving = false;
-          this.modalLoading.hide();
-          
-          if (rsBudget.ok) {
-            this.alertService.success();
-            this.alertService.success('ดำเนินการเสร็จเรียบร้อย');
-            this.router.navigate(['/purchase/orders']);
-          } else {
-            this.alertService.error(rsBudget.error);
-          }
-        } else {
-          this.alertService.error(rs.error);
-        }
+        rs = await this.purchasingOrderService.save(summary, this.purchaseOrderItems, this.budgetData);
       }
 
+      if (rs.ok) {
+        this.alertService.success();
+        this.router.navigate(['/purchase/orders'])
+      } else {
+        this.alertService.error(rs.error);
+      }
     } catch (error) {
       this.modalLoading.hide();
       this.isSaving = false;
       this.alertService.error(JSON.stringify(error));
     }
-
-  }
- 
-  getPurchasing(purchasing_id: string) {
-    this.loading = true;
-    this.purchasingService.detail(purchasing_id)
-      .then((results: any) => {
-        this.purchasing = results.detail;
-        this.loadFormPurchasing(results.detail);
-        this.ref.detectChanges();
-        this.loading = false;
-      })
-      .catch(error => {
-        this.alertService.serverError(error);
-      });
   }
 
   async getPurchaseOrderDetail(orderId: string) {
     this.loading = true;
     this.modalLoading.show();
-    this.purchasingOrderService.detail(orderId)
-      .then(async (results: any) => {
-        if (results) {
-          this.purchaseOrder = results.detail;
-          this.isContract = results.detail.is_contract === 'T' ? true : false;
-          await this.setOrderDetail(results.detail);
-          // await this.getLastOrderByLeberID(this.purchaseOrder.labeler_id);
-          // 
-          // await this.getBidAmount(results.detail.purchase_method);
-          await this.searchProductLabeler.setApiUrl(results.detail.labeler_id);
-          await this.getPurchaseOrderItems(this.purchaseOrder.purchase_order_id);
-          await this.getBudgetTransectionDetail(this.purchaseOrder.purchase_order_id);
+    
+    try {
+      let rs: any = await this.purchasingOrderService.detail(orderId);
+      if (rs.ok) {
+        this.purchaseOrder = rs.detail;
+        this.isContract = rs.detail.is_contract === 'T' ? true : false;
+        await this.setOrderDetail(rs.detail);
+        this.searchProductLabeler.setApiUrl(rs.detail.labeler_id);
+        await this.getPurchaseOrderItems(this.purchaseOrder.purchase_order_id);
+        
+      } else {
+        this.alertService.error(rs.error);
+      }
 
-          if (this.purchaseOrder.verify_committee_id) {
-            // this.getCommitteePeople(this.purchaseOrder.verify_committee_id);
-          }
+      this.modalLoading.hide();
+      this.loading = false;
 
-          if (this.contract_ref) {
-            // this.getDetailContract(this.contract_ref);
-          }
-        } else {
-          this.navigateUrlError();
-        }
-        this.modalLoading.hide();
-        this.loading = false;
-      })
-      .catch(error => {
-        this.alertService.serverError(error);
-      });
+    } catch (error) {
+      this.modalLoading.hide();
+      this.loading = false;
+      this.alertService.error(JSON.stringify(error));
+    }
+
   }
 
   async getPurchaseOrderItems(orderId: string) {
@@ -925,7 +885,20 @@ export class OrderFormComponent implements OnInit {
       let rs: any = await this.purchasingOrderItemService.allByOrderID(orderId);
       if (rs.ok) {
         let products = rs.rows;
-        products.forEach((v: any) => {
+
+        // product.cost = +this.selectedCost;
+        // product.product_id = this.selectedProduct.product_id;
+        // product.generic_id = this.selectedProduct.generic_id;
+        // product.generic_name = this.selectedProduct.generic_name;
+        // product.product_name = this.selectedProduct.product_name;
+        // product.is_giveaway = this.isGiveaway ? 'Y' : 'N';
+        // product.qty = this.selectedQty;
+        // product.unit_generic_id = this.selectedUnit.unit_generic_id;
+        // product.small_qty = this.selectedUnit.qty;
+        // product.total_cost = this.selectedCost * this.selectedQty;
+        // product.total_small_qty = this.selectedQty * this.selectedUnit.qty;
+
+        for (let v of products) {
           let obj: IProductOrderItems = {
             product_id: v.product_id,
             product_name: v.product_name,
@@ -933,22 +906,18 @@ export class OrderFormComponent implements OnInit {
             generic_name: v.generic_name,
             cost: v.unit_price,
             qty: v.qty,
-            total_small_qty: v.total_small_qty,
+            total_small_qty: v.qty * v.small_qty,
             unit_generic_id: v.unit_generic_id,
-            total_cost: v.total_price,
-            fullname: v.fullname,
-            is_giveaway: v.giveaway === 'Y' ? 'Y' : 'N',
+            total_cost: v.cost*v.qty,
+            is_giveaway: v.giveaway || 'N',
             small_qty: v.small_qty
           }
-
           this.purchaseOrderItems.push(obj);
-        });
+        }
 
         this.modalLoading.hide();
 
-        setTimeout(() => {
-          this.calAmount();
-        }, 1000);
+        this.calAmount();
 
       } else {
         this.modalLoading.hide();
@@ -982,65 +951,43 @@ export class OrderFormComponent implements OnInit {
   //     });
   // }
 
-  getBudgetTransectionDetail(purchase_order_id: number) {
-    this.budgetTransectionService.detail(purchase_order_id)
-      .then((results: any) => {
-        this.budgetTransectionDetail = results.detail;
-        if (this.budgetTransectionDetail) {
-          this.incomingBalance = this.budgetTransectionDetail.incoming_balance;
-          this.balance = this.budgetTransectionDetail.balance;
-          this.budget_type = this.budgetTransectionDetail.type;
-        }
-      })
-      .catch(error => {
-        this.budgetTransectionDetail = {};
-      });
-  }
-
-  getAmountBudgetTransection(bgdetail_id: any, year: any) {
-    this.budgetTransectionService.getDetail(bgdetail_id, year)
-      .then((results: any) => {
-        this.TransectionDetail = results.detail;
-        // console.log(this.TransectionDetail);
-        this.amount = this.TransectionDetail ? this.TransectionDetail.amount : null;
-        this.ref.detectChanges();
-      })
-      .catch(error => {
-        this.budgetTransectionDetail = {};
-      });
-  }
-
-  // setActiveBudget(bgdetail_id: number) {
-  //   const budget: any = _.find(this.budgets, { 'bgdetail_id': bgdetail_id });
-  //   if (budget) {
-  //     this.budgetYear = budget.bg_year;
-  //     this.budgetTypeDetail = {
-  //       bgtype_name: budget.bgtype_name,
-  //       bgsubtype_name: budget.bgtypesub_name,
-  //       amount: budget.amount
-  //     };
-  //   }
+  // getBudgetTransectionDetail(purchase_order_id: number) {
+  //   this.budgetTransectionService.detail(purchase_order_id)
+  //     .then((rs: any) => {
+  //       if (rs.ok) {
+  //         if (rs.detail) {
+  //           this.budgetTransectionDetail = rs.detail;
+  //           if (this.budgetTransectionDetail) {
+  //             // this.incomingBalance = this.budgetTransectionDetail.incoming_balance;
+  //             this.balance = this.budgetTransectionDetail.balance;
+  //             this.budgetType = this.budgetTransectionDetail.type;
+  //           }
+  //         }
+  //       } else {
+  //         this.alertService.error(rs.error);
+  //       }
+  //     })
+  //     .catch(error => {
+  //       this.budgetTransectionDetail = {};
+  //     });
   // }
 
-  printPurchaseOrder(row: any) {
-    this.htmlPrview.printPurchaseOrder(row);
-  }
-
-  printRequistion(row: any) {
-    this.htmlPrview.printRequistion(row);
-  }
-
-  // onLabelerSelected(event: any) {
-  //   // console.log(event);
-  //   const oldLabelerID: string = this.labelerId;
-  //   this.labelerName = event.labeler_name;
-  //   this.labelerId = event.labeler_id;
-  //   this.searchProductLabeler.setApiUrl(event.labeler_id);
-  //   if (this.purchaseOrderItems.length === 0) {
-  //     this.addItem();
-  //   } else {
-  //     this.onChangeLabeler(this.labelerId, oldLabelerID);
-  //   }
+  // getAmountBudgetTransection(bgdetail_id: any) {
+  //   this.budgetTransectionService.getDetail(bgdetail_id)
+  //     .then((rs: any) => {
+  //       if (rs.ok) {
+  //         if (rs.detail) {
+  //           this.TransectionDetail = rs.detail;
+  //           // console.log(this.TransectionDetail);
+  //           this.amount = this.TransectionDetail ? this.TransectionDetail.amount : 0;
+  //         }
+  //       } else {
+  //         this.alertService.error(rs.error);
+  //       }
+  //     })
+  //     .catch(error => {
+  //       this.budgetTransectionDetail = {};
+  //     });
   // }
 
   cancel() {
@@ -1056,7 +1003,6 @@ export class OrderFormComponent implements OnInit {
           this.holidayText = results.detail.detail;
           this.alertService.success('วันนี้เป็นวันหยุด', results.detail.detail);
         }
-        this.ref.detectChanges();
       })
       .catch(error => {
         this.alertService.serverError(error);
@@ -1068,15 +1014,15 @@ export class OrderFormComponent implements OnInit {
       return true;
     }
 
-    if (this.purchase_order_status === 'COMPLETED') {
+    if (this.purchaseOrderStatus === 'COMPLETED') {
       return true;
     }
 
-    if (this.is_cancel == '1') {
+    if (this.isContract == true) {
       return true;
     }
 
-    if (this.purchase_order_status === 'APPROVED') {
+    if (this.purchaseOrderStatus === 'APPROVED') {
       if (this.accessCheck.can('PO_EDIT_AFFTER_APPREVE')) {
         return false;
       }
@@ -1089,11 +1035,11 @@ export class OrderFormComponent implements OnInit {
     // if (this.tempPrice) return this.tempPrice;
 
     if (!this.labelerId) return true;
-    if (this.purchaseOrderItems.length == 0)  return true;
-    if (this.purchase_order_status === 'COMPLETED') return true;
-    if (this.is_cancel === '1')  return true;
+    if (this.purchaseOrderItems.length == 0) return true;
+    if (this.purchaseOrderStatus === 'COMPLETED') return true;
+    // if (this.isContract === true)  return true;
 
-    if (this.purchase_order_status === 'APPROVED') {
+    if (this.purchaseOrderStatus === 'APPROVED') {
       if (this.accessCheck.can('PO_EDIT_AFFTER_APPREVE')) {
         return false;
       }
@@ -1103,44 +1049,12 @@ export class OrderFormComponent implements OnInit {
     return false;
   }
 
-  // async onChangeChief(data: any, item) {
-  // await this.officerService.findPeople(id)
-  //   .then((results: any) => {
-  //     if (results.ok) {
-  //       this.chief_fullname = results.rows[0].fname + ' ' + results.rows[0].lname;
-  //       this.chief_position = results.rows.position_name;
-  //       this.chief_id = results.rows.id;
-  //     } else {
-  //       this.chief_fullname = '________________________________';
-  //     }
-  //   })
-  //   .catch((error) => {
-  //     console.log(error)
-  //   })
-
-  // }
-
-  // async onChangeBuyer(id: any) {
-  //   await this.officerService.findPeople(id)
-  //     .then((results: any) => {
-  //       if (results.ok) {
-  //         this.buyer_fullname = results.rows[0].fname + ' ' + results.rows[0].lname;
-  //         this.buyer_position = results.rows.position_name;
-  //         this.buyer_id = results.rows.id;
-  //       } else {
-  //         this.buyer_fullname = '________________________________';
-  //       }
-  //     })
-  //     .catch((error) => {
-  //       console.log(error)
-  //     })
-  // }
-
   changeCommittee(event: any) {
-    this.verifyCommitteeId = event.committee_id;
+    this.verifyCommitteeId = event ? event.committee_id : null;
     this.getCommitteePeople(event.committee_id);
   }
 
+  // แสดงรายชื่อกรรมการ
   async getCommitteePeople(committeeId: string) {
     this.modalLoading.show();
     try {
@@ -1158,11 +1072,11 @@ export class OrderFormComponent implements OnInit {
   }
 
   changeOfficer(event: any) {
-    this.office = event ? event.people_id : null;
+    this.chiefId = event ? event.people_id : null;
   }
 
   changeOffice(event: any) {
-    this.office1 = event ? event.people_id : null;
+    this.buyerId = event ? event.people_id : null;
   }
 
   async getProductType() {
@@ -1175,18 +1089,18 @@ export class OrderFormComponent implements OnInit {
       this.modalLoading.hide();
       if (rs.rows) {
         this.productType = rs.rows;
-        this.generic_type_id = this.productType.length ? this.productType[0].generic_type_id : null;
+        this.genericTypeId = this.productType.length ? this.productType[0].generic_type_id : null;
       } else {
         this.alertService.error(rs.error);
       }
-      
+
     } catch (error) {
       this.alertService.error(JSON.stringify(error))
     }
   }
 
   onChangePurchaseMethod(event: any) {
-    this.purchaseMethod = event ? event.id : null;
+    this.purchaseMethodId = event ? event.id : null;
     this.bidAmount = event ? event.f_amount : 0;
   }
 
@@ -1211,7 +1125,7 @@ export class OrderFormComponent implements OnInit {
 
       this.labelerId = event.labeler_id;
       this.oldLabelerId = event.labeler_id;
-      
+
       this.searchProductLabeler.setApiUrl(this.labelerId);
     }
   }

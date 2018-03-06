@@ -33,6 +33,7 @@ export class SelectBoxUnitsComponent implements OnInit {
   setSelect(event: any) {
     const idx = _.findIndex(this.units, { unit_generic_id: +event.target.value });
     if (idx > -1) {
+      console.log(this.units[idx]);
       this.onChange.emit(this.units[idx]);
     }
   }

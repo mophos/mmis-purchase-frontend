@@ -27,7 +27,7 @@ export class SearchProductVendorComponent implements OnInit {
 
   token: any;
   query: any = null;
-  url: any;
+  url: any = null;
 
   constructor(
     @Inject('API_URL') private apiUrl: string) {

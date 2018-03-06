@@ -31,7 +31,7 @@ export class SearchVendorComponent implements OnInit {
   ngOnInit() {
   }
 
-  clearProductSearch() {
+  clearResult() {
     this.query = null;
   }
 

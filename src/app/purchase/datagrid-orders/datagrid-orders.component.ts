@@ -498,7 +498,7 @@ export class DatagridOrdersComponent implements OnInit {
         f2++;
       }
     });
-    console.log(f1, f2);
+  
     if (f1 !== f2) {
       this.htmlPrview.showReport(this.url + '/report/getporder/singburi/?' + poItems.join('&'));
     } else {
@@ -510,10 +510,11 @@ export class DatagridOrdersComponent implements OnInit {
   printRequistionSingburi(row: any) {
     this.htmlPrview.printRequistionSingburi(row);
   }
+
   goEdit(purchase_order_id) {
 
     if (this.accessCheck.confirm('PO_EDIT')) {
-      this.router.navigateByUrl('/purchase/order-form/edit?id=' + purchase_order_id);
+      this.router.navigateByUrl('/purchase/edit?purchaseOrderId=' + purchase_order_id);
     } else {
       this.alertService.error('คุณไม่มีสิทธิ์ในการแก้ไข', 'Access denied!');
     }

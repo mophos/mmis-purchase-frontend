@@ -46,25 +46,22 @@ export class BudgetTransectionService {
     });
   }
   
-  async getDetail(id: number, year: any) {
-    let rs: any = await this.authHttp.get(`${this.url}/budget-transection/get-detail/${id}/${year}`).toPromise();
+  async getBudgetPurchase(purchaseOrderId: string) {
+    let rs: any = await this.authHttp.get(`${this.url}/budget-transection/purchase-detail/${purchaseOrderId}`).toPromise();
     return rs.json();
   }
 
-  save(data: object) {
-    return new Promise((resolve, reject) => {
-      this.authHttp.post(`${this.url}/budget-transection`, { data })
-        .map(res => res.json())
-        .subscribe(data => {
-          resolve(data);
-        }, error => {
-          reject(error);
-        });
-    });
+  async getBudgetTransection(budgetDetailId: any) {
+    const res = await this.authHttp.get(`${this.url}/budget-transection/transaction/${budgetDetailId}`)
+      .toPromise();
+    return res.json();
   }
 
-  async getBudgetTransection(budgetYear: any, budgetDetailId: any) {
-    const res = await this.authHttp.get(`${this.url}/budget-transection/transaction/${budgetYear}/${budgetDetailId}`)
+  async getBudgetTransectionBalance(budgetDetailId: any, purchaseOrderId: any) {
+    const res = await this.authHttp.post(`${this.url}/budget-transection/transaction/balance`, {
+      purchaseOrderId: purchaseOrderId,
+      budgetDetailId: budgetDetailId
+    })
       .toPromise();
     return res.json();
   }
@@ -74,42 +71,5 @@ export class BudgetTransectionService {
       .toPromise();
     return res.json();
   }
-
-  update(id: string, data: object) {
-    return new Promise((resolve, reject) => {
-      this.authHttp.put(`${this.url}/budget-transection/${id}`, { data })
-        .map(res => res.json())
-        .subscribe(data => {
-          resolve(data);
-        }, error => {
-          reject(error);
-        });
-    });
-  }
-
-  cancel(id: string, data: object) {
-    return new Promise((resolve, reject) => {
-      this.authHttp.put(`${this.url}/budget-transection/cancel/${id}`, { data })
-        .map(res => res.json())
-        .subscribe(data => {
-          resolve(data);
-        }, error => {
-          reject(error);
-        });
-    });
-  }
-
-  remove(id: string) {
-    return new Promise((resolve, reject) => {
-      this.authHttp.delete(`${this.url}/budget-transection/${id}`)
-        .map(res => res.json())
-        .subscribe(data => {
-          resolve(data);
-        }, error => {
-          reject(error);
-        });
-    });
-  }
-
 
 }
