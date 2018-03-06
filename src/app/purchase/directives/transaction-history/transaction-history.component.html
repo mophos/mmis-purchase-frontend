@@ -1,4 +1,4 @@
-<clr-datagrid class="grid-order" [(clrDgLoading)]="loading" style="padding-top:15px;">
+<clr-datagrid class="grid-order" [(clrDgLoading)]="loading" style="height: 270px;">
   <clr-dg-column>วันที่</clr-dg-column>
   <clr-dg-column>เลขที่ใบสั่งซื้อ</clr-dg-column>
   <clr-dg-column>ยอดคงเหลือยกมา</clr-dg-column>
@@ -17,10 +17,8 @@
     </clr-dg-cell>
   </clr-dg-row>
   <clr-dg-footer>
-    จำนวนทั้งหมด
-    <strong>
-      <span class="badge"> {{transactions.length}}</span>
-    </strong> รายการ
-    <clr-dg-pagination #pagination [clrDgPageSize]="20"></clr-dg-pagination>
+    <clr-dg-pagination #pagination [clrDgPageSize]="10">
+      {{pagination.firstItem + 1}} - {{pagination.lastItem + 1}} จาก {{pagination.totalItems}} รายการ
+    </clr-dg-pagination>
   </clr-dg-footer>
 </clr-datagrid>

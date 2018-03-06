@@ -455,6 +455,7 @@ export class OrderFormComponent implements OnInit {
   }
 
   onBudgetCalculated(event: any) {
+    console.log(event);
     this.budgetData = event;
   }
 
@@ -489,6 +490,8 @@ export class OrderFormComponent implements OnInit {
       this.totalPrice = this.subTotal - discount;
       // let count: number = 0;
     }
+
+    
     
   }
 
@@ -656,15 +659,6 @@ export class OrderFormComponent implements OnInit {
   }
 
   async save() {
-    console.log('purchaseDate ', this.purchaseDate)
-    console.log('labelerId ', this.labelerId)
-    console.log('purchaseMethodId ', this.purchaseMethodId)
-    console.log('budgetTypeId ', this.budgetTypeId)
-    console.log('genericTypeId ', this.genericTypeId)
-    console.log('purchaseOrderItems ', this.purchaseOrderItems.length)
-    console.log('totalPrice ', this.totalPrice)
-    console.log('budgetDetailId ', this.budgetDetailId)
-    console.log('verifyCommitteeId ', this.verifyCommitteeId)
 
     if (this.purchaseDate && this.labelerId && this.purchaseMethodId &&
       this.budgetTypeId && this.genericTypeId && this.purchaseOrderItems.length &&
