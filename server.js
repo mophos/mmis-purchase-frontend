@@ -29,6 +29,8 @@ app.use(function(err, req, res, next) {
   res.send({ok: false, error: err.message})
 });
 
-app.listen(3008, function () {
+let port = +process.env.PORT || 3008;
+
+app.listen(port, function () {
   console.log('Purchasing-frontend listening on port 3008!')
 })
