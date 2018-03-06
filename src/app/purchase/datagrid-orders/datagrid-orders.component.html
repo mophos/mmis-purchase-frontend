@@ -97,21 +97,21 @@
       </span>
     </clr-dg-cell>
     <clr-dg-cell>
-      <del *ngIf="pro.is_cancel ==1" class="{{getStatusLabel(pro,'color')}}">{{getStatusLabel(pro)}}</del>
-      <span *ngIf="pro.is_cancel !=1" class="{{getStatusLabel(pro,'color')}}">{{getStatusLabel(pro)}}</span>
+      <del *ngIf="pro.is_cancel === 'Y'" class="{{getStatusLabel(pro,'color')}}">{{getStatusLabel(pro)}}</del>
+      <span *ngIf="pro.is_cancel !== 'Y'" class="{{getStatusLabel(pro,'color')}}">{{getStatusLabel(pro)}}</span>
       <span *ngIf="pro.contract_id" role="tooltip" aria-haspopup="true" class="tooltip tooltip-md">
         <clr-icon class="text-success" shape="certificate" title="{{pro.contract_id}}"></clr-icon>
         <span class="tooltip-content">{{pro.contract_id}}</span>
       </span>
-      <span *ngIf="pro.is_cancel==1" class="badge badge-warning">ยกเลิก</span>
+      <span *ngIf="pro.is_cancel==='Y'" class="badge badge-warning">ยกเลิก</span>
     </clr-dg-cell>
     <clr-dg-cell>
-      <del *ngIf="pro.is_cancel==1">{{pro.purchase_order_number}}</del>
-      <span *ngIf="pro.is_cancel !=1 ">{{pro.purchase_order_number}}</span>
+      <del *ngIf="pro.is_cancel==='Y'">{{pro.purchase_order_number}}</del>
+      <span *ngIf="pro.is_cancel !=='Y' ">{{pro.purchase_order_number}}</span>
     </clr-dg-cell>
     <clr-dg-cell class="text-right text-success">
-      <del *ngIf="pro.is_cancel==1"> {{pro.puchase_money_total | number: '1.2'}}</del>
-      <span *ngIf="pro.is_cancel !=1 "> {{pro.puchase_money_total | number: '1.2'}}</span>
+      <del *ngIf="pro.is_cancel==='Y'"> {{pro.puchase_money_total | number: '1.2'}}</del>
+      <span *ngIf="pro.is_cancel !=='Y' "> {{pro.puchase_money_total | number: '1.2'}}</span>
     </clr-dg-cell>
     <clr-dg-cell class="text-right">{{pro.order_date | toThaiDate}} </clr-dg-cell>
     <clr-dg-cell>{{pro.labeler_name}}</clr-dg-cell>
@@ -119,7 +119,7 @@
     <clr-dg-cell>{{pro.contract_id}}</clr-dg-cell>
 
     <clr-dg-action-overflow>
-      <button class="action-item" [disabled]="pro.recieve_count > 0" (click)="goEdit(pro.purchase_order_id)">
+      <button class="action-item" [disabled]="pro.recieve_count > 0 || pro.is_cancel ==='Y'" (click)="goEdit(pro.purchase_order_id)">
         <clr-icon shape="note-edit"></clr-icon> แก้ไข</button>
 
       <button *ngIf="btnConfirmIsActive(pro)" class="action-item" (click)="confirm(pro)">
@@ -151,11 +151,11 @@
       <button *ngIf="pro.recieve_count > 0" (click)="getReceiveInfo(pro)" class="action-item">
         <clr-icon shape="search"></clr-icon> ดูรายละเอียดการรับ
       </button>
-      <button [disabled]="pro.purchase_order_status === 'COMPLETED' || pro.is_cancel === 1 || pro.recieve_count > 0" (click)="cancle(pro)"
+      <button [disabled]="pro.purchase_order_status === 'COMPLETED' || pro.is_cancel === 'Y' || pro.recieve_count > 0" (click)="cancle(pro)"
         class="action-item">
         <clr-icon shape="cancel"></clr-icon> ยกเลิก
       </button>
-      <button *ngIf="pro.purchase_order_status==='APPROVED' || pro.is_cancel === 1" (click)="changeToPrepare(pro)" class="action-item">
+      <button *ngIf="pro.purchase_order_status==='APPROVED' || pro.is_cancel === 'Y'" (click)="changeToPrepare(pro)" class="action-item">
         <clr-icon shape="cancel"></clr-icon> เปลี่ยนสถานะเป็น เตรียมใบสั่งซื้อ
       </button>
     </clr-dg-action-overflow>

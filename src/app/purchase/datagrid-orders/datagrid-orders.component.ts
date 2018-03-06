@@ -166,7 +166,7 @@ export class DatagridOrdersComponent implements OnInit {
   async confirm(order: any) {
     let purchases = [];
     if (this.accessCheck.confirm('PO_CONFIRM')) {
-      if (order.purchase_order_status !== "ORDERPOINT" && order.is_cancel !== 1) {
+      if (order.purchase_order_status !== "ORDERPOINT" && order.is_cancel !== 'Y') {
         if (this.canUpdateStatus(order.purchase_order_status, 'CONFIRMED')) {
           let data = {
             purchase_order_id: order.purchase_order_id,
@@ -204,7 +204,7 @@ export class DatagridOrdersComponent implements OnInit {
   async approve(order: any) {
     let purchases = [];
     if (this.accessCheck.confirm('PO_APPROVE')) {
-      if (order.purchase_order_status !== "ORDERPOINT" && order.is_cancel !== 1) {
+      if (order.purchase_order_status !== "ORDERPOINT" && order.is_cancel !== 'Y') {
         if (this.canUpdateStatus(order.purchase_order_status, 'APPROVED')) {
           let data = {
             purchase_order_id: order.purchase_order_id,
@@ -250,7 +250,7 @@ export class DatagridOrdersComponent implements OnInit {
     if (this.accessCheck.confirm(type === 'CONFIRMED' ? 'PO_CONFIRM' : 'PO_APPROVE')) {
       this.alertService.confirm(message).then(async () => {
         this.purchaseOrdersSelected.forEach(element => {
-          if (element.purchase_order_status !== "ORDERPOINT" && element.is_cancel !== 1) {
+          if (element.purchase_order_status !== "ORDERPOINT" && element.is_cancel !== 'Y') {
             if (this.canUpdateStatus(element.purchase_order_status, type)) {
               if (this.getConfirmData(type, element) !== false) {
                 const data: any = this.getConfirmData(type, element);
@@ -386,9 +386,9 @@ export class DatagridOrdersComponent implements OnInit {
     this.getPurchaseOrders();
   }
 
-  getStatusTextCancel(pro: any) {
-    return pro.is_cancel == 1 ? '' : '';
-  }
+  // getStatusTextCancel(pro: any) {
+  //   return pro.is_cancel === 'Y' ? '' : '';
+  // }
 
   btnEditIsActive(pro: any) {
     if (pro.purchase_order_status === 'COMPLETED' || pro.purchase_order_status === 'APPROVED') {
@@ -399,7 +399,7 @@ export class DatagridOrdersComponent implements OnInit {
   }
 
   btnCancelIsActive(pro: any) {
-    if (pro.purchase_order_status === 'COMPLETED' || pro.is_cancel === 1 || pro.recieve_count > 0) {
+    if (pro.purchase_order_status === 'COMPLETED' || pro.is_cancel === 'Y' || pro.recieve_count > 0) {
       return false;
     } else {
       return true;
@@ -444,7 +444,7 @@ export class DatagridOrdersComponent implements OnInit {
     if (pro.purchase_order_status === 'COMPLETED'
       || pro.purchase_order_status === 'CONFIRMED'
       || pro.purchase_order_status === 'APPROVED'
-      || pro.is_cancel === 1) {
+      || pro.is_cancel === 'Y') {
       return false;
     } else {
       return true;
@@ -459,7 +459,7 @@ export class DatagridOrdersComponent implements OnInit {
     if(this.isConfirm && pro.purchase_order_status !== 'CONFIRMED'){
       return false;
     }
-    if (pro.purchase_order_status === 'COMPLETED' || pro.purchase_order_status === 'APPROVED' || pro.is_cancel === 1) {
+    if (pro.purchase_order_status === 'COMPLETED' || pro.purchase_order_status === 'APPROVED' || pro.is_cancel === 'Y') {
       return false;
     } else {
       return true;
@@ -504,7 +504,7 @@ export class DatagridOrdersComponent implements OnInit {
     } else {
       this.alertService.error('ข้อมุูลไม่ครบถ้วน');
     }
-    console.log(poItems);
+
   }
 
   printRequistionSingburi(row: any) {
