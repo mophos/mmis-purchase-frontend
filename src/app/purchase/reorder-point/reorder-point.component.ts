@@ -12,6 +12,7 @@ import * as _ from 'lodash';
 import { State } from '@clr/angular';
 import { SettingService } from 'app/purchase/share/setting.service';
 import { ModalLoadingComponent } from 'app/modal-loading/modal-loading.component';
+import { JwtHelper } from 'angular2-jwt';
 
 @Component({
   selector: 'app-reorder-point',
@@ -38,6 +39,8 @@ export class ReorderPointComponent implements OnInit {
   defaultBudgetYear: number;
 
   orderItems: any = [];
+  token: any;
+  jwtHelper: JwtHelper = new JwtHelper();
 
   constructor(
     private ref: ChangeDetectorRef,
@@ -50,7 +53,9 @@ export class ReorderPointComponent implements OnInit {
     private purchasingOrderItemService: PurchasingOrderItemService,
     private genericTypeService: GenericTypeService,
     private settingService: SettingService
-  ) { }
+  ) {
+    this.token = sessionStorage.getItem('token');
+   }
 
   async ngOnInit() {
     this.settings('PC');
@@ -89,7 +94,8 @@ export class ReorderPointComponent implements OnInit {
   async getProducts(q: string = '', limit: number = 100, offset: number = 0) {
     this.modalLoading.show();
     try {
-      const rs: any = await this.productService.ordersPoint(q, this.contractFilter, this.minMaxFilter, this.generic_type_id, limit, offset);
+      // if (!this.generic_type_id) this.generic_type_id = this.generictsType[0].generic_type_id;
+      const rs: any = await this.productService.ordersPoint(q, this.contractFilter, this.generic_type_id, limit, offset);
       this.products = [];
       // this.products = res.ok ? res.rows : [];
       if (rs.ok) {
@@ -125,10 +131,22 @@ export class ReorderPointComponent implements OnInit {
     this.modalLoading.show();
     try {
       const res: any = await this.genericTypeService.all();
-      this.generictsType = res.ok ? res.rows : [];
-      // if (this.generictsType.length > 0) {
-      //   this.generic_type_id = this.generictsType[0].generic_type_id;
-      // }
+
+      let decoded = this.jwtHelper.decodeToken(this.token);
+      let genericIds = decoded.generic_type_id ? decoded.generic_type_id.split(',') : [];
+
+      let data = res.ok ? res.rows : [];
+
+      data.forEach(v => {
+        genericIds.forEach(i => {
+          if (+i === +v.generic_type_id) {
+            this.generictsType.push(v);
+          }
+        })
+      })
+
+      // this.generic_type_id = data[0].generic_type_id;
+
       this.modalLoading.hide();
       this.ref.detectChanges();
     } catch (error) {

@@ -24,8 +24,8 @@ export class ProductService {
     return res.json();
   }
 
-  async ordersPoint(q:string='', contractFilter='all', minMaxFilter='0',genericType:string ='',limit:number=50, offset:number=0) {
-    const res = await this.authHttp.post(`${this.url}/${this.apiName}/orderspoint?q=${q}&contract=${contractFilter}&minmax=${minMaxFilter}&generictype=${genericType}`,{
+  async ordersPoint(q:string='', contractFilter='all', genericType: any, limit:number=50, offset:number=0) {
+    const res = await this.authHttp.post(`${this.url}/${this.apiName}/orderspoint?q=${q}&contract=${contractFilter}&generictype=${genericType}`,{
       limit,
       offset
     }).toPromise();
