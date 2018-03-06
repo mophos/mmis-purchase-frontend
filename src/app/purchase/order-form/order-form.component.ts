@@ -468,11 +468,11 @@ export class OrderFormComponent implements OnInit {
 
     this.purchaseOrderItems.forEach(v => {
       if (v.is_giveaway == "N") {
-        _purchaseOrderItems.push(v.total_cost)
+        this.subTotal += +v.total_cost;
       }
     });
 
-    this.subTotal = _.sum(_purchaseOrderItems);
+    // this.subTotal = _.sum(_purchaseOrderItems);
     discount = this.calDiscount(this.subTotal);
     afterDiscount = this.subTotal - discount;
 
@@ -883,20 +883,9 @@ export class OrderFormComponent implements OnInit {
     try {
       this.modalLoading.show();
       let rs: any = await this.purchasingOrderItemService.allByOrderID(orderId);
+      this.modalLoading.hide();
       if (rs.ok) {
         let products = rs.rows;
-
-        // product.cost = +this.selectedCost;
-        // product.product_id = this.selectedProduct.product_id;
-        // product.generic_id = this.selectedProduct.generic_id;
-        // product.generic_name = this.selectedProduct.generic_name;
-        // product.product_name = this.selectedProduct.product_name;
-        // product.is_giveaway = this.isGiveaway ? 'Y' : 'N';
-        // product.qty = this.selectedQty;
-        // product.unit_generic_id = this.selectedUnit.unit_generic_id;
-        // product.small_qty = this.selectedUnit.qty;
-        // product.total_cost = this.selectedCost * this.selectedQty;
-        // product.total_small_qty = this.selectedQty * this.selectedUnit.qty;
 
         for (let v of products) {
           let obj: IProductOrderItems = {
@@ -908,19 +897,16 @@ export class OrderFormComponent implements OnInit {
             qty: v.qty,
             total_small_qty: v.qty * v.small_qty,
             unit_generic_id: v.unit_generic_id,
-            total_cost: v.cost*v.qty,
+            total_cost: v.unit_price*v.qty,
             is_giveaway: v.giveaway || 'N',
             small_qty: v.small_qty
           }
           this.purchaseOrderItems.push(obj);
         }
 
-        this.modalLoading.hide();
-
         this.calAmount();
-
+        
       } else {
-        this.modalLoading.hide();
         this.alertService.error(rs.error);
       }
     } catch (error) {
