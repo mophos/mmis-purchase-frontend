@@ -77,6 +77,7 @@ import { ExpandReceiveItemsComponent } from './expand-receive-items/expand-recei
 import { ReceiveService } from 'app/purchase/share/receive.service';
 import { TransactionPoComponent } from './directives/transaction-po/transaction-po.component';
 import { BudgetRemainComponent } from './directives/budget-remain/budget-remain.component';
+import { TransactionHistoryComponent } from './directives/transaction-history/transaction-history.component';
 
 @NgModule({
   imports: [
@@ -128,7 +129,8 @@ import { BudgetRemainComponent } from './directives/budget-remain/budget-remain.
     ModalReceivesComponent,
     ExpandReceiveItemsComponent,
     TransactionPoComponent,
-    BudgetRemainComponent
+    BudgetRemainComponent,
+    TransactionHistoryComponent
   ],
   providers: [
     BudgetTransectionService,

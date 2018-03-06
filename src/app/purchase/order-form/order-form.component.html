@@ -305,8 +305,8 @@
               </div>
             </div>
             <div class="col-md-4">
-              <po-budget-remain [purchaseOrderId]="purchaseOrderId" (onCalculated)="onBudgetCalculated($event)" [purchaseAmount]="totalPrice" [budgetDetailId]="budgetDetailId"
-                [budgetYear]="budgetYear"></po-budget-remain>
+              <po-budget-remain [purchaseOrderId]="purchaseOrderId" (onCalculated)="onBudgetCalculated($event)" [purchaseAmount]="totalPrice"
+                [budgetDetailId]="budgetDetailId" [budgetYear]="budgetYear"></po-budget-remain>
             </div>
             <div class="col-md-4">
               <div class="card" style="min-height:255px;">
@@ -418,21 +418,21 @@
       </clr-tab-content>
     </clr-tab>
 
-    <clr-tab>
+    <!-- <clr-tab>
       <button clrTabLink>ประวัติการตัดงบ</button>
       <clr-tab-content id="tab-detail-4" *clrIfActive>
         <br>
-        <app-budgetransection #bgTransection [budgetYear]="budget_year" [budgetDetailId]="budget_detail_id"></app-budgetransection>
+        <po-transaction-history [budgetDetailId]="budgetDetailId"></po-transaction-history>
       </clr-tab-content>
-    </clr-tab>
+    </clr-tab> -->
 
-    <clr-tab>
+    <!-- <clr-tab>
       <button clrTabLink>ประวัติการแก้ไข</button>
       <clr-tab-content id="tab-detail-5" *clrIfActive>
         <br>
         <app-transaction-po #transactionPo [purchaseOrderId]="purchase_order_id"></app-transaction-po>
       </clr-tab-content>
-    </clr-tab>
+    </clr-tab> -->
   </clr-tabs>
 
   <hr class="hr">

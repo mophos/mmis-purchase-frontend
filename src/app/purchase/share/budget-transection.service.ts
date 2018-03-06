@@ -46,6 +46,11 @@ export class BudgetTransectionService {
     });
   }
   
+  async getHistory(budgetDetailId: string) {
+    let rs: any = await this.authHttp.get(`${this.url}/budget-transection/history/${budgetDetailId}`).toPromise();
+    return rs.json();
+  }
+  
   async getBudgetPurchase(purchaseOrderId: string) {
     let rs: any = await this.authHttp.get(`${this.url}/budget-transection/purchase-detail/${purchaseOrderId}`).toPromise();
     return rs.json();

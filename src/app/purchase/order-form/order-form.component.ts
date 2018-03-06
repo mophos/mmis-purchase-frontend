@@ -40,7 +40,6 @@ import * as moment from 'moment';
 import * as _ from 'lodash';
 // import { forEach } from '@angular/router/src/utils/collection';
 import { SelectBoxUnitsComponent } from 'app/select-boxes/select-box-units/select-box-units.component';
-import { BudgetransectionComponent } from 'app/purchase/directives/budgetransection/budgetransection.component';
 import { TransactionPoComponent } from 'app/purchase/directives/transaction-po/transaction-po.component';
 import { IProductOrderItem, IGenericUnit, IProductOrderItems } from 'app/interfaces'
 import { log } from 'util';
@@ -59,7 +58,6 @@ export class OrderFormComponent implements OnInit {
   @ViewChild('htmlPrview') htmlPrview: HtmlPreviewComponent;
   @ViewChild('searchProductLabeler') searchProductLabeler: SearchProductVendorComponent;
   @ViewChild('selectBoxUnit') selectBoxUnit: SelectBoxUnitsComponent;
-  @ViewChild('bgTransection') bgTransection: BudgetransectionComponent;
   @ViewChild('transactionPo') transactionPo: TransactionPoComponent;
   @ViewChild('modalLoading') modalLoading: ModalLoadingComponent;
   @ViewChild('subBudgetList') subBudgetList: SelectSubBudgetComponent;
