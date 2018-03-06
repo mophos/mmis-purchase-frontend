@@ -464,7 +464,9 @@ export class OrderFormComponent implements OnInit {
     let afterDiscount: number = 0;
     let discount: number = 0;
     let checkloop = 0;
-    let _purchaseOrderItems: any = [];
+    this.subTotal = 0;
+    this.totalPrice = 0;
+    // let _purchaseOrderItems: any = [];
 
     this.purchaseOrderItems.forEach(v => {
       if (v.is_giveaway == "N") {
