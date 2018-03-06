@@ -413,10 +413,10 @@ export class DatagridOrdersComponent implements OnInit {
     if (!pro.budget_detail_id) {
       return false;
     }
-    if (!pro.purchase_type) {
+    if (!pro.purchase_type_id) {
       return false;
     }
-    if (!pro.purchase_method) {
+    if (!pro.purchase_method_id) {
       return false;
     }
     if (!pro.buyer_id) {
@@ -618,6 +618,7 @@ export class DatagridOrdersComponent implements OnInit {
     }
 
   }
+
   settings(){
     this.settingService.byModule('PC')
     .then(async (results: any) => {
