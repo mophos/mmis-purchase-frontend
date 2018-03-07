@@ -127,19 +127,19 @@
       <button *ngIf="btnApproveIsActive(pro)" class="action-item" (click)="approve(pro)">
         <clr-icon shape="tasks"></clr-icon> อนุมัติการสั่งซื้อ</button>
 
-      <button class="action-item" (click)="printRequistionSingburi(pro)" *ngIf="pro.purchase_order_status !== 'ORDERPOINT'">
+      <button class="action-item" (click)="printRequistionSingburi(pro)" [disabled]="pro.purchase_order_status === 'ORDERPOINT' || pro.is_cancel == 'Y'">
         <clr-icon shape="printer"></clr-icon> พิมพ์ใบขอซื้อ
       </button>
-      <button class="action-item" (click)="printPurchaseOrder(pro)" *ngIf="pro.purchase_order_status !== 'ORDERPOINT'">
+      <button class="action-item" (click)="printPurchaseOrder(pro)" [disabled]="pro.purchase_order_status === 'ORDERPOINT' || pro.is_cancel == 'Y'">
         <clr-icon shape="printer"></clr-icon> พิมพ์ใบสั่งซื้อ
       </button>
-      <button class="action-item" (click)="printpPurchasing(pro)" *ngIf="pro.purchase_order_status !== 'ORDERPOINT'">
+      <button class="action-item" (click)="printpPurchasing(pro)" [disabled]="pro.purchase_order_status === 'ORDERPOINT' || pro.is_cancel == 'Y'">
         <clr-icon shape="printer"></clr-icon> พิมพ์ใบสรุปรายการเวชภัณฑ์ที่สั่งซื้อ
       </button>
-      <button class="action-item" (click)="printPurchaseOrderAttach(pro)" *ngIf="pro.purchase_order_status !== 'ORDERPOINT'">
+      <button class="action-item" (click)="printPurchaseOrderAttach(pro)" [disabled]="pro.purchase_order_status === 'ORDERPOINT' || pro.is_cancel == 'Y'">
         <clr-icon shape="printer"></clr-icon> พิมพ์ใบแนบใบสั่งซื้อ
       </button>
-      <button class="action-item" (click)="printPurchaseOrderEgp(pro)" *ngIf="pro.purchase_order_status !== 'ORDERPOINT'">
+      <button class="action-item" (click)="printPurchaseOrderEgp(pro)" [disabled]="pro.purchase_order_status === 'ORDERPOINT' || pro.is_cancel == 'Y'">
         <clr-icon shape="printer"></clr-icon> พิมพ์แบบฟอร์ม e-GP
       </button>
 
