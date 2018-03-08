@@ -301,10 +301,12 @@
                   <div class="card-block">
                     <form class="compact box-pricing" style="margin-top:0px;padding-top:0;">
                       <section class="form-block" style="margin-top:0px;">
-                        <div class="form-group">
+                        <div class="form-control" style="height:24px; line-height:24px; margin-top:5px;">
                           <label for="excludeVat">
-                            <input type="checkbox" id="isBeforeVat" name="excludeVat" [(ngModel)]="excludeVat" (change)="calAmount()"> ถอดภาษี</label>
-                          <div class="form-control" style="height:24px; line-height:24px; margin-top:5px;"></div>
+                            <input type="checkbox" id="isBeforeVat" name="excludeVat" [(ngModel)]="excludeVat" (change)="checkVat('excludeVat')"> ถอดภาษี</label>
+                          <label for="addVat" style="margin-left:20px;">
+                            <input type="checkbox" id="isAddVat" name="addVat" [(ngModel)]="addVat" (change)="checkVat('addVat')"> เพิ่มภาษี</label>
+                          <!-- <div class="form-control" style="height:24px; line-height:24px; margin-top:5px;"></div> -->
                         </div>
 
                         <div class="form-group">
@@ -329,7 +331,7 @@
                         <div class="form-group">
                           <label for="vatRate">ภาษี ( % )</label>
                           <div class="inline-box">
-                            <input type="number" [disabled]="!excludeVat" min="0" max="100" style="width:30%" id="vatRate" name="vatRate" [(ngModel)]="vatRate"
+                            <input type="number" [disabled]="!excludeVat&&!this.addVat" min="0" max="100" style="width:30%" id="vatRate" name="vatRate" [(ngModel)]="vatRate"
                               (keyup)="calAmount()" (change)="calAmount()">
                             <input type="text" class="" id="vat" name="vat" style="width:70%" value="{{vat | number:'1.2-2'}}" disabled>
                           </div>

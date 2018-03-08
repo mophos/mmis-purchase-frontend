@@ -152,7 +152,9 @@ export class OrderFormComponent implements OnInit {
   discountCash: number = 0;
   subTotal: number = 0;
   vatRate: number;
+  vatRateTmp: number;
   excludeVat: boolean = false;
+  addVat: boolean = false;
   vat: number = 0;
   totalPrice: number = 0;
   // incomingBalance: number = 0;
@@ -254,10 +256,11 @@ export class OrderFormComponent implements OnInit {
     let token = sessionStorage.getItem('token');
     let decoded = this.jwtHelper.decodeToken(token);
 
-    this.vatRate = decoded.PC_VAT ? decoded.PC_VAT : 7;
-    this.currentVatRate = decoded.PC_VAT ? decoded.PC_VAT : 7;
+    this.vatRateTmp = decoded.PC_VAT
+    this.vatRate = this.vatRateTmp
+    this.currentVatRate = decoded.PC_VAT
 
-    this.delivery = decoded.PC_SHIPPING_DATE ? decoded.PC_SHIPPING_DATE : 30;
+    this.delivery = decoded.PC_SHIPPING_DATE
     this.budgetYear = decoded.PC_DEFAULT_BUDGET_YEAR;
     this.currentBudgetYear = decoded.PC_DEFAULT_BUDGET_YEAR;
   }
@@ -459,6 +462,18 @@ export class OrderFormComponent implements OnInit {
     this.budgetData = event;
   }
 
+  checkVat(event: any) {
+    if (event == 'excludeVat' && this.excludeVat) {
+      this.addVat = false
+      this.vatRate = this.vatRateTmp
+    }
+    else if (event == 'addVat' && this.addVat) {
+      this.excludeVat = false
+      this.vatRate = this.vatRateTmp
+    }
+    this.calAmount()
+  }
+
   calAmount() {
     let afterDiscount: number = 0;
     let discount: number = 0;
@@ -476,26 +491,26 @@ export class OrderFormComponent implements OnInit {
     // this.subTotal = _.sum(_purchaseOrderItems);
     discount = this.calDiscount(this.subTotal);
     afterDiscount = this.subTotal - discount;
-
     if (this.excludeVat) {
       this.totalPrice = this.subTotal - discount;
       this.vat = (this.totalPrice - discount) * (this.vatRate / 100);
       this.subTotal = (this.totalPrice - discount) - this.vat;
-
-    } else {
-      this.vat = afterDiscount * this.vatRate / 100;
-      this.totalPrice = this.vat + afterDiscount;
+    } else if (this.addVat) {
+      this.totalPrice = this.subTotal - discount;
+      this.vat = this.totalPrice * (this.vatRate / 100);
+      this.totalPrice = this.totalPrice + this.vat;
+    }
+    else {
       this.vatRate = null;
       this.vat = 0;
       this.totalPrice = this.subTotal - discount;
       // let count: number = 0;
     }
-
-    
-    
   }
 
   calDiscount(subTotal: number): number {
+    console.log(this.discountPercent);
+
     this.discountPercentAmount = this.discountPercent * subTotal / 100;
     return ((+this.discountPercentAmount) + (+this.discountCash));
   }
@@ -576,17 +591,17 @@ export class OrderFormComponent implements OnInit {
     this.purchaseOrderBookNumber = data.purchase_order_book_number;
     this.purchaseOrderNumber = data.purchase_order_number;
     // this.requisition_id = data.requisition_id;
-    
+
     if (data.generic_type_id) {
       this.genericTypeId = data.generic_type_id;
     } else {
       this.genericTypeId = this.productType.length ? this.productType[0].generic_type_id : null;
     }
-    
+
     this.contractId = data.contract_id;
     this.contractRef = data.contract_ref;
     this.purchaseOrderId = data.purchase_order_id;
-   
+
     if (data.purchase_method_id) {
       this.purchaseMethodId = data.purchase_method_id;
     }
@@ -621,6 +636,7 @@ export class OrderFormComponent implements OnInit {
 
     // this.buyerFullname = data.buyer_fullname;
     // this.chiefFullname = data.chief_fullname;
+    this.addVat = data.include_vat === 'Y' ? true : false;
     this.excludeVat = data.exclude_vat === 'Y' ? true : false;
     // this.isBeforeVat = data.is_before_vat === 'Y' ? true : false;
     // this.chiefPosition = data.chief_position;
@@ -827,6 +843,7 @@ export class OrderFormComponent implements OnInit {
         discount_cash: this.discountCash,
         vat_rate: this.vatRate,
         vat: this.vat,
+        include_vat: this.addVat ? 'Y' : 'N',
         exclude_vat: this.excludeVat ? 'Y' : 'N',
         // is_before_vat: this.isBeforeVat ? 'Y' : 'N',
         total_price: this.totalPrice,
@@ -872,7 +889,7 @@ export class OrderFormComponent implements OnInit {
   async getPurchaseOrderDetail(orderId: string) {
     this.loading = true;
     this.modalLoading.show();
-    
+
     try {
       let rs: any = await this.purchasingOrderService.detail(orderId);
       if (rs.ok) {
@@ -881,7 +898,7 @@ export class OrderFormComponent implements OnInit {
         await this.setOrderDetail(rs.detail);
         this.searchProductLabeler.setApiUrl(rs.detail.labeler_id);
         await this.getPurchaseOrderItems(this.purchaseOrder.purchase_order_id);
-        
+
       } else {
         this.alertService.error(rs.error);
       }
@@ -915,7 +932,7 @@ export class OrderFormComponent implements OnInit {
             qty: v.qty,
             total_small_qty: v.qty * v.small_qty,
             unit_generic_id: v.unit_generic_id,
-            total_cost: v.unit_price*v.qty,
+            total_cost: v.unit_price * v.qty,
             is_giveaway: v.giveaway || 'N',
             small_qty: v.small_qty
           }
@@ -923,7 +940,7 @@ export class OrderFormComponent implements OnInit {
         }
 
         this.calAmount();
-        
+
       } else {
         this.alertService.error(rs.error);
       }
