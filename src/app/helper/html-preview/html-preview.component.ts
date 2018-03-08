@@ -59,9 +59,9 @@ export class HtmlPreviewComponent implements OnInit {
     const forms: Array<any> = [
       { 'id': '1', 'name': 'บันทึกข้อความขอความ (สิงห์บุรี)', path: this.url + '/report/purchasing/10/?purchaOrderId=' + order_id + '&type=8&bgtype=1' },
       { 'id': '2', 'name': 'ใบสั่งซื้อ (สิงห์บุรี)', path: this.url + '/report/purchasingorder/?orderId=' + order_id },
-      { 'id': '3', 'name': 'ใบแนบใบสั่งซื้อ (สิงห์บุรี)', path: this.url + '/report/purchasing/11/?purchaOrderId=' + order_id + '&type=8&bgtype=1' },
+      { 'id': '3', 'name': 'ใบองค์การเภสัชกรรม (สิงห์บุรี)', path: this.url + '/report/purchasing/11/?purchaOrderId=' + order_id + '&type=8&bgtype=1' },
       { 'id': '4', 'name': 'ใบสั่งซื้อที่เลือก (สิงห์บุรี)', path: this.url + '/report/getporder/' },
-      { 'id': '5', 'name': 'แบบฟอ์รม e-GP', path: this.url + '/report/po/egp?purchaOrderId=' + order_id + '&type=8' },
+      { 'id': '5', 'name': 'แบบฟอ์รม e-GP', path: this.url + '/report/po/egp/singburi?purchaOrderId=' + order_id + '&type=8' },
     ];
     const print = _.find(forms, { 'id': id });
     this.showReport(print ? print.path : this.url);
@@ -81,8 +81,4 @@ export class HtmlPreviewComponent implements OnInit {
   printPurchaseOrderEgp(row: any) {
     this.printReportItems('5', row.purchase_order_id);
   }
-
-
-
-
 }
