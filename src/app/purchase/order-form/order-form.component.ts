@@ -256,11 +256,11 @@ export class OrderFormComponent implements OnInit {
     let token = sessionStorage.getItem('token');
     let decoded = this.jwtHelper.decodeToken(token);
 
-    this.vatRateTmp = decoded.PC_VAT
-    this.vatRate = this.vatRateTmp
-    this.currentVatRate = decoded.PC_VAT
+    this.vatRateTmp = decoded.PC_VAT ? decoded.PC_VAT : 7;
+    this.vatRate = this.vatRateTmp;
+    this.currentVatRate = decoded.PC_VAT ? decoded.PC_VAT : 7;
 
-    this.delivery = decoded.PC_SHIPPING_DATE
+    this.delivery = decoded.PC_SHIPPING_DATE ? decoded.PC_SHIPPING_DATE : 30;
     this.budgetYear = decoded.PC_DEFAULT_BUDGET_YEAR;
     this.currentBudgetYear = decoded.PC_DEFAULT_BUDGET_YEAR;
   }
