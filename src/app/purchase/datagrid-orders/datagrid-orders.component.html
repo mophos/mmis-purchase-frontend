@@ -137,7 +137,7 @@
         <clr-icon shape="printer"></clr-icon> พิมพ์ใบสรุปรายการเวชภัณฑ์ที่สั่งซื้อ
       </button>
       <button class="action-item" (click)="printPurchaseOrderAttach(pro)" [disabled]="pro.purchase_order_status === 'ORDERPOINT' || pro.is_cancel == 'Y'">
-        <clr-icon shape="printer"></clr-icon> พิมพ์ใบแนบใบสั่งซื้อ
+        <clr-icon shape="printer"></clr-icon> พิมพ์ใบองค์การเภสัชกรรม
       </button>
       <button class="action-item" (click)="printPurchaseOrderEgp(pro)" [disabled]="pro.purchase_order_status === 'ORDERPOINT' || pro.is_cancel == 'Y'">
         <clr-icon shape="printer"></clr-icon> พิมพ์แบบฟอร์ม e-GP
