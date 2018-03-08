@@ -3,8 +3,7 @@ import { PurchasingOrderService } from '../../share/purchasing-order.service';
 
 @Component({
   selector: 'app-product-history',
-  templateUrl: './product-history.component.html',
-  styleUrls: ['./product-history.component.css']
+  templateUrl: './product-history.component.html'
 })
 export class ProductHistoryComponent implements OnInit {
 
