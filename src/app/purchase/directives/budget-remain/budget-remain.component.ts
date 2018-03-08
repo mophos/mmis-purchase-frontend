@@ -18,6 +18,7 @@ export class BudgetRemainComponent implements OnInit {
   budgetRemain: number = 0;
   budgetName: string;
   contractNo: string;
+  purchaseAmount: number;
 
   @Input('purchaseAmount')
   set setPurchaseAmount(value: any) {
@@ -61,6 +62,7 @@ export class BudgetRemainComponent implements OnInit {
       if (rs.ok) {
         let totalPurchase = rs.totalPurchase ? +rs.totalPurchase : 0;
         this.budgetRemain = this.budgetAmount - totalPurchase;
+        this.purchaseAmount = totalPurchase;
       }
     } catch (error) {
       console.log(error);

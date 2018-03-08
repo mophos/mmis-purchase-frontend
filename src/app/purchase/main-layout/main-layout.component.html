@@ -7,8 +7,39 @@
             </a>
         </div>
         <div class="header-nav">
-            <a class=" nav-link nav-icon" href="{{homeUrl}}" routerLinkActive='active'>
+            <a href="{{homeUrl}}" class=" nav-link nav-icon tooltip tooltip-md tooltip-bottom-right" role="tooltip" aria-haspopup="true">
                 <clr-icon shape="home"></clr-icon>
+                <span class="tooltip-content">Home</span>
+            </a>
+            <a class=" nav-link nav-icon tooltip tooltip-md tooltip-bottom-right" routerLink="{{env.purchasingUrl}}" routerLinkActive="active"
+                role="tooltip" aria-haspopup="true">
+                <clr-icon shape="shopping-cart"></clr-icon>
+                <span class="tooltip-content">Purchasing</span>
+            </a>
+            <a href="{{env.planningUrl}}" *ngIf="Planning" class=" nav-link nav-icon tooltip tooltip-md tooltip-bottom-right" role="tooltip"
+                aria-haspopup="true">
+                <clr-icon shape="event"></clr-icon>
+                <span class="tooltip-content">Planning</span>
+            </a>
+            <a href="{{env.inventoryUrl}}" *ngIf="Inventory || InventoryWarehouse" class=" nav-link nav-icon tooltip tooltip-md tooltip-bottom-right"
+                role="tooltip" aria-haspopup="true">
+                <clr-icon shape="data-cluster"></clr-icon>
+                <span class="tooltip-content">Inventory</span>
+            </a>
+            <a href="{{env.materialsUrl}}" *ngIf="Materials" class=" nav-link nav-icon tooltip tooltip-md tooltip-bottom-right" role="tooltip"
+                aria-haspopup="true">
+                <clr-icon shape="storage"></clr-icon>
+                <span class="tooltip-content">Materials</span>
+            </a>
+            <a href="{{env.contractsUrl}}" *ngIf="Contracts" class=" nav-link nav-icon tooltip tooltip-md tooltip-bottom-right" role="tooltip"
+                aria-haspopup="true">
+                <clr-icon shape="scroll"></clr-icon>
+                <span class="tooltip-content">Contracts</span>
+            </a>
+            <a href="{{env.umUrl}}" *ngIf="Administrator" class=" nav-link nav-icon tooltip tooltip-md tooltip-bottom-right" role="tooltip"
+                aria-haspopup="true">
+                <clr-icon shape="cog"></clr-icon>
+                <span class="tooltip-content">Administrator</span>
             </a>
             <!-- <a class=" nav-link nav-icon" routerLink='/purchasing/dashboard' routerLinkActive='active'>
                 <clr-icon shape="analytics"></clr-icon>

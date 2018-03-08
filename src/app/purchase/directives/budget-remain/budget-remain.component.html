@@ -7,25 +7,31 @@
       </div>
     </div>
     <div class="row">
-      <div class="col-md-5">ยอดที่จัดสรร</div>
+      <div class="col-md-5">ยอดจัดสรร</div>
       <div class="col-md-7" style="text-align: right;">
         <span style="font-weight: bold;">{{budgetAmount | number: '1.2-2'}}</span>
       </div>
     </div>
     <div class="row">
-      <div class="col-md-5">ยอดคงเหลือยกมา</div>
+      <div class="col-md-5">คงเหลือยกมา</div>
       <div class="col-md-7" style="text-align: right;">
         <span style="color: #0065AB; font-weight: bold;">{{budgetRemain | number: '1.2-2'}}</span>
       </div>
     </div>
     <div class="row">
-      <div class="col-md-5">ยอดจัดซื้อครั้งนี้</div>
+      <div class="col-md-5">ซื้อไปแล้ว</div>
+      <div class="col-md-7" style="text-align: right;">
+        <span style="color: #0065AB; font-weight: bold;">{{purchaseAmount | number: '1.2-2'}} ({{purchaseAmount * 100 / budgetAmount | number:'1.2-2'}}%)</span>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-5">ซื้อครั้งนี้</div>
       <div class="col-md-7" style="text-align: right;">
         <span style="color: #318700; font-weight: bold;">{{totalPurchaseAmount | number: '1.2-2'}}</span>
       </div>
     </div>
     <div class="row">
-      <div class="col-md-5">ยอดคงเหลือครั้งนี้</div>
+      <div class="col-md-5">คงเหลือครั้งนี้</div>
       <div class="col-md-7" style="text-align: right;">
         <span style="color: #781DA0; font-weight: bold;">{{budgetRemain - totalPurchaseAmount | number: '1.2-2'}}</span>
       </div>
