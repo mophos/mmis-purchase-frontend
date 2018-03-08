@@ -249,4 +249,22 @@ export class PurchasingOrderService {
     return res.json();
   }
 
+  async getGeneric() {
+    const res = await this.authHttp.get(`${this.url}/${this.apiName}/getGeneric`)
+      .toPromise();
+    return res.json();
+  }
+
+  async getProductHistory(generic_id: any) {
+    const res = await this.authHttp.get(`${this.url}/${this.apiName}/getProductHistory/${generic_id}`)
+      .toPromise();
+    return res.json();
+  }
+
+  async searchGenericHistory(key: any) {
+    const res = await this.authHttp.get(`${this.url}/${this.apiName}/searchGenericHistory?key=${key}`)
+      .toPromise();
+    return res.json();
+  }
+
 }

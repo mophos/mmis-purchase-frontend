@@ -32,6 +32,8 @@ export class DatagridOrdersComponent implements OnInit {
    * @params status
    *  'PREPARED','CONFIRMED','APPROVED','COMPLETED'
    */
+  @Input() genericId: string;
+  productOrders: Array<any> = [];
   @Input() status: Array<any> = ['ORDERPOINT'];
   @Input() isCancel: boolean;
 
@@ -58,6 +60,12 @@ export class DatagridOrdersComponent implements OnInit {
     dateFormat: 'dd mmm yyyy',
     editableDateField: false,
   };
+  genericOrders: Array<any> = [];
+  modal: any = false;
+  file: any;
+  purchaseOrderId: any;
+  generic_name: any;
+
   isConfirm: any;
   constructor(
     private ref: ChangeDetectorRef,
@@ -103,6 +111,7 @@ export class DatagridOrdersComponent implements OnInit {
       }
     };
     this.getPurchaseOrders();
+    this.getOrders();
   }
 
   handleKeyDown(event: any) {
@@ -631,4 +640,28 @@ export class DatagridOrdersComponent implements OnInit {
       this.alertService.serverError(error);
     });
   }
+
+  async getOrders() {
+    const rs: any = await this.purchasingOrderService.getGeneric();
+    this.genericOrders = rs.rows;
+    // console.log(this.genericOrders);
+  }
+
+  printHistory(generic_name: any) {
+    this.generic_name = generic_name;
+    this.htmlPrview.showReport(this.url + '/report/getProductHistory/' + generic_name.generic_code);
+    console.log(generic_name.generic_code);
+  }
+
+  async fileChangeEvent(e: any) {
+    if (e.target.value !== '') {
+      const rs: any = await this.purchasingOrderService.searchGenericHistory(e.target.value);
+      this.genericOrders = rs.rows;
+    } else {
+      const rs: any = await this.purchasingOrderService.getGeneric();
+      this.genericOrders = rs.rows;
+    }
+    // console.log(e.target.value);
+  }
+
 }

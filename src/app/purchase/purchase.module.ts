@@ -77,6 +77,7 @@ import { ReceiveService } from 'app/purchase/share/receive.service';
 import { TransactionPoComponent } from './directives/transaction-po/transaction-po.component';
 import { BudgetRemainComponent } from './directives/budget-remain/budget-remain.component';
 import { TransactionHistoryComponent } from './directives/transaction-history/transaction-history.component';
+import { ProductHistoryComponent } from './directives/product-history/product-history.component';
 
 @NgModule({
   imports: [
@@ -128,7 +129,8 @@ import { TransactionHistoryComponent } from './directives/transaction-history/tr
     ExpandReceiveItemsComponent,
     TransactionPoComponent,
     BudgetRemainComponent,
-    TransactionHistoryComponent
+    TransactionHistoryComponent,
+    ProductHistoryComponent
   ],
   providers: [
     BudgetTransectionService,
