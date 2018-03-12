@@ -177,8 +177,9 @@ export class DatagridOrdersComponent implements OnInit {
       }
 
       this.modalLoading.hide();
-
+  
       this.purchaseOrders = result.rows;
+      
     } catch (error) {
       this.alertService.error(error);
       this.modalLoading.hide();
@@ -460,7 +461,7 @@ export class DatagridOrdersComponent implements OnInit {
     if (this.checkEmptyData(pro) === false) {
       return false;
     }
-    if(!this.isConfirm){
+    if (!this.isConfirm) {
       return false;
     }
     if (pro.purchase_order_status === 'COMPLETED'
@@ -478,7 +479,7 @@ export class DatagridOrdersComponent implements OnInit {
     if (this.checkEmptyData(pro) === false) {
       return false;
     }
-    if(this.isConfirm && pro.purchase_order_status !== 'CONFIRMED'){
+    if (this.isConfirm && pro.purchase_order_status !== 'CONFIRMED') {
       return false;
     }
     if (pro.purchase_order_status === 'COMPLETED' || pro.purchase_order_status === 'APPROVED' || pro.is_cancel === 'Y') {
@@ -515,14 +516,14 @@ export class DatagridOrdersComponent implements OnInit {
     this.purchaseOrdersSelected.forEach((value: any, index: number) => {
       f1++;
       if (value.purchase_order_status !== 'ORDERPOINT') {
-        poItems.push('porder=' + value.purchase_order_id);
+        poItems.push('purchaOrderId=' + value.purchase_order_id);
       } else {
         f2++;
       }
     });
-  
+
     if (f1 !== f2) {
-      this.htmlPrview.showReport(this.url + '/report/getporder/singburi/?' + poItems.join('&'));
+      this.htmlPrview.showReport(this.url + '/report/po/egp/singburi/?' + poItems.join('&'));
     } else {
       this.alertService.error('ข้อมุูลไม่ครบถ้วน');
     }
@@ -641,17 +642,17 @@ export class DatagridOrdersComponent implements OnInit {
 
   }
 
-  settings(){
+  settings() {
     this.settingService.byModule('PC')
-    .then(async (results: any) => {
-      this.settingConfig = results.rows;
-      const confirm = _.find(this.settingConfig, { 'action_name': 'PC_CONFIRM' });
-      this.isConfirm = (confirm.value == null || confirm.value == '' )? confirm.default : confirm.value;
-      this.isConfirm = this.isConfirm === 'Y' ? true : false;
-    })
-    .catch(error => {
-      this.alertService.serverError(error);
-    });
+      .then(async (results: any) => {
+        this.settingConfig = results.rows;
+        const confirm = _.find(this.settingConfig, { 'action_name': 'PC_CONFIRM' });
+        this.isConfirm = (confirm.value == null || confirm.value == '') ? confirm.default : confirm.value;
+        this.isConfirm = this.isConfirm === 'Y' ? true : false;
+      })
+      .catch(error => {
+        this.alertService.serverError(error);
+      });
   }
 
   async getOrders() {

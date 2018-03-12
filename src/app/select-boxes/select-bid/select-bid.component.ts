@@ -31,6 +31,7 @@ export class SelectBidComponent implements OnInit {
       this.loading = false;
       if (rs.ok) {
         this.items = rs.rows;
+        console.log(this.items)
         if (this.items.length) {
           if (this.selectedId) {
             const idx = _.findIndex(this.items, { bid_id: this.selectedId });

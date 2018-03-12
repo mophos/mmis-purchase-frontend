@@ -115,8 +115,10 @@
             <span *ngIf="pro.is_cancel==='Y'" class="badge badge-warning">ยกเลิก</span>
           </clr-dg-cell>
           <clr-dg-cell>
-            <del *ngIf="pro.is_cancel==='Y'">{{pro.purchase_order_number}}</del>
-            <span *ngIf="pro.is_cancel !=='Y' ">{{pro.purchase_order_number}}</span>
+            <del *ngIf="pro.is_cancel==='Y'&&!pro.purchase_order_book_number">{{pro.purchase_order_number}}</del>
+            <span *ngIf="pro.is_cancel !=='Y'&&!pro.purchase_order_book_number">{{pro.purchase_order_number}}</span>
+            <del *ngIf="pro.is_cancel==='Y'&&pro.purchase_order_book_number">{{pro.purchase_order_book_number}}</del>
+            <span *ngIf="pro.is_cancel !=='Y'&&pro.purchase_order_book_number">{{pro.purchase_order_book_number}}</span>
           </clr-dg-cell>
           <clr-dg-cell class="text-right text-success">
             <del *ngIf="pro.is_cancel==='Y'"> {{pro.puchase_money_total | number: '1.2'}}</del>
@@ -147,7 +149,7 @@
               <clr-icon shape="printer"></clr-icon> พิมพ์ใบสรุปรายการเวชภัณฑ์ที่สั่งซื้อ
             </button>
             <button class="action-item" (click)="printPurchaseOrderAttach(pro)" [disabled]="pro.purchase_order_status === 'ORDERPOINT' || pro.is_cancel == 'Y'">
-              <clr-icon shape="printer"></clr-icon> พิมพ์ใบแนบใบสั่งซื้อ
+              <clr-icon shape="printer"></clr-icon> พิมพ์ใบองค์การเภสัชกรรม
             </button>
             <button class="action-item" (click)="printPurchaseOrderEgp(pro)" [disabled]="pro.purchase_order_status === 'ORDERPOINT' || pro.is_cancel == 'Y'">
               <clr-icon shape="printer"></clr-icon> พิมพ์แบบฟอร์ม e-GP
