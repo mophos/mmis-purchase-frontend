@@ -267,4 +267,13 @@ export class PurchasingOrderService {
     return res.json();
   }
 
+  async saveChangePurchaseDate(purchaseOrderIds: any[], purchaseDate: any) {
+    const res = await this.authHttp.post(`${this.url}/${this.apiName}/change-purchase-date`, {
+      purchaseOrderIds: purchaseOrderIds,
+      purchaseDate: purchaseDate
+    })
+      .toPromise();
+    return res.json();
+  }
+
 }

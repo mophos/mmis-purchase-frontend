@@ -66,6 +66,10 @@ export class DatagridOrdersComponent implements OnInit {
   purchaseOrderId: any;
   generic_name: any;
 
+  openChangeDate: boolean = false;
+  editPurchaseDate: any = null;
+  itemsChangeDate: any = [];
+
   isConfirm: any;
   constructor(
     private ref: ChangeDetectorRef,
@@ -98,6 +102,15 @@ export class DatagridOrdersComponent implements OnInit {
         day: 1
       }
     };
+
+    this.editPurchaseDate = {
+      date: {
+        year: moment().get('year'),
+        month: moment().get('month') + 1,
+        day: moment().get('date')
+      }
+    };
+
     this.end_date = {
       date: {
         year: moment().get('year'),
@@ -662,6 +675,56 @@ export class DatagridOrdersComponent implements OnInit {
       this.genericOrders = rs.rows;
     }
     // console.log(e.target.value);
+  }
+
+  // change puchase date
+  changePurchaseDate() {
+    let items = [];
+    this.purchaseOrdersSelected.forEach(v => {
+
+      if (v.purchase_order_status === 'PREPARED' || v.purchase_order_status === 'CONFIRMED') {
+        this.itemsChangeDate.push(v);
+      }
+    });
+
+    if (this.itemsChangeDate.length) {
+      this.openChangeDate = true;
+    } else {
+      this.alertService.error('กรุณาระบุรายการที่ต้องการแก้ไขวันที่ (เฉพาะรายการที่เตรียมใบสีั่งซื้อ/ยืนยัน เท่านั้น)')
+    }
+  }
+
+  async doChangePurchaseDate() {
+    let purchaseOrderIds = [];
+    this.itemsChangeDate.forEach(v => {
+      purchaseOrderIds.push(v.purchase_order_id);
+    });
+
+    if (this.editPurchaseDate) {
+      const purchaseDate = this.editPurchaseDate ? moment(this.editPurchaseDate.jsdate).format('YYYY-MM-DD') : null;
+
+      try {
+        this.modalLoading.show();
+        let rs: any = await this.purchasingOrderService.saveChangePurchaseDate(purchaseOrderIds, purchaseDate);
+        this.modalLoading.hide();
+        if (rs.ok) {
+          this.alertService.success();
+          this.openChangeDate = false;
+        
+          this.getPurchaseOrders();
+          this.getOrders();
+          
+        } else {
+          this.alertService.error(rs.error);
+        }
+      } catch (error) {
+        this.modalLoading.hide();
+        this.alertService.error(JSON.stringify(error));
+      }
+
+    } else {
+      this.alertService.error('กรุณาระบุวันที่จัดซื้อ');
+    }
   }
 
 }
