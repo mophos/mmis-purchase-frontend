@@ -15,6 +15,7 @@ import { ModalReceivesComponent } from 'app/purchase/modal-receives/modal-receiv
 import { ProductService } from './../share/product.service'
 import { tokenNotExpired, JwtHelper } from 'angular2-jwt';
 import { SettingService } from './../share/setting.service';
+import { State } from '@clr/angular';
 @Component({
   selector: 'app-datagrid-orders',
   templateUrl: './datagrid-orders.component.html',
@@ -71,13 +72,18 @@ export class DatagridOrdersComponent implements OnInit {
   itemsChangeDate: any = [];
 
   isConfirm: any;
-  openModalConfirm: boolean = false
-  confirmApprove: boolean = false
-  tmpOderApprove: any
-  username: any
-  password: any
-  action: any = 'PC_ORDERS'
-  page: any
+  openModalConfirm: boolean = false;
+  confirmApprove: boolean = false;
+  tmpOderApprove: any;
+  username: any;
+  password: any;
+  action: any = 'PC_ORDERS';
+
+  total: number = 0;
+  perPage: number = 20;
+
+  page: any;
+
   constructor(
     private ref: ChangeDetectorRef,
     private alertService: AlertService,
@@ -130,7 +136,7 @@ export class DatagridOrdersComponent implements OnInit {
         day: moment().get('date')
       }
     };
-    this.getPurchaseOrders();
+    // this.getPurchaseOrders();
     this.getOrders();
   }
 
@@ -170,23 +176,19 @@ export class DatagridOrdersComponent implements OnInit {
 
     try {
       this.modalLoading.show();
-      if (this.isCancel) {
-        result = await this.purchasingOrderService.isCancel();
-      } else {
-        result = await this.purchasingOrderService.byStatus(
-          this.status,
-          this.contractFilter,
-          this.query,
-          start_date,
-          end_date,
-          this.number_start,
-          this.number_end);
-      }
+      result = await this.purchasingOrderService.byStatus(
+        this.status,
+        this.contractFilter,
+        this.query,
+        start_date,
+        end_date,
+        this.perPage, 0);
 
       this.modalLoading.hide();
-  
+
       this.purchaseOrders = result.rows;
-      
+      this.total = +result.total;
+
     } catch (error) {
       this.alertService.error(error);
       this.modalLoading.hide();
@@ -234,7 +236,6 @@ export class DatagridOrdersComponent implements OnInit {
   async approve(order: any) {
     this.page = 1
     const checked = await this.accessCheck.can('PO_APPROVE')
-    console.log(checked);
     if (checked) {
       this.confirmApprove = true
       this.approveConfirm(order)
@@ -246,7 +247,7 @@ export class DatagridOrdersComponent implements OnInit {
 
   async checkApprove(username: any, password: any) {
     let rs: any = await this.purchasingOrderService.checkApprove(username, password, this.action);
-    console.log(rs);
+    // console.log(rs);
 
     if (rs.ok) {
       if (this.page === 1) {
@@ -324,8 +325,7 @@ export class DatagridOrdersComponent implements OnInit {
     const checked = type === 'APPROVED' ? true : false;
     let dataConfirm = [];
     if (this.accessCheck.confirm(type === 'CONFIRMED' ? 'PO_CONFIRM' : 'PO_APPROVE') || checked) {
-      console.log(type);
-      
+
       this.alertService.confirm(message).then(async () => {
         this.purchaseOrdersSelected.forEach(element => {
           if (element.purchase_order_status !== "ORDERPOINT" && element.is_cancel !== 'Y') {
@@ -767,10 +767,10 @@ export class DatagridOrdersComponent implements OnInit {
         if (rs.ok) {
           this.alertService.success();
           this.openChangeDate = false;
-        
+
           this.getPurchaseOrders();
           this.getOrders();
-          
+
         } else {
           this.alertService.error(rs.error);
         }
@@ -782,6 +782,53 @@ export class DatagridOrdersComponent implements OnInit {
     } else {
       this.alertService.error('กรุณาระบุวันที่จัดซื้อ');
     }
+  }
+
+  async refresh(state: State) {
+    const offset = +state.page.from;
+    const limit = +state.page.size;
+
+    const start_date = this.start_date !== null ? moment(this.start_date.jsdate).format('YYYY-MM-DD') : '';
+    const end_date = this.end_date !== null ? moment(this.end_date.jsdate).format('YYYY-MM-DD') : '';
+
+    let status: Array<any> = ['ORDERPOINT', 'PREPARED', 'CONFIRMED', 'APPROVED', 'SUCCESS', 'COMPLETED'];
+    if (this.statusFilter === 'PREPARED') {
+      this.status = ['PREPARED'];
+    } else if (this.statusFilter === 'ORDERPOINT') {
+      this.status = ['ORDERPOINT'];
+    }
+    else if (this.statusFilter === 'CONFIRMED') {
+      this.status = ['CONFIRMED'];
+    }
+    else if (this.statusFilter === 'APPROVED') {
+      this.status = ['APPROVED'];
+    }
+    else if (this.statusFilter === 'SUCCESS') {
+      this.status = ['COMPLETED', 'SUCCESS'];
+    } else {
+      this.status = status;
+    }
+
+    try {
+      this.modalLoading.show();
+      let rs: any = await this.purchasingOrderService.byStatus(
+        this.status,
+        this.contractFilter,
+        this.query,
+        start_date,
+        end_date,
+        limit, offset);
+
+      this.modalLoading.hide();
+
+      this.purchaseOrders = rs.rows;
+      this.total = +rs.total;
+
+    } catch (error) {
+      this.alertService.error(error);
+      this.modalLoading.hide();
+    }
+
   }
 
 }

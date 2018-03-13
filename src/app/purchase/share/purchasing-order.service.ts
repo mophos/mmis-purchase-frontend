@@ -85,12 +85,16 @@ export class PurchasingOrderService {
     });
   }
 
-  byStatus(status: Array<any>, contract: string = "ALL", query: string = '', start_date: string = '', end_date: string = '',
-    number_start: string = '', number_end: string = '') {
+  byStatus(status: Array<any>, contract: string = "ALL", query: string = '', start_date: string = '', end_date: string = '', limit: number = 20, offset: number = 0) {
     return new Promise((resolve, reject) => {
       this.authHttp.post(`${this.url}/${this.apiName}/by-status`, {
-        status, contract, query, start_date, end_date,
-        number_start, number_end
+        status: status,
+        contract: contract,
+        query: query,
+        start_date: start_date,
+        end_date: end_date,
+        limit: limit,
+        offset: offset
       })
         .map(res => res.json())
         .subscribe(data => {
@@ -101,17 +105,6 @@ export class PurchasingOrderService {
     });
   }
 
-  isCancel() {
-    return new Promise((resolve, reject) => {
-      this.authHttp.get(`${this.url}/${this.apiName}/by-cancel`)
-        .map(res => res.json())
-        .subscribe(data => {
-          resolve(data);
-        }, error => {
-          reject(error);
-        });
-    });
-  }
   getPOid(s_id: any, e_id: any, genericTypeId: any, statusFilter: any) {
     return new Promise((resolve, reject) => {
       this.authHttp.get(`${this.url}/${this.apiName}/getpoId/${s_id}/${e_id}/${genericTypeId}/${statusFilter}`)
