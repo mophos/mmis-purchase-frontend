@@ -249,7 +249,7 @@ export class DatagridOrdersComponent implements OnInit {
   async approveConfirm(order: any) {
     let purchases = [];
     if (this.confirmApprove) {
-      if (order.purchase_order_status !== "ORDERPOINT" && order.is_cancel !== 1) {
+      if (order.purchase_order_status !== "ORDERPOINT" && order.is_cancel !== 'Y') {
         if (this.canUpdateStatus(order.purchase_order_status, 'APPROVED')) {
           let data = {
             purchase_order_id: order.purchase_order_id,
