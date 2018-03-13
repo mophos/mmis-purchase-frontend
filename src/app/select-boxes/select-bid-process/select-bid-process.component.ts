@@ -33,14 +33,24 @@ export class SelectBidProcessComponent implements OnInit {
         this.items = rs.rows;
         if (this.items.length) {
           if (this.selectedId) {
-            const idx = _.findIndex(this.items, { id: this.selectedId });
+            let idx = _.findIndex(this.items, { id: this.selectedId });
             if (idx > -1) {
               this.onChange.emit(this.items[idx]);
             } else {
-              this.onChange.emit(this.items[0]);
+              idx = _.findIndex(this.items, { is_default: 'Y' });
+              if (idx > -1) {
+                this.selectedId = this.items[idx].id;
+              } else {
+                this.selectedId = this.items[0].id;
+              }
             }
           } else {
-            this.selectedId = this.items[0].id;
+            const idx = _.findIndex(this.items, { is_default: 'Y' });
+            if (idx > -1) {
+              this.selectedId = this.items[idx].id;
+            } else {
+              this.selectedId = this.items[0].id;
+            }
             this.onChange.emit(this.items[0]);
           }
         }
