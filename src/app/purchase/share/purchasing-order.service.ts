@@ -275,7 +275,8 @@ export class PurchasingOrderService {
       action: action
     }).toPromise();
     return rs.json();
-
+  }
+  
   async saveChangePurchaseDate(purchaseOrderIds: any[], purchaseDate: any) {
     const res = await this.authHttp.post(`${this.url}/${this.apiName}/change-purchase-date`, {
       purchaseOrderIds: purchaseOrderIds,
@@ -283,7 +284,6 @@ export class PurchasingOrderService {
     })
       .toPromise();
     return res.json();
-
   }
 
 }
