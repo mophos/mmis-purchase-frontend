@@ -45,7 +45,7 @@
 
               <clr-button-group class="btn-primary btn-md" [clrMenuPosition]="'bottom-right'" *ngIf="purchaseOrdersSelected.length">
                 <clr-button (click)="confirmAll('CONFIRMED')">ยืนยัน ({{this.purchaseOrdersSelected.length}})</clr-button>
-                <clr-button (click)="confirmAll('APPROVED')">อนุมัติ ({{this.purchaseOrdersSelected.length}})</clr-button>
+                <clr-button (click)="allApprove()">อนุมัติ ({{this.purchaseOrdersSelected.length}})</clr-button>
                 <clr-button [clrInMenu]="true" (click)="printSelected()">
                   <clr-icon shape="printer"></clr-icon> พิมพ์ ({{this.purchaseOrdersSelected.length}})</clr-button>
                 <clr-button [clrInMenu]="true" (click)="changePurchaseDate()">
@@ -341,6 +341,30 @@
 </clr-modal>
 
 <app-modal-loading #modalLoading></app-modal-loading>
+
+<clr-modal [(clrModalOpen)]="openModalConfirm" [clrModalStaticBackdrop]="true" [clrModalSize]="'md'" [clrModalClosable]="false">
+  <h3 class="modal-title">{{title}}สิทธิ์การอนุมัติ</h3>
+  <div class="modal-body" style="height:150px">
+
+    <form>
+      <section class="form-block">
+        <div class="form-group">
+          <label for="aForm_1" class="required">User Name</label>
+          <input autocomplete="nope" type="text" id="username" name="username" [(ngModel)]="username" >
+        </div>
+        <div class="form-group">
+          <label for="aForm_1" class="required"> password</label>
+          <input autocomplete="new-password" type="password" id="password" name="password" [(ngModel)]="password" >
+        </div>
+      </section>
+    </form>
+  </div>
+  <div class="modal-footer" style="padding-top: 0px;">
+    <button type="button" class="btn btn-md btn-primary" [disabled]="!username || !password"
+      (click)="checkApprove(username,password)">บันทึก</button>
+    <button type="button" class="btn btn-md btn-danger-outline" (click)="close()">ปิด</button>
+  </div>
+</clr-modal>
 
 <app-html-preview #htmlPrview></app-html-preview>
 <app-purchase-cancel #modalCancel (onAfterSave)="onAfterCancel($event)"></app-purchase-cancel>
