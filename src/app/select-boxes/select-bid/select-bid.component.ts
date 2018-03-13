@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import * as _ from 'lodash';  
+import * as _ from 'lodash';
 import { IBidType } from 'app/interfaces';
 import { StandardService } from 'app/services/standard.service';
 import { AlertService } from 'app/alert.service';
@@ -31,17 +31,26 @@ export class SelectBidComponent implements OnInit {
       this.loading = false;
       if (rs.ok) {
         this.items = rs.rows;
-        console.log(this.items)
         if (this.items.length) {
           if (this.selectedId) {
-            const idx = _.findIndex(this.items, { bid_id: this.selectedId });
+            let idx = _.findIndex(this.items, { id: this.selectedId });
             if (idx > -1) {
               this.onChange.emit(this.items[idx]);
             } else {
-              this.onChange.emit(this.items[0]);
+              idx = _.findIndex(this.items, { isdefault: 'Y' });
+              if (idx > -1) {
+                this.selectedId = this.items[idx].bid_id;
+              } else {
+                this.selectedId = this.items[0].bid_id;
+              }
             }
           } else {
-            this.selectedId = this.items[0].bid_id;
+            const idx = _.findIndex(this.items, { isdefault: 'Y' });
+            if (idx > -1) {
+              this.selectedId = this.items[idx].bid_id;
+            } else {
+              this.selectedId = this.items[0].bid_id;
+            }
             this.onChange.emit(this.items[0]);
           }
         }
