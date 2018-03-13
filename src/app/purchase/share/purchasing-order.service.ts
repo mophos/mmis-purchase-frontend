@@ -267,4 +267,13 @@ export class PurchasingOrderService {
     return res.json();
   }
 
+  async checkApprove(username: any, password: any, action: any) {
+    let rs: any = await this.authHttp.post(`${this.url}/${this.apiName}/checkApprove`, {
+      username: username,
+      password: password,
+      action: action
+    }).toPromise();
+    return rs.json();
+  }
+
 }

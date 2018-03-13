@@ -67,6 +67,13 @@ export class DatagridOrdersComponent implements OnInit {
   generic_name: any;
 
   isConfirm: any;
+  openModalConfirm: boolean = false
+  confirmApprove: boolean = false
+  tmpOderApprove: any
+  username: any
+  password: any
+  action: any = 'PC_ORDERS'
+  page: any
   constructor(
     private ref: ChangeDetectorRef,
     private alertService: AlertService,
@@ -211,9 +218,38 @@ export class DatagridOrdersComponent implements OnInit {
   }
 
   async approve(order: any) {
+    this.page = 1
+    const checked = await this.accessCheck.can('PO_APPROVE')
+    console.log(checked);
+    if (checked) {
+      this.confirmApprove = true
+      this.approveConfirm(order)
+    } else {
+      this.openModalConfirm = true
+      this.tmpOderApprove = order
+    }
+  }
+
+  async checkApprove(username: any, password: any) {
+    let rs: any = await this.purchasingOrderService.checkApprove(username, password, this.action);
+    console.log(rs);
+
+    if (rs.ok) {
+      if (this.page === 1) {
+        this.confirmApprove = true
+        this.approveConfirm(this.tmpOderApprove)
+      } else if (this.page === 2) {
+        this.confirmAll('APPROVED')
+      }
+    } else {
+      this.alertService.error('ไม่มีสิทธิ์อนุมัติใบสั่งซื้อ');
+    }
+  }
+
+  async approveConfirm(order: any) {
     let purchases = [];
-    if (this.accessCheck.confirm('PO_APPROVE')) {
-      if (order.purchase_order_status !== "ORDERPOINT" && order.is_cancel !== 'Y') {
+    if (this.confirmApprove) {
+      if (order.purchase_order_status !== "ORDERPOINT" && order.is_cancel !== 1) {
         if (this.canUpdateStatus(order.purchase_order_status, 'APPROVED')) {
           let data = {
             purchase_order_id: order.purchase_order_id,
@@ -223,7 +259,6 @@ export class DatagridOrdersComponent implements OnInit {
           purchases.push(data);
         }
       }
-
       if (purchases.length) {
         this.modalLoading.show();
         try {
@@ -247,16 +282,36 @@ export class DatagridOrdersComponent implements OnInit {
     } else {
       this.alertService.error('ไม่มีสิทธิ์อนุมัติใบสั่งซื้อ');
     }
+    this.close()
   }
+
+  close() {
+    this.openModalConfirm = false
+    this.username = ''
+    this.password = ''
+  }
+
+  async allApprove() {
+    this.page = 2
+    const checked = await (this.accessCheck.can('PO_APPROVE') && this.accessCheck.can('PO_CONFIRM'))
+    if (checked) {
+      this.confirmAll('APPROVED')
+    } else {
+      this.openModalConfirm = true
+    }
+  }
+
 
   async confirmAll(type: string) {
     let promise: Array<any> = [];
     const message: string = (type === 'CONFIRMED' ?
       'คุณต้องการที่จะยืนยันใบสั่งซื้อใช่หรือไม่' :
       'คุณต้องการที่จะอนุมัติใบสั่งซื้อใช่หรือไม่');
-
+    const checked = type === 'APPROVED' ? true : false;
     let dataConfirm = [];
-    if (this.accessCheck.confirm(type === 'CONFIRMED' ? 'PO_CONFIRM' : 'PO_APPROVE')) {
+    if (this.accessCheck.confirm(type === 'CONFIRMED' ? 'PO_CONFIRM' : 'PO_APPROVE') || checked) {
+      console.log(type);
+      
       this.alertService.confirm(message).then(async () => {
         this.purchaseOrdersSelected.forEach(element => {
           if (element.purchase_order_status !== "ORDERPOINT" && element.is_cancel !== 'Y') {
@@ -296,6 +351,7 @@ export class DatagridOrdersComponent implements OnInit {
     } else {
       this.alertService.error('คุณไม่มีสิทธ์ในการอนุมัติ!', 'Access denied!');
     }
+    this.close()
   }
 
   canUpdateStatus(currentStatus: string, updateStatus: string) {
@@ -447,7 +503,7 @@ export class DatagridOrdersComponent implements OnInit {
     if (this.checkEmptyData(pro) === false) {
       return false;
     }
-    if(!this.isConfirm){
+    if (!this.isConfirm) {
       return false;
     }
     if (pro.purchase_order_status === 'COMPLETED'
@@ -465,7 +521,7 @@ export class DatagridOrdersComponent implements OnInit {
     if (this.checkEmptyData(pro) === false) {
       return false;
     }
-    if(this.isConfirm && pro.purchase_order_status !== 'CONFIRMED'){
+    if (this.isConfirm && pro.purchase_order_status !== 'CONFIRMED') {
       return false;
     }
     if (pro.purchase_order_status === 'COMPLETED' || pro.purchase_order_status === 'APPROVED' || pro.is_cancel === 'Y') {
@@ -507,7 +563,7 @@ export class DatagridOrdersComponent implements OnInit {
         f2++;
       }
     });
-  
+
     if (f1 !== f2) {
       this.htmlPrview.showReport(this.url + '/report/getporder/singburi/?' + poItems.join('&'));
     } else {
@@ -628,17 +684,17 @@ export class DatagridOrdersComponent implements OnInit {
 
   }
 
-  settings(){
+  settings() {
     this.settingService.byModule('PC')
-    .then(async (results: any) => {
-      this.settingConfig = results.rows;
-      const confirm = _.find(this.settingConfig, { 'action_name': 'PC_CONFIRM' });
-      this.isConfirm = (confirm.value == null || confirm.value == '' )? confirm.default : confirm.value;
-      this.isConfirm = this.isConfirm === 'Y' ? true : false;
-    })
-    .catch(error => {
-      this.alertService.serverError(error);
-    });
+      .then(async (results: any) => {
+        this.settingConfig = results.rows;
+        const confirm = _.find(this.settingConfig, { 'action_name': 'PC_CONFIRM' });
+        this.isConfirm = (confirm.value == null || confirm.value == '') ? confirm.default : confirm.value;
+        this.isConfirm = this.isConfirm === 'Y' ? true : false;
+      })
+      .catch(error => {
+        this.alertService.serverError(error);
+      });
   }
 
   async getOrders() {
