@@ -73,21 +73,39 @@ export class ReorderPointComponent implements OnInit {
   }
 
   async refresh(state: State) {
-    this.loading = true;
     let offset = +state.page.from;
     let limit = +state.page.size;
+    this.modalLoading.show();
     try {
+      // if (!this.generic_type_id) this.generic_type_id = this.generictsType[0].generic_type_id;
+      const rs: any = await this.productService.ordersPoint(this.query, this.contractFilter, this.generic_type_id, limit, offset);
+      this.products = [];
+      if (rs.ok) {
+        rs.rows.forEach(v => {
+          let obj: any = {};
+          obj.generic_id = v.generic_id;
+          obj.generic_name = v.generic_name;
+          obj.generic_type_name = v.generic_type_name;
+          obj.max_qty = v.max_qty;
+          obj.min_qty = v.min_qty;
+          obj.primary_unit_name = v.primary_unit_name;
+          obj.remain_qty = v.remain_qty;
+          obj.working_code = v.working_code;
+          obj.total_purchased = v.total_purchased;
+          obj.items = [];
 
-      // const res: any = await this.productService.ordersPoint(this.query, this.contractFilter, this.minMaxFilter, this.generic_type_id, limit, offset);
-      // this.products = res.ok ? res.rows : [];
-      // this.total = res.total || 0;
-      // this.loading = false;
-      // this.calReorderPointUnit();
-      // this.ref.detectChanges();
-      this.getProducts(this.query, limit, offset);
+          this.products.push(obj);
+        });
+
+        this.total = rs.total || 0;
+        this.modalLoading.hide();
+        // this.calReorderPointUnit();
+      } else {
+        this.alertService.error(rs.error);
+      }
     } catch (error) {
-      this.alertService.serverError(error);
-      this.loading = false;
+      this.alertService.error(JSON.stringify(error));
+      this.modalLoading.hide();
     }
   }
 
