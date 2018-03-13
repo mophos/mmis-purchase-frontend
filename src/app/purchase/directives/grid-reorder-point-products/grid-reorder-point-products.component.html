@@ -14,7 +14,7 @@
       <clr-dg-cell>{{ i.v_labeler_name }}</clr-dg-cell>
       <clr-dg-cell style="text-align: right;">{{ i.remain_qty/i.conversion_qty | number }} {{ i.from_unit_name }} ({{i.conversion_qty | number}} {{i.to_unit_name}})</clr-dg-cell>
       <clr-dg-cell style="text-align: right;">
-        {{i.remain_qty*i.conversion_qty | number}} {{i.to_unit_name}}
+        {{i.remain_qty | number}} {{i.to_unit_name}}
       </clr-dg-cell>
       <clr-dg-cell>
         <input type="text" #qty (keyup)="onChangeQty(i, qty.value)" style="width: 100%; text-align: right; background-color:#FFF9C4"
