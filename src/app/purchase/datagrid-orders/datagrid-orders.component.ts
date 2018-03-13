@@ -66,6 +66,10 @@ export class DatagridOrdersComponent implements OnInit {
   purchaseOrderId: any;
   generic_name: any;
 
+  openChangeDate: boolean = false;
+  editPurchaseDate: any = null;
+  itemsChangeDate: any = [];
+
   isConfirm: any;
   openModalConfirm: boolean = false
   confirmApprove: boolean = false
@@ -105,6 +109,15 @@ export class DatagridOrdersComponent implements OnInit {
         day: 1
       }
     };
+
+    this.editPurchaseDate = {
+      date: {
+        year: moment().get('year'),
+        month: moment().get('month') + 1,
+        day: moment().get('date')
+      }
+    };
+
     this.end_date = {
       date: {
         year: moment().get('year'),
@@ -171,8 +184,9 @@ export class DatagridOrdersComponent implements OnInit {
       }
 
       this.modalLoading.hide();
-
+  
       this.purchaseOrders = result.rows;
+      
     } catch (error) {
       this.alertService.error(error);
       this.modalLoading.hide();
@@ -558,14 +572,14 @@ export class DatagridOrdersComponent implements OnInit {
     this.purchaseOrdersSelected.forEach((value: any, index: number) => {
       f1++;
       if (value.purchase_order_status !== 'ORDERPOINT') {
-        poItems.push('porder=' + value.purchase_order_id);
+        poItems.push('purchaOrderId=' + value.purchase_order_id);
       } else {
         f2++;
       }
     });
 
     if (f1 !== f2) {
-      this.htmlPrview.showReport(this.url + '/report/getporder/singburi/?' + poItems.join('&'));
+      this.htmlPrview.showReport(this.url + '/report/po/egp/singburi/?' + poItems.join('&'));
     } else {
       this.alertService.error('ข้อมุูลไม่ครบถ้วน');
     }
@@ -718,6 +732,56 @@ export class DatagridOrdersComponent implements OnInit {
       this.genericOrders = rs.rows;
     }
     // console.log(e.target.value);
+  }
+
+  // change puchase date
+  changePurchaseDate() {
+    let items = [];
+    this.purchaseOrdersSelected.forEach(v => {
+
+      if (v.purchase_order_status === 'PREPARED' || v.purchase_order_status === 'CONFIRMED') {
+        this.itemsChangeDate.push(v);
+      }
+    });
+
+    if (this.itemsChangeDate.length) {
+      this.openChangeDate = true;
+    } else {
+      this.alertService.error('กรุณาระบุรายการที่ต้องการแก้ไขวันที่ (เฉพาะรายการที่เตรียมใบสีั่งซื้อ/ยืนยัน เท่านั้น)')
+    }
+  }
+
+  async doChangePurchaseDate() {
+    let purchaseOrderIds = [];
+    this.itemsChangeDate.forEach(v => {
+      purchaseOrderIds.push(v.purchase_order_id);
+    });
+
+    if (this.editPurchaseDate) {
+      const purchaseDate = this.editPurchaseDate ? moment(this.editPurchaseDate.jsdate).format('YYYY-MM-DD') : null;
+
+      try {
+        this.modalLoading.show();
+        let rs: any = await this.purchasingOrderService.saveChangePurchaseDate(purchaseOrderIds, purchaseDate);
+        this.modalLoading.hide();
+        if (rs.ok) {
+          this.alertService.success();
+          this.openChangeDate = false;
+        
+          this.getPurchaseOrders();
+          this.getOrders();
+          
+        } else {
+          this.alertService.error(rs.error);
+        }
+      } catch (error) {
+        this.modalLoading.hide();
+        this.alertService.error(JSON.stringify(error));
+      }
+
+    } else {
+      this.alertService.error('กรุณาระบุวันที่จัดซื้อ');
+    }
   }
 
 }

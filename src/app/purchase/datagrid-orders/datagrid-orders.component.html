@@ -48,6 +48,8 @@
                 <clr-button (click)="allApprove()">อนุมัติ ({{this.purchaseOrdersSelected.length}})</clr-button>
                 <clr-button [clrInMenu]="true" (click)="printSelected()">
                   <clr-icon shape="printer"></clr-icon> พิมพ์ ({{this.purchaseOrdersSelected.length}})</clr-button>
+                <clr-button [clrInMenu]="true" (click)="changePurchaseDate()">
+                  <clr-icon shape="note"></clr-icon> แก้ไขวันออกใบสั่งซื้อ ({{this.purchaseOrdersSelected.length}})</clr-button>
               </clr-button-group>
 
               <button (click)="printOrder_number()" class="btn btn-md btn-primary" *ngIf="!purchaseOrdersSelected.length">
@@ -113,8 +115,10 @@
             <span *ngIf="pro.is_cancel==='Y'" class="badge badge-warning">ยกเลิก</span>
           </clr-dg-cell>
           <clr-dg-cell>
-            <del *ngIf="pro.is_cancel==='Y'">{{pro.purchase_order_number}}</del>
-            <span *ngIf="pro.is_cancel !=='Y' ">{{pro.purchase_order_number}}</span>
+            <del *ngIf="pro.is_cancel==='Y'&&!pro.purchase_order_book_number">{{pro.purchase_order_number}}</del>
+            <span *ngIf="pro.is_cancel !=='Y'&&!pro.purchase_order_book_number">{{pro.purchase_order_number}}</span>
+            <del *ngIf="pro.is_cancel==='Y'&&pro.purchase_order_book_number">{{pro.purchase_order_book_number}}</del>
+            <span *ngIf="pro.is_cancel !=='Y'&&pro.purchase_order_book_number">{{pro.purchase_order_book_number}}</span>
           </clr-dg-cell>
           <clr-dg-cell class="text-right text-success">
             <del *ngIf="pro.is_cancel==='Y'"> {{pro.puchase_money_total | number: '1.2'}}</del>
@@ -145,7 +149,7 @@
               <clr-icon shape="printer"></clr-icon> พิมพ์ใบสรุปรายการเวชภัณฑ์ที่สั่งซื้อ
             </button>
             <button class="action-item" (click)="printPurchaseOrderAttach(pro)" [disabled]="pro.purchase_order_status === 'ORDERPOINT' || pro.is_cancel == 'Y'">
-              <clr-icon shape="printer"></clr-icon> พิมพ์ใบแนบใบสั่งซื้อ
+              <clr-icon shape="printer"></clr-icon> พิมพ์ใบองค์การเภสัชกรรม
             </button>
             <button class="action-item" (click)="printPurchaseOrderEgp(pro)" [disabled]="pro.purchase_order_status === 'ORDERPOINT' || pro.is_cancel == 'Y'">
               <clr-icon shape="printer"></clr-icon> พิมพ์แบบฟอร์ม e-GP
@@ -300,6 +304,42 @@
     <button type="button" class="btn btn-outline-danger btn-lg" (click)="openModal = false">ปิด</button>
   </div>
 </clr-modal>
+
+// แก้ไขวันที่ออกใบสั่งซื้อ
+<clr-modal [(clrModalOpen)]="openChangeDate" [clrModalSize]="'lg'">
+  <h3 class="modal-title">แก้ไขวันที่ออกใบสั่งซื้อ</h3>
+  <div class="modal-body">
+    <div style="text-align: center;">
+      <label for="start_date">วันที่สั่งซื้อ</label>
+      <div style="width:170px; display:inline-block;vertical-align: middle;">
+        <my-date-picker-th name="start_date" [(ngModel)]="editPurchaseDate" [options]="myDatePickerOptions"></my-date-picker-th>
+      </div>
+    </div>
+    <span class="p4">รายการที่จะถูกเปลี่ยนวันที่สั่งซื้อ</span>
+    <clr-datagrid>
+      <clr-dg-column style="width: 120px;">เลขที่จัดซื้อ</clr-dg-column>
+      <clr-dg-column style="width: 120px;">วันที่จัดซื้อ</clr-dg-column>
+      <clr-dg-column>ผู้จัดจำหน่าย</clr-dg-column>
+      <clr-dg-column style="width: 150px;">มูลค่า</clr-dg-column>
+
+      <clr-dg-row *ngFor="let i of itemsChangeDate">
+        <clr-dg-cell>{{i.purchase_order_number}}</clr-dg-cell>
+        <clr-dg-cell>{{i.order_date | toThaiDate}}</clr-dg-cell>
+        <clr-dg-cell>{{i.labeler_name}}</clr-dg-cell>
+        <clr-dg-cell style="text-align: right; font-weight: bold;">{{i.total_price | number: '1.2-2'}}</clr-dg-cell>
+      </clr-dg-row>
+
+      <clr-dg-footer>{{itemsChangeDate.length}} รายการ</clr-dg-footer>
+    </clr-datagrid>
+
+
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-danger btn-md" (click)="openChangeDate = false">ยกเลิก</button>
+    <button type="button" class="btn btn-primary btn-md" [disabled]="!itemsChangeDate.length" (click)="doChangePurchaseDate()">ตกลง</button>
+  </div>
+</clr-modal>
+
 <app-modal-loading #modalLoading></app-modal-loading>
 
 <clr-modal [(clrModalOpen)]="openModalConfirm" [clrModalStaticBackdrop]="true" [clrModalSize]="'md'" [clrModalClosable]="false">

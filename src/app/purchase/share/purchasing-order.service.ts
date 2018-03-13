@@ -267,6 +267,7 @@ export class PurchasingOrderService {
     return res.json();
   }
 
+
   async checkApprove(username: any, password: any, action: any) {
     let rs: any = await this.authHttp.post(`${this.url}/${this.apiName}/checkApprove`, {
       username: username,
@@ -274,6 +275,15 @@ export class PurchasingOrderService {
       action: action
     }).toPromise();
     return rs.json();
+
+  async saveChangePurchaseDate(purchaseOrderIds: any[], purchaseDate: any) {
+    const res = await this.authHttp.post(`${this.url}/${this.apiName}/change-purchase-date`, {
+      purchaseOrderIds: purchaseOrderIds,
+      purchaseDate: purchaseDate
+    })
+      .toPromise();
+    return res.json();
+
   }
 
 }
