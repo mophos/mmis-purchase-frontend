@@ -5,6 +5,7 @@ import * as moment from 'moment';
 import { tokenNotExpired, JwtHelper } from 'angular2-jwt';
 import { ProductService } from '../../share/product.service';
 import { log } from 'util';
+import { decode } from 'punycode';
 
 @Component({
   selector: 'app-purchase-order',
@@ -12,40 +13,31 @@ import { log } from 'util';
   styleUrls: ['./purchase-order.component.css']
 })
 export class PurchaseOrderComponent implements OnInit {
-  startDate: any;
-  endDate: any;
+  
   isPreview: boolean = false;
+  
   @Output('onClickSearch') onClickSearch: EventEmitter<any> = new EventEmitter<any>();
   @ViewChild('htmlPreview') public htmlPreview: any;
+  
   generic_type_id: string;
+  
   productType: Array<any> = [];
+  
   myDatePickerOptions: IMyOptions = {
     dateFormat: 'dd mmm yyyy',
   };
+  
   constructor(
     private productService: ProductService,
     @Inject('API_URL') private apiUrl: any) {
 
   }
   public jwtHelper: JwtHelper = new JwtHelper();
+  
   ngOnInit() {
     this.getProductType();
-    const date = new Date();
-    this.startDate = {
-      date: {
-        year: date.getFullYear(),
-        month: date.getMonth() + 1,
-        day: 1
-      }
-    };
-    this.endDate = {
-      date: {
-        year: date.getFullYear(),
-        month: date.getMonth() + 1,
-        day: date.getDate()
-      }
-    };
   }
+  
   onDateStartChanged(event: IMyDateModel) {
     const selectDate: any = moment(event.jsdate).format('YYYY-MM-DD');
     if (selectDate !== 'Invalid date') {
@@ -54,6 +46,7 @@ export class PurchaseOrderComponent implements OnInit {
 
     }
   }
+  
   onDateEndChanged(event: IMyDateModel) {
     const selectDate: any = moment(event.jsdate).format('YYYY-MM-DD');
     if (selectDate !== 'Invalid date') {
@@ -72,17 +65,15 @@ export class PurchaseOrderComponent implements OnInit {
   showReport() {
     this.isPreview = true;
     const that = this;
-    const startDate = this.startDate ? moment(this.startDate.jsdate).format('YYYY-MM-DD') : null;
-    const endDate = this.endDate ? moment(this.endDate.jsdate).format('YYYY-MM-DD') : null;
-    console.log(startDate, endDate);
     setTimeout(() => {
       that.isPreview = false;
     }, 2000);
 
-    const url = `${this.apiUrl}/report/list/purchaseSelec/${startDate}/${endDate}/?generic_type_id=${this.generic_type_id}`;
+    const url = `${this.apiUrl}/report/list/purchaseSelec/?generic_type_id=${this.generic_type_id}`;
 
     this.htmlPreview.showReport(url);
   }
+  
   async getProductType() {
     const token = sessionStorage.getItem('token');
     const decodedToken = this.jwtHelper.decodeToken(token);
