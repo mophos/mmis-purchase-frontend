@@ -2,7 +2,7 @@
   Loading...
 </span>
 <div class="select" *ngIf="!loading" style="width: 100%">
-  <select name="subBudgetId" id="subBudgetId" [disabled]="disabled" [(ngModel)]="selectedId" (change)="setSelected($event)">
+  <select name="subBudgetId" id="subBudgetId" [disabled]="disabled" [(ngModel)]="_selectedId" (change)="setSelected($event)">
     <option *ngFor="let item of items" [value]="item.bgdetail_id">{{ item.bgtypesub_name }} (วงเงิน {{item.amount | number:'1.0'}} บาท)</option>
   </select>
 </div>
