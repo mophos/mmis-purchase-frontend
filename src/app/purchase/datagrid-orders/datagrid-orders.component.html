@@ -94,6 +94,9 @@
           วิธีการจัดซื้อ
         </clr-dg-column>
         <clr-dg-column [style.width.px]="130">
+          งบประมาณย่อย
+        </clr-dg-column>
+        <clr-dg-column [style.width.px]="130">
           เลขที่สัญญา
         </clr-dg-column>
 
@@ -127,6 +130,7 @@
           <clr-dg-cell class="text-right">{{pro.order_date | toThaiDate}} </clr-dg-cell>
           <clr-dg-cell>{{pro.labeler_name}}</clr-dg-cell>
           <clr-dg-cell>{{pro.bid_process_name}}</clr-dg-cell>
+          <clr-dg-cell>{{pro.bgtypesub_name}}</clr-dg-cell>
           <clr-dg-cell>{{pro.contract_id}}</clr-dg-cell>
 
           <clr-dg-action-overflow>

@@ -48,6 +48,7 @@ export class SelectSubBudgetComponent implements OnInit {
         if (this.items.length) {
           if (this.selectedId) {
             const idx = _.findIndex(this.items, { bgdetail_id: this.selectedId });
+            console.log(idx);
             if (idx > -1) {
               this.onChange.emit(this.items[idx]);
             } else {
