@@ -55,10 +55,15 @@ export class ReorderPointComponent implements OnInit {
     private settingService: SettingService
   ) {
     this.token = sessionStorage.getItem('token');
+    let decoded = this.jwtHelper.decodeToken(this.token);
+    console.log(decoded);
+    if (decoded) {
+      this.delivery = decoded.PC_SHIPPING_DATE || 30;
+      this.defaultBudgetYear = decoded.PC_DEFAULT_BUDGET_YEAR || moment().get('year');
+    }
    }
 
   async ngOnInit() {
-    this.settings('PC');
     await this.getGenerictType();
   }
 
@@ -75,8 +80,9 @@ export class ReorderPointComponent implements OnInit {
   async refresh(state: State) {
     let offset = +state.page.from;
     let limit = +state.page.size;
-    this.modalLoading.show();
+    
     try {
+      this.modalLoading.show();
       // if (!this.generic_type_id) this.generic_type_id = this.generictsType[0].generic_type_id;
       const rs: any = await this.productService.ordersPoint(this.query, this.contractFilter, this.generic_type_id, limit, offset);
       this.products = [];
@@ -101,6 +107,7 @@ export class ReorderPointComponent implements OnInit {
         this.modalLoading.hide();
         // this.calReorderPointUnit();
       } else {
+        this.modalLoading.hide();
         this.alertService.error(rs.error);
       }
     } catch (error) {
@@ -137,6 +144,7 @@ export class ReorderPointComponent implements OnInit {
         this.modalLoading.hide();
         // this.calReorderPointUnit();
       } else {
+        this.modalLoading.hide();
         this.alertService.error(rs.error);
       }
     } catch (error) {
@@ -146,7 +154,7 @@ export class ReorderPointComponent implements OnInit {
   }
 
   async getGenerictType() {
-    this.modalLoading.show();
+    // this.modalLoading.show();
     try {
       const res: any = await this.genericTypeService.all();
 
@@ -163,30 +171,13 @@ export class ReorderPointComponent implements OnInit {
         })
       })
 
-      // this.generic_type_id = data[0].generic_type_id;
-
-      this.modalLoading.hide();
-      this.ref.detectChanges();
+      // this.modalLoading.hide();
+      // this.ref.detectChanges();
     } catch (error) {
       this.alertService.serverError(error);
-      this.modalLoading.hide();
+      // this.modalLoading.hide();
     }
   }
-
-  // calReorderPointUnit() {
-  //   this.products.forEach((item, index) => {
-  //     let rec_amount: number = Math.ceil((item.max_qty - item.remain) / item.qty);
-
-  //     let rec_baseunit_amount: number = Math.ceil((item.rec_amount * item.qty));
-  //     if (item.remain <= item.min_qty) {
-  //       item.rec_amount = isNaN(rec_amount) ? 0 : rec_amount;
-  //       item.rec_baseunit_amount = isNaN(rec_baseunit_amount) ? 0 : +rec_baseunit_amount;
-  //     } else {
-  //       item.rec_amount = 0;
-  //       item.rec_baseunit_amount = 0;
-  //     }
-  //   });
-  // }
 
   getRemainStatus(data: any) {
     if (data.remain < data.min_qty) {
@@ -263,9 +254,6 @@ export class ReorderPointComponent implements OnInit {
         poItems.push(objP);
       });
 
-      // console.log(poItems);
-      // console.log(productItems);
-
       this.alertService.confirm('ต้องการสร้างใบสั่งซื้อใหม่ตามรายการที่กำหนด ใช่หรือไม่?')
         .then(async () => {
           this.modalLoading.show();
@@ -296,23 +284,6 @@ export class ReorderPointComponent implements OnInit {
       this.alertService.error('กรุณาระบุรายการที่ต้องการจัดซื้อ');
     }
 
-  }
-
-  settings(module: string) {
-    this.settingService.byModule(module)
-      .then((results: any) => {
-        this.settingConfig = results.rows;
-        const delivery = _.find(this.settingConfig, { 'action_name': 'PC_SHIPPING_DATE' });
-        this.delivery = delivery.value;
-        const budgetYear = _.find(this.settingConfig, { 'action_name': 'PC_DEFAULT_BUDGET_YEAR' });
-        if (budgetYear) {
-          this.defaultBudgetYear = budgetYear.value;
-        }
-        this.ref.detectChanges();
-      })
-      .catch(error => {
-        this.alertService.serverError(error);
-      });
   }
 
   onSuccessReorderPoint(event: any) {
