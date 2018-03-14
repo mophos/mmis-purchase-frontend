@@ -293,3 +293,6 @@ form.box-pricing input {
       border-bottom: 0
   }
   
+app-modal-loading .modal-backdrop {
+    background-color: transparent;
+}
