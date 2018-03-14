@@ -293,3 +293,13 @@ form.box-pricing input {
       border-bottom: 0
   }
   
+app-modal-loading {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    background-color: transparent;
+    opacity: .85;
+    z-index: 1040;
+}
