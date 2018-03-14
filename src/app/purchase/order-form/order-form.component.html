@@ -80,7 +80,7 @@
           <div class="col-md-4">
             <div class="form-group">
               <label class="required" for="budget_detail_id">งบประมาณย่อย</label>
-              <po-select-sub-budget (onChange)="onChangeSubBudget($event)" [disabled]="contractId" style="width: 100%;" #subBudgetList
+              <po-select-sub-budget [selectedId]="budgetDetailId" (onChange)="onChangeSubBudget($event)" [disabled]="contractId" style="width: 100%;" #subBudgetList
                 [year]="budgetYear" [budgetTypeId]="budgetTypeId"></po-select-sub-budget>
             </div>
           </div>
