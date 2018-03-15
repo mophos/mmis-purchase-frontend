@@ -13,31 +13,31 @@ import { decode } from 'punycode';
   styleUrls: ['./purchase-order.component.css']
 })
 export class PurchaseOrderComponent implements OnInit {
-  
+
   isPreview: boolean = false;
-  
+
   @Output('onClickSearch') onClickSearch: EventEmitter<any> = new EventEmitter<any>();
   @ViewChild('htmlPreview') public htmlPreview: any;
-  
+
   generic_type_id: string;
-  
+
   productType: Array<any> = [];
-  
+
   myDatePickerOptions: IMyOptions = {
     dateFormat: 'dd mmm yyyy',
   };
-  
+
   constructor(
     private productService: ProductService,
     @Inject('API_URL') private apiUrl: any) {
 
   }
   public jwtHelper: JwtHelper = new JwtHelper();
-  
+
   ngOnInit() {
     this.getProductType();
   }
-  
+
   onDateStartChanged(event: IMyDateModel) {
     const selectDate: any = moment(event.jsdate).format('YYYY-MM-DD');
     if (selectDate !== 'Invalid date') {
@@ -46,7 +46,7 @@ export class PurchaseOrderComponent implements OnInit {
 
     }
   }
-  
+
   onDateEndChanged(event: IMyDateModel) {
     const selectDate: any = moment(event.jsdate).format('YYYY-MM-DD');
     if (selectDate !== 'Invalid date') {
@@ -69,11 +69,14 @@ export class PurchaseOrderComponent implements OnInit {
       that.isPreview = false;
     }, 2000);
 
+    // const token = sessionStorage.getItem('token');
+    // const url = `${this.apiUrl}/report/list/purchaseSelec/?generic_type_id=${this.generic_type_id}/${token}`;
+    
     const url = `${this.apiUrl}/report/list/purchaseSelec/?generic_type_id=${this.generic_type_id}`;
 
     this.htmlPreview.showReport(url);
   }
-  
+
   async getProductType() {
     const token = sessionStorage.getItem('token');
     const decodedToken = this.jwtHelper.decodeToken(token);
