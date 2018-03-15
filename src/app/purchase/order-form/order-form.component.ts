@@ -209,6 +209,8 @@ export class OrderFormComponent implements OnInit {
   currentBudgetYear = null;
   currentVatRate = 7;
 
+  contractNo: any = null;
+
   constructor(
     private accessCheck: AccessCheck,
     private router: Router,
@@ -509,8 +511,6 @@ export class OrderFormComponent implements OnInit {
   }
 
   calDiscount(subTotal: number): number {
-    console.log(this.discountPercent);
-
     this.discountPercentAmount = this.discountPercent * subTotal / 100;
     return ((+this.discountPercentAmount) + (+this.discountCash));
   }
@@ -599,6 +599,7 @@ export class OrderFormComponent implements OnInit {
     }
 
     this.contractId = data.contract_id;
+    this.contractNo = data.contract_no;
     this.contractRef = data.contract_ref;
     this.purchaseOrderId = data.purchase_order_id;
 

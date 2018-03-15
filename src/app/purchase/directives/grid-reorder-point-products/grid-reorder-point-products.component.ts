@@ -66,12 +66,15 @@ export class GridReorderPointProductsComponent implements OnInit {
             unit_generic_id: v.unit_generic_id,
             v_labeler_id: v.v_labeler_id,
             v_labeler_name: v.v_labeler_name,
-            working_code: v.working_code
+            working_code: v.working_code,
+            contract_no: v.contract_no,
+            contract_id: v.contract_id
           }
 
           let _idx = _.findIndex(this._productItems, { product_id: v.product_id });
           if (_idx > -1) {
             obj.order_qty = this._productItems[_idx].order_qty;
+            obj.purchase_cost = this._productItems[_idx].unit_price;
           }
 
           this.items.push(obj);
@@ -102,20 +105,10 @@ export class GridReorderPointProductsComponent implements OnInit {
   onChangeUnit(event: any, product: any) {
     let idx = _.findIndex(this.items, { product_id: product.product_id });
     if (idx > -1) {
-      this.items[idx].cost = +event.cost;
-      this.items[idx].purchase_unit_generic_id = event.unit_generic_id;
-      this.items[idx].purchase_conversion_qty = event.qty;
-
+      this.items[idx].purchase_cost = +event.cost;
+      this.items[idx].purchase_unit_id = event.unit_generic_id;
+      this.items[idx].conversion_qty = event.qty;
       this.onSuccess.emit(this.items[idx]);
     }
-    /*
-    cost:4.1
-    from_unit_id:124
-    from_unit_name:"BOX"
-    qty:1
-    to_unit_id:99
-    to_unit_name:"AMP"
-    unit_generic_id:12762
-    */
   }
 }
