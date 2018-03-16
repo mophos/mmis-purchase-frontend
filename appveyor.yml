@@ -16,7 +16,7 @@ test_script:
   - node --version
   - npm --version
   # run tests
-  - ng build --build-optimizer --prod
+  - npx ng build --build-optimizer --prod --base-href=./
 
 # Don't actually build.
 build: off
