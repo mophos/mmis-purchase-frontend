@@ -24,12 +24,14 @@ export class PrintComponent implements OnInit {
   end_date: any;
   reportName: string;
   report: any;
-
+  token: any;
   constructor(
     private santizer: DomSanitizer,
     private activatedRoute: ActivatedRoute,
     @Inject('API_URL') public url: String,
-  ) {}
+  ) {
+    this.token = sessionStorage.getItem('token');
+  }
 
   ngOnInit() {
 
@@ -49,8 +51,8 @@ export class PrintComponent implements OnInit {
 
   getActiveReports(id: string){
     this.reports = [
-      {'id': '01', 'name': 'รายการสั่งซื้อยา', 'url': this.url + `/report/list/purchase/${this.start_date}/${this.end_date}`},
-      {'id': '02', 'name': 'รายการเวชภัณฑ์ที่สั่งซื้อ', 'url': this.url + `/report/purchasing/${this.start_date}/${this.end_date}`}
+      {'id': '01', 'name': 'รายการสั่งซื้อยา', 'url': this.url + `/report/list/purchase/${this.start_date}/${this.end_date}?token=${this.token}`},
+      {'id': '02', 'name': 'รายการเวชภัณฑ์ที่สั่งซื้อ', 'url': this.url + `/report/purchasing/${this.start_date}/${this.end_date}?token=${this.token}`}
     ];
     this.report = _.find(this.reports, {'id': this.id});
     if(this.report){
