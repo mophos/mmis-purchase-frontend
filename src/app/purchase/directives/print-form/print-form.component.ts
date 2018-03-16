@@ -13,6 +13,7 @@ export class PrintFormComponent implements OnInit {
   startDate: any;
   endDate: any;
   isPreview: boolean = false;
+  token: any;
   @Output('onClickSearch') onClickSearch: EventEmitter<any> = new EventEmitter<any>();
   @ViewChild('htmlPreview') public htmlPreview: any;
   @Inject('API_URL') private apiUrl: any;
@@ -20,7 +21,9 @@ export class PrintFormComponent implements OnInit {
     dateFormat: 'dd mmm yyyy',
   };
 
-  constructor() { }
+  constructor() { 
+    this.token = sessionStorage.getItem('token');
+  }
 
   ngOnInit() {
     const date = new Date();
@@ -94,9 +97,8 @@ export class PrintFormComponent implements OnInit {
     //   that.isPreview = false;
     // }, 5000);
 
-    const url = `${this.apiUrl}/report/list/purchase/${startDate}/${endDate}`;
+    const url = `${this.apiUrl}/report/list/purchase/${startDate}/${endDate}?token=${this.token}`;
     console.log(url);
-    
      this.htmlPreview.showReport(url);
   }
 }

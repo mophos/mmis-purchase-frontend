@@ -22,12 +22,15 @@ export class PurchaseOrderComponent implements OnInit {
   myDatePickerOptions: IMyOptions = {
     dateFormat: 'dd mmm yyyy',
   };
+  token: any;
   constructor(
     private productService: ProductService,
     @Inject('API_URL') private apiUrl: any) {
-
+      this.token = sessionStorage.getItem('token');
   }
+
   public jwtHelper: JwtHelper = new JwtHelper();
+
   ngOnInit() {
     this.getProductType();
     const date = new Date();
@@ -79,13 +82,12 @@ export class PurchaseOrderComponent implements OnInit {
       that.isPreview = false;
     }, 2000);
 
-    const url = `${this.apiUrl}/report/list/purchaseSelec/${startDate}/${endDate}/?generic_type_id=${this.generic_type_id}`;
+    const url = `${this.apiUrl}/report/list/purchaseSelec/${startDate}/${endDate}/?generic_type_id=${this.generic_type_id}&token=${this.token}`;
 
     this.htmlPreview.showReport(url);
   }
   async getProductType() {
-    const token = sessionStorage.getItem('token');
-    const decodedToken = this.jwtHelper.decodeToken(token);
+    const decodedToken = this.jwtHelper.decodeToken(this.token);
     const productGroup = decodedToken.generic_type_id.split(',');
     console.log(productGroup);
     const rs: any = await this.productService.type(productGroup);
