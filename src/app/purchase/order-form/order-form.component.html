@@ -3,7 +3,7 @@
     <a class="breadcrumb-item" href="javascript://" routerLink="/">หน้าหลัก</a>
     <span class="breadcrumb-item active">ใบสั่งซื้อ</span>
     <span style="margin-left: 2%; font-size:20px; font-weight:bold;">{{purchaseOrderNumber}}</span>
-    <span *ngIf="contractId" style="margin-left: 2%; font-size:20px; font-weight:bold;">เลขที่สัญญา {{contractNo}}</span>
+    <!-- <span *ngIf="contractId" style="color: red; margin-left: 2%; font-size:20px; font-weight:bold;">เลขที่สัญญา {{contractNo}}</span> -->
     <span style="margin-left:35px">
       <app-order-status [status]="purchaseOrderStatus"></app-order-status>
     </span>
@@ -294,11 +294,11 @@
           <clr-tab-content *clrIfActive>
             <div class="row">
               <div class="col-md-6">
-                <po-budget-remain [purchaseOrderId]="purchaseOrderId" (onCalculated)="onBudgetCalculated($event)" [purchaseAmount]="totalPrice"
+                <po-budget-remain [contractId]="contractId" [purchaseOrderId]="purchaseOrderId" (onCalculated)="onBudgetCalculated($event)" [purchaseAmount]="totalPrice"
                   [budgetDetailId]="budgetDetailId" [budgetYear]="budgetYear"></po-budget-remain>
               </div>
               <div class="col-md-6">
-                <div class="card">
+                <div class="card" style="height:299px;">
                   <div class="card-block">
                     <form class="compact box-pricing" style="margin-top:0px;padding-top:0;">
                       <section class="form-block" style="margin-top:0px;">
@@ -358,11 +358,14 @@
 
   <div class="text-right">
     <button type="button" [disabled]="isUpdate" (click)="reset()" class="btn btn-outline-danger btn-sm">
-      <clr-icon shape="refresh"></clr-icon> รีเซ็ต</button>
+      <clr-icon shape="refresh"></clr-icon> รีเซ็ต
+    </button>
     <button [disabled]="disableSave() || isSaving" type="button" (click)="save()" class="btn btn-sm btn-success">
-      <clr-icon shape="floppy"></clr-icon> บันทึก</button>
+      <clr-icon shape="floppy"></clr-icon> บันทึก
+    </button>
     <button type="button" (click)="cancel()" class="btn btn-danger btn-sm">
-      <clr-icon shape="home"></clr-icon> กลับหน้าหลัก</button>
+      <clr-icon shape="home"></clr-icon> กลับหน้าหลัก
+    </button>
 
   </div>
 
