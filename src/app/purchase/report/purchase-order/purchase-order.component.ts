@@ -33,13 +33,14 @@ export class PurchaseOrderComponent implements OnInit {
   myDatePickerOptions: IMyOptions = {
     dateFormat: 'dd mmm yyyy',
   };
-
+  token: any;
   constructor(
     private productService: ProductService,
     private alertService: AlertService,
     @Inject('API_URL') private apiUrl: any) {
-
+      this.token = sessionStorage.getItem('token');
   }
+
   public jwtHelper: JwtHelper = new JwtHelper();
 
   ngOnInit() {

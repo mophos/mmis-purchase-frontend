@@ -84,7 +84,6 @@ export class DatagridOrdersComponent implements OnInit {
 
   page: any;
   token: any;
-
   constructor(
     private ref: ChangeDetectorRef,
     private alertService: AlertService,
@@ -586,7 +585,7 @@ export class DatagridOrdersComponent implements OnInit {
     });
 
     if (f1 !== f2) {
-      this.htmlPrview.showReport(this.url + '/report/po/egp/singburi/?' + poItems.join('&'));
+      this.htmlPrview.showReport(this.url + `/report/po/egp/singburi/?token=${this.token}&` + poItems.join('&'));
     } else {
       this.alertService.error('ข้อมุูลไม่ครบถ้วน');
     }
@@ -634,7 +633,7 @@ export class DatagridOrdersComponent implements OnInit {
       this.alertService.error('ข้อมุูลไม่ครบถ้วน');
     }
     if (print_non > 0) {
-      this.htmlPrview.showReport(this.url + '/report/getporder/singburi/?' + printId.join('&'));
+      this.htmlPrview.showReport(this.url + `/report/getporder/singburi/?token=${this.token}&` + printId.join('&'));
       this.openModal = false;
     } else {
       this.alertService.error('ข้อมุูลไม่ครบถ้วน');
@@ -659,7 +658,7 @@ export class DatagridOrdersComponent implements OnInit {
       this.alertService.error('ไม่มีข้อมูล');
     }
     if (print_non > 0) {
-      this.htmlPrview.showReport(this.url + '/report/getporder/singburi/?' + printId.join('&'));
+      this.htmlPrview.showReport(this.url + `/report/getporder/singburi/?token=${this.token}&` + printId.join('&'));
       this.openModal = false;
     } else {
       this.alertService.error('ข้อมุูลไม่ครบถ้วน');
@@ -713,7 +712,7 @@ export class DatagridOrdersComponent implements OnInit {
 
   printHistory(generic_name: any) {
     this.generic_name = generic_name;
-    this.htmlPrview.showReport(this.url + '/report/getProductHistory/' + generic_name.generic_code);
+    this.htmlPrview.showReport(this.url + `/report/getProductHistory/${generic_name.generic_code}?token=${this.token}`);
     console.log(generic_name.generic_code);
   }
 
