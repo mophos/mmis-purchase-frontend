@@ -13,8 +13,13 @@ export class SelectSubBudgetComponent implements OnInit {
 
   _year: any;
   _budgetTypeId: any;
+  _selectedId: any;
 
-  @Input() public selectedId: any;
+  @Input('selectedId') 
+  set setSelectedId(value: any) {
+    this._selectedId = value;
+  } 
+  
   @Input() public disabled: any;
 
   @Input('year')
@@ -46,15 +51,15 @@ export class SelectSubBudgetComponent implements OnInit {
       if (rs.ok) {
         this.items = rs.rows;
         if (this.items.length) {
-          if (this.selectedId) {
-            const idx = _.findIndex(this.items, { bgdetail_id: this.selectedId });
+          if (this._selectedId) {
+            const idx = _.findIndex(this.items, { bgdetail_id: this._selectedId });
             if (idx > -1) {
               this.onChange.emit(this.items[idx]);
             } else {
               this.onChange.emit(this.items[0]);
             }
           } else {
-            this.selectedId = this.items[0].bgdetail_id;
+            this._selectedId = this.items[0].bgdetail_id;
             this.onChange.emit(this.items[0]);
           }
         }

@@ -5,6 +5,10 @@ import * as moment from 'moment';
 import { tokenNotExpired, JwtHelper } from 'angular2-jwt';
 import { ProductService } from '../../share/product.service';
 import { log } from 'util';
+import { decode } from 'punycode';
+import { AlertService } from 'app/alert.service';
+import { ModalLoadingComponent } from 'app/modal-loading/modal-loading.component';
+import { HtmlPreviewComponent } from 'app/helper/html-preview/html-preview.component';
 
 @Component({
   selector: 'app-purchase-order',
@@ -12,19 +16,27 @@ import { log } from 'util';
   styleUrls: ['./purchase-order.component.css']
 })
 export class PurchaseOrderComponent implements OnInit {
-  startDate: any;
-  endDate: any;
+
   isPreview: boolean = false;
-  @Output('onClickSearch') onClickSearch: EventEmitter<any> = new EventEmitter<any>();
-  @ViewChild('htmlPreview') public htmlPreview: any;
+
+  products: any = [];
+  selectedProduct: any = [];
+  printProducts: any = [];
+
+  @ViewChild('htmlPreview') public htmlPreview: HtmlPreviewComponent;
+  @ViewChild('modalLoading') modalLoading: ModalLoadingComponent
+
   generic_type_id: string;
+
   productType: Array<any> = [];
+
   myDatePickerOptions: IMyOptions = {
     dateFormat: 'dd mmm yyyy',
   };
   token: any;
   constructor(
     private productService: ProductService,
+    private alertService: AlertService,
     @Inject('API_URL') private apiUrl: any) {
       this.token = sessionStorage.getItem('token');
   }
@@ -32,23 +44,28 @@ export class PurchaseOrderComponent implements OnInit {
   public jwtHelper: JwtHelper = new JwtHelper();
 
   ngOnInit() {
-    this.getProductType();
-    const date = new Date();
-    this.startDate = {
-      date: {
-        year: date.getFullYear(),
-        month: date.getMonth() + 1,
-        day: 1
-      }
-    };
-    this.endDate = {
-      date: {
-        year: date.getFullYear(),
-        month: date.getMonth() + 1,
-        day: date.getDate()
-      }
-    };
+    // this.getProductType();
+    this.getProducts();
   }
+
+  printProduct() {
+    this.selectedProduct.forEach(v => {
+      this.printProducts.push(v.product_id);
+    });
+
+    let productIds = '';
+    this.printProducts.forEach((v: any) => {
+      productIds += `product_id=${v}&`;
+    });
+
+    let token = sessionStorage.getItem('token');
+
+    const url = `${this.apiUrl}/report/list/purchase-trade-select/?token=${token}&${productIds}`;
+
+    this.htmlPreview.showReport(url);
+
+  }
+
   onDateStartChanged(event: IMyDateModel) {
     const selectDate: any = moment(event.jsdate).format('YYYY-MM-DD');
     if (selectDate !== 'Invalid date') {
@@ -57,6 +74,7 @@ export class PurchaseOrderComponent implements OnInit {
 
     }
   }
+
   onDateEndChanged(event: IMyDateModel) {
     const selectDate: any = moment(event.jsdate).format('YYYY-MM-DD');
     if (selectDate !== 'Invalid date') {
@@ -66,34 +84,38 @@ export class PurchaseOrderComponent implements OnInit {
     }
   }
 
-  print() {
-    // this.onClickSearch.emit({
-    //   start_date: `${this.start_date.date.year}-${this.start_date.date.month}-${this.start_date.date.day}`,
-    //   end_date: `${this.end_date.date.year}-${this.end_date.date.month}-${this.end_date.date.day}`,
-    // });
+  async getProducts() {
+    try {
+      this.modalLoading.show();
+      let rs: any = await this.productService.getReorderPointTrade(this.generic_type_id);
+      this.modalLoading.hide();
+      if (rs.ok) {
+        this.products = rs.rows;
+      } else {
+        this.alertService.error(rs.error);
+      }
+    } catch (error) {
+      this.modalLoading.hide();
+      this.alertService.error(error.message);
+    }
   }
-  showReport() {
-    this.isPreview = true;
-    const that = this;
-    const startDate = this.startDate ? moment(this.startDate.jsdate).format('YYYY-MM-DD') : null;
-    const endDate = this.endDate ? moment(this.endDate.jsdate).format('YYYY-MM-DD') : null;
-    console.log(startDate, endDate);
-    setTimeout(() => {
-      that.isPreview = false;
-    }, 2000);
 
-    const url = `${this.apiUrl}/report/list/purchaseSelec/${startDate}/${endDate}/?generic_type_id=${this.generic_type_id}&token=${this.token}`;
-
-    this.htmlPreview.showReport(url);
-  }
-  async getProductType() {
-    const decodedToken = this.jwtHelper.decodeToken(this.token);
-    const productGroup = decodedToken.generic_type_id.split(',');
-    console.log(productGroup);
-    const rs: any = await this.productService.type(productGroup);
-    console.log(rs.rows);
-    this.productType = rs.rows;
-    this.generic_type_id = '';
-  }
+  // async getProductType() {
+  //   const token = sessionStorage.getItem('token');
+  //   const decodedToken = this.jwtHelper.decodeToken(token);
+  //   const productGroup = decodedToken.generic_type_id.split(',');
+  //   try {
+  //     const rs: any = await this.productService.type(productGroup);
+  //     if (rs.ok) {
+  //       this.productType = rs.rows;
+  //       if (rs.rows.length) this.generic_type_id = this.productType[0].generic_type_id;
+  //     } else {
+  //       this.alertService.error(rs.error);
+  //     }
+     
+  //   } catch (error) {
+  //     this.alertService.error(error.message);
+  //   }
+  // }
 }
 

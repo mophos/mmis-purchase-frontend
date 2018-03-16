@@ -209,6 +209,8 @@ export class OrderFormComponent implements OnInit {
   currentBudgetYear = null;
   currentVatRate = 7;
 
+  contractNo: any = null;
+
   constructor(
     private accessCheck: AccessCheck,
     private router: Router,
@@ -509,8 +511,6 @@ export class OrderFormComponent implements OnInit {
   }
 
   calDiscount(subTotal: number): number {
-    console.log(this.discountPercent);
-
     this.discountPercentAmount = this.discountPercent * subTotal / 100;
     return ((+this.discountPercentAmount) + (+this.discountCash));
   }
@@ -599,6 +599,7 @@ export class OrderFormComponent implements OnInit {
     }
 
     this.contractId = data.contract_id;
+    this.contractNo = data.contract_no;
     this.contractRef = data.contract_ref;
     this.purchaseOrderId = data.purchase_order_id;
 
@@ -611,10 +612,6 @@ export class OrderFormComponent implements OnInit {
 
     this.purchaseOrderStatus = data.purchase_order_status;
     // this.isCancel = data.is_cancel;
-
-    if (data.budget_detail_id) {
-      this.budgetDetailId = data.budget_detail_id;
-    }
 
     this.labelerId = data.labeler_id;
     // this.verifyCommitteeId = data.verify_committee_id;
@@ -655,19 +652,23 @@ export class OrderFormComponent implements OnInit {
     };
 
     if (!data.budgettype_id) {
-      this.subBudgetList.setBudgetType(this.budgetTypeId);
-      this.subBudgetList.getItems();
+      await this.subBudgetList.setBudgetType(this.budgetTypeId);
+      await this.subBudgetList.getItems();
     } else {
       this.budgetTypeId = data.budgettype_id;
     }
 
     if (this.purchaseOrder.verify_committee_id) {
       this.verifyCommitteeId = this.purchaseOrder.verify_committee_id;
-      this.getCommitteePeople(this.purchaseOrder.verify_committee_id);
+      await this.getCommitteePeople(this.purchaseOrder.verify_committee_id);
     }
 
     if (this.contractRef) {
       // this.getDetailContract(this.contract_ref);
+    }
+
+    if (data.budget_detail_id) {
+      this.budgetDetailId = data.budget_detail_id;
     }
 
     this.searchVendor.setSelected(data.labeler_name);

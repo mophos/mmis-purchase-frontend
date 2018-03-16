@@ -8,6 +8,7 @@
     <clr-dg-column>หน่วยสั่งซื้อ</clr-dg-column>
     <clr-dg-column>ราคาต่อ Pack</clr-dg-column>
     <clr-dg-column>รวม (Base Unit)</clr-dg-column>
+    <clr-dg-column>เลขที่สัญญา</clr-dg-column>
     <clr-dg-placeholder>ไม่พบรายการเวชภัณฑ์สำหรับจ่าย</clr-dg-placeholder>
     <clr-dg-row *ngFor="let i of items; let idx = index;">
       <clr-dg-cell>{{ i.product_name }}</clr-dg-cell>
@@ -21,13 +22,16 @@
           placeholder="0" appNumberWithoutDot [value]="i.order_qty">
       </clr-dg-cell>
       <clr-dg-cell>
-         <app-select-box-units (onSelect)="onChangeUnit($event, i)" [genericId]="i.generic_id"></app-select-box-units>
+         <app-select-box-units (onChange)="onChangeUnit($event, i)" [genericId]="i.generic_id"></app-select-box-units>
       </clr-dg-cell>
       <clr-dg-cell style="text-align: right;">
-         {{i.cost || 0 | number: '1.2-2'}}
+         {{i.purchase_cost || 0 | number: '1.2-2'}}
       </clr-dg-cell>
       <clr-dg-cell style="text-align: right;">
          {{i.order_qty*i.purchase_conversion_qty | number}} {{i.to_unit_name}}
+      </clr-dg-cell>
+      <clr-dg-cell>
+         {{i.contract_no}}
       </clr-dg-cell>
     </clr-dg-row>
 

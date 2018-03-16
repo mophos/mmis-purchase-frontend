@@ -3,6 +3,7 @@
     <a class="breadcrumb-item" href="javascript://" routerLink="/">หน้าหลัก</a>
     <span class="breadcrumb-item active">ใบสั่งซื้อ</span>
     <span style="margin-left: 2%; font-size:20px; font-weight:bold;">{{purchaseOrderNumber}}</span>
+    <span *ngIf="contractId" style="margin-left: 2%; font-size:20px; font-weight:bold;">เลขที่สัญญา {{contractNo}}</span>
     <span style="margin-left:35px">
       <app-order-status [status]="purchaseOrderStatus"></app-order-status>
     </span>
@@ -14,9 +15,9 @@
     </span>
   </nav>
 
-  <span *ngIf="contractId" class="label label-info">เลขที่สัญญา:
+  <!-- <span *ngIf="contractId" class="label label-info">เลขที่สัญญา:
     <strong>{{contractId}}</strong>
-  </span>
+  </span> -->
   <small class="p5" *ngIf="holidayText">
     <clr-icon shape="info-standard"></clr-icon> {{holidayText}}</small>
 
@@ -65,7 +66,7 @@
             <div class="form-group">
               <label style="width: 120px;" class="required" for="labeler_id">ผู้จำหน่าย</label>
               <!-- <app-search-labeler style="width:100%" (onSelected)="onLabelerSelected($event)" [labelerName]="labelerName"></app-search-labeler> -->
-              <po-search-vendor #searchVendor (onChange)="onChangeVendor($event)" (onSelect)="onSelectVendor($event)" style="width: 100%;"></po-search-vendor>
+              <po-search-vendor [disabled]="contractId" #searchVendor (onChange)="onChangeVendor($event)" (onSelect)="onSelectVendor($event)" style="width: 100%;"></po-search-vendor>
             </div>
           </div>
 
@@ -80,7 +81,7 @@
           <div class="col-md-4">
             <div class="form-group">
               <label class="required" for="budget_detail_id">งบประมาณย่อย</label>
-              <po-select-sub-budget (onChange)="onChangeSubBudget($event)" [disabled]="contractId" style="width: 100%;" #subBudgetList
+              <po-select-sub-budget [selectedId]="budgetDetailId" (onChange)="onChangeSubBudget($event)" style="width: 100%;" #subBudgetList
                 [year]="budgetYear" [budgetTypeId]="budgetTypeId"></po-select-sub-budget>
             </div>
           </div>

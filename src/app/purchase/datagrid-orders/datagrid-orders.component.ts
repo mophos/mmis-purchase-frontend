@@ -96,12 +96,16 @@ export class DatagridOrdersComponent implements OnInit {
     private router: Router,
     private productService: ProductService,
     private settingService: SettingService
-  ) {
+  ) { 
     this.token = sessionStorage.getItem('token');
-   }
+    let decoded = this.jwtHelper.decodeToken(this.token);
+    if (decoded) {
+      this.isConfirm = decoded.PC_CONFIRM || 'N';
+      this.isConfirm = this.isConfirm === 'Y' ? true : false;
+    }
+  }
   public jwtHelper: JwtHelper = new JwtHelper()
   ngOnInit() {
-    this.settings();
     this.getProductType();
     this.purchaseOrders = [];
     moment.locale('th');
@@ -698,19 +702,6 @@ export class DatagridOrdersComponent implements OnInit {
 
     }
 
-  }
-
-  settings() {
-    this.settingService.byModule('PC')
-      .then(async (results: any) => {
-        this.settingConfig = results.rows;
-        const confirm = _.find(this.settingConfig, { 'action_name': 'PC_CONFIRM' });
-        this.isConfirm = (confirm.value == null || confirm.value == '') ? confirm.default : confirm.value;
-        this.isConfirm = this.isConfirm === 'Y' ? true : false;
-      })
-      .catch(error => {
-        this.alertService.serverError(error);
-      });
   }
 
   async getOrders() {
