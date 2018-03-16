@@ -1,4 +1,4 @@
-<div class="card" style="min-height:255px;">
+<div class="card" style="height:299px;">
   <div class="card-block  form-right">
     <div class="row">
       <div class="col-md-5">งบประมาณ</div>
@@ -40,13 +40,26 @@
     <div class="row">
       <div class="col-md-5">เลขที่สัญญา</div>
       <div class="col-md-7" style="text-align: right;">
-        <span class="p4">{{contractNo || '-'}}</span>
+        <span style="color: #F52F22; font-weight: bold;">{{contractNo || '-'}}</span>
       </div>
     </div>
     <div class="row">
       <div class="col-md-5">วงเงินในสัญญา</div>
       <div class="col-md-7" style="text-align: right;">
-        <span style="color: #F52F22; font-weight: bold;">{{0 | number: '1.2-2'}}</span>
+        <span style="font-weight: bold;">{{contractAmount | number: '1.2-2'}}</span>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-5">คงเหลือยกมา</div>
+      <div class="col-md-7" style="text-align: right;">
+        <span style="color: #0065AB; font-weight: bold;">{{contractRemain | number: '1.2-2'}}</span>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-5">คงเหลือครั้งนี้</div>
+      <div class="col-md-7" style="text-align: right;">
+        <span *ngIf="_contractId" style="color: #781DA0; font-weight: bold;">{{contractRemainAfterPurchase | number: '1.2-2'}}</span>
+        <span *ngIf="!_contractId" style="color: #781DA0; font-weight: bold;">{{0 | number: '1.2-2'}}</span>
       </div>
     </div>
   </div>
