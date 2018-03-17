@@ -251,12 +251,12 @@
 
                 <div class="form-group">
                   <label for="chief_fullname"> ชื่อหัวหน้างาน</label>
-                  <po-select-officer [selectedId]="office" officerTypeId="3" (onChange)="changeOfficer($event)" style="width: 100%;"></po-select-officer>
+                  <po-select-officer [selectedId]="office" officerTypeCode="CHIEF" (onChange)="changeOfficer($event)" style="width: 100%;"></po-select-officer>
                 </div>
 
                 <div class="form-group">
                   <label for="buyer_fullname"> ชื่อเจ้าหน้าที่</label>
-                  <po-select-officer officerTypeId="4" [selectedId]="office1" (onChange)="changeOffice($event)" style="width: 100%;"></po-select-officer>
+                  <po-select-officer officerTypeCode="BUYYER" [selectedId]="office1" (onChange)="changeOffice($event)" style="width: 100%;"></po-select-officer>
                 </div>
 
                 <div class="form-group">
