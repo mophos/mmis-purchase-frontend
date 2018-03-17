@@ -26,8 +26,8 @@ export class PurchaseOrderComponent implements OnInit {
   @ViewChild('htmlPreview') public htmlPreview: HtmlPreviewComponent;
   @ViewChild('modalLoading') modalLoading: ModalLoadingComponent
 
-  generic_type_id: string;
-
+  generic_type_id = 'all';
+  productGroup: any;
   productType: Array<any> = [];
 
   myDatePickerOptions: IMyOptions = {
@@ -38,14 +38,16 @@ export class PurchaseOrderComponent implements OnInit {
     private productService: ProductService,
     private alertService: AlertService,
     @Inject('API_URL') private apiUrl: any) {
-      this.token = sessionStorage.getItem('token');
+    this.token = sessionStorage.getItem('token');
+    const decodedToken = this.jwtHelper.decodeToken(this.token);
+    this.productGroup = decodedToken.generic_type_id.split(',');
   }
 
   public jwtHelper: JwtHelper = new JwtHelper();
 
   ngOnInit() {
-    // this.getProductType();
-    this.getProducts();
+    this.getProductType();
+    // await this.getProducts();
   }
 
   printProduct() {
@@ -81,10 +83,20 @@ export class PurchaseOrderComponent implements OnInit {
     }
   }
 
+  changeType() {
+    this.getProducts();
+  }
+
   async getProducts() {
     try {
       this.modalLoading.show();
-      let rs: any = await this.productService.getReorderPointTrade(this.generic_type_id);
+      let rs: any;
+      if (this.generic_type_id === 'all') {
+        rs = await this.productService.getReorderPointTrade(this.productGroup);
+      } else {
+        const _generic_type_id = [this.generic_type_id];
+        rs = await this.productService.getReorderPointTrade(_generic_type_id);
+      }
       this.modalLoading.hide();
       if (rs.ok) {
         this.products = rs.rows;
@@ -97,22 +109,22 @@ export class PurchaseOrderComponent implements OnInit {
     }
   }
 
-  // async getProductType() {
-  //   const token = sessionStorage.getItem('token');
-  //   const decodedToken = this.jwtHelper.decodeToken(token);
-  //   const productGroup = decodedToken.generic_type_id.split(',');
-  //   try {
-  //     const rs: any = await this.productService.type(productGroup);
-  //     if (rs.ok) {
-  //       this.productType = rs.rows;
-  //       if (rs.rows.length) this.generic_type_id = this.productType[0].generic_type_id;
-  //     } else {
-  //       this.alertService.error(rs.error);
-  //     }
-     
-  //   } catch (error) {
-  //     this.alertService.error(error.message);
-  //   }
-  // }
+  async getProductType() {
+    try {
+      this.modalLoading.show();
+      const rs: any = await this.productService.type(this.productGroup);
+      if (rs.ok) {
+        this.productType = rs.rows;
+        await this.getProducts();
+      } else {
+        this.modalLoading.hide();
+        this.alertService.error(rs.error);
+      }
+
+    } catch (error) {
+      this.modalLoading.hide();
+      this.alertService.error(error.message);
+    }
+  }
 }
 
