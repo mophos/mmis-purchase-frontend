@@ -58,10 +58,7 @@ export class PurchaseOrderComponent implements OnInit {
       productIds += `product_id=${v}&`;
     });
 
-    let token = sessionStorage.getItem('token');
-
-    const url = `${this.apiUrl}/report/list/purchase-trade-select/?token=${token}&${productIds}`;
-
+    const url = `${this.apiUrl}/report/list/purchase-trade-select/?token=${this.token}&${productIds}`;
     this.htmlPreview.showReport(url);
 
   }

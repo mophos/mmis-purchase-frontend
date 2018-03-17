@@ -3,7 +3,7 @@
   <span class="breadcrumb-item active">รายงานสั่งซื้อเวชภัณฑ์</span>
 </nav>
 
-<div class="row">
+<div class="row wid99">
   <div class="col-md-6">
     <button [disabled]="!selectedProduct.length" class="btn btn-sm btn-success btn-icon" (click)="printProduct()">
       <clr-icon shape="print"></clr-icon> พิมพ์รายการ
@@ -13,22 +13,23 @@
 
   </div>
 </div>
-
-<clr-datagrid [(clrDgSelected)]="selectedProduct">
-  <clr-dg-column [clrDgField]="'product_name'">ชื่อสินค้า (Trade Name)</clr-dg-column>
+  <clr-datagrid [(clrDgSelected)]="selectedProduct" class="grid-order">
+  <clr-dg-column [clrDgField]="'product_name'">ชื่อสินค้า (Generic Name)</clr-dg-column>
+  <clr-dg-column [clrDgField]="'generic_name'">ชื่อสินค้า (Trade Name)</clr-dg-column>
   <clr-dg-column [clrDgField]="'min_qty'" style="width: 120px;">Min</clr-dg-column>
   <clr-dg-column [clrDgField]="'max_qty'" style="width: 120px;">Max</clr-dg-column>
   <clr-dg-column [clrDgField]="'remain_qty'" style="width: 120px;">คงเหลือ</clr-dg-column>
-  <clr-dg-column style="width: 120px;">หน่วย (Base)</clr-dg-column>
   <clr-dg-column [clrDgField]="'generic_type_name'">ประเภท</clr-dg-column>
+  <clr-dg-column [clrDgField]="'labeler_name'">ผู้จำหน่าย</clr-dg-column>
 
   <clr-dg-row *clrDgItems="let p of products" [clrDgItem]="p">
     <clr-dg-cell>{{p.product_name}}</clr-dg-cell>
+    <clr-dg-cell>{{p.generic_name}}</clr-dg-cell>
     <clr-dg-cell style="text-align: right;">{{p.min_qty | number}}</clr-dg-cell>
     <clr-dg-cell style="text-align: right;">{{p.max_qty | number}}</clr-dg-cell>
     <clr-dg-cell style="text-align: right;">{{p.remain_qty | number}}</clr-dg-cell>
-    <clr-dg-cell></clr-dg-cell>
     <clr-dg-cell>{{p.generic_type_name}}</clr-dg-cell>
+    <clr-dg-cell>{{p.labeler_name}}</clr-dg-cell>
   </clr-dg-row>
 
   <clr-dg-footer>{{products.length}} รายการ</clr-dg-footer>
