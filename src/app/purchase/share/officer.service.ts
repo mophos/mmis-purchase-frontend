@@ -5,10 +5,10 @@ import { Injectable, Inject } from '@angular/core';
 export class OfficerService {
   tokenKey = sessionStorage.getItem('token');
 
-  apiName: string = 'purchasing-order';
+  apiName = 'purchasing-order';
 
   constructor(
-    @Inject('API_URL') private url: String,
+    @Inject('API_URL') private url: string,
     private authHttp: AuthHttp
   ) { }
 
@@ -160,67 +160,4 @@ export class OfficerService {
         });
     });
   }
-
-  // type bid =====================================
-  // deleteTypeBid(ref) {
-  //   return new Promise((resolve, reject) => {
-  //     this.authHttp.post(`${this.url}/delete-type-bid`, {
-  //       tokenKey: this.tokenKey,
-  //       ref: ref
-  //     } )
-  //       .map(res => res.json())
-  //       .subscribe(data => {
-  //         resolve(data);
-  //       }, error => {
-  //         reject(error);
-  //       });
-  //   });
-  // }
-
-  // saveBidProcess(ref, data) {
-  //   return new Promise((resolve, reject) => {
-  //     this.authHttp.post(`${this.url}/save-bid-process`, {
-  //       tokenKey: this.tokenKey,
-  //       data: data,
-  //       ref: ref
-  //     } )
-  //       .map(res => res.json())
-  //       .subscribe(res => {
-  //         resolve(res);
-  //       }, error => {
-  //         reject(error);
-  //       });
-  //   });
-  // }
-
-  // deleteBidProcess(ref) {
-  //   return new Promise((resolve, reject) => {
-  //     this.authHttp.post(`${this.url}/delete-bid-process`, {
-  //       tokenKey: this.tokenKey,
-  //       ref: ref
-  //     } )
-  //       .map(res => res.json())
-  //       .subscribe(data => {
-  //         resolve(data);
-  //       }, error => {
-  //         reject(error);
-  //       });
-  //   });
-  // }
-
-  // saveTypeBid(ref, data) {
-  //   return new Promise((resolve, reject) => {
-  //     this.authHttp.post(`${this.url}/save-type-bid`, {
-  //       tokenKey: this.tokenKey,
-  //       data: data,
-  //       ref: ref
-  //     } )
-  //       .map(res => res.json())
-  //       .subscribe(res => {
-  //         resolve(res);
-  //       }, error => {
-  //         reject(error);
-  //       });
-  //   });
-  // }
 }

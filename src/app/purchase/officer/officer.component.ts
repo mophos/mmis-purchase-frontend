@@ -40,8 +40,8 @@ export class PurchasingofficerComponent implements OnInit {
       } else {
         this.alertService.error(rs.error)
       }
-    } catch (err) {
-      this.alertService.error(err)
+    } catch (error) {
+      this.alertService.error(JSON.stringify(error))
     }
   }
 
@@ -53,8 +53,8 @@ export class PurchasingofficerComponent implements OnInit {
       } else {
         this.alertService.error(rs.error)
       }
-    } catch (err) {
-      this.alertService.error(err)
+    } catch (error) {
+      this.alertService.error(JSON.stringify(error))
     }
   }
 
@@ -66,8 +66,8 @@ export class PurchasingofficerComponent implements OnInit {
       } else {
         this.alertService.error(rs.error)
       }
-    } catch (err) {
-      this.alertService.error(err)
+    } catch (error) {
+      this.alertService.error(JSON.stringify(error))
     }
   }
 
@@ -93,7 +93,7 @@ export class PurchasingofficerComponent implements OnInit {
             this.getOfficer();
           })
           .catch(error => {
-            this.alertService.serverError();
+            this.alertService.error(JSON.stringify(error))
           });
       });
   }
@@ -114,7 +114,7 @@ export class PurchasingofficerComponent implements OnInit {
       this.modalInput = false;
       this.alertService.success('บันทึกเรียบร้อย');
     } catch (error) {
-      this.alertService.error(error);
+      this.alertService.error(JSON.stringify(error))
     }
   }
 }
