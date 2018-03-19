@@ -199,8 +199,6 @@ export class ReorderPointComponent implements OnInit {
 
     let purchaseItems = [];
 
-    var rnd = new Random(Random.engines.mt19937().seedWithArray([0x12345678, 0x90abcdef]));
-
     this.products.forEach(v => {
       if (v.items.length) {
         v.items.forEach(x => {
@@ -220,8 +218,6 @@ export class ReorderPointComponent implements OnInit {
 
     // group by generictypes
     let genericGroups = _.uniqBy(purchaseItems, 'generic_type_id');
-    console.log('TYPES: ', genericGroups);
-
     let genericTypeItems = [];
     // จัดกลุ่มตาม Generic types
     genericGroups.forEach(g => {
@@ -297,7 +293,8 @@ export class ReorderPointComponent implements OnInit {
 
         // สร้าง product items
         for (let v of labelerItems) {
-          const purchaseOrderId = rnd.hex(15, true);
+          // var rnd = new Random(Random.engines.mt19937().seedWithArray([0x12345678, 0x90abcdef]));
+          const purchaseOrderId = Math.floor(new Date().valueOf() * Math.random() * new Date().getUTCMilliseconds());
 
           for (let i of v.items) {
             let obj: any = {};
@@ -329,8 +326,6 @@ export class ReorderPointComponent implements OnInit {
           poItems.push(objP);
         }
 
-        console.log(productItems);
-        console.log(poItems);
       }
 
       // มีสัญญา
@@ -355,12 +350,10 @@ export class ReorderPointComponent implements OnInit {
           ctItems.push(obj);
 
         }
-
-        // console.log(ctItems)
-
         // สร้าง product items
         for (let v of ctItems) {
-          const purchaseOrderId = rnd.hex(15, true);
+          // var rnd = new Random(Random.engines.mt19937().seedWithArray([0x12345678, 0x90abcdef]));
+          const purchaseOrderId = Math.floor(new Date().valueOf() * Math.random() * new Date().getUTCMilliseconds());
 
           for (let i of v.items) {
             let obj: any = {};
@@ -394,10 +387,6 @@ export class ReorderPointComponent implements OnInit {
 
           poItems.push(objP);
         }
-
-        console.log('================ contracts ===============')
-        console.log(productItems);
-        console.log(poItems);
       }
  
       this.alertService.confirm('ต้องการสร้างใบสั่งซื้อใหม่ตามรายการที่กำหนด ใช่หรือไม่?')
