@@ -12,7 +12,7 @@ export class SelectOfficerComponent implements OnInit {
 
   @Input() public selectedId: any;
   @Input() public disabled: any;
-  @Input() public officerTypeId: any;
+  @Input() public officerTypeCode: any;
 
   @Output('onChange') onChange: EventEmitter<any> = new EventEmitter<any>();
 
@@ -28,10 +28,10 @@ export class SelectOfficerComponent implements OnInit {
   async getItems() {
     try {
       this.loading = true;
-      let rs: any = await this.officeService.findAll();
+      const rs: any = await this.officeService.getPurchasingOfficer();
       this.loading = false;
       if (rs.ok) {
-        this.items = _.filter(rs.rows, { 'type_id': +this.officerTypeId });
+        this.items = _.filter(rs.rows, { 'type_code': this.officerTypeCode });
         if (this.items.length) {
           if (this.selectedId) {
             const idx = _.findIndex(this.items, { people_id: +this.selectedId });

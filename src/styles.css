@@ -296,3 +296,7 @@ form.box-pricing input {
 app-modal-loading .modal-backdrop {
     background-color: transparent;
 }
+
+.wid99{
+    width: 99%;
+}
