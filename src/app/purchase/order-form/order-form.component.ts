@@ -47,6 +47,7 @@ import { tokenNotExpired, JwtHelper } from 'angular2-jwt';
 import { ModalLoadingComponent } from 'app/modal-loading/modal-loading.component';
 import { SelectSubBudgetComponent } from '../../select-boxes/select-sub-budget/select-sub-budget.component';
 import { SearchVendorComponent } from '../../autocomplete/search-vendor/search-vendor.component';
+import { BudgetRemainComponent } from '../directives/budget-remain/budget-remain.component';
 @Component({
   selector: 'app-order-form',
   templateUrl: './order-form.component.html'
@@ -62,6 +63,7 @@ export class OrderFormComponent implements OnInit {
   @ViewChild('modalLoading') modalLoading: ModalLoadingComponent;
   @ViewChild('subBudgetList') subBudgetList: SelectSubBudgetComponent;
   @ViewChild('searchVendor') searchVendor: SearchVendorComponent;
+  @ViewChild('budgetRemainRef') budgetRemainRef: BudgetRemainComponent;
 
   detailActive: boolean = true;
   otherActive: boolean;
@@ -210,6 +212,8 @@ export class OrderFormComponent implements OnInit {
   currentVatRate = 7;
 
   contractNo: any = null;
+
+  _canSave: boolean = false;
 
   constructor(
     private accessCheck: AccessCheck,
@@ -460,8 +464,8 @@ export class OrderFormComponent implements OnInit {
   }
 
   onBudgetCalculated(event: any) {
-    console.log(event);
     this.budgetData = event;
+    this._canSave = true;
   }
 
   checkVat(event: any) {
@@ -714,6 +718,7 @@ export class OrderFormComponent implements OnInit {
   }
 
   async _save() {
+
     let isErrorBidAmount: boolean = this.bidAmount < this.totalPrice;
 
     if (isErrorBidAmount) {
@@ -740,7 +745,21 @@ export class OrderFormComponent implements OnInit {
         } else if (this.budgetData.contractRemainAfterPurchase < 0 && this.contractId) {
           this.alertService.error('ยอดจัดซื้อครั้งนี้ เกินกว่ายอดคงเหลือของสัญญา?')
         } else {
-          this.doSavePurchase();
+          this._canSave = false;
+          this.modalLoading.show();
+          // calculate new budget transaction
+          await this.budgetRemainRef.getBudget();
+
+          if (this._canSave) {
+            this.modalLoading.hide();
+            this.alertService.confirm('กรุณาตรวจสอบรายการให้ถูกต้องการทำการบันทึก ต้องการบันทึก ใช่หรือไม่?')
+              .then(async () => {
+                this.doSavePurchase();
+              }).catch(() => { });
+          } else {
+            this.modalLoading.hide();
+            this.alertService.error('ไม่สามารถประมวลผล Transaction ของงบประมาณได้')
+          }
         }
       }
 
