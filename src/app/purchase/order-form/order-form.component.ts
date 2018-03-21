@@ -270,7 +270,7 @@ export class OrderFormComponent implements OnInit {
   async ngOnInit() {
     await this.getProductType();
 
-    if (this.isUpdate) {
+    if (this.purchaseOrderId) {
       await this.getPurchaseOrderDetail(this.purchaseOrderId);
     } else {
       this.newOrder();
@@ -752,6 +752,8 @@ export class OrderFormComponent implements OnInit {
 
     try {
 
+      let purchaseDate = `${this.purchaseDate.date.year}-${this.purchaseDate.date.month}-${this.purchaseDate.date.day}`;
+
       summary = {
         // purchase_order_id: this.purchaseOrderId,
         purchase_order_book_number: this.purchaseOrderBookNumber,
@@ -781,7 +783,7 @@ export class OrderFormComponent implements OnInit {
         total_price: this.totalPrice,
         ship_to: this.shipTo,
         vendor_contact_name: this.vendorContactName,
-        order_date: moment(this.purchaseDate.jsdate).format('YYYY-MM-DD'),
+        order_date: purchaseDate,
         comment: this.comment,
         note_to_vender: this.noteToVender,
         chief_id: this.chiefId,
