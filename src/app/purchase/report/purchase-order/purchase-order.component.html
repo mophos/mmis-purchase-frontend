@@ -19,8 +19,8 @@
   </div>
 </div>
 <clr-datagrid [(clrDgSelected)]="selectedProduct">
-  <clr-dg-column [clrDgField]="'product_name'">ชื่อสินค้า (Generic Name)</clr-dg-column>
-  <clr-dg-column [clrDgField]="'generic_name'">ชื่อสินค้า (Trade Name)</clr-dg-column>
+  <clr-dg-column [clrDgField]="'generic_name'">ชื่อสินค้า (Generic Name)</clr-dg-column>
+  <clr-dg-column [clrDgField]="'product_name'">ชื่อสินค้า (Trade Name)</clr-dg-column>
   <clr-dg-column [clrDgField]="'min_qty'" style="width: 120px;">Min</clr-dg-column>
   <clr-dg-column [clrDgField]="'max_qty'" style="width: 120px;">Max</clr-dg-column>
   <clr-dg-column [clrDgField]="'remain_qty'" style="width: 120px;">คงเหลือ</clr-dg-column>
@@ -28,8 +28,8 @@
   <clr-dg-column [clrDgField]="'generic_type_name'">ประเภท</clr-dg-column>
 
   <clr-dg-row *clrDgItems="let p of products" [clrDgItem]="p">
+    <clr-dg-cell>{{p.generic_name}}</clr-dg-cell>
   <clr-dg-cell>{{p.product_name}}</clr-dg-cell>
-  <clr-dg-cell>{{p.generic_name}}</clr-dg-cell>
   <clr-dg-cell style="text-align: right;">{{p.min_qty | number}}</clr-dg-cell>
   <clr-dg-cell style="text-align: right;">{{p.max_qty | number}}</clr-dg-cell>
   <clr-dg-cell style="text-align: right;">{{p.remain_qty | number}}</clr-dg-cell>
