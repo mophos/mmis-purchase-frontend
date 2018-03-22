@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import * as _ from 'lodash';  
+import * as _ from 'lodash';
 import { IBudgetSub } from 'app/interfaces';
 import { StandardService } from 'app/services/standard.service';
 import { AlertService } from 'app/alert.service';
@@ -15,21 +15,21 @@ export class SelectSubBudgetComponent implements OnInit {
   _budgetTypeId: any;
   _selectedId: any;
 
-  @Input('selectedId') 
+  @Input('selectedId')
   set setSelectedId(value: any) {
     this._selectedId = value;
-  } 
-  
+  }
+
   @Input() public disabled: any;
 
   @Input('year')
-  set setYear(value: any) { this._year = value; }  
+  set setYear(value: any) { this._year = value; }
 
   @Input('budgetTypeId')
   set setBudgetTypeId(value: any) {
     this._budgetTypeId = value;
     this.getItems();
-  }  
+  }
 
   @Output('onChange') onChange: EventEmitter<any> = new EventEmitter<any>();
 

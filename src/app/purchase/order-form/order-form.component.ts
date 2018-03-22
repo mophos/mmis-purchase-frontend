@@ -552,26 +552,16 @@ export class OrderFormComponent implements OnInit {
   }
 
   newOrder() {
-    // this.tempPrice = false;
+   
     this.isUpdate = false;
-    // let d = new Date();
-    // let i: number = 0;
-    // const purchasingID = d.getTime().toString() + i++;
-    // const purchasingOrderID = d.getTime().toString() + i++;
-    // const budgetTransectionId = d.getTime().toString() + i++;
-
-    // this.purchasing_id = purchasingID;
-    // this.purchase_order_id = purchasingOrderID;
+   
     this.purchaseOrderItems = [];
     this.purchaseOrderNumber = null;
     this.subTotal = 0;
     this.discountPercent = null;
     this.discountCash = 0;
-    // this.vat = 0;
-    // this.budgettype_id = '1';
     this.totalPrice = 0;
-    // this.labelerName = null;
-
+    
     this.purchaseDate = {
       date: {
         year: moment().get('year'),
@@ -581,11 +571,9 @@ export class OrderFormComponent implements OnInit {
     };
 
     this.budgetType = 'spend';
-    // this.getBidAmount(this.purchase_method);
   }
 
   async setOrderDetail(data: any) {
-    // this.labelerName = data.labeler_name;
     this.isUpdate = true;
     this.purchasingId = data.purchasing_id;
     this.purchaseOrderBookNumber = data.purchase_order_book_number;
@@ -1082,5 +1070,4 @@ export class OrderFormComponent implements OnInit {
       this.searchProductLabeler.setApiUrl(this.labelerId);
     }
   }
-
 }
