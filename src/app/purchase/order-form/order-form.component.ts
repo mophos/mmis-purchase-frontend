@@ -47,6 +47,7 @@ import { tokenNotExpired, JwtHelper } from 'angular2-jwt';
 import { ModalLoadingComponent } from 'app/modal-loading/modal-loading.component';
 import { SelectSubBudgetComponent } from '../../select-boxes/select-sub-budget/select-sub-budget.component';
 import { SearchVendorComponent } from '../../autocomplete/search-vendor/search-vendor.component';
+import { BudgetRemainComponent } from '../directives/budget-remain/budget-remain.component';
 @Component({
   selector: 'app-order-form',
   templateUrl: './order-form.component.html'
@@ -62,6 +63,7 @@ export class OrderFormComponent implements OnInit {
   @ViewChild('modalLoading') modalLoading: ModalLoadingComponent;
   @ViewChild('subBudgetList') subBudgetList: SelectSubBudgetComponent;
   @ViewChild('searchVendor') searchVendor: SearchVendorComponent;
+  @ViewChild('budgetRemainRef') budgetRemainRef: BudgetRemainComponent;
 
   detailActive: boolean = true;
   otherActive: boolean;
@@ -211,6 +213,8 @@ export class OrderFormComponent implements OnInit {
 
   contractNo: any = null;
 
+  _canSave: boolean = false;
+
   constructor(
     private accessCheck: AccessCheck,
     private router: Router,
@@ -270,7 +274,7 @@ export class OrderFormComponent implements OnInit {
   async ngOnInit() {
     await this.getProductType();
 
-    if (this.isUpdate) {
+    if (this.purchaseOrderId) {
       await this.getPurchaseOrderDetail(this.purchaseOrderId);
     } else {
       this.newOrder();
@@ -460,8 +464,8 @@ export class OrderFormComponent implements OnInit {
   }
 
   onBudgetCalculated(event: any) {
-    console.log(event);
     this.budgetData = event;
+    this._canSave = true;
   }
 
   checkVat(event: any) {
@@ -702,6 +706,7 @@ export class OrderFormComponent implements OnInit {
   }
 
   async _save() {
+
     let isErrorBidAmount: boolean = this.bidAmount < this.totalPrice;
 
     if (isErrorBidAmount) {
@@ -728,7 +733,21 @@ export class OrderFormComponent implements OnInit {
         } else if (this.budgetData.contractRemainAfterPurchase < 0 && this.contractId) {
           this.alertService.error('ยอดจัดซื้อครั้งนี้ เกินกว่ายอดคงเหลือของสัญญา?')
         } else {
-          this.doSavePurchase();
+          this._canSave = false;
+          this.modalLoading.show();
+          // calculate new budget transaction
+          await this.budgetRemainRef.getBudget();
+
+          if (this._canSave) {
+            this.modalLoading.hide();
+            this.alertService.confirm('กรุณาตรวจสอบรายการให้ถูกต้องการทำการบันทึก ต้องการบันทึก ใช่หรือไม่?')
+              .then(async () => {
+                this.doSavePurchase();
+              }).catch(() => { });
+          } else {
+            this.modalLoading.hide();
+            this.alertService.error('ไม่สามารถประมวลผล Transaction ของงบประมาณได้')
+          }
         }
       }
 
@@ -739,6 +758,8 @@ export class OrderFormComponent implements OnInit {
     let summary: any = {};
 
     try {
+
+      let purchaseDate = `${this.purchaseDate.date.year}-${this.purchaseDate.date.month}-${this.purchaseDate.date.day}`;
 
       summary = {
         // purchase_order_id: this.purchaseOrderId,
@@ -769,7 +790,7 @@ export class OrderFormComponent implements OnInit {
         total_price: this.totalPrice,
         ship_to: this.shipTo,
         vendor_contact_name: this.vendorContactName,
-        order_date: moment(this.purchaseDate.jsdate).format('YYYY-MM-DD'),
+        order_date: purchaseDate,
         comment: this.comment,
         note_to_vender: this.noteToVender,
         chief_id: this.chiefId,
