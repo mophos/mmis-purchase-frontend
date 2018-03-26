@@ -79,7 +79,7 @@ export class OrderFormComponent implements OnInit {
   loadingProducts: boolean;
   purchaseOrderId: string;
   tempPrice: boolean = true;
-
+ 
   contractDetail: any;
   contract_amount: string;
   amount_spent: string;
@@ -176,6 +176,9 @@ export class OrderFormComponent implements OnInit {
   committeePo: any;
   officer: any = [];
   officer1: any = [];
+
+  showChief: any;
+  showBuyer: any;
 
   office: any;
   office1: any;
@@ -280,7 +283,6 @@ export class OrderFormComponent implements OnInit {
       this.newOrder();
       await this.checkIsHoliday(moment().format('YYYY-MM-DD'));
     }
-
   }
 
   productSearchSelected(product: IProductOrderItem) {
@@ -556,25 +558,15 @@ export class OrderFormComponent implements OnInit {
   }
 
   newOrder() {
-    // this.tempPrice = false;
-    this.isUpdate = false;
-    // let d = new Date();
-    // let i: number = 0;
-    // const purchasingID = d.getTime().toString() + i++;
-    // const purchasingOrderID = d.getTime().toString() + i++;
-    // const budgetTransectionId = d.getTime().toString() + i++;
 
-    // this.purchasing_id = purchasingID;
-    // this.purchase_order_id = purchasingOrderID;
+    this.isUpdate = false;
+
     this.purchaseOrderItems = [];
     this.purchaseOrderNumber = null;
     this.subTotal = 0;
     this.discountPercent = null;
     this.discountCash = 0;
-    // this.vat = 0;
-    // this.budgettype_id = '1';
     this.totalPrice = 0;
-    // this.labelerName = null;
 
     this.purchaseDate = {
       date: {
@@ -585,11 +577,9 @@ export class OrderFormComponent implements OnInit {
     };
 
     this.budgetType = 'spend';
-    // this.getBidAmount(this.purchase_method);
   }
 
   async setOrderDetail(data: any) {
-    // this.labelerName = data.labeler_name;
     this.isUpdate = true;
     this.purchasingId = data.purchasing_id;
     this.purchaseOrderBookNumber = data.purchase_order_book_number;
@@ -768,7 +758,6 @@ export class OrderFormComponent implements OnInit {
 
   async doSavePurchase() {
     let summary: any = {};
-
     try {
 
       let purchaseDate = `${this.purchaseDate.date.year}-${this.purchaseDate.date.month}-${this.purchaseDate.date.day}`;
@@ -1103,5 +1092,4 @@ export class OrderFormComponent implements OnInit {
       this.searchProductLabeler.setApiUrl(this.labelerId);
     }
   }
-
 }

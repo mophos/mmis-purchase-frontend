@@ -2,6 +2,7 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import * as _ from 'lodash';
 import { IBidType } from 'app/interfaces';
 import { StandardService } from 'app/services/standard.service';
+import { } from '../../services/'
 import { AlertService } from 'app/alert.service';
 
 @Component({
@@ -53,6 +54,7 @@ export class SelectBidComponent implements OnInit {
             }
             this.onChange.emit(this.items[0]);
           }
+
         }
 
       } else {
@@ -69,6 +71,10 @@ export class SelectBidComponent implements OnInit {
     if (idx > -1) {
       this.onChange.emit(this.items[idx]);
     }
+  }
+
+  async getMappingCommittee(){
+
   }
 
 }

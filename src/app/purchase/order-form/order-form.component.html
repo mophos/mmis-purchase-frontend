@@ -66,7 +66,8 @@
             <div class="form-group">
               <label style="width: 120px;" class="required" for="labeler_id">ผู้จำหน่าย</label>
               <!-- <app-search-labeler style="width:100%" (onSelected)="onLabelerSelected($event)" [labelerName]="labelerName"></app-search-labeler> -->
-              <po-search-vendor [disabled]="contractId" #searchVendor (onChange)="onChangeVendor($event)" (onSelect)="onSelectVendor($event)" style="width: 100%;"></po-search-vendor>
+              <po-search-vendor [disabled]="contractId" #searchVendor (onChange)="onChangeVendor($event)" (onSelect)="onSelectVendor($event)"
+                style="width: 100%;"></po-search-vendor>
             </div>
           </div>
 
@@ -251,12 +252,32 @@
 
                 <div class="form-group">
                   <label for="chief_fullname"> ชื่อหัวหน้างาน</label>
-                  <po-select-officer [selectedId]="office" officerTypeCode="CHIEF" (onChange)="changeOfficer($event)" style="width: 100%;"></po-select-officer>
+                  <div class="row">
+                    <div class="col-md-11">
+                      <po-select-officer [selectedId]="office" officerTypeCode="CHIEF" (onChange)="changeOfficer($event)" style="width: 100%;"></po-select-officer>
+                    </div>
+                    <div class="col-md-1">
+                      <div class="checkbox">
+                        <input type="checkbox" id="showChief" name="showChief" value="1" [checked]="true">
+                        <label for="showChief"></label>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
                 <div class="form-group">
                   <label for="buyer_fullname"> ชื่อเจ้าหน้าที่</label>
-                  <po-select-officer officerTypeCode="BUYYER" [selectedId]="office1" (onChange)="changeOffice($event)" style="width: 100%;"></po-select-officer>
+                  <div class="row">
+                    <div class="col-md-11">
+                      <po-select-officer officerTypeCode="BUYYER" [selectedId]="office1" (onChange)="changeOffice($event)" style="width: 100%;"></po-select-officer>
+                    </div>
+                    <div class="col-md-1">
+                      <div class="checkbox">
+                        <input type="checkbox" id="showBuyer" name="showBuyer" value="1" [checked]="true">
+                        <label for="showBuyer"></label>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
                 <div class="form-group">
@@ -294,8 +315,8 @@
           <clr-tab-content *clrIfActive>
             <div class="row">
               <div class="col-md-6">
-                <po-budget-remain #budgetRemainRef [contractId]="contractId" [purchaseOrderId]="purchaseOrderId" (onCalculated)="onBudgetCalculated($event)" [purchaseAmount]="totalPrice"
-                  [budgetDetailId]="budgetDetailId" [budgetYear]="budgetYear"></po-budget-remain>
+                <po-budget-remain #budgetRemainRef [contractId]="contractId" [purchaseOrderId]="purchaseOrderId" (onCalculated)="onBudgetCalculated($event)"
+                  [purchaseAmount]="totalPrice" [budgetDetailId]="budgetDetailId" [budgetYear]="budgetYear"></po-budget-remain>
               </div>
               <div class="col-md-6">
                 <div class="card" style="height:299px;">
@@ -332,8 +353,8 @@
                         <div class="form-group">
                           <label for="vatRate">ภาษี ( % )</label>
                           <div class="inline-box">
-                            <input type="number" [disabled]="!excludeVat&&!this.addVat" min="0" max="100" style="width:30%" id="vatRate" name="vatRate" [(ngModel)]="vatRate"
-                              (keyup)="calAmount()" (change)="calAmount()">
+                            <input type="number" [disabled]="!excludeVat&&!this.addVat" min="0" max="100" style="width:30%" id="vatRate" name="vatRate"
+                              [(ngModel)]="vatRate" (keyup)="calAmount()" (change)="calAmount()">
                             <input type="text" class="" id="vat" name="vat" style="width:70%" value="{{vat | number:'1.2-2'}}" disabled>
                           </div>
                         </div>
