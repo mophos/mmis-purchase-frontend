@@ -3,8 +3,8 @@ import { IMyOptions, IMyDateModel } from 'mydatepicker-th';
 import * as _ from 'lodash';
 import * as moment from 'moment';
 import { tokenNotExpired, JwtHelper } from 'angular2-jwt';
-import { GenericTypeService } from '../../share/generic-type.service';
 import { PurchasingOrderService } from '../../share/purchasing-order.service';
+import { BudgetTypeService } from '../../share/budget-type.service';
 import { log } from 'util';
 import { decode } from 'punycode';
 import { AlertService } from 'app/alert.service';
@@ -21,32 +21,30 @@ export class PurchaseOrderListComponent implements OnInit {
   @ViewChild('htmlPreview') public htmlPreview: HtmlPreviewComponent;
   @ViewChild('modalLoading') modalLoading: ModalLoadingComponent;
 
-  genericType = [];
+  budgetSubType = [];
   purchaseOrder = [];
 
   startDate: any;
   endDate: any;
   token: any;
 
-  generic_type_id: any;
+  bgtypesub_id: any;
 
-  
+
   myDatePickerOptions: IMyOptions = {
     dateFormat: 'dd mmm yyyy',
   }
 
   constructor(
     @Inject('API_URL') private apiUrl: string,
-    private genericTypeService: GenericTypeService,
     private purchasingOrderService: PurchasingOrderService,
+    private budgetTypeService: BudgetTypeService,
     private alertService: AlertService
   ) {
     this.token = sessionStorage.getItem('token');
   }
 
   ngOnInit() {
-    this.getGenericType();
-
     const date = new Date();
 
     this.startDate = {
@@ -63,15 +61,17 @@ export class PurchaseOrderListComponent implements OnInit {
         day: date.getDate()
       }
     };
+    this.getBudgetType();
   }
 
-  async getGenericType() {
+  async getBudgetType() {
     try {
-      const rs: any = await this.genericTypeService.all();
+      const rs: any = await this.budgetTypeService.getSubType();
       if (rs.ok) {
-        this.genericType = rs.rows;
-        this.generic_type_id = this.genericType[0].generic_type_id;
-        this.getPo(this.generic_type_id);
+        this.budgetSubType = rs.rows;
+        console.log(this.budgetSubType)
+        this.bgtypesub_id = this.budgetSubType[0].bgtypesub_id;
+        this.getPo(this.bgtypesub_id);
       } else {
         this.alertService.error(rs.error);
       }
@@ -82,13 +82,13 @@ export class PurchaseOrderListComponent implements OnInit {
   }
 
   async changeType() {
-    this.getPo(this.generic_type_id);
+    this.getPo(this.bgtypesub_id);
   }
 
-  async getPo(generic_type_id: any) {
+  async getPo(bgtypesub_id: any) {
     this.modalLoading.show();
     try {
-      const rs: any = await this.purchasingOrderService.getOrderList(generic_type_id);
+      const rs: any = await this.purchasingOrderService.getOrderList(bgtypesub_id);
       if (rs.ok) {
         this.purchaseOrder = rs.rows;
         this.modalLoading.hide();
@@ -103,11 +103,10 @@ export class PurchaseOrderListComponent implements OnInit {
   }
 
   async printProduct() {
-    const startDate = this.startDate ? moment(this.startDate.jsdate).format('YYYY-MM-DD') : null;
-    const endDate = this.endDate ? moment(this.endDate.jsdate).format('YYYY-MM-DD') : null;
-
-    const url = `${this.apiUrl}/report/purchasing-list/${startDate}/${endDate}?token=${this.token}`;
-    console.log(url);
+    let startDate = `${this.startDate.date.year}-${this.startDate.date.month}-${this.startDate.date.day}`;
+    let endDate = `${this.endDate.date.year}-${this.endDate.date.month}-${this.endDate.date.day}`;
+    
+    let url = `${this.apiUrl}/report/purchasing-list/${startDate}/${endDate}/${this.bgtypesub_id}?token=${this.token}`;
     this.htmlPreview.showReport(url);
   }
 }
