@@ -33,7 +33,7 @@ export class PurchaseOrderListComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    // this.getPo(); 
+    this.getPo(this.generic_type_id);
     this.getGenericType();
   }
 
@@ -42,6 +42,7 @@ export class PurchaseOrderListComponent implements OnInit {
       const rs: any = await this.genericTypeService.all();
       if (rs.ok) {
         this.genericType = rs.rows;
+        this.generic_type_id = this.genericType[0].generic_type_id;
       } else {
         this.alertService.error(rs.error);
       }
@@ -51,19 +52,21 @@ export class PurchaseOrderListComponent implements OnInit {
     }
   }
 
-  // async getPo() {
-  //   try {
-  //     const rs: any = await this.purchasingOrderService.getOrderList();
-  //     console.log(rs);
-  //     if (rs.ok) {
-  //       this.purchaseOrder = rs.rows;
-  //       console.log(this.purchaseOrder);
-  //     } else {
-  //       this.alertService.error(rs.error);
-  //     }
-  //   }
-  //   catch (error) {
-  //     this.alertService.error(error.message);
-  //   }
-  // }
+  async changeType() {
+
+  }
+
+  async getPo(generic_type_id: any) {
+    try {
+      const rs: any = await this.purchasingOrderService.getOrderList(generic_type_id);
+      if (rs.ok) {
+        this.purchaseOrder = rs.rows;
+      } else {
+        this.alertService.error(rs.error);
+      }
+    }
+    catch (error) {
+      this.alertService.error(error.message);
+    }
+  }
 }
