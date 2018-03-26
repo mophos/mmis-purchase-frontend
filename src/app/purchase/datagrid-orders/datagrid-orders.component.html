@@ -111,9 +111,9 @@
           <clr-dg-cell>
             <del *ngIf="pro.is_cancel === 'Y'" class="{{getStatusLabel(pro,'color')}}">{{getStatusLabel(pro)}}</del>
             <span *ngIf="pro.is_cancel !== 'Y'" class="{{getStatusLabel(pro,'color')}}">{{getStatusLabel(pro)}}</span>
-            <span *ngIf="pro.contract_id" role="tooltip" aria-haspopup="true" class="tooltip tooltip-md">
-              <clr-icon class="text-success" shape="certificate" title="{{pro.contract_id}}"></clr-icon>
-              <span class="tooltip-content">{{pro.contract_id}}</span>
+            <span *ngIf="pro.contract_id" role="tooltip" aria-haspopup="true" class="tooltip tooltip-md tooltip-bottom-right">
+              <clr-icon class="text-success" shape="certificate"></clr-icon>
+              <span class="tooltip-content">เลขที่สัญญา {{pro.contract_no}}</span>
             </span>
             <span *ngIf="pro.is_cancel==='Y'" class="badge badge-warning">ยกเลิก</span>
           </clr-dg-cell>

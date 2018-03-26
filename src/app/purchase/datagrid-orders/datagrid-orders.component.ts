@@ -84,6 +84,7 @@ export class DatagridOrdersComponent implements OnInit {
 
   public jwtHelper: JwtHelper = new JwtHelper()
 
+  token: any;
   constructor(
     private ref: ChangeDetectorRef,
     private alertService: AlertService,
@@ -96,9 +97,15 @@ export class DatagridOrdersComponent implements OnInit {
     private router: Router,
     private productService: ProductService,
     private settingService: SettingService
-  ) { }
+  ) {
+    this.token = sessionStorage.getItem('token');
+    const decoded = this.jwtHelper.decodeToken(this.token);
+    if (decoded) {
+      this.isConfirm = decoded.PC_CONFIRM || 'N';
+      this.isConfirm = this.isConfirm === 'Y' ? true : false;
+    }
+  }
   ngOnInit() {
-    this.settings();
     this.getProductType();
     this.purchaseOrders = [];
     moment.locale('th');
@@ -574,7 +581,7 @@ export class DatagridOrdersComponent implements OnInit {
     });
 
     if (f1 !== f2) {
-      this.htmlPrview.showReport(this.url + '/report/po/egp/singburi/?' + poItems.join('&'));
+      this.htmlPrview.showReport(this.url + `/report/po/egp/singburi/?token=${this.token}&` + poItems.join('&'));
     } else {
       this.alertService.error('ข้อมุูลไม่ครบถ้วน');
     }
@@ -622,7 +629,7 @@ export class DatagridOrdersComponent implements OnInit {
       this.alertService.error('ข้อมุูลไม่ครบถ้วน');
     }
     if (print_non > 0) {
-      this.htmlPrview.showReport(this.url + '/report/getporder/singburi/?' + printId.join('&'));
+      this.htmlPrview.showReport(this.url + `/report/getporder/singburi/?token=${this.token}&` + printId.join('&'));
       this.openModal = false;
     } else {
       this.alertService.error('ข้อมุูลไม่ครบถ้วน');
@@ -647,7 +654,7 @@ export class DatagridOrdersComponent implements OnInit {
       this.alertService.error('ไม่มีข้อมูล');
     }
     if (print_non > 0) {
-      this.htmlPrview.showReport(this.url + '/report/getporder/singburi/?' + printId.join('&'));
+      this.htmlPrview.showReport(this.url + `/report/getporder/singburi/?token=${this.token}&` + printId.join('&'));
       this.openModal = false;
     } else {
       this.alertService.error('ข้อมุูลไม่ครบถ้วน');
@@ -693,19 +700,6 @@ export class DatagridOrdersComponent implements OnInit {
 
   }
 
-  settings() {
-    this.settingService.byModule('PC')
-      .then(async (results: any) => {
-        this.settingConfig = results.rows;
-        const confirm = _.find(this.settingConfig, { 'action_name': 'PC_CONFIRM' });
-        this.isConfirm = (confirm.value == null || confirm.value === '') ? confirm.default : confirm.value;
-        this.isConfirm = this.isConfirm === 'Y' ? true : false;
-      })
-      .catch(error => {
-        this.alertService.serverError(error);
-      });
-  }
-
   async getOrders() {
     const rs: any = await this.purchasingOrderService.getGeneric();
     this.genericOrders = rs.rows;
@@ -714,8 +708,8 @@ export class DatagridOrdersComponent implements OnInit {
 
   printHistory(generic_name: any) {
     this.generic_name = generic_name;
-    this.htmlPrview.showReport(this.url + '/report/getProductHistory/' + generic_name.generic_code);
-    // console.log(generic_name.generic_code);
+    this.htmlPrview.showReport(this.url + `/report/getProductHistory/${generic_name.generic_code}?token=${this.token}`);
+    console.log(generic_name.generic_code);
   }
 
   async fileChangeEvent(e: any) {

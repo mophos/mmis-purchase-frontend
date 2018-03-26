@@ -3,7 +3,7 @@ import { AuthHttp } from 'angular2-jwt';
 @Injectable()
 export class ContractService {
 
-  apiName: string = 'contract';
+  apiName: string = 'contracts';
 
   constructor(
     @Inject('API_URL') private url: String,
@@ -49,6 +49,18 @@ export class ContractService {
   detail(id: string) {
     return new Promise((resolve, reject) => {
       this.authHttp.get(`${this.url}/${this.apiName}/detail/${id}`)
+        .map(res => res.json())
+        .subscribe(data => {
+          resolve(data);
+        }, error => {
+          reject(error);
+        });
+    });
+  }
+
+  remainDetail(id: string) {
+    return new Promise((resolve, reject) => {
+      this.authHttp.get(`${this.url}/${this.apiName}/remain-detail?contractId=${id}`)
         .map(res => res.json())
         .subscribe(data => {
           resolve(data);

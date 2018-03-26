@@ -6,6 +6,9 @@ import { tokenNotExpired, JwtHelper } from 'angular2-jwt';
 import { ProductService } from '../../share/product.service';
 import { log } from 'util';
 import { decode } from 'punycode';
+import { AlertService } from 'app/alert.service';
+import { ModalLoadingComponent } from 'app/modal-loading/modal-loading.component';
+import { HtmlPreviewComponent } from 'app/helper/html-preview/html-preview.component';
 
 @Component({
   selector: 'app-purchase-order',
@@ -16,26 +19,50 @@ export class PurchaseOrderComponent implements OnInit {
 
   isPreview: boolean = false;
 
-  @Output('onClickSearch') onClickSearch: EventEmitter<any> = new EventEmitter<any>();
-  @ViewChild('htmlPreview') public htmlPreview: any;
+  products: any = [];
+  selectedProduct: any = [];
+  printProducts: any = [];
 
-  generic_type_id: string;
+  @ViewChild('htmlPreview') public htmlPreview: HtmlPreviewComponent;
+  @ViewChild('modalLoading') modalLoading: ModalLoadingComponent
 
+  generic_type_id = 'all';
+  productGroup: any;
   productType: Array<any> = [];
 
   myDatePickerOptions: IMyOptions = {
     dateFormat: 'dd mmm yyyy',
   };
-
+  token: any;
   constructor(
     private productService: ProductService,
+    private alertService: AlertService,
     @Inject('API_URL') private apiUrl: any) {
-
+    this.token = sessionStorage.getItem('token');
+    const decodedToken = this.jwtHelper.decodeToken(this.token);
+    this.productGroup = decodedToken.generic_type_id.split(',');
   }
+
   public jwtHelper: JwtHelper = new JwtHelper();
 
   ngOnInit() {
     this.getProductType();
+    // await this.getProducts();
+  }
+
+  printProduct() {
+    this.selectedProduct.forEach(v => {
+      this.printProducts.push(v.product_id);
+    });
+
+    let productIds = '';
+    this.printProducts.forEach((v: any) => {
+      productIds += `product_id=${v}&`;
+    });
+
+    const url = `${this.apiUrl}/report/list/purchase-trade-select/?token=${this.token}&${productIds}`;
+    this.htmlPreview.showReport(url);
+
   }
 
   onDateStartChanged(event: IMyDateModel) {
@@ -56,36 +83,48 @@ export class PurchaseOrderComponent implements OnInit {
     }
   }
 
-  print() {
-    // this.onClickSearch.emit({
-    //   start_date: `${this.start_date.date.year}-${this.start_date.date.month}-${this.start_date.date.day}`,
-    //   end_date: `${this.end_date.date.year}-${this.end_date.date.month}-${this.end_date.date.day}`,
-    // });
+  changeType() {
+    this.getProducts();
   }
-  showReport() {
-    this.isPreview = true;
-    const that = this;
-    setTimeout(() => {
-      that.isPreview = false;
-    }, 2000);
 
-    // const token = sessionStorage.getItem('token');
-    // const url = `${this.apiUrl}/report/list/purchaseSelec/?generic_type_id=${this.generic_type_id}/${token}`;
-    
-    const url = `${this.apiUrl}/report/list/purchaseSelec/?generic_type_id=${this.generic_type_id}`;
-
-    this.htmlPreview.showReport(url);
+  async getProducts() {
+    try {
+      this.modalLoading.show();
+      let rs: any;
+      if (this.generic_type_id === 'all') {
+        rs = await this.productService.getReorderPointTrade(this.productGroup);
+      } else {
+        const _generic_type_id = [this.generic_type_id];
+        rs = await this.productService.getReorderPointTrade(_generic_type_id);
+      }
+      this.modalLoading.hide();
+      if (rs.ok) {
+        this.products = rs.rows;
+      } else {
+        this.alertService.error(rs.error);
+      }
+    } catch (error) {
+      this.modalLoading.hide();
+      this.alertService.error(error.message);
+    }
   }
 
   async getProductType() {
-    const token = sessionStorage.getItem('token');
-    const decodedToken = this.jwtHelper.decodeToken(token);
-    const productGroup = decodedToken.generic_type_id.split(',');
-    console.log(productGroup);
-    const rs: any = await this.productService.type(productGroup);
-    console.log(rs.rows);
-    this.productType = rs.rows;
-    this.generic_type_id = '';
+    try {
+      this.modalLoading.show();
+      const rs: any = await this.productService.type(this.productGroup);
+      if (rs.ok) {
+        this.productType = rs.rows;
+        await this.getProducts();
+      } else {
+        this.modalLoading.hide();
+        this.alertService.error(rs.error);
+      }
+
+    } catch (error) {
+      this.modalLoading.hide();
+      this.alertService.error(error.message);
+    }
   }
 }
 

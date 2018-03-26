@@ -18,6 +18,13 @@ export class ProductService {
     return res.json();
   }
 
+  async getReorderPointTrade(genericTypeId: any) {
+    const res = await this.authHttp.post(`${this.url}/products/reorderpoint/trade`, {
+      genericTypeId: genericTypeId
+    }).toPromise();
+    return res.json();
+  }
+
   async getProductsListByGeneric(genericId: any) {
     const res = await this.authHttp.get(`${this.url}/products/orderspoint/product-list-by-generic/${genericId}`)
       .toPromise();

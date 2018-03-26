@@ -40,7 +40,6 @@ export class ExpandPurchaseOrderComponent implements OnInit {
           this.totalPrice += v.unit_price * v.qty;
         });
         
-        console.log(this.purchaseOrderItems)
         this.ref.detectChanges();
         this.loading = false;
       })
