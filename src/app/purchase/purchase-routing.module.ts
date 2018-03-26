@@ -15,6 +15,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { MainLayoutComponent } from './main-layout/main-layout.component';
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
+import { PurchaseOrderListComponent } from './report/purchase-order-list/purchase-order-list.component';
 
 
 const routes: Routes = [
@@ -23,8 +24,7 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     component: MainLayoutComponent,
     children: [
-      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-      { path: 'dashboard', component: DashboardComponent },
+      { path: '', redirectTo: 'reorder-point', pathMatch: 'full' },
       { path: 'reorder-point', component: ReorderPointComponent },
       { path: 'orders', component: OrdersComponent },
       { path: 'orders-approve', component: OrdersApproveComponent },
@@ -37,6 +37,7 @@ const routes: Routes = [
       { path: 'print', component: PrintComponent },
       { path: 'officer', component: PurchasingofficerComponent },
       { path: 'report/purchase-order', component: PurchaseOrderComponent },
+      { path: 'report/purchase-order-list', component: PurchaseOrderListComponent },
       { path: '**', component: PageNotFoundComponent },
     ]
   }

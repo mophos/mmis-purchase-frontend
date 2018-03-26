@@ -1,0 +1,32 @@
+<nav class="breadcrumb">
+  <a class="breadcrumb-item" href="javascript://" routerLink="/">หน้าหลัก</a>
+  <span class="breadcrumb-item active">รายงานสั่งซื้อเวชภัณฑ์</span>
+</nav>
+
+<div class="row">
+  <div class="col-md-6">
+    <button class="btn btn-sm btn-success btn-icon" (click)="printProduct()">
+      <clr-icon shape="print"></clr-icon> พิมพ์รายการ
+    </button>
+    <!-- <button [disabled]="!selectedProduct.length" class="btn btn-sm btn-success btn-icon" (click)="printProduct()">
+      <clr-icon shape="print"></clr-icon> พิมพ์รายการ
+    </button> -->
+  </div>
+  <div class="col-md-6">
+    <div class="select" style="float: right;">
+      <select name="generic_type_id" [(ngModel)]="generic_type_id" (change)="changeType()">
+        <option value="all">ทั้งหมด</option>
+        <option *ngFor="let g of genericType" [value]="g.generic_type_id">{{ g.generic_type_name }}</option>
+      </select>
+    </div>
+    <!-- <div class="select" style="float: right;">
+      <select  name="generic_type_id" [(ngModel)]="generic_type_id" (change)="changeType()">
+        <option value="all">ทั้งหมด</option>
+        <option *ngFor="let p of productType" [value]="p.generic_type_id">{{ p.generic_type_name }}</option>
+      </select>
+    </div> -->
+  </div>
+</div>
+
+<!-- <app-modal-loading #modalLoading></app-modal-loading> -->
+<app-html-preview #htmlPreview></app-html-preview>

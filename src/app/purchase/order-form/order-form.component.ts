@@ -79,7 +79,7 @@ export class OrderFormComponent implements OnInit {
   loadingProducts: boolean;
   purchaseOrderId: string;
   tempPrice: boolean = true;
-
+ 
   contractDetail: any;
   contract_amount: string;
   amount_spent: string;
@@ -176,6 +176,9 @@ export class OrderFormComponent implements OnInit {
   committeePo: any;
   officer: any = [];
   officer1: any = [];
+
+  showChief: any;
+  showBuyer: any;
 
   office: any;
   office1: any;
@@ -280,7 +283,6 @@ export class OrderFormComponent implements OnInit {
       this.newOrder();
       await this.checkIsHoliday(moment().format('YYYY-MM-DD'));
     }
-
   }
 
   productSearchSelected(product: IProductOrderItem) {
@@ -556,16 +558,16 @@ export class OrderFormComponent implements OnInit {
   }
 
   newOrder() {
-   
+
     this.isUpdate = false;
-   
+
     this.purchaseOrderItems = [];
     this.purchaseOrderNumber = null;
     this.subTotal = 0;
     this.discountPercent = null;
     this.discountCash = 0;
     this.totalPrice = 0;
-    
+
     this.purchaseDate = {
       date: {
         year: moment().get('year'),
@@ -756,7 +758,6 @@ export class OrderFormComponent implements OnInit {
 
   async doSavePurchase() {
     let summary: any = {};
-
     try {
 
       let purchaseDate = `${this.purchaseDate.date.year}-${this.purchaseDate.date.month}-${this.purchaseDate.date.day}`;
