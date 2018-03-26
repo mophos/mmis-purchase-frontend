@@ -33,7 +33,7 @@ export class PurchaseOrderListComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.getPo(); 
+    // this.getPo(); 
     this.getGenericType();
   }
 
@@ -51,19 +51,19 @@ export class PurchaseOrderListComponent implements OnInit {
     }
   }
 
-  async getPo() {
-    try {
-      const rs: any = await this.purchasingOrderService.all();
-      console.log(rs);
-      if (rs.ok) {
-        this.purchaseOrder = rs.rows;
-        console.log(this.purchaseOrder);
-      } else {
-        this.alertService.error(rs.error);
-      }
-    }
-    catch (error) {
-      this.alertService.error(error.message);
-    }
-  }
+  // async getPo() {
+  //   try {
+  //     const rs: any = await this.purchasingOrderService.getOrderList();
+  //     console.log(rs);
+  //     if (rs.ok) {
+  //       this.purchaseOrder = rs.rows;
+  //       console.log(this.purchaseOrder);
+  //     } else {
+  //       this.alertService.error(rs.error);
+  //     }
+  //   }
+  //   catch (error) {
+  //     this.alertService.error(error.message);
+  //   }
+  // }
 }
