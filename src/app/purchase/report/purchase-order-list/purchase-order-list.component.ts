@@ -30,11 +30,13 @@ export class PurchaseOrderListComponent implements OnInit {
 
   generic_type_id: any;
 
+  
+  myDatePickerOptions: IMyOptions = {
+    dateFormat: 'dd mmm yyyy',
+  }
+
   constructor(
     @Inject('API_URL') private apiUrl: string,
-    myDatePickerOptions: IMyOptions = {
-      dateFormat: 'dd mmm yyyy',
-    },
     private genericTypeService: GenericTypeService,
     private purchasingOrderService: PurchasingOrderService,
     private alertService: AlertService
