@@ -28,8 +28,8 @@
   </div>
   <div class="col-md-3">
     <div class="select" style="float: right;">
-      <select name="generic_type_id" [(ngModel)]="generic_type_id" (change)="changeType()">
-        <option *ngFor="let g of genericType" [value]="g.generic_type_id">{{ g.generic_type_name }}</option>
+      <select name="bgtypesub_id" [(ngModel)]="bgtypesub_id" (change)="changeType()">
+        <option *ngFor="let b of budgetSubType" [value]="b.bgtypesub_id">{{ b.bgtypesub_name }}</option>
       </select>
     </div>
     <!-- <div class="select" style="float: right;">
@@ -50,7 +50,8 @@
   <clr-dg-column [clrDgField]="'generic_type_name'">ประเภท</clr-dg-column> -->
 
   <clr-dg-row *clrDgItems="let o of purchaseOrder" [clrDgItem]="o">
-    <clr-dg-cell>{{o.purchase_order_number}}</clr-dg-cell>
+    <clr-dg-cell *ngIf="!o.purchase_order_book_number">{{o.purchase_order_number}}</clr-dg-cell>
+    <clr-dg-cell *ngIf="o.purchase_order_book_number">{{o.purchase_order_book_number}}</clr-dg-cell>
     <clr-dg-cell>{{o.created_date | toThaiDate}}</clr-dg-cell>
     <clr-dg-cell style="text-align: right;">{{o.total_price | number}}</clr-dg-cell>
     <!-- <clr-dg-cell style="text-align: right;">{{p.max_qty | number}}</clr-dg-cell>
