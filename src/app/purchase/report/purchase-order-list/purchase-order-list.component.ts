@@ -19,22 +19,45 @@ import { HtmlPreviewComponent } from 'app/helper/html-preview/html-preview.compo
 export class PurchaseOrderListComponent implements OnInit {
 
   @ViewChild('htmlPreview') public htmlPreview: HtmlPreviewComponent;
-  @ViewChild('modalLoading') modalLoading: ModalLoadingComponent
+  @ViewChild('modalLoading') modalLoading: ModalLoadingComponent;
 
   genericType = [];
   purchaseOrder = [];
 
+  startDate: any;
+  endDate: any;
+  token: any;
+
   generic_type_id: any;
 
   constructor(
+    @Inject('API_URL') private apiUrl: string,
     private genericTypeService: GenericTypeService,
     private purchasingOrderService: PurchasingOrderService,
     private alertService: AlertService
-  ) { }
+  ) {
+    this.token = sessionStorage.getItem('token');
+  }
 
   ngOnInit() {
-    this.getPo(this.generic_type_id);
     this.getGenericType();
+
+    const date = new Date();
+
+    this.startDate = {
+      date: {
+        year: date.getFullYear(),
+        month: date.getMonth() + 1,
+        day: 1
+      }
+    };
+    this.endDate = {
+      date: {
+        year: date.getFullYear(),
+        month: date.getMonth() + 1,
+        day: date.getDate()
+      }
+    };
   }
 
   async getGenericType() {
@@ -43,6 +66,7 @@ export class PurchaseOrderListComponent implements OnInit {
       if (rs.ok) {
         this.genericType = rs.rows;
         this.generic_type_id = this.genericType[0].generic_type_id;
+        this.getPo(this.generic_type_id);
       } else {
         this.alertService.error(rs.error);
       }
@@ -53,20 +77,32 @@ export class PurchaseOrderListComponent implements OnInit {
   }
 
   async changeType() {
-
+    this.getPo(this.generic_type_id);
   }
 
   async getPo(generic_type_id: any) {
+    this.modalLoading.show();
     try {
       const rs: any = await this.purchasingOrderService.getOrderList(generic_type_id);
       if (rs.ok) {
         this.purchaseOrder = rs.rows;
+        this.modalLoading.hide();
       } else {
         this.alertService.error(rs.error);
       }
     }
     catch (error) {
+      this.modalLoading.hide();
       this.alertService.error(error.message);
     }
+  }
+
+  async printProduct() {
+    const startDate = this.startDate ? moment(this.startDate.jsdate).format('YYYY-MM-DD') : null;
+    const endDate = this.endDate ? moment(this.endDate.jsdate).format('YYYY-MM-DD') : null;
+
+    const url = `${this.apiUrl}/report/purchasing-list/${startDate}/${endDate}?token=${this.token}`;
+    console.log(url);
+    this.htmlPreview.showReport(url);
   }
 }

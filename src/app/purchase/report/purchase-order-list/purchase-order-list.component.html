@@ -3,8 +3,22 @@
   <span class="breadcrumb-item active">รายงานสั่งซื้อเวชภัณฑ์</span>
 </nav>
 
-<div class="row">
-  <div class="col-md-6">
+<div class="row" style="padding-top: 5px;">
+  <div class="col-md-1" style="padding-top: 7px; text-align: right; ">
+    ตั้งแต่วันที่
+  </div>
+  <br>
+  <div class="col-md-2">
+    <my-date-picker-th name="startDate" [(ngModel)]="startDate" [options]="myDatePickerOptions" required></my-date-picker-th>
+  </div>
+  <div class="col-md-1" style="padding-top: 7px; text-align: right; ">
+    ถึง
+  </div>
+  <br>
+  <div class="col-md-2">
+    <my-date-picker-th name="endDate" [(ngModel)]="endDate" [options]="myDatePickerOptions" required></my-date-picker-th>
+  </div>
+  <div class="col-md-3">
     <button class="btn btn-sm btn-success btn-icon" (click)="printProduct()">
       <clr-icon shape="print"></clr-icon> พิมพ์รายการ
     </button>
@@ -12,7 +26,7 @@
       <clr-icon shape="print"></clr-icon> พิมพ์รายการ
     </button> -->
   </div>
-  <div class="col-md-6">
+  <div class="col-md-3">
     <div class="select" style="float: right;">
       <select name="generic_type_id" [(ngModel)]="generic_type_id" (change)="changeType()">
         <option *ngFor="let g of genericType" [value]="g.generic_type_id">{{ g.generic_type_name }}</option>
@@ -45,8 +59,8 @@
     <clr-dg-cell>{{p.generic_type_name}}</clr-dg-cell> -->
   </clr-dg-row>
 
-  <!-- <clr-dg-footer>{{purchaseOrder.length}} รายการ</clr-dg-footer> -->
+  <clr-dg-footer>{{purchaseOrder.length}} รายการ</clr-dg-footer>
 </clr-datagrid>
 
-<!-- <app-modal-loading #modalLoading></app-modal-loading> -->
+<app-modal-loading #modalLoading></app-modal-loading>
 <app-html-preview #htmlPreview></app-html-preview>
