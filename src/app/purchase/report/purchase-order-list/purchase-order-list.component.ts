@@ -32,6 +32,9 @@ export class PurchaseOrderListComponent implements OnInit {
 
   constructor(
     @Inject('API_URL') private apiUrl: string,
+    myDatePickerOptions: IMyOptions = {
+      dateFormat: 'dd mmm yyyy',
+    },
     private genericTypeService: GenericTypeService,
     private purchasingOrderService: PurchasingOrderService,
     private alertService: AlertService
