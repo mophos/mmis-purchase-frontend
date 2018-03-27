@@ -1,3 +1,33 @@
-<p>
-  purchase-budget-history works!
-</p>
+<nav class="breadcrumb">
+  <a class="breadcrumb-item" href="javascript://" routerLink="/">หน้าหลัก</a>
+  <span class="breadcrumb-item active">รายงานประวัติการใช้งบประมาณ</span>
+</nav>
+
+<div class="row" style="padding-top: 5px;">
+  <div class="col-md-1" style="padding-top: 7px; text-align: right; ">
+    ตั้งแต่วันที่
+  </div>
+  <br>
+  <div class="col-md-2">
+    <my-date-picker-th name="startDate" [(ngModel)]="startDate" [options]="myDatePickerOptions" required></my-date-picker-th>
+  </div>
+  <div class="col-md-1" style="padding-top: 7px; text-align: right; ">
+    ถึง
+  </div>
+  <br>
+  <div class="col-md-2">
+    <my-date-picker-th name="endDate" [(ngModel)]="endDate" [options]="myDatePickerOptions" required></my-date-picker-th>
+  </div>
+  <div class="col-md-3">
+    <button class="btn btn-sm btn-success btn-icon" (click)="printProduct()">
+      <clr-icon shape="print"></clr-icon> พิมพ์รายการ
+    </button>
+  </div>
+  <div class="col-md-3">
+    <div class="form-group">
+      <label class="required" for="budget_detail_id">งบประมาณย่อย</label>
+      <po-select-sub-budget [selectedId]="budgetDetailId" (onChange)="onChangeSubBudget($event)" style="width: 100%;" #subBudgetList
+        [year]="budgetYear" [budgetTypeId]="budgetTypeId"></po-select-sub-budget>
+    </div>
+  </div>
+</div>
