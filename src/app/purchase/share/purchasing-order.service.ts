@@ -2,6 +2,8 @@ import { Injectable, Inject } from '@angular/core';
 import { AuthHttp } from 'angular2-jwt';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toPromise';
+// import { resolve } from 'path';
+import { reject } from 'q';
 
 @Injectable()
 export class PurchasingOrderService {
@@ -35,6 +37,18 @@ export class PurchasingOrderService {
           reject(error);
         });
     });
+  }
+
+  getOrderList(bgSubType: any) {
+    return new Promise((resolve, reject) => {
+      this.authHttp.get(`${this.url}/${this.apiName}/get-list-po/${bgSubType}`)
+        .map(res => res.json())
+        .subscribe(data => {
+          resolve(data);
+        }, error => {
+          reject(error);
+        })
+    })
   }
 
   ordernocontracts() {
