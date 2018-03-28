@@ -134,4 +134,34 @@ export class OrderPointComponent implements OnInit {
     this.getProducts(limit, offset);
   }
 
+  async saveReserved() {
+    if (this.selectedProduct.length) {
+      try {
+        let items: any = [];
+        this.selectedProduct.forEach(v => {
+          let obj: any = {};
+          obj.product_id = v.product_id;
+          obj.generic_id = v.generic_id;
+          items.push(obj);
+        });
+
+        this.modalLoading.show();
+        let rs: any = await this.productService.saveReservedProducts(items);
+        if (rs.ok) {
+          this.alertService.success();
+          this.getProducts();
+        } else {
+          this.alertService.error(rs.error);
+        }
+        this.modalLoading.hide();
+      } catch (error) {
+        this.modalLoading.hide();
+        console.log(error);
+        this.alertService.error(error);
+      }
+    } else {
+      this.alertService.error('กรุณาเลือกรายการที่ต้องการ')
+    }
+  }
+
 }

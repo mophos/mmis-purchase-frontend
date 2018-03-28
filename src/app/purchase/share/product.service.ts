@@ -28,6 +28,13 @@ export class ProductService {
     return res.json();
   }
 
+  async saveReservedProducts(items: any[]) {
+    const res = await this.authHttp.post(`${this.url}/products/save-reserved`, {
+      items: items
+    }).toPromise();
+    return res.json();
+  }
+
   async getProductsListByGeneric(genericId: any) {
     const res = await this.authHttp.get(`${this.url}/products/orderspoint/product-list-by-generic/${genericId}`)
       .toPromise();
