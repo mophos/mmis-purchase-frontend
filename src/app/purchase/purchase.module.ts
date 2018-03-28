@@ -79,6 +79,7 @@ import { BudgetRemainComponent } from './directives/budget-remain/budget-remain.
 import { TransactionHistoryComponent } from './directives/transaction-history/transaction-history.component';
 import { ProductHistoryComponent } from './directives/product-history/product-history.component';
 import { PurchaseOrderListComponent } from './report/purchase-order-list/purchase-order-list.component';
+import { OrderPointComponent } from './order-point/order-point.component';
 
 @NgModule({
   imports: [
@@ -132,7 +133,8 @@ import { PurchaseOrderListComponent } from './report/purchase-order-list/purchas
     BudgetRemainComponent,
     TransactionHistoryComponent,
     ProductHistoryComponent,
-    PurchaseOrderListComponent
+    PurchaseOrderListComponent,
+    OrderPointComponent
   ],
   providers: [
     BudgetTransectionService,

@@ -1,0 +1,60 @@
+<nav class="breadcrumb">
+  <a class="breadcrumb-item" href="javascript://" routerLink="/">หน้าหลัก</a>
+  <span class="breadcrumb-item active">รายการถึงจุดสั่งซื้อ</span>
+</nav>
+
+<clr-tabs>
+  <clr-tab>
+    <button clrTabLink id="link1">รายการที่ถึงจุดสั่งซื้อ</button>
+    <clr-tab-content id="content1" *clrIfActive="true">
+      <div class="row wid99">
+        <div class="col-md-6">
+          <button [disabled]="!selectedProduct.length" class="btn btn-sm btn-success btn-icon" (click)="printProduct()">
+            <clr-icon shape="plus"></clr-icon> เตรียมออกใบสั่งซื้อ ({{selectedProduct.length | number}} รายการ)
+          </button>
+        </div>
+        <div class="col-md-6">
+          <div class="select" style="float: right;">
+            <select name="generic_type_id" [(ngModel)]="generic_type_id" (change)="changeType()">
+              <option value="all">ทั้งหมด</option>
+              <option *ngFor="let p of productType" [value]="p.generic_type_id">{{ p.generic_type_name }}</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <clr-datagrid [(clrDgSelected)]="selectedProduct">
+        <clr-dg-column [clrDgField]="'generic_name'">ชื่อสินค้า (Generic Name)</clr-dg-column>
+        <clr-dg-column [clrDgField]="'product_name'">ชื่อสินค้า (Trade Name)</clr-dg-column>
+        <clr-dg-column [clrDgField]="'labeler_name'">ผู้จำหน่าย</clr-dg-column>
+        <clr-dg-column [clrDgField]="'min_qty'" style="width: 120px;">Min</clr-dg-column>
+        <clr-dg-column [clrDgField]="'max_qty'" style="width: 120px;">Max</clr-dg-column>
+        <clr-dg-column [clrDgField]="'remain_qty'" style="width: 120px;">คงเหลือ</clr-dg-column>
+        <clr-dg-column [clrDgField]="'generic_type_name'">ประเภท</clr-dg-column>
+
+        <clr-dg-row *clrDgItems="let p of products" [clrDgItem]="p">
+          <clr-dg-cell>{{p.generic_name}}</clr-dg-cell>
+          <clr-dg-cell>{{p.product_name}}</clr-dg-cell>
+          <clr-dg-cell>{{p.labeler_name}}</clr-dg-cell>
+          <clr-dg-cell style="text-align: right;">{{p.min_qty | number}}</clr-dg-cell>
+          <clr-dg-cell style="text-align: right;">{{p.max_qty | number}}</clr-dg-cell>
+          <clr-dg-cell style="text-align: right;">{{p.remain_qty | number}}</clr-dg-cell>
+          <clr-dg-cell>{{p.generic_type_name}}</clr-dg-cell>
+        </clr-dg-row>
+
+        <clr-dg-footer>{{products.length}} รายการ</clr-dg-footer>
+      </clr-datagrid>
+    </clr-tab-content>
+  </clr-tab>
+  <clr-tab>
+    <button clrTabLink>รายการรอจัดซื้อ</button>
+    <clr-tab-content *clrIfActive>
+      <button [disabled]="!selectedProduct.length" class="btn btn-sm btn-primary btn-icon" (click)="printProduct()">
+        <clr-icon shape="print"></clr-icon> พิมพ์รายการ
+      </button>
+    </clr-tab-content>
+  </clr-tab>
+</clr-tabs>
+
+
+<app-modal-loading #modalLoading></app-modal-loading>
+<app-html-preview #htmlPreview></app-html-preview>
