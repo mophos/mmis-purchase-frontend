@@ -134,6 +134,12 @@ export class OrderPointComponent implements OnInit {
     this.getProducts(limit, offset);
   }
 
+  doSearch(event: any) {
+    if (event.keyCode === 13) {
+      this.getProducts();
+    }
+  }
+
   async saveReserved() {
     if (this.selectedProduct.length) {
       try {
