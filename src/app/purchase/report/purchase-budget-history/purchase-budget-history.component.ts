@@ -18,6 +18,8 @@ export class PurchaseBudgetHistoryComponent implements OnInit {
   budgetDetailId: any;
   startDate: any;
   endDate: any;
+  budgetYear: any;
+  budgetTypeId: any;
 
   myDatePickerOptions: IMyOptions = {
     dateFormat: 'dd mmm yyyy',
@@ -42,6 +44,16 @@ export class PurchaseBudgetHistoryComponent implements OnInit {
         day: date.getDate()
       }
     };
+  }
+
+  onChangeBudgetType(budgetType: any) {
+    const date = new Date();
+    this.budgetYear = date.getFullYear()
+    this.budgetTypeId = budgetType.bgtype_id;
+  }
+
+  onChangeSubBudget(subBudget: any) {
+
   }
 
 }

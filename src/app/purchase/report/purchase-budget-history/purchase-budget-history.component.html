@@ -18,14 +18,20 @@
   <div class="col-md-2">
     <my-date-picker-th name="endDate" [(ngModel)]="endDate" [options]="myDatePickerOptions" required></my-date-picker-th>
   </div>
-  <div class="col-md-3">
+  <div class="col-md-2">
     <button class="btn btn-sm btn-success btn-icon" (click)="printProduct()">
       <clr-icon shape="print"></clr-icon> พิมพ์รายการ
     </button>
   </div>
-  <div class="col-md-3">
+  <div class="col-md-2">
     <div class="form-group">
-      <label class="required" for="budget_detail_id">งบประมาณย่อย</label>
+      <label class="required">ประเภทงบประมาณ</label>
+      <po-select-budget style="width: 100%;" (onChange)="onChangeBudgetType($event)"></po-select-budget>
+    </div>
+  </div>
+  <div class="col-md-2">
+    <div class="form-group">
+      <label class="required">งบประมาณย่อย</label>
       <po-select-sub-budget [selectedId]="budgetDetailId" (onChange)="onChangeSubBudget($event)" style="width: 100%;" #subBudgetList
         [year]="budgetYear" [budgetTypeId]="budgetTypeId"></po-select-sub-budget>
     </div>
