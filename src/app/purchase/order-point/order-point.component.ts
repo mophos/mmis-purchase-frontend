@@ -6,6 +6,7 @@ import { ModalLoadingComponent } from 'app/modal-loading/modal-loading.component
 import { ProductService } from 'app/purchase/share/product.service';
 import { JwtHelper } from 'angular2-jwt';
 import { AlertService } from 'app/alert.service';
+import { State } from '@clr/angular';
 @Component({
   selector: 'po-order-point',
   templateUrl: './order-point.component.html',
@@ -19,13 +20,19 @@ export class OrderPointComponent implements OnInit {
   isPreview: boolean = false;
 
   products: any = [];
+  prepareItems: any = [];
   selectedProduct: any = [];
+  selectedPrepare: any = [];
   printProducts: any = [];
   generic_type_id = 'all';
   productGroup: any;
   productType: Array<any> = [];
 
   token: any;
+  perPage: number = 20;
+  total: number = 0;
+  query: any = '';
+
   constructor(
     private productService: ProductService,
     private alertService: AlertService,
@@ -75,22 +82,24 @@ export class OrderPointComponent implements OnInit {
   }
 
   changeType() {
-    this.getProducts();
+    this.getProducts(this.perPage);
   }
 
-  async getProducts() {
+  async getProducts(limit: number = 20, offset: number = 0) {
     try {
       this.modalLoading.show();
       let rs: any;
       if (this.generic_type_id === 'all') {
-        rs = await this.productService.getReorderPointTrade(this.productGroup);
+        rs = await this.productService.getReorderPointTrade(this.productGroup, limit, offset, this.query);
       } else {
-        const _generic_type_id = [this.generic_type_id];
-        rs = await this.productService.getReorderPointTrade(_generic_type_id);
+        let genericIds: any = [];
+        genericIds.push(this.generic_type_id);
+        rs = await this.productService.getReorderPointTrade(genericIds, limit, offset, this.query);
       }
       this.modalLoading.hide();
       if (rs.ok) {
         this.products = rs.rows;
+        this.total = rs.total || 0;
       } else {
         this.alertService.error(rs.error);
       }
@@ -116,6 +125,13 @@ export class OrderPointComponent implements OnInit {
       // this.modalLoading.hide();
       this.alertService.error(error.message);
     }
+  }
+
+  refresh(state: State) {
+    const offset = +state.page.from;
+    const limit = +state.page.size;
+
+    this.getProducts(limit, offset);
   }
 
 }
