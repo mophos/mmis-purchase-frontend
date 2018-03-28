@@ -258,8 +258,7 @@
                     </div>
                     <div class="col-md-1">
                       <div class="checkbox">
-                        <input type="checkbox" id="showChief" name="showChief" value="1" [checked]="true">
-                        <label for="showChief"></label>
+                        <clr-checkbox name="showChief" [(ngModel)]="showChief" [clrChecked]="showChief"></clr-checkbox>
                       </div>
                     </div>
                   </div>
@@ -273,8 +272,7 @@
                     </div>
                     <div class="col-md-1">
                       <div class="checkbox">
-                        <input type="checkbox" id="showBuyer" name="showBuyer" value="1" [checked]="true">
-                        <label for="showBuyer"></label>
+                        <clr-checkbox name="showBuyer" [(ngModel)]="showBuyer" [clrChecked]="showBuyer"></clr-checkbox>
                       </div>
                     </div>
                   </div>

@@ -79,7 +79,7 @@ export class OrderFormComponent implements OnInit {
   loadingProducts: boolean;
   purchaseOrderId: string;
   tempPrice: boolean = true;
- 
+
   contractDetail: any;
   contract_amount: string;
   amount_spent: string;
@@ -177,8 +177,8 @@ export class OrderFormComponent implements OnInit {
   officer: any = [];
   officer1: any = [];
 
-  showChief: any;
-  showBuyer: any;
+  showChief = true;
+  showBuyer = true;
 
   office: any;
   office1: any;
@@ -761,6 +761,9 @@ export class OrderFormComponent implements OnInit {
     try {
 
       let purchaseDate = `${this.purchaseDate.date.year}-${this.purchaseDate.date.month}-${this.purchaseDate.date.day}`;
+      
+      if(!this.showChief) this.chiefId = null;
+      if(!this.showBuyer) this.buyerId = null;
 
       summary = {
         // purchase_order_id: this.purchaseOrderId,

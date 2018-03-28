@@ -46,9 +46,9 @@
               <clr-button-group class="btn-primary btn-md" [clrMenuPosition]="'bottom-right'" *ngIf="purchaseOrdersSelected.length">
                 <clr-button (click)="confirmAll('CONFIRMED')">ยืนยัน ({{this.purchaseOrdersSelected.length}})</clr-button>
                 <clr-button (click)="allApprove()">อนุมัติ ({{this.purchaseOrdersSelected.length}})</clr-button>
-                <clr-button [clrInMenu]="true" (click)="printSelected()">
-                  <clr-icon shape="printer"></clr-icon> พิมพ์ ({{this.purchaseOrdersSelected.length}})</clr-button>
-                <clr-button [clrInMenu]="true" (click)="changePurchaseDate()">
+                <!-- <clr-button [clrInMenu]="true" (click)="printSelected()">
+                  <clr-icon shape="printer"></clr-icon> พิมพ์ ({{this.purchaseOrdersSelected.length}})</clr-button> -->
+                <clr-button (click)="changePurchaseDate()">
                   <clr-icon shape="note"></clr-icon> แก้ไขวันออกใบสั่งซื้อ ({{this.purchaseOrdersSelected.length}})</clr-button>
               </clr-button-group>
 
