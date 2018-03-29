@@ -28,6 +28,16 @@ export class ProductService {
     return res.json();
   }
 
+  async getReorderPointTradeReserved(genericTypeId: any, limit: number = 20, offset: number = 0, query: any = '') {
+    const res = await this.authHttp.post(`${this.url}/products/reorderpoint/trade/reserved`, {
+      genericTypeId: genericTypeId,
+      limit: limit,
+      offset: offset,
+      query: query
+    }).toPromise();
+    return res.json();
+  }
+
   async saveReservedProducts(items: any[]) {
     const res = await this.authHttp.post(`${this.url}/products/save-reserved`, {
       items: items

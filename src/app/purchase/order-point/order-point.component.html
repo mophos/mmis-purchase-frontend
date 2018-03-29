@@ -8,14 +8,14 @@
     <button clrTabLink id="link1">รายการที่ถึงจุดสั่งซื้อ</button>
     <clr-tab-content id="content1" *clrIfActive="true">
       <div class="row wid99">
-        <div class="col-md-6">
+        <div class="col-md-8">
           <label for="">ค้นหา</label>
           <input (keyup)="doSearch($event)" type="text" placeholder="ชื่อ, working code, keyword" [(ngModel)]="query" style="width: 350px;">
           <button [disabled]="!selectedProduct.length" class="btn btn-sm btn-success btn-icon" (click)="saveReserved()">
             <clr-icon shape="plus"></clr-icon> เตรียมจัดสั่งซื้อ ({{selectedProduct.length | number}} รายการ)
           </button>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-4">
           <div class="select" style="float: right;">
             <select name="generic_type_id" [(ngModel)]="generic_type_id" (change)="changeType()">
               <option value="all">ทั้งหมด</option>
@@ -25,21 +25,21 @@
         </div>
       </div>
 
-      <clr-datagrid [(clrDgSelected)]="selectedProduct" (clrDgRefresh)="refresh($event)">
+      <clr-datagrid [(clrDgSelected)]="selectedProduct" (clrDgRefresh)="refresh($event)" style="height: 85%;">
         <clr-dg-column>ชื่อสินค้า (Generic Name)</clr-dg-column>
-        <!-- <clr-dg-column [clrDgField]="'product_name'">ชื่อสินค้า (Trade Name)</clr-dg-column> -->
         <clr-dg-column>ผู้จำหน่าย</clr-dg-column>
         <clr-dg-column style="width: 120px;">Min</clr-dg-column>
         <clr-dg-column style="width: 120px;">Max</clr-dg-column>
         <clr-dg-column style="width: 120px;">คงเหลือ</clr-dg-column>
         <clr-dg-column>ประเภท</clr-dg-column>
+        <clr-dg-placeholder>ไม่พบข้อมูล</clr-dg-placeholder>
 
         <clr-dg-row *ngFor="let p of products" [clrDgItem]="p">
           <clr-dg-cell>
-            <span class="p4">{{p.working_code}} - {{p.generic_name}}</span> <br>
+            <span class="p4">{{p.working_code}} - {{p.generic_name}}</span>
+            <br>
             <span class="p7">Trade: {{p.product_name}}</span>
           </clr-dg-cell>
-          <!-- <clr-dg-cell>{{p.product_name}}</clr-dg-cell> -->
           <clr-dg-cell>{{p.labeler_name}}</clr-dg-cell>
           <clr-dg-cell style="text-align: right;">{{p.min_qty | number}}</clr-dg-cell>
           <clr-dg-cell style="text-align: right;">{{p.max_qty | number}}</clr-dg-cell>
@@ -48,39 +48,79 @@
         </clr-dg-row>
 
         <clr-dg-footer>
-           {{pagination.firstItem + 1 | number}} - {{pagination.lastItem + 1 | number}} จาก {{pagination.totalItems | number}} รายการ
+          {{pagination.firstItem + 1 | number}} - {{pagination.lastItem + 1 | number}} จาก {{pagination.totalItems | number}} รายการ
           <clr-dg-pagination #pagination [clrDgPageSize]="perPage" [clrDgTotalItems]="total"></clr-dg-pagination>
         </clr-dg-footer>
       </clr-datagrid>
     </clr-tab-content>
   </clr-tab>
   <clr-tab>
-    <button clrTabLink>รายการรอจัดซื้อ</button>
+    <button clrTabLink>รายการรอจัดซื้อ
+      <span class="badge badge-danger">{{totalReserved | number}}</span>
+    </button>
     <clr-tab-content *clrIfActive>
-      <button class="btn btn-sm btn-primary btn-icon" (click)="printProduct()">
-        <clr-icon shape="print"></clr-icon> พิมพ์รายการ
-      </button>
+      <div class="row">
+        <div class="col-md-8">
+          <label for="">ค้นหา</label>
+          <input (keyup)="doSearchReserved($event)" type="text" placeholder="ชื่อ, working code, keyword" [(ngModel)]="queryReserved"
+            style="width: 350px;">
+          <button [disabled]="!selectedReserved.length" class="btn btn-sm btn-success btn-icon" (click)="createPurchaseOrder()">
+            <clr-icon shape="plus"></clr-icon> ออกใบสั่งซื้อ ({{selectedReserved.length | number}} รายการ)
+          </button>
+          <button class="btn btn-sm btn-primary btn-icon" [disabled]="!selectedReserved.length" (click)="printProduct()">
+            <clr-icon shape="printer"></clr-icon> พิมพ์รายการ
+          </button>
+        </div>
+        <div class="col-md-4">
+          <div class="select" style="float: right;">
+            <select name="genericTypeIdReserved" [(ngModel)]="genericTypeIdReserved" (change)="changeTypeReserved()">
+              <option value="all">ทั้งหมด</option>
+              <option *ngFor="let p of productType" [value]="p.generic_type_id">{{ p.generic_type_name }}</option>
+            </select>
+          </div>
+        </div>
+      </div>
 
-      <clr-datagrid [(clrDgSelected)]="selectedPrepare">
-        <clr-dg-column [clrDgField]="'generic_name'">ชื่อสินค้า (Generic Name)</clr-dg-column>
-        <clr-dg-column [clrDgField]="'product_name'">ชื่อสินค้า (Trade Name)</clr-dg-column>
-        <clr-dg-column [clrDgField]="'labeler_name'">ผู้จำหน่าย</clr-dg-column>
-        <clr-dg-column [clrDgField]="'min_qty'" style="width: 120px;">Min</clr-dg-column>
-        <clr-dg-column [clrDgField]="'max_qty'" style="width: 120px;">Max</clr-dg-column>
-        <clr-dg-column [clrDgField]="'remain_qty'" style="width: 120px;">คงเหลือ</clr-dg-column>
-        <clr-dg-column [clrDgField]="'generic_type_name'">ประเภท</clr-dg-column>
-      
-        <clr-dg-row *clrDgItems="let p of prepareItems" [clrDgItem]="p">
-          <clr-dg-cell>{{p.generic_name}}</clr-dg-cell>
-          <clr-dg-cell>{{p.product_name}}</clr-dg-cell>
+      <clr-datagrid [(clrDgSelected)]="selectedReserved" (clrDgRefresh)="refreshReserved($event)" style="height: 85%;">
+        <clr-dg-column>ชื่อสินค้า (Generic Name)</clr-dg-column>
+        <clr-dg-column>ผู้จำหน่าย</clr-dg-column>
+        <!-- <clr-dg-column style="width: 100px;">Min</clr-dg-column> -->
+        <clr-dg-column style="width: 120px;">Min/Max</clr-dg-column>
+        <clr-dg-column style="width: 100px;">คงเหลือ</clr-dg-column>
+        <clr-dg-column>ประเภท</clr-dg-column>
+        <clr-dg-column style="width: 120px;">เลขที่สัญญา</clr-dg-column>
+        <clr-dg-column style="width: 100px;">ราคาต่อ Pack</clr-dg-column>
+        <clr-dg-column style="width: 100px;">จำนวนซื้อ</clr-dg-column>
+        <clr-dg-column style="width: 140px;">หน่วยจัดซื้อ</clr-dg-column>
+        <clr-dg-placeholder>ไม่พบข้อมูล</clr-dg-placeholder>
+
+        <clr-dg-row *ngFor="let p of reservedItems" [clrDgItem]="p">
+          <clr-dg-cell>
+            <span class="p4">{{p.working_code}} - {{p.generic_name}}</span>
+            <br>
+            <span class="p7">Trade: {{p.product_name}}</span>
+          </clr-dg-cell>
           <clr-dg-cell>{{p.labeler_name}}</clr-dg-cell>
-          <clr-dg-cell style="text-align: right;">{{p.min_qty | number}}</clr-dg-cell>
-          <clr-dg-cell style="text-align: right;">{{p.max_qty | number}}</clr-dg-cell>
+          <!-- <clr-dg-cell style="text-align: right;">{{p.min_qty | number}}</clr-dg-cell> -->
+          <clr-dg-cell style="text-align: right;">{{p.min_qty | number}}/{{p.max_qty | number}}</clr-dg-cell>
           <clr-dg-cell style="text-align: right;">{{p.remain_qty | number}}</clr-dg-cell>
           <clr-dg-cell>{{p.generic_type_name}}</clr-dg-cell>
+          <clr-dg-cell></clr-dg-cell>
+          <clr-dg-cell></clr-dg-cell>
+          <clr-dg-cell>
+            <input type="text" #qty (keyup)="onChangeQty(i, qty.value)" style="width: 100%; text-align: right; background-color:#FFF9C4"
+              placeholder="0" appNumberWithoutDot [value]="p.order_qty || null">
+          </clr-dg-cell>
+          <clr-dg-cell>
+            <app-select-box-units (onChange)="onChangeUnit($event, i)" [genericId]="p.generic_id"></app-select-box-units>
+          </clr-dg-cell>
         </clr-dg-row>
-      
-        <clr-dg-footer>{{prepareItems.length}} รายการ</clr-dg-footer>
+
+        <clr-dg-footer>
+          {{paginationReserved.firstItem + 1 | number}} - {{paginationReserved.lastItem + 1 | number}} จาก {{paginationReserved.totalItems
+          | number}} รายการ
+          <clr-dg-pagination #paginationReserved [clrDgPageSize]="perPageReserved" [clrDgTotalItems]="totalReserved"></clr-dg-pagination>
+        </clr-dg-footer>
       </clr-datagrid>
     </clr-tab-content>
   </clr-tab>

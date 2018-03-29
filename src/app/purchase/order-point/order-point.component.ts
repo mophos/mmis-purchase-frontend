@@ -20,18 +20,22 @@ export class OrderPointComponent implements OnInit {
   isPreview: boolean = false;
 
   products: any = [];
-  prepareItems: any = [];
+  reservedItems: any = [];
   selectedProduct: any = [];
-  selectedPrepare: any = [];
+  selectedReserved: any = [];
   printProducts: any = [];
-  generic_type_id = 'all';
+  genericTypeId = 'all';
+  genericTypeIdReserved = 'all';
   productGroup: any;
   productType: Array<any> = [];
 
   token: any;
   perPage: number = 20;
+  perPageReserved: number = 100;
   total: number = 0;
   query: any = '';
+  totalReserved: number = 0;
+  queryReserved: any = '';
 
   constructor(
     private productService: ProductService,
@@ -44,8 +48,9 @@ export class OrderPointComponent implements OnInit {
 
   public jwtHelper: JwtHelper = new JwtHelper();
 
-  ngOnInit() {
+  async ngOnInit() {
     this.getProductType();
+    await this.getProductsReserved();
   }
 
   printProduct() {
@@ -85,21 +90,49 @@ export class OrderPointComponent implements OnInit {
     this.getProducts(this.perPage);
   }
 
+  changeTypeReserved() {
+    this.getProductsReserved(this.perPage);
+  }
+
   async getProducts(limit: number = 20, offset: number = 0) {
     try {
       this.modalLoading.show();
       let rs: any;
-      if (this.generic_type_id === 'all') {
+      if (this.genericTypeId === 'all') {
         rs = await this.productService.getReorderPointTrade(this.productGroup, limit, offset, this.query);
       } else {
-        let genericIds: any = [];
-        genericIds.push(this.generic_type_id);
-        rs = await this.productService.getReorderPointTrade(genericIds, limit, offset, this.query);
+        let productGroup: any = [];
+        productGroup.push(this.genericTypeId);
+        rs = await this.productService.getReorderPointTrade(productGroup, limit, offset, this.query);
       }
       this.modalLoading.hide();
       if (rs.ok) {
         this.products = rs.rows;
         this.total = rs.total || 0;
+      } else {
+        this.alertService.error(rs.error);
+      }
+    } catch (error) {
+      this.modalLoading.hide();
+      this.alertService.error(error.message);
+    }
+  }
+
+  async getProductsReserved(limit: number = 20, offset: number = 0) {
+    try {
+      this.modalLoading.show();
+      let rs: any;
+      if (this.genericTypeIdReserved === 'all') {
+        rs = await this.productService.getReorderPointTradeReserved(this.productGroup, limit, offset, this.queryReserved);
+      } else {
+        let productGroup: any = [];
+        productGroup.push(this.genericTypeIdReserved);
+        rs = await this.productService.getReorderPointTradeReserved(productGroup, limit, offset, this.queryReserved);
+      }
+      this.modalLoading.hide();
+      if (rs.ok) {
+        this.reservedItems = rs.rows;
+        this.totalReserved = rs.total || 0;
       } else {
         this.alertService.error(rs.error);
       }
@@ -134,10 +167,27 @@ export class OrderPointComponent implements OnInit {
     this.getProducts(limit, offset);
   }
 
+  refreshReserved(state: State) {
+    const offset = +state.page.from;
+    const limit = +state.page.size;
+
+    this.getProductsReserved(limit, offset);
+  }
+
   doSearch(event: any) {
     if (event.keyCode === 13) {
       this.getProducts();
     }
+  }
+
+  doSearchReserved(event: any) {
+    if (event.keyCode === 13) {
+      this.getProductsReserved();
+    }
+  }
+
+  createPurchaseOrder() {
+
   }
 
   async saveReserved() {
