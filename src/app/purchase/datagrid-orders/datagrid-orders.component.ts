@@ -516,19 +516,23 @@ export class DatagridOrdersComponent implements OnInit {
 
   btnConfirmIsActive(pro: any) {
 
-    if (this.checkEmptyData(pro) === false) {
-      return false;
-    }
-    if (!this.isConfirm) {
-      return false;
-    }
-    if (pro.purchase_order_status === 'COMPLETED'
-      || pro.purchase_order_status === 'CONFIRMED'
-      || pro.purchase_order_status === 'APPROVED'
-      || pro.is_cancel === 'Y') {
-      return false;
-    } else {
+    if (this.accessCheck.can('PO_EDIT_AFFTER_APPROVE')) {
       return true;
+    } else {
+      if (this.checkEmptyData(pro) === false) {
+        return false;
+      }
+      if (!this.isConfirm) {
+        return false;
+      }
+      if (pro.purchase_order_status === 'COMPLETED'
+        || pro.purchase_order_status === 'CONFIRMED'
+        || pro.purchase_order_status === 'APPROVED'
+        || pro.is_cancel === 'Y') {
+        return false;
+      } else {
+        return true;
+      }
     }
   }
 
