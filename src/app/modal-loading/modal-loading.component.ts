@@ -6,7 +6,7 @@ import { Component, OnInit } from '@angular/core';
   styles: []
 })
 export class ModalLoadingComponent implements OnInit {
-  opened: boolean = false;
+  opened = false;
   constructor() { }
 
   ngOnInit() {
@@ -23,6 +23,4 @@ export class ModalLoadingComponent implements OnInit {
       this.opened = false;
     }, 500);
   }
-
-  
 }

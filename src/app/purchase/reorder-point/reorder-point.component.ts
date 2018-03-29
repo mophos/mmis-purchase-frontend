@@ -23,12 +23,12 @@ export class ReorderPointComponent implements OnInit {
 
   @ViewChild('modalLoading') modalLoading: ModalLoadingComponent
   loading: boolean;
-  total: number = 0;
-  perPage: number = 50;
+  total = 0;
+  perPage = 50;
 
   labelerName: string;
-  contractFilter: string = 'all';
-  minMaxFilter: string = 'min';
+  contractFilter = 'all';
+  minMaxFilter = 'min';
   query: string;
   generic_type_id: string = null;
   products: any = [];
@@ -57,7 +57,7 @@ export class ReorderPointComponent implements OnInit {
     private settingService: SettingService
   ) {
     this.token = sessionStorage.getItem('token');
-    let decoded = this.jwtHelper.decodeToken(this.token);
+    const decoded = this.jwtHelper.decodeToken(this.token);
     if (decoded) {
       this.delivery = decoded.PC_SHIPPING_DATE || 30;
       this.vatRate = decoded.PC_VAT || 7;
@@ -80,8 +80,8 @@ export class ReorderPointComponent implements OnInit {
   }
 
   async refresh(state: State) {
-    let offset = +state.page.from;
-    let limit = +state.page.size;
+    const offset = +state.page.from;
+    const limit = +state.page.size;
 
     try {
       this.modalLoading.show();
@@ -90,7 +90,7 @@ export class ReorderPointComponent implements OnInit {
       this.products = [];
       if (rs.ok) {
         rs.rows.forEach(v => {
-          let obj: any = {};
+          const obj: any = {};
           obj.generic_id = v.generic_id;
           obj.generic_name = v.generic_name;
           obj.generic_type_name = v.generic_type_name;
@@ -128,7 +128,7 @@ export class ReorderPointComponent implements OnInit {
       // this.products = res.ok ? res.rows : [];
       if (rs.ok) {
         rs.rows.forEach(v => {
-          let obj: any = {};
+          const obj: any = {};
           obj.generic_id = v.generic_id;
           obj.generic_name = v.generic_name;
           obj.generic_type_name = v.generic_type_name;
@@ -162,10 +162,10 @@ export class ReorderPointComponent implements OnInit {
     try {
       const res: any = await this.genericTypeService.all();
 
-      let decoded = this.jwtHelper.decodeToken(this.token);
-      let genericIds = decoded.generic_type_id ? decoded.generic_type_id.split(',') : [];
+      const decoded = this.jwtHelper.decodeToken(this.token);
+      const genericIds = decoded.generic_type_id ? decoded.generic_type_id.split(',') : [];
 
-      let data = res.ok ? res.rows : [];
+      const data = res.ok ? res.rows : [];
 
       data.forEach(v => {
         genericIds.forEach(i => {
@@ -186,18 +186,17 @@ export class ReorderPointComponent implements OnInit {
   getRemainStatus(data: any) {
     if (data.remain < data.min_qty) {
       return 'text-danger';
-    }
-    else if (data.remain > data.min_qty) {
+    } else if (data.remain > data.min_qty) {
       return 'text-info';
     }
   }
 
   async createPurchaseOrders() {
-    let totalPrice = 0;
-    let purchaseSummary: any = {};
+    const totalPrice = 0;
+    const purchaseSummary: any = {};
     const purchaseOrderItems: Array<any> = [];
 
-    let purchaseItems = [];
+    const purchaseItems = [];
 
     this.products.forEach(v => {
       if (v.items.length) {
@@ -213,15 +212,15 @@ export class ReorderPointComponent implements OnInit {
     // console.log(purchaseItems);
 
     // group by contract
-    let contractItems = [];
-    let noContractItems = [];
+    const contractItems = [];
+    const noContractItems = [];
 
     // group by generictypes
-    let genericGroups = _.uniqBy(purchaseItems, 'generic_type_id');
-    let genericTypeItems = [];
+    const genericGroups = _.uniqBy(purchaseItems, 'generic_type_id');
+    const genericTypeItems = [];
     // จัดกลุ่มตาม Generic types
     genericGroups.forEach(g => {
-      let objG: any = [];
+      const objG: any = [];
       objG.generic_type_id = g.generic_type_id;
       objG.items = [];
 
@@ -234,11 +233,11 @@ export class ReorderPointComponent implements OnInit {
       genericTypeItems.push(objG);
     });
 
-    let itemsByGenericsType = [];
+    const itemsByGenericsType = [];
 
-    for (let gItem of genericTypeItems) {
-      for (let pItem of gItem.items) {
-        let obj: any = {};
+    for (const gItem of genericTypeItems) {
+      for (const pItem of gItem.items) {
+        const obj: any = {};
         obj.generic_type_id = pItem.generic_type_id;
         obj.contract_id = pItem.contract_id;
         obj.contract_no = pItem.contract_no;
@@ -257,29 +256,32 @@ export class ReorderPointComponent implements OnInit {
     // แยกสัญญา และไม่ใช่สัญญา
 
     itemsByGenericsType.forEach(v => {
-      if (v.contract_id) contractItems.push(v);
-      else noContractItems.push(v);
-    });
+      if (v.contract_id) {
+        contractItems.push(v);
+      } else {
+        noContractItems.push(v);
+      }
+      });
 
     // console.log(noContractItems);
     // console.log(contractItems);
 
-    let productItems = [];
-    let poItems = [];
+    const productItems = [];
+    const poItems = [];
 
     if (contractItems.length || noContractItems.length) {
 
       if (noContractItems.length) {
         // group by labeler
-        let labelerItems = [];
-        let labelerGroups = _.uniqBy(noContractItems, 'v_labeler_id');
+        const labelerItems = [];
+        const labelerGroups = _.uniqBy(noContractItems, 'v_labeler_id');
 
-        for (let l of labelerGroups) {
-          let obj: any = {};
+        for (const l of labelerGroups) {
+          const obj: any = {};
           obj.v_labeler_id = l.v_labeler_id;
           obj.generic_type_id = l.generic_type_id;
           obj.items = [];
-          for (let i of noContractItems) {
+          for (const i of noContractItems) {
             if (i.v_labeler_id === l.v_labeler_id && i.generic_type_id === l.generic_type_id) {
               obj.items.push(i);
             }
@@ -292,12 +294,12 @@ export class ReorderPointComponent implements OnInit {
         // console.log(labelerItems)
 
         // สร้าง product items
-        for (let v of labelerItems) {
+        for (const v of labelerItems) {
           // var rnd = new Random(Random.engines.mt19937().seedWithArray([0x12345678, 0x90abcdef]));
           const purchaseOrderId = Math.floor(new Date().valueOf() * Math.random() * new Date().getUTCMilliseconds());
 
-          for (let i of v.items) {
-            let obj: any = {};
+          for (const i of v.items) {
+            const obj: any = {};
             obj.purchase_order_id = purchaseOrderId;
             // obj.generic_type_id = i.generic_type_id;
             obj.generic_id = i.generic_id;
@@ -311,7 +313,7 @@ export class ReorderPointComponent implements OnInit {
             productItems.push(obj);
           }
 
-          let objP = {
+          const objP = {
             purchase_order_id: purchaseOrderId,
             labeler_id: v.v_labeler_id,
             is_contract: 'N',
@@ -331,17 +333,17 @@ export class ReorderPointComponent implements OnInit {
       // มีสัญญา
       if (contractItems.length) {
         // group by labeler
-        let ctItems = [];
-        let contractGroups = _.uniqBy(contractItems, 'contract_id');
+        const ctItems = [];
+        const contractGroups = _.uniqBy(contractItems, 'contract_id');
 
-        for (let l of contractGroups) {
-          let obj: any = {};
+        for (const l of contractGroups) {
+          const obj: any = {};
           obj.contract_id = l.contract_id;
           obj.generic_type_id = l.generic_type_id;
           obj.v_labeler_id = l.v_labeler_id;
 
           obj.items = [];
-          for (let i of contractItems) {
+          for (const i of contractItems) {
             if (i.contract_id === l.contract_id && i.generic_type_id === l.generic_type_id) {
               obj.items.push(i);
             }
@@ -351,12 +353,12 @@ export class ReorderPointComponent implements OnInit {
 
         }
         // สร้าง product items
-        for (let v of ctItems) {
+        for (const v of ctItems) {
           // var rnd = new Random(Random.engines.mt19937().seedWithArray([0x12345678, 0x90abcdef]));
           const purchaseOrderId = Math.floor(new Date().valueOf() * Math.random() * new Date().getUTCMilliseconds());
 
-          for (let i of v.items) {
-            let obj: any = {};
+          for (const i of v.items) {
+            const obj: any = {};
             obj.purchase_order_id = purchaseOrderId;
             // obj.generic_type_id = i.generic_type_id;
             obj.generic_id = i.generic_id;
@@ -372,7 +374,7 @@ export class ReorderPointComponent implements OnInit {
             productItems.push(obj);
           }
 
-          let objP = {
+          const objP = {
             purchase_order_id: purchaseOrderId,
             labeler_id: v.v_labeler_id,
             contract_id: v.contract_id,
@@ -388,13 +390,13 @@ export class ReorderPointComponent implements OnInit {
           poItems.push(objP);
         }
       }
- 
+
       this.alertService.confirm('ต้องการสร้างใบสั่งซื้อใหม่ตามรายการที่กำหนด ใช่หรือไม่?')
         .then(async () => {
           this.modalLoading.show();
           try {
             this.loading = true;
-            let rs: any = await this.purchasingOrderService.saveWithOrderPoint(poItems, productItems);
+            const rs: any = await this.purchasingOrderService.saveWithOrderPoint(poItems, productItems);
             this.modalLoading.hide();
             // console.log(rs);
             if (rs.ok) {
@@ -422,7 +424,7 @@ export class ReorderPointComponent implements OnInit {
   }
 
   onSuccessReorderPoint(event: any) {
-    let idx = _.findIndex(this.orderItems, { product_id: event.product_id });
+    const idx = _.findIndex(this.orderItems, { product_id: event.product_id });
     if (idx > -1) {
       this.orderItems[idx].order_qty = +event.order_qty;
       this.orderItems[idx].purchase_cost = +event.purchase_cost;
@@ -432,10 +434,10 @@ export class ReorderPointComponent implements OnInit {
       this.orderItems.push(event);
     }
 
-    let idxG = _.findIndex(this.products, { generic_id: event.generic_id });
+    const idxG = _.findIndex(this.products, { generic_id: event.generic_id });
 
     if (idxG > -1) {
-      let idxP = _.findIndex(this.products[idxG].items, { product_id: event.product_id });
+      const idxP = _.findIndex(this.products[idxG].items, { product_id: event.product_id });
       if (idxP > -1) {
         this.products[idxG].items[idxP].order_qty = +event.order_qty;
       } else {
