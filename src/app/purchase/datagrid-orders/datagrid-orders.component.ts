@@ -28,7 +28,9 @@ export class DatagridOrdersComponent implements OnInit {
   @ViewChild('modalCancel') modalCancel: PurchaseCancelComponent;
   @ViewChild('htmlPrview') htmlPrview: HtmlPreviewComponent;
   @ViewChild('modalLoading') modalLoading: ModalLoadingComponent;
-  @ViewChild('modalReceives') modalReceives: ModalReceivesComponent
+  @ViewChild('modalReceives') modalReceives: ModalReceivesComponent;
+  @ViewChild('paginationPo') paginationPo: any;
+
   /**
    * @params status
    *  'PREPARED','CONFIRMED','APPROVED','COMPLETED'
@@ -85,8 +87,9 @@ export class DatagridOrdersComponent implements OnInit {
   public jwtHelper: JwtHelper = new JwtHelper()
 
   token: any;
-  offset: any = 0
-  currentPage: any = 1
+  offset: any = 0;
+  currentPage: any = 1;
+
   constructor(
     private ref: ChangeDetectorRef,
     private alertService: AlertService,
@@ -106,7 +109,11 @@ export class DatagridOrdersComponent implements OnInit {
       this.isConfirm = decoded.PC_CONFIRM || 'N';
       this.isConfirm = this.isConfirm === 'Y' ? true : false;
     }
+
+    this.currentPage = +sessionStorage.getItem('poOrderCurrentPage') ? +sessionStorage.getItem('poOrderCurrentPage') : 1;
+
   }
+
   ngOnInit() {
     this.getProductType();
     this.purchaseOrders = [];
@@ -788,7 +795,23 @@ export class DatagridOrdersComponent implements OnInit {
   }
 
   async refresh(state: State) {
-    console.log(2);
+    console.log(this.paginationPo);
+
+    if (!this.currentPage) {
+      if (this.paginationPo) {
+        this.currentPage = this.paginationPo.currentPage;
+      } else {
+        this.currentPage = 1;
+      }
+    } else {
+      if (this.paginationPo) {
+        this.currentPage = this.currentPage > this.paginationPo.lastPage ? this.paginationPo.currentPage : this.paginationPo.currentPage;
+      } else {
+        this.currentPage = 1;
+      }
+    }
+
+    sessionStorage.setItem('poOrderCurrentPage', this.currentPage);
 
     this.offset = state.page.from;
     const limit = +state.page.size;
