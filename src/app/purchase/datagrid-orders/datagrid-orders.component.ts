@@ -522,7 +522,7 @@ export class DatagridOrdersComponent implements OnInit {
 
   btnConfirmIsActive(pro: any) {
 
-    if (this.accessCheck.can('PO_EDIT_AFFTER_APPROVE') && pro.purchase_order_status !== 'APPROVED') {
+    if (this.accessCheck.can('PO_EDIT_AFFTER_APPROVE') && pro.purchase_order_status !== 'APPROVED' && pro.purchase_order_status !== 'CONFIRMED') {
       return true;
     } else {
       if (this.checkEmptyData(pro) === false) {
