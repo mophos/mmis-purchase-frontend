@@ -12,7 +12,7 @@ import { ModalLoadingComponent } from 'app/modal-loading/modal-loading.component
 import { HtmlPreviewComponent } from 'app/helper/html-preview/html-preview.component';
 
 @Component({
-  selector: 'po-purchase-order-list',
+  selector: 'app-purchase-order-list',
   templateUrl: './purchase-order-list.component.html',
   styleUrls: ['./purchase-order-list.component.css']
 })
@@ -95,18 +95,17 @@ export class PurchaseOrderListComponent implements OnInit {
       } else {
         this.alertService.error(rs.error);
       }
-    }
-    catch (error) {
+    } catch (error) {
       this.modalLoading.hide();
       this.alertService.error(error.message);
     }
   }
 
   async printProduct() {
-    let startDate = `${this.startDate.date.year}-${this.startDate.date.month}-${this.startDate.date.day}`;
-    let endDate = `${this.endDate.date.year}-${this.endDate.date.month}-${this.endDate.date.day}`;
-    
-    let url = `${this.apiUrl}/report/purchasing-list/${startDate}/${endDate}/${this.bgtypesub_id}?token=${this.token}`;
+    const startDate = `${this.startDate.date.year}-${this.startDate.date.month}-${this.startDate.date.day}`;
+    const endDate = `${this.endDate.date.year}-${this.endDate.date.month}-${this.endDate.date.day}`;
+
+    const url = `${this.apiUrl}/report/purchasing-list/${startDate}/${endDate}/${this.bgtypesub_id}?token=${this.token}`;
     this.htmlPreview.showReport(url);
   }
 }
