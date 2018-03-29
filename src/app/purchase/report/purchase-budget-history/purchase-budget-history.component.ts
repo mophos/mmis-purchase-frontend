@@ -56,4 +56,8 @@ export class PurchaseBudgetHistoryComponent implements OnInit {
 
   }
 
+  printProduct() {
+
+  }
+
 }
