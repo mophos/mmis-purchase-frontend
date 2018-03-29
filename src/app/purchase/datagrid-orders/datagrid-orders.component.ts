@@ -86,7 +86,7 @@ export class DatagridOrdersComponent implements OnInit {
 
   token: any;
   offset: any = 0
-  currentPage:any = 1
+  currentPage: any = 1
   constructor(
     private ref: ChangeDetectorRef,
     private alertService: AlertService,
@@ -183,8 +183,8 @@ export class DatagridOrdersComponent implements OnInit {
 
     try {
       this.modalLoading.show();
-      console.log(this.offset+'---');
-      
+      console.log(this.offset + '---');
+
       result = await this.purchasingOrderService.byStatus(
         this.status,
         this.contractFilter,
@@ -522,7 +522,7 @@ export class DatagridOrdersComponent implements OnInit {
 
   btnConfirmIsActive(pro: any) {
 
-    if (this.accessCheck.can('PO_EDIT_AFFTER_APPROVE')) {
+    if (this.accessCheck.can('PO_EDIT_AFFTER_APPROVE') && pro.purchase_order_status !== 'APPROVED') {
       return true;
     } else {
       if (this.checkEmptyData(pro) === false) {
@@ -544,7 +544,7 @@ export class DatagridOrdersComponent implements OnInit {
 
   btnApproveIsActive(pro: any) {
 
-    if (this.accessCheck.can('PO_EDIT_AFFTER_APPROVE')) {
+    if (this.accessCheck.can('PO_EDIT_AFFTER_APPROVE') && pro.purchase_order_status === 'CONFIRMED' && pro.purchase_order_status !== 'APPROVED') {
       return true;
     } else {
       if (this.checkEmptyData(pro) === false) {
@@ -789,7 +789,7 @@ export class DatagridOrdersComponent implements OnInit {
 
   async refresh(state: State) {
     console.log(2);
-    
+
     this.offset = state.page.from;
     const limit = +state.page.size;
     const start_date = this.start_date !== null ? moment(this.start_date.jsdate).format('YYYY-MM-DD') : '';
