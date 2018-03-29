@@ -68,7 +68,7 @@
     </div>
   </div>
 </div> -->
-      <clr-datagrid style="height:80%;" [(clrDgSelected)]="purchaseOrdersSelected" (clrDgRefresh)="refresh($event)">
+      <clr-datagrid style="height:80%;" [(clrDgSelected)]="purchaseOrdersSelected"  (clrDgRefresh)="refresh($event)">
         <clr-dg-column class="datagrid-fixed-column" [style.width.px]="30">
           #
         </clr-dg-column>
@@ -182,7 +182,7 @@
 
         <clr-dg-footer>
           {{paginationPo.firstItem + 1}} - {{paginationPo.lastItem + 1}} of {{paginationPo.totalItems}} รายการ
-          <clr-dg-pagination #paginationPo [clrDgPageSize]="perPage" [clrDgTotalItems]="total"></clr-dg-pagination>
+          <clr-dg-pagination [(clrDgPage)]="currentPage" #paginationPo [clrDgPageSize]="perPage" [clrDgTotalItems]="total"></clr-dg-pagination>
         </clr-dg-footer>
       </clr-datagrid>
       <p>

@@ -84,6 +84,8 @@ export class DatagridOrdersComponent implements OnInit {
 
   page: any;
   token: any;
+  offset: any = 0
+  currentPage:any = 1
   constructor(
     private ref: ChangeDetectorRef,
     private alertService: AlertService,
@@ -153,6 +155,8 @@ export class DatagridOrdersComponent implements OnInit {
   }
 
   search() {
+    this.currentPage = 1
+    this.offset = 0
     this.getPurchaseOrders();
   }
 
@@ -182,13 +186,15 @@ export class DatagridOrdersComponent implements OnInit {
 
     try {
       this.modalLoading.show();
+      console.log(this.offset+'---');
+      
       result = await this.purchasingOrderService.byStatus(
         this.status,
         this.contractFilter,
         this.query,
         start_date,
         end_date,
-        this.perPage, 0);
+        this.perPage, this.offset);
 
       this.modalLoading.hide();
 
@@ -778,9 +784,10 @@ export class DatagridOrdersComponent implements OnInit {
   }
 
   async refresh(state: State) {
-    const offset = +state.page.from;
+    console.log(2);
+    
+    this.offset = state.page.from;
     const limit = +state.page.size;
-
     const start_date = this.start_date !== null ? moment(this.start_date.jsdate).format('YYYY-MM-DD') : '';
     const end_date = this.end_date !== null ? moment(this.end_date.jsdate).format('YYYY-MM-DD') : '';
 
@@ -810,7 +817,7 @@ export class DatagridOrdersComponent implements OnInit {
         this.query,
         start_date,
         end_date,
-        limit, offset);
+        limit, this.offset);
 
       this.modalLoading.hide();
 
