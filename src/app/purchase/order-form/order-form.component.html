@@ -3,6 +3,7 @@
     <a class="breadcrumb-item" href="javascript://" routerLink="/">หน้าหลัก</a>
     <span class="breadcrumb-item active">ใบสั่งซื้อ</span>
     <span style="margin-left: 2%; font-size:20px; font-weight:bold;">{{purchaseOrderNumber}}</span>
+    <!-- <span *ngIf="contractId" style="color: red; margin-left: 2%; font-size:20px; font-weight:bold;">เลขที่สัญญา {{contractNo}}</span> -->
     <span style="margin-left:35px">
       <app-order-status [status]="purchaseOrderStatus"></app-order-status>
     </span>
@@ -14,9 +15,9 @@
     </span>
   </nav>
 
-  <span *ngIf="contractId" class="label label-info">เลขที่สัญญา:
+  <!-- <span *ngIf="contractId" class="label label-info">เลขที่สัญญา:
     <strong>{{contractId}}</strong>
-  </span>
+  </span> -->
   <small class="p5" *ngIf="holidayText">
     <clr-icon shape="info-standard"></clr-icon> {{holidayText}}</small>
 
@@ -65,7 +66,8 @@
             <div class="form-group">
               <label style="width: 120px;" class="required" for="labeler_id">ผู้จำหน่าย</label>
               <!-- <app-search-labeler style="width:100%" (onSelected)="onLabelerSelected($event)" [labelerName]="labelerName"></app-search-labeler> -->
-              <po-search-vendor #searchVendor (onChange)="onChangeVendor($event)" (onSelect)="onSelectVendor($event)" style="width: 100%;"></po-search-vendor>
+              <po-search-vendor [disabled]="contractId" #searchVendor (onChange)="onChangeVendor($event)" (onSelect)="onSelectVendor($event)"
+                style="width: 100%;"></po-search-vendor>
             </div>
           </div>
 
@@ -80,7 +82,7 @@
           <div class="col-md-4">
             <div class="form-group">
               <label class="required" for="budget_detail_id">งบประมาณย่อย</label>
-              <po-select-sub-budget (onChange)="onChangeSubBudget($event)" [disabled]="contractId" style="width: 100%;" #subBudgetList
+              <po-select-sub-budget [selectedId]="budgetDetailId" (onChange)="onChangeSubBudget($event)" style="width: 100%;" #subBudgetList
                 [year]="budgetYear" [budgetTypeId]="budgetTypeId"></po-select-sub-budget>
             </div>
           </div>
@@ -250,12 +252,30 @@
 
                 <div class="form-group">
                   <label for="chief_fullname"> ชื่อหัวหน้างาน</label>
-                  <po-select-officer [selectedId]="office" officerTypeId="3" (onChange)="changeOfficer($event)" style="width: 100%;"></po-select-officer>
+                  <div class="row">
+                    <div class="col-md-11">
+                      <po-select-officer [selectedId]="office" officerTypeCode="CHIEF" (onChange)="changeOfficer($event)" style="width: 100%;"></po-select-officer>
+                    </div>
+                    <div class="col-md-1">
+                      <div class="checkbox">
+                        <clr-checkbox name="showChief" [(ngModel)]="showChief" [clrChecked]="showChief"></clr-checkbox>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
                 <div class="form-group">
                   <label for="buyer_fullname"> ชื่อเจ้าหน้าที่</label>
-                  <po-select-officer officerTypeId="4" [selectedId]="office1" (onChange)="changeOffice($event)" style="width: 100%;"></po-select-officer>
+                  <div class="row">
+                    <div class="col-md-11">
+                      <po-select-officer officerTypeCode="BUYYER" [selectedId]="office1" (onChange)="changeOffice($event)" style="width: 100%;"></po-select-officer>
+                    </div>
+                    <div class="col-md-1">
+                      <div class="checkbox">
+                        <clr-checkbox name="showBuyer" [(ngModel)]="showBuyer" [clrChecked]="showBuyer"></clr-checkbox>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
                 <div class="form-group">
@@ -293,11 +313,11 @@
           <clr-tab-content *clrIfActive>
             <div class="row">
               <div class="col-md-6">
-                <po-budget-remain [purchaseOrderId]="purchaseOrderId" (onCalculated)="onBudgetCalculated($event)" [purchaseAmount]="totalPrice"
-                  [budgetDetailId]="budgetDetailId" [budgetYear]="budgetYear"></po-budget-remain>
+                <po-budget-remain #budgetRemainRef [contractId]="contractId" [purchaseOrderId]="purchaseOrderId" (onCalculated)="onBudgetCalculated($event)"
+                  [purchaseAmount]="totalPrice" [budgetDetailId]="budgetDetailId" [budgetYear]="budgetYear"></po-budget-remain>
               </div>
               <div class="col-md-6">
-                <div class="card">
+                <div class="card" style="height:299px;">
                   <div class="card-block">
                     <form class="compact box-pricing" style="margin-top:0px;padding-top:0;">
                       <section class="form-block" style="margin-top:0px;">
@@ -331,8 +351,8 @@
                         <div class="form-group">
                           <label for="vatRate">ภาษี ( % )</label>
                           <div class="inline-box">
-                            <input type="number" [disabled]="!excludeVat&&!this.addVat" min="0" max="100" style="width:30%" id="vatRate" name="vatRate" [(ngModel)]="vatRate"
-                              (keyup)="calAmount()" (change)="calAmount()">
+                            <input type="number" [disabled]="!excludeVat&&!this.addVat" min="0" max="100" style="width:30%" id="vatRate" name="vatRate"
+                              [(ngModel)]="vatRate" (keyup)="calAmount()" (change)="calAmount()">
                             <input type="text" class="" id="vat" name="vat" style="width:70%" value="{{vat | number:'1.2-2'}}" disabled>
                           </div>
                         </div>
@@ -357,11 +377,14 @@
 
   <div class="text-right">
     <button type="button" [disabled]="isUpdate" (click)="reset()" class="btn btn-outline-danger btn-sm">
-      <clr-icon shape="refresh"></clr-icon> รีเซ็ต</button>
+      <clr-icon shape="refresh"></clr-icon> รีเซ็ต
+    </button>
     <button [disabled]="disableSave() || isSaving" type="button" (click)="save()" class="btn btn-sm btn-success">
-      <clr-icon shape="floppy"></clr-icon> บันทึก</button>
+      <clr-icon shape="floppy"></clr-icon> บันทึก
+    </button>
     <button type="button" (click)="cancel()" class="btn btn-danger btn-sm">
-      <clr-icon shape="home"></clr-icon> กลับหน้าหลัก</button>
+      <clr-icon shape="home"></clr-icon> กลับหน้าหลัก
+    </button>
 
   </div>
 

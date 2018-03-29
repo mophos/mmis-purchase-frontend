@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import * as _ from 'lodash';  
+import * as _ from 'lodash';
 import { IBudgetSub } from 'app/interfaces';
 import { StandardService } from 'app/services/standard.service';
 import { AlertService } from 'app/alert.service';
@@ -13,18 +13,23 @@ export class SelectSubBudgetComponent implements OnInit {
 
   _year: any;
   _budgetTypeId: any;
+  _selectedId: any;
 
-  @Input() public selectedId: any;
+  @Input('selectedId')
+  set setSelectedId(value: any) {
+    this._selectedId = value;
+  }
+
   @Input() public disabled: any;
 
   @Input('year')
-  set setYear(value: any) { this._year = value; }  
+  set setYear(value: any) { this._year = value; }
 
   @Input('budgetTypeId')
   set setBudgetTypeId(value: any) {
     this._budgetTypeId = value;
     this.getItems();
-  }  
+  }
 
   @Output('onChange') onChange: EventEmitter<any> = new EventEmitter<any>();
 
@@ -46,15 +51,15 @@ export class SelectSubBudgetComponent implements OnInit {
       if (rs.ok) {
         this.items = rs.rows;
         if (this.items.length) {
-          if (this.selectedId) {
-            const idx = _.findIndex(this.items, { bgdetail_id: this.selectedId });
+          if (this._selectedId) {
+            const idx = _.findIndex(this.items, { bgdetail_id: this._selectedId });
             if (idx > -1) {
               this.onChange.emit(this.items[idx]);
             } else {
               this.onChange.emit(this.items[0]);
             }
           } else {
-            this.selectedId = this.items[0].bgdetail_id;
+            this._selectedId = this.items[0].bgdetail_id;
             this.onChange.emit(this.items[0]);
           }
         }

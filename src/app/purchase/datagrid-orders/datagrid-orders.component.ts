@@ -15,6 +15,7 @@ import { ModalReceivesComponent } from 'app/purchase/modal-receives/modal-receiv
 import { ProductService } from './../share/product.service'
 import { tokenNotExpired, JwtHelper } from 'angular2-jwt';
 import { SettingService } from './../share/setting.service';
+import { State } from '@clr/angular';
 @Component({
   selector: 'app-datagrid-orders',
   templateUrl: './datagrid-orders.component.html',
@@ -66,14 +67,23 @@ export class DatagridOrdersComponent implements OnInit {
   purchaseOrderId: any;
   generic_name: any;
 
+  openChangeDate: boolean = false;
+  editPurchaseDate: any = null;
+  itemsChangeDate: any = [];
+
   isConfirm: any;
-  openModalConfirm: boolean = false
-  confirmApprove: boolean = false
-  tmpOderApprove: any
-  username: any
-  password: any
-  action: any = 'PC_ORDERS'
-  page: any
+  openModalConfirm: boolean = false;
+  confirmApprove: boolean = false;
+  tmpOderApprove: any;
+  username: any;
+  password: any;
+  action: any = 'PC_ORDERS';
+
+  total: number = 0;
+  perPage: number = 20;
+
+  page: any;
+  token: any;
   constructor(
     private ref: ChangeDetectorRef,
     private alertService: AlertService,
@@ -86,10 +96,16 @@ export class DatagridOrdersComponent implements OnInit {
     private router: Router,
     private productService: ProductService,
     private settingService: SettingService
-  ) { }
+  ) { 
+    this.token = sessionStorage.getItem('token');
+    let decoded = this.jwtHelper.decodeToken(this.token);
+    if (decoded) {
+      this.isConfirm = decoded.PC_CONFIRM || 'N';
+      this.isConfirm = this.isConfirm === 'Y' ? true : false;
+    }
+  }
   public jwtHelper: JwtHelper = new JwtHelper()
   ngOnInit() {
-    this.settings();
     this.getProductType();
     this.purchaseOrders = [];
     moment.locale('th');
@@ -105,6 +121,15 @@ export class DatagridOrdersComponent implements OnInit {
         day: 1
       }
     };
+
+    this.editPurchaseDate = {
+      date: {
+        year: moment().get('year'),
+        month: moment().get('month') + 1,
+        day: moment().get('date')
+      }
+    };
+
     this.end_date = {
       date: {
         year: moment().get('year'),
@@ -117,7 +142,7 @@ export class DatagridOrdersComponent implements OnInit {
         day: moment().get('date')
       }
     };
-    this.getPurchaseOrders();
+    // this.getPurchaseOrders();
     this.getOrders();
   }
 
@@ -157,22 +182,19 @@ export class DatagridOrdersComponent implements OnInit {
 
     try {
       this.modalLoading.show();
-      if (this.isCancel) {
-        result = await this.purchasingOrderService.isCancel();
-      } else {
-        result = await this.purchasingOrderService.byStatus(
-          this.status,
-          this.contractFilter,
-          this.query,
-          start_date,
-          end_date,
-          this.number_start,
-          this.number_end);
-      }
+      result = await this.purchasingOrderService.byStatus(
+        this.status,
+        this.contractFilter,
+        this.query,
+        start_date,
+        end_date,
+        this.perPage, 0);
 
       this.modalLoading.hide();
 
       this.purchaseOrders = result.rows;
+      this.total = +result.total;
+
     } catch (error) {
       this.alertService.error(error);
       this.modalLoading.hide();
@@ -220,7 +242,6 @@ export class DatagridOrdersComponent implements OnInit {
   async approve(order: any) {
     this.page = 1
     const checked = await this.accessCheck.can('PO_APPROVE')
-    console.log(checked);
     if (checked) {
       this.confirmApprove = true
       this.approveConfirm(order)
@@ -232,7 +253,7 @@ export class DatagridOrdersComponent implements OnInit {
 
   async checkApprove(username: any, password: any) {
     let rs: any = await this.purchasingOrderService.checkApprove(username, password, this.action);
-    console.log(rs);
+    // console.log(rs);
 
     if (rs.ok) {
       if (this.page === 1) {
@@ -310,8 +331,7 @@ export class DatagridOrdersComponent implements OnInit {
     const checked = type === 'APPROVED' ? true : false;
     let dataConfirm = [];
     if (this.accessCheck.confirm(type === 'CONFIRMED' ? 'PO_CONFIRM' : 'PO_APPROVE') || checked) {
-      console.log(type);
-      
+
       this.alertService.confirm(message).then(async () => {
         this.purchaseOrdersSelected.forEach(element => {
           if (element.purchase_order_status !== "ORDERPOINT" && element.is_cancel !== 'Y') {
@@ -558,14 +578,14 @@ export class DatagridOrdersComponent implements OnInit {
     this.purchaseOrdersSelected.forEach((value: any, index: number) => {
       f1++;
       if (value.purchase_order_status !== 'ORDERPOINT') {
-        poItems.push('porder=' + value.purchase_order_id);
+        poItems.push('purchaOrderId=' + value.purchase_order_id);
       } else {
         f2++;
       }
     });
 
     if (f1 !== f2) {
-      this.htmlPrview.showReport(this.url + '/report/getporder/singburi/?' + poItems.join('&'));
+      this.htmlPrview.showReport(this.url + `/report/po/egp/singburi/?token=${this.token}&` + poItems.join('&'));
     } else {
       this.alertService.error('ข้อมุูลไม่ครบถ้วน');
     }
@@ -613,7 +633,7 @@ export class DatagridOrdersComponent implements OnInit {
       this.alertService.error('ข้อมุูลไม่ครบถ้วน');
     }
     if (print_non > 0) {
-      this.htmlPrview.showReport(this.url + '/report/getporder/singburi/?' + printId.join('&'));
+      this.htmlPrview.showReport(this.url + `/report/getporder/singburi/?token=${this.token}&` + printId.join('&'));
       this.openModal = false;
     } else {
       this.alertService.error('ข้อมุูลไม่ครบถ้วน');
@@ -638,7 +658,7 @@ export class DatagridOrdersComponent implements OnInit {
       this.alertService.error('ไม่มีข้อมูล');
     }
     if (print_non > 0) {
-      this.htmlPrview.showReport(this.url + '/report/getporder/singburi/?' + printId.join('&'));
+      this.htmlPrview.showReport(this.url + `/report/getporder/singburi/?token=${this.token}&` + printId.join('&'));
       this.openModal = false;
     } else {
       this.alertService.error('ข้อมุูลไม่ครบถ้วน');
@@ -684,19 +704,6 @@ export class DatagridOrdersComponent implements OnInit {
 
   }
 
-  settings() {
-    this.settingService.byModule('PC')
-      .then(async (results: any) => {
-        this.settingConfig = results.rows;
-        const confirm = _.find(this.settingConfig, { 'action_name': 'PC_CONFIRM' });
-        this.isConfirm = (confirm.value == null || confirm.value == '') ? confirm.default : confirm.value;
-        this.isConfirm = this.isConfirm === 'Y' ? true : false;
-      })
-      .catch(error => {
-        this.alertService.serverError(error);
-      });
-  }
-
   async getOrders() {
     const rs: any = await this.purchasingOrderService.getGeneric();
     this.genericOrders = rs.rows;
@@ -705,7 +712,7 @@ export class DatagridOrdersComponent implements OnInit {
 
   printHistory(generic_name: any) {
     this.generic_name = generic_name;
-    this.htmlPrview.showReport(this.url + '/report/getProductHistory/' + generic_name.generic_code);
+    this.htmlPrview.showReport(this.url + `/report/getProductHistory/${generic_name.generic_code}?token=${this.token}`);
     console.log(generic_name.generic_code);
   }
 
@@ -718,6 +725,103 @@ export class DatagridOrdersComponent implements OnInit {
       this.genericOrders = rs.rows;
     }
     // console.log(e.target.value);
+  }
+
+  // change puchase date
+  changePurchaseDate() {
+    let items = [];
+    this.purchaseOrdersSelected.forEach(v => {
+
+      if (v.purchase_order_status === 'PREPARED' || v.purchase_order_status === 'CONFIRMED') {
+        this.itemsChangeDate.push(v);
+      }
+    });
+
+    if (this.itemsChangeDate.length) {
+      this.openChangeDate = true;
+    } else {
+      this.alertService.error('กรุณาระบุรายการที่ต้องการแก้ไขวันที่ (เฉพาะรายการที่เตรียมใบสีั่งซื้อ/ยืนยัน เท่านั้น)')
+    }
+  }
+
+  async doChangePurchaseDate() {
+    let purchaseOrderIds = [];
+    this.itemsChangeDate.forEach(v => {
+      purchaseOrderIds.push(v.purchase_order_id);
+    });
+
+    if (this.editPurchaseDate) {
+      const purchaseDate = this.editPurchaseDate ? moment(this.editPurchaseDate.jsdate).format('YYYY-MM-DD') : null;
+
+      try {
+        this.modalLoading.show();
+        let rs: any = await this.purchasingOrderService.saveChangePurchaseDate(purchaseOrderIds, purchaseDate);
+        this.modalLoading.hide();
+        if (rs.ok) {
+          this.alertService.success();
+          this.openChangeDate = false;
+
+          this.getPurchaseOrders();
+          this.getOrders();
+
+        } else {
+          this.alertService.error(rs.error);
+        }
+      } catch (error) {
+        this.modalLoading.hide();
+        this.alertService.error(JSON.stringify(error));
+      }
+
+    } else {
+      this.alertService.error('กรุณาระบุวันที่จัดซื้อ');
+    }
+  }
+
+  async refresh(state: State) {
+    const offset = +state.page.from;
+    const limit = +state.page.size;
+
+    const start_date = this.start_date !== null ? moment(this.start_date.jsdate).format('YYYY-MM-DD') : '';
+    const end_date = this.end_date !== null ? moment(this.end_date.jsdate).format('YYYY-MM-DD') : '';
+
+    let status: Array<any> = ['ORDERPOINT', 'PREPARED', 'CONFIRMED', 'APPROVED', 'SUCCESS', 'COMPLETED'];
+    if (this.statusFilter === 'PREPARED') {
+      this.status = ['PREPARED'];
+    } else if (this.statusFilter === 'ORDERPOINT') {
+      this.status = ['ORDERPOINT'];
+    }
+    else if (this.statusFilter === 'CONFIRMED') {
+      this.status = ['CONFIRMED'];
+    }
+    else if (this.statusFilter === 'APPROVED') {
+      this.status = ['APPROVED'];
+    }
+    else if (this.statusFilter === 'SUCCESS') {
+      this.status = ['COMPLETED', 'SUCCESS'];
+    } else {
+      this.status = status;
+    }
+
+    try {
+      this.modalLoading.show();
+      let rs: any = await this.purchasingOrderService.byStatus(
+        this.status,
+        this.contractFilter,
+        this.query,
+        start_date,
+        end_date,
+        limit, offset);
+
+      this.modalLoading.hide();
+
+      this.purchaseOrders = rs.rows;
+      this.total = +rs.total;
+
+    } catch (error) {
+      this.alertService.error(error);
+      this.modalLoading.hide();
+    }
+
   }
 
 }

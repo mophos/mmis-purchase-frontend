@@ -34,7 +34,7 @@
 </div>
 <br>
 
-<clr-datagrid [style.height.%]="80" class="grid-order" (clrDgRefresh)="refresh($event)">
+<clr-datagrid class="grid-order" (clrDgRefresh)="refresh($event)">
   <clr-dg-column [style.width.px]="100"><ng-container *clrDgHideableColumn="{hidden: false}">Working Code</ng-container></clr-dg-column>
   <clr-dg-column>Generic Name</clr-dg-column>
   <clr-dg-column [style.width.px]="100"><ng-container *clrDgHideableColumn="{hidden: false}">MIN</ng-container></clr-dg-column>
