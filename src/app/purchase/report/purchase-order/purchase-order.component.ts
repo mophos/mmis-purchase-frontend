@@ -17,7 +17,7 @@ import { HtmlPreviewComponent } from 'app/helper/html-preview/html-preview.compo
 })
 export class PurchaseOrderComponent implements OnInit {
 
-  isPreview: boolean = false;
+  isPreview = false;
 
   products: any = [];
   selectedProduct: any = [];
@@ -33,6 +33,7 @@ export class PurchaseOrderComponent implements OnInit {
   myDatePickerOptions: IMyOptions = {
     dateFormat: 'dd mmm yyyy',
   };
+  public jwtHelper: JwtHelper = new JwtHelper();
   token: any;
   constructor(
     private productService: ProductService,
@@ -42,9 +43,6 @@ export class PurchaseOrderComponent implements OnInit {
     const decodedToken = this.jwtHelper.decodeToken(this.token);
     this.productGroup = decodedToken.generic_type_id.split(',');
   }
-
-  public jwtHelper: JwtHelper = new JwtHelper();
-
   ngOnInit() {
     this.getProductType();
     // await this.getProducts();
@@ -68,7 +66,7 @@ export class PurchaseOrderComponent implements OnInit {
   onDateStartChanged(event: IMyDateModel) {
     const selectDate: any = moment(event.jsdate).format('YYYY-MM-DD');
     if (selectDate !== 'Invalid date') {
-      //this._start_date = selectDate;
+      // this._start_date = selectDate;
     } else {
 
     }
@@ -77,7 +75,7 @@ export class PurchaseOrderComponent implements OnInit {
   onDateEndChanged(event: IMyDateModel) {
     const selectDate: any = moment(event.jsdate).format('YYYY-MM-DD');
     if (selectDate !== 'Invalid date') {
-      //this._end_date = selectDate;
+      // this._end_date = selectDate;
     } else {
 
     }
