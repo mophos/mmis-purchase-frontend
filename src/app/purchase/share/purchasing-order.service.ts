@@ -294,4 +294,9 @@ export class PurchasingOrderService {
     return res.json();
   }
 
+  async sysReport(){
+    const res = await this.authHttp.get(`${this.url}/${this.apiName}/sys-report`)
+      .toPromise();
+    return res.json();
+  }
 }

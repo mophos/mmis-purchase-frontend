@@ -1,5 +1,6 @@
 import { Component, OnInit, Input, Inject } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
+import { PurchasingOrderService } from '../../purchase/share/purchasing-order.service';
 import * as _ from 'lodash';
 
 @Component({
@@ -11,12 +12,13 @@ export class HtmlPreviewComponent implements OnInit {
   startDate: any;
   endDate: any;
 
-
+  urlReport: any;
   reportURL: any;
   isShow = false;
   token: any;
   constructor(
     private santizer: DomSanitizer,
+    private model: PurchasingOrderService,
     @Inject('API_URL') public url: String
   ) {
     this.token = sessionStorage.getItem('token');
@@ -28,14 +30,20 @@ export class HtmlPreviewComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.getSysReport();
+  }
+
+  async getSysReport() {
+    let rs = await this.model.sysReport();
+    this.urlReport = rs.rows.report_url;
   }
 
   printPurchaseOrder(row: any) {
-    this.showReport(this.url + `/report/purchasingorder/?token=${this.token}&orderId=` + row.purchase_order_id);
+    console.log(this.urlReport)
+    this.showReport(this.url + `${this.urlReport}/?token=${this.token}&purchaOrderId=` + row.purchase_order_id);
   }
   printpPurchasing(row: any) {
     const created_date = row.created_date.substring(0, 10);
-    console.log(created_date)
     this.showReport(this.url + `/report/purchasing/${created_date}/${created_date}?token=${this.token}`);
   }
 
@@ -45,7 +53,6 @@ export class HtmlPreviewComponent implements OnInit {
 
   printRequistion(row: any) {
     const id = row.purchase_method;
-    console.log(id);
     const forms: Array<any> = [
       { 'id': 1, 'name': 'บันทึกข้อความขอซื้อเวชภัณฑ์ (คัดเลือก)', path: this.url + `/report/requisition?purchase_order_id=${row.purchase_order_id}&type=1&token=${this.token}` },
       { 'id': 2, 'name': 'บันทึกข้อความขอซื้อเวชภัณฑ์ (เจาะจง ข.)', path: this.url + `/report/requisition?purchase_order_id=${row.purchase_order_id}&type=21&token=${this.token}` },
