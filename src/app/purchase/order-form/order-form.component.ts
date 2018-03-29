@@ -1022,6 +1022,13 @@ export class OrderFormComponent implements OnInit {
       return true;
     }
 
+    if (this.purchaseOrderStatus === 'CONFIRMED') {
+      if (this.accessCheck.can('PO_EDIT_AFFTER_APPROVE')) {
+        return false;
+      }
+      return true;
+    }
+
     return false;
   }
 
