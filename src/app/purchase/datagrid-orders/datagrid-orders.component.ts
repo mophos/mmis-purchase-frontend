@@ -667,7 +667,7 @@ export class DatagridOrdersComponent implements OnInit {
 
   async changeToPrepare(pro: any) {
 
-    if (this.accessCheck.confirm('PO_EDIT_AFFTER_APPREVE')) {
+    if (this.accessCheck.confirm('PO_EDIT_AFFTER_APPROVE')) {
       this.alertService.confirm('ต้องการเปลี่ยนสถานะใบสั่งซื้อ เป็นเตรียมใบสั่งซื้อ ใช่หรือไม่?')
         .then(async () => {
           // PREPARED
