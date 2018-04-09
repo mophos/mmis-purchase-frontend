@@ -244,7 +244,7 @@
   <!-- </clr-tab> -->
 </clr-tabs>
 
-<clr-modal [(clrModalOpen)]="openModal" [clrModalClosable]="false">
+<clr-modal [(clrModalOpen)]="openModal" [clrModalClosable]="false" [clrModalSize]="'lg'">
   <h3 class="modal-title">เลือกเลขที่ใบสั่งซื้อ</h3>
   <div class="modal-body">
     <div class="row" style="margin:1em">
@@ -269,13 +269,27 @@
     </div>
     <div class="row" style="margin:1em">
       <div class="card">
-        <div style="margin:0.5em">
+        <div style="margin:0.5em">ใบสั่งซื้อ : 
           <input placeholder="เลขที่ตั้งต้น" (keydown)="handleKeyDown($event)" class="form-control" type="text" id="start_id" [(ngModel)]="start_id"
             name="start_id" size="16"> &nbsp;&nbsp;&nbsp;
           <input placeholder="เลขที่สุดท้าย" (keydown)="handleKeyDown($event)" class="form-control" type="text" id="end_id" [(ngModel)]="end_id"
             name="end_id" size="16"> &nbsp;&nbsp;&nbsp;
           <clr-button-group class="btn-sm" [clrMenuPosition]="'bottom-right '" style="display:inline-block;float:right;">
-            <clr-button class="btn" (click)="print_id()">
+            <clr-button class="btn" (click)="printPo()">
+              <clr-icon shape="printer"></clr-icon> พิมพ์ </clr-button>
+          </clr-button-group>
+        </div>
+      </div>
+    </div>
+    <div class="row" style="margin:1em">
+      <div class="card">
+        <div style="margin:0.5em">แบบฟอร์ม e-GP : 
+          <input placeholder="เลขที่ตั้งต้น" (keydown)="handleKeyDown($event)" class="form-control" type="text" id="start_id" [(ngModel)]="start_id"
+            name="start_id" size="16"> &nbsp;&nbsp;&nbsp;
+          <input placeholder="เลขที่สุดท้าย" (keydown)="handleKeyDown($event)" class="form-control" type="text" id="end_id" [(ngModel)]="end_id"
+            name="end_id" size="16"> &nbsp;&nbsp;&nbsp;
+          <clr-button-group class="btn-sm" [clrMenuPosition]="'bottom-right '" style="display:inline-block;float:right;">
+            <clr-button class="btn" (click)="printEgp()">
               <clr-icon shape="printer"></clr-icon> พิมพ์ </clr-button>
           </clr-button-group>
         </div>
