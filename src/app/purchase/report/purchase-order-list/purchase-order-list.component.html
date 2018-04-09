@@ -1,6 +1,6 @@
 <nav class="breadcrumb">
   <a class="breadcrumb-item" href="javascript://" routerLink="/">หน้าหลัก</a>
-  <span class="breadcrumb-item active">รายงานสั่งซื้อเวชภัณฑ์</span>
+  <span class="breadcrumb-item active">รายงานสรุปรายการเวชภัณฑ์ที่สั่งซื้อ</span>
 </nav>
 
 <div class="row" style="padding-top: 5px;">
@@ -19,12 +19,12 @@
     <my-date-picker-th name="endDate" [(ngModel)]="endDate" [options]="myDatePickerOptions" required></my-date-picker-th>
   </div>
   <div class="col-md-3">
-    <button class="btn btn-sm btn-success btn-icon" (click)="printProduct()">
-      <clr-icon shape="print"></clr-icon> พิมพ์รายการ
+    <button class="btn btn-sm btn-success btn-icon" (click)="printProduct(1)">
+      <clr-icon shape="printer"></clr-icon> พิมพ์รายการ
     </button>
-    <!-- <button [disabled]="!selectedProduct.length" class="btn btn-sm btn-success btn-icon" (click)="printProduct()">
-      <clr-icon shape="print"></clr-icon> พิมพ์รายการ
-    </button> -->
+    <button class="btn btn-sm btn-success btn-icon" (click)="printProduct(2)">
+      <clr-icon shape="printer"></clr-icon> พิมพ์รายการทั้งหมด
+    </button>
   </div>
   <div class="col-md-3">
     <div class="select" style="float: right;">

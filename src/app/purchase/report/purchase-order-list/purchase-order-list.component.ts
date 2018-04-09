@@ -101,11 +101,18 @@ export class PurchaseOrderListComponent implements OnInit {
     }
   }
 
-  async printProduct() {
-    const startDate = `${this.startDate.date.year}-${this.startDate.date.month}-${this.startDate.date.day}`;
-    const endDate = `${this.endDate.date.year}-${this.endDate.date.month}-${this.endDate.date.day}`;
-
-    const url = `${this.apiUrl}/report/purchasing-list/${startDate}/${endDate}/${this.bgtypesub_id}?token=${this.token}`;
-    this.htmlPreview.showReport(url);
+  async printProduct(check: any) {
+    if(check == 1){
+      const startDate = `${this.startDate.date.year}-${this.startDate.date.month}-${this.startDate.date.day}`;
+      const endDate = `${this.endDate.date.year}-${this.endDate.date.month}-${this.endDate.date.day}`;
+      const url = `${this.apiUrl}/report/purchasing-list/${startDate}/${endDate}/${this.bgtypesub_id}?token=${this.token}`;
+      this.htmlPreview.showReport(url);
+    }
+    if(check == 2){
+      const startDate = `2017-1-1`;
+      const endDate = `${this.endDate.date.year}-${this.endDate.date.month}-${this.endDate.date.day}`;
+      const url = `${this.apiUrl}/report/purchasing-list/${startDate}/${endDate}/${this.bgtypesub_id}?token=${this.token}`;
+      this.htmlPreview.showReport(url);
+    }
   }
 }

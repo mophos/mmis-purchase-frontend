@@ -111,6 +111,7 @@ export class DatagridOrdersComponent implements OnInit {
     }
 
     this.currentPage = +sessionStorage.getItem('poOrderCurrentPage') ? +sessionStorage.getItem('poOrderCurrentPage') : 1;
+    console.log('=', this.currentPage)
 
   }
 
@@ -635,7 +636,8 @@ export class DatagridOrdersComponent implements OnInit {
     this.productType = rs.rows;
     this.generic_type_id = this.productType[0].generic_type_id;
   }
-  async print_id() {
+
+  async printPo() {
     const printId: any = [];
     let print_non: any = 0;
     const rs: any = await this.purchasingOrderService.getPOid(this.start_id, this.end_id, this.generic_type_id, this.status_po);
@@ -658,6 +660,31 @@ export class DatagridOrdersComponent implements OnInit {
     this.start_id = '';
     this.end_id = '';
   }
+
+  async printEgp() {
+    const printId: any = [];
+    let print_non: any = 0;
+    const rs: any = await this.purchasingOrderService.getPOid(this.start_id, this.end_id, this.generic_type_id, this.status_po);
+    if (rs.rows) {
+      rs.rows.forEach(e => {
+        if (e.purchase_order_status !== 'ORDERPOINT') {
+          printId.push('porder=' + e.purchase_order_id);
+          print_non++;
+        }
+      });
+    } else {
+      this.alertService.error('ข้อมุูลไม่ครบถ้วน');
+    }
+    if (print_non > 0) {
+      this.htmlPrview.showReport(this.url + `/report/getporder/singburi/?token=${this.token}&` + printId.join('&'));
+      this.openModal = false;
+    } else {
+      this.alertService.error('ข้อมุูลไม่ครบถ้วน');
+    }
+    this.start_id = '';
+    this.end_id = '';
+  }
+
   async print_date() {
     const printId: any = [];
     let print_non: any = 0;
@@ -805,7 +832,7 @@ export class DatagridOrdersComponent implements OnInit {
       }
     } else {
       if (this.paginationPo) {
-        this.currentPage = this.currentPage > this.paginationPo.lastPage ? this.paginationPo.currentPage : this.paginationPo.currentPage;
+        this.currentPage = this.paginationPo.currentPage;
       } else {
         this.currentPage = 1;
       }
@@ -844,7 +871,6 @@ export class DatagridOrdersComponent implements OnInit {
         limit, this.offset);
 
       this.modalLoading.hide();
-
       this.purchaseOrders = rs.rows;
       this.total = +rs.total;
 
@@ -852,7 +878,5 @@ export class DatagridOrdersComponent implements OnInit {
       this.alertService.error(error);
       this.modalLoading.hide();
     }
-
   }
-
 }
