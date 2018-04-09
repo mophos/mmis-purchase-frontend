@@ -63,9 +63,12 @@
         <div class="col-md-8">
           <label for="">ค้นหา</label>
           <input (keyup)="doSearchReserved($event)" type="text" placeholder="ชื่อ, working code, keyword" [(ngModel)]="queryReserved"
-            style="width: 350px;">
-          <button [disabled]="!selectedReserved.length" class="btn btn-sm btn-success btn-icon" (click)="createPurchaseOrder()">
-            <clr-icon shape="plus"></clr-icon> ออกใบสั่งซื้อ ({{selectedReserved.length | number}} รายการ)
+            style="width: 250px;">
+          <button [disabled]="getSelectedPrepare() === 0" class="btn btn-sm btn-success btn-icon" (click)="createPreparePurchaseOrder()">
+            <clr-icon shape="plus"></clr-icon> เตรียมออกใบสั่งซื้อ ({{getSelectedPrepare() | number}} รายการ)
+          </button>
+          <button [disabled]="!selectedOrders.length" class="btn btn-sm btn-danger btn-icon">
+            <clr-icon shape="shopping-cart"></clr-icon> ออกใบสั่งซื้อ ({{selectedOrders.length | number}} รายการ)
           </button>
           <button class="btn btn-sm btn-primary btn-icon" [disabled]="!selectedReserved.length" (click)="printProduct()">
             <clr-icon shape="printer"></clr-icon> พิมพ์รายการ
@@ -109,7 +112,7 @@
           <clr-dg-cell></clr-dg-cell>
           <clr-dg-cell style="text-align: right;">{{p.cost | number: '1.2-2'}}</clr-dg-cell>
           <clr-dg-cell>
-            <input type="text" #qty (keyup)="onChangeQty(i, qty.value)" style="width: 100%; text-align: right; background-color:#FFF9C4"
+            <input type="text" #qty (keyup)="onChangeQty(qty.value, p)" style="width: 100%; text-align: right; background-color:#FFF9C4"
               placeholder="0" appNumberWithoutDot [value]="p.order_qty || null">
           </clr-dg-cell>
           <clr-dg-cell>

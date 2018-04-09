@@ -25,6 +25,7 @@ export class OrderPointComponent implements OnInit {
   reservedItems: any = [];
   selectedProduct: any = [];
   selectedReserved: any = [];
+  selectedOrders: any = [];
   printProducts: any = [];
   genericTypeId = 'all';
   genericTypeIdReserved = 'all';
@@ -186,7 +187,30 @@ export class OrderPointComponent implements OnInit {
     }
   }
 
-  createPurchaseOrder() {
+  createPreparePurchaseOrder() {
+    this.selectedReserved.forEach(v => {
+      if (+v.purchase_qty > 0) {
+        let obj: any = {};
+        obj.generic_id = v.generic_id;
+        obj.unit_generic_id = v.unit_generic_id;
+        obj.cost = v.cost;
+        obj.purchase_qty = +v.purchase_qty; // pack unit
+        obj.product_id = v.product_id;
+        obj.contract_id = v.contract_id || null;
+        obj.reserve_id = v.reserve_id;
+
+        this.selectedOrders.push(obj);
+      }
+    });
+
+    if (this.selectedOrders.length) {
+      console.log(this.selectedOrders);
+    } else {
+      this.alertService.error('กรุณาระบุจำนวนที่ต้องการสั่งซื้อ');
+    }
+  }
+
+  savePreparePurchase(product: any) {
 
   }
 
@@ -224,6 +248,14 @@ export class OrderPointComponent implements OnInit {
     let idx = _.findIndex(this.reservedItems, { product_id: product.product_id });
     if (idx > -1) {
       this.reservedItems[idx].cost = +event.cost;
+      this.reservedItems[idx].unit_generic_id = +event.unit_generic_id;
+    }
+  }
+
+  onChangeQty(qty: any, product: any) {
+    let idx = _.findIndex(this.reservedItems, { product_id: product.product_id });
+    if (idx > -1) {
+      this.reservedItems[idx].purchase_qty = +qty;
     }
   }
 
@@ -247,5 +279,18 @@ export class OrderPointComponent implements OnInit {
   clearSelected() {
     this.selectedProduct = [];
     this.selectedReserved = [];
+  }
+
+  getSelectedPrepare() {
+    let items = [];
+    this.selectedReserved.forEach(v => {
+      if (+v.purchase_qty > 0) items.push(v);
+    });
+
+    return items.length;
+  }
+
+  addToOrders() {
+  
   }
 }

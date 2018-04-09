@@ -38,6 +38,13 @@ export class ProductService {
     return res.json();
   }
 
+  async updateTradeReserved(items: any[]) {
+    const res = await this.authHttp.put(`${this.url}/products/reorderpoint/trade/reserved-update`, {
+      items: items
+    }).toPromise();
+    return res.json();
+  }
+
   async saveReservedProducts(items: any[]) {
     const res = await this.authHttp.post(`${this.url}/products/save-reserved`, {
       items: items
