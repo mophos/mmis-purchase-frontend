@@ -88,10 +88,11 @@
         <clr-dg-column style="width: 120px;">Min/Max</clr-dg-column>
         <clr-dg-column style="width: 100px;">คงเหลือ</clr-dg-column>
         <clr-dg-column>ประเภท</clr-dg-column>
-        <clr-dg-column style="width: 120px;">เลขที่สัญญา</clr-dg-column>
+        <clr-dg-column style="width: 100px;">เลขที่สัญญา</clr-dg-column>
         <clr-dg-column style="width: 100px;">ราคาต่อ Pack</clr-dg-column>
         <clr-dg-column style="width: 100px;">จำนวนซื้อ</clr-dg-column>
         <clr-dg-column style="width: 140px;">หน่วยจัดซื้อ</clr-dg-column>
+        <clr-dg-column style="width: 100px;">#</clr-dg-column>
         <clr-dg-placeholder>ไม่พบข้อมูล</clr-dg-placeholder>
 
         <clr-dg-row *ngFor="let p of reservedItems" [clrDgItem]="p">
@@ -106,13 +107,18 @@
           <clr-dg-cell style="text-align: right;">{{p.remain_qty | number}}</clr-dg-cell>
           <clr-dg-cell>{{p.generic_type_name}}</clr-dg-cell>
           <clr-dg-cell></clr-dg-cell>
-          <clr-dg-cell></clr-dg-cell>
+          <clr-dg-cell style="text-align: right;">{{p.cost | number: '1.2-2'}}</clr-dg-cell>
           <clr-dg-cell>
             <input type="text" #qty (keyup)="onChangeQty(i, qty.value)" style="width: 100%; text-align: right; background-color:#FFF9C4"
               placeholder="0" appNumberWithoutDot [value]="p.order_qty || null">
           </clr-dg-cell>
           <clr-dg-cell>
-            <app-select-box-units (onChange)="onChangeUnit($event, i)" [genericId]="p.generic_id"></app-select-box-units>
+            <app-select-box-units (onChange)="onChangeUnit($event, p)" [genericId]="p.generic_id"></app-select-box-units>
+          </clr-dg-cell>
+          <clr-dg-cell style="text-align: center;">
+            <button class="btn btn-sm btn-danger wm-small-btn" (click)="removeWaiting(p)">
+              <clr-icon shape="trash"></clr-icon>
+            </button>
           </clr-dg-cell>
         </clr-dg-row>
 

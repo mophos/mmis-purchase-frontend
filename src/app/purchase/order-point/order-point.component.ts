@@ -1,6 +1,8 @@
 import { Component, OnInit, ViewChild, Inject } from '@angular/core';
 import { IMyDateModel } from 'mydatepicker-th';
 import * as moment from 'moment';
+import * as _ from 'lodash';  
+
 import { HtmlPreviewComponent } from 'app/helper/html-preview/html-preview.component';
 import { ModalLoadingComponent } from 'app/modal-loading/modal-loading.component';
 import { ProductService } from 'app/purchase/share/product.service';
@@ -218,6 +220,17 @@ export class OrderPointComponent implements OnInit {
     } else {
       this.alertService.error('กรุณาเลือกรายการที่ต้องการ')
     }
+  }
+
+  onChangeUnit(event: any, product: any) {
+    let idx = _.findIndex(this.reservedItems, { product_id: product.product_id });
+    if (idx > -1) {
+      this.reservedItems[idx].cost = +event.cost;
+    }
+  }
+
+  removeWaiting(product: any) {
+
   }
 
 }
