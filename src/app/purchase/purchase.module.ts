@@ -80,6 +80,7 @@ import { TransactionHistoryComponent } from './directives/transaction-history/tr
 import { ProductHistoryComponent } from './directives/product-history/product-history.component';
 import { PurchaseOrderListComponent } from './report/purchase-order-list/purchase-order-list.component';
 import { OrderPointComponent } from './order-point/order-point.component';
+import { PurchaseBudgetHistoryComponent } from './report/purchase-budget-history/purchase-budget-history.component';
 
 @NgModule({
   imports: [
@@ -134,7 +135,8 @@ import { OrderPointComponent } from './order-point/order-point.component';
     TransactionHistoryComponent,
     ProductHistoryComponent,
     PurchaseOrderListComponent,
-    OrderPointComponent
+    OrderPointComponent,
+    PurchaseBudgetHistoryComponent
   ],
   providers: [
     BudgetTransectionService,

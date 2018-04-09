@@ -28,7 +28,9 @@ export class DatagridOrdersComponent implements OnInit {
   @ViewChild('modalCancel') modalCancel: PurchaseCancelComponent;
   @ViewChild('htmlPrview') htmlPrview: HtmlPreviewComponent;
   @ViewChild('modalLoading') modalLoading: ModalLoadingComponent;
-  @ViewChild('modalReceives') modalReceives: ModalReceivesComponent
+  @ViewChild('modalReceives') modalReceives: ModalReceivesComponent;
+  @ViewChild('paginationPo') paginationPo: any;
+
   /**
    * @params status
    *  'PREPARED','CONFIRMED','APPROVED','COMPLETED'
@@ -48,10 +50,10 @@ export class DatagridOrdersComponent implements OnInit {
   loading: boolean;
   purchaseOrders: Array<any> = [];
   purchaseOrdersSelected: Array<any> = [];
-  contractFilter: string = 'ALL';
-  statusFilter: string = 'ALL';
-  status_po: string = 'ALL';
-  openModal: boolean = false;
+  contractFilter = 'ALL';
+  statusFilter = 'ALL';
+  status_po = 'ALL';
+  openModal = false;
   generic: any;
   generic_type_id: any;
   genericType: any;
@@ -67,23 +69,27 @@ export class DatagridOrdersComponent implements OnInit {
   purchaseOrderId: any;
   generic_name: any;
 
-  openChangeDate: boolean = false;
+  openChangeDate = false;
   editPurchaseDate: any = null;
   itemsChangeDate: any = [];
 
   isConfirm: any;
-  openModalConfirm: boolean = false;
-  confirmApprove: boolean = false;
+  openModalConfirm = false;
+  confirmApprove = false;
   tmpOderApprove: any;
   username: any;
   password: any;
   action: any = 'PC_ORDERS';
-
-  total: number = 0;
-  perPage: number = 20;
-
+  total = 0;
+  perPage = 20;
   page: any;
+
+  public jwtHelper: JwtHelper = new JwtHelper()
+
   token: any;
+  offset: any = 0;
+  currentPage: any = 1;
+
   constructor(
     private ref: ChangeDetectorRef,
     private alertService: AlertService,
@@ -96,15 +102,18 @@ export class DatagridOrdersComponent implements OnInit {
     private router: Router,
     private productService: ProductService,
     private settingService: SettingService
-  ) { 
+  ) {
     this.token = sessionStorage.getItem('token');
-    let decoded = this.jwtHelper.decodeToken(this.token);
+    const decoded = this.jwtHelper.decodeToken(this.token);
     if (decoded) {
       this.isConfirm = decoded.PC_CONFIRM || 'N';
       this.isConfirm = this.isConfirm === 'Y' ? true : false;
     }
+
+    this.currentPage = +sessionStorage.getItem('poOrderCurrentPage') ? +sessionStorage.getItem('poOrderCurrentPage') : 1;
+
   }
-  public jwtHelper: JwtHelper = new JwtHelper()
+
   ngOnInit() {
     this.getProductType();
     this.purchaseOrders = [];
@@ -153,6 +162,8 @@ export class DatagridOrdersComponent implements OnInit {
   }
 
   search() {
+    this.currentPage = 1
+    this.offset = 0
     this.getPurchaseOrders();
   }
 
@@ -162,19 +173,16 @@ export class DatagridOrdersComponent implements OnInit {
     const start_date = this.start_date !== null ? moment(this.start_date.jsdate).format('YYYY-MM-DD') : '';
     const end_date = this.end_date !== null ? moment(this.end_date.jsdate).format('YYYY-MM-DD') : '';
 
-    let status: Array<any> = ['ORDERPOINT', 'PREPARED', 'CONFIRMED', 'APPROVED', 'SUCCESS', 'COMPLETED'];
+    const status: Array<any> = ['ORDERPOINT', 'PREPARED', 'CONFIRMED', 'APPROVED', 'SUCCESS', 'COMPLETED'];
     if (this.statusFilter === 'PREPARED') {
       this.status = ['PREPARED'];
     } else if (this.statusFilter === 'ORDERPOINT') {
       this.status = ['ORDERPOINT'];
-    }
-    else if (this.statusFilter === 'CONFIRMED') {
+    } else if (this.statusFilter === 'CONFIRMED') {
       this.status = ['CONFIRMED'];
-    }
-    else if (this.statusFilter === 'APPROVED') {
+    } else if (this.statusFilter === 'APPROVED') {
       this.status = ['APPROVED'];
-    }
-    else if (this.statusFilter === 'SUCCESS') {
+    } else if (this.statusFilter === 'SUCCESS') {
       this.status = ['COMPLETED', 'SUCCESS'];
     } else {
       this.status = status;
@@ -182,13 +190,15 @@ export class DatagridOrdersComponent implements OnInit {
 
     try {
       this.modalLoading.show();
+      console.log(this.offset + '---');
+
       result = await this.purchasingOrderService.byStatus(
         this.status,
         this.contractFilter,
         this.query,
         start_date,
         end_date,
-        this.perPage, 0);
+        this.perPage, this.offset);
 
       this.modalLoading.hide();
 
@@ -202,11 +212,11 @@ export class DatagridOrdersComponent implements OnInit {
   }
 
   async confirm(order: any) {
-    let purchases = [];
+    const purchases = [];
     if (this.accessCheck.confirm('PO_CONFIRM')) {
-      if (order.purchase_order_status !== "ORDERPOINT" && order.is_cancel !== 'Y') {
+      if (order.purchase_order_status !== 'ORDERPOINT' && order.is_cancel !== 'Y') {
         if (this.canUpdateStatus(order.purchase_order_status, 'CONFIRMED')) {
-          let data = {
+          const data = {
             purchase_order_id: order.purchase_order_id,
             purchase_order_status: 'CONFIRMED',
             from_status: order.purchase_order_status
@@ -217,7 +227,7 @@ export class DatagridOrdersComponent implements OnInit {
       if (purchases.length) {
         try {
           this.modalLoading.show();
-          let rs: any = await this.purchasingOrderService.updateStatus(purchases);
+          const rs: any = await this.purchasingOrderService.updateStatus(purchases);
           this.purchaseOrdersSelected = [];
           if (rs.ok) {
             this.alertService.success();
@@ -252,7 +262,7 @@ export class DatagridOrdersComponent implements OnInit {
   }
 
   async checkApprove(username: any, password: any) {
-    let rs: any = await this.purchasingOrderService.checkApprove(username, password, this.action);
+    const rs: any = await this.purchasingOrderService.checkApprove(username, password, this.action);
     // console.log(rs);
 
     if (rs.ok) {
@@ -268,11 +278,11 @@ export class DatagridOrdersComponent implements OnInit {
   }
 
   async approveConfirm(order: any) {
-    let purchases = [];
+    const purchases = [];
     if (this.confirmApprove) {
-      if (order.purchase_order_status !== "ORDERPOINT" && order.is_cancel !== 'Y') {
+      if (order.purchase_order_status !== 'ORDERPOINT' && order.is_cancel !== 'Y') {
         if (this.canUpdateStatus(order.purchase_order_status, 'APPROVED')) {
-          let data = {
+          const data = {
             purchase_order_id: order.purchase_order_id,
             purchase_order_status: 'APPROVED',
             from_status: order.purchase_order_status
@@ -283,7 +293,7 @@ export class DatagridOrdersComponent implements OnInit {
       if (purchases.length) {
         this.modalLoading.show();
         try {
-          let rs: any = await this.purchasingOrderService.updateStatus(purchases);
+          const rs: any = await this.purchasingOrderService.updateStatus(purchases);
           this.purchaseOrdersSelected = [];
           this.modalLoading.hide();
           if (rs.ok) {
@@ -324,17 +334,17 @@ export class DatagridOrdersComponent implements OnInit {
 
 
   async confirmAll(type: string) {
-    let promise: Array<any> = [];
+    const promise: Array<any> = [];
     const message: string = (type === 'CONFIRMED' ?
       'คุณต้องการที่จะยืนยันใบสั่งซื้อใช่หรือไม่' :
       'คุณต้องการที่จะอนุมัติใบสั่งซื้อใช่หรือไม่');
     const checked = type === 'APPROVED' ? true : false;
-    let dataConfirm = [];
+    const dataConfirm = [];
     if (this.accessCheck.confirm(type === 'CONFIRMED' ? 'PO_CONFIRM' : 'PO_APPROVE') || checked) {
 
       this.alertService.confirm(message).then(async () => {
         this.purchaseOrdersSelected.forEach(element => {
-          if (element.purchase_order_status !== "ORDERPOINT" && element.is_cancel !== 'Y') {
+          if (element.purchase_order_status !== 'ORDERPOINT' && element.is_cancel !== 'Y') {
             if (this.canUpdateStatus(element.purchase_order_status, type)) {
               if (this.getConfirmData(type, element) !== false) {
                 const data: any = this.getConfirmData(type, element);
@@ -347,7 +357,7 @@ export class DatagridOrdersComponent implements OnInit {
 
         if (dataConfirm.length) {
           try {
-            let rs: any = await this.purchasingOrderService.updateStatus(dataConfirm);
+            const rs: any = await this.purchasingOrderService.updateStatus(dataConfirm);
             this.purchaseOrdersSelected = [];
             if (rs.ok) {
               this.alertService.success();
@@ -403,7 +413,6 @@ export class DatagridOrdersComponent implements OnInit {
         from_status: po.purchase_order_status,
         purchase_order_status: 'APPROVED',
         approved_date: moment().format('YYYY-MM-DD HH:mm:ss'),
-        //approved_by:1
       };
     }
     return false;
@@ -520,34 +529,42 @@ export class DatagridOrdersComponent implements OnInit {
 
   btnConfirmIsActive(pro: any) {
 
-    if (this.checkEmptyData(pro) === false) {
-      return false;
-    }
-    if (!this.isConfirm) {
-      return false;
-    }
-    if (pro.purchase_order_status === 'COMPLETED'
-      || pro.purchase_order_status === 'CONFIRMED'
-      || pro.purchase_order_status === 'APPROVED'
-      || pro.is_cancel === 'Y') {
-      return false;
-    } else {
+    if (this.accessCheck.can('PO_EDIT_AFFTER_APPROVE') && pro.purchase_order_status !== 'APPROVED' && pro.purchase_order_status !== 'CONFIRMED') {
       return true;
+    } else {
+      if (this.checkEmptyData(pro) === false) {
+        return false;
+      }
+      if (!this.isConfirm) {
+        return false;
+      }
+      if (pro.purchase_order_status === 'COMPLETED'
+        || pro.purchase_order_status === 'CONFIRMED'
+        || pro.purchase_order_status === 'APPROVED'
+        || pro.is_cancel === 'Y') {
+        return false;
+      } else {
+        return true;
+      }
     }
   }
 
   btnApproveIsActive(pro: any) {
 
-    if (this.checkEmptyData(pro) === false) {
-      return false;
-    }
-    if (this.isConfirm && pro.purchase_order_status !== 'CONFIRMED') {
-      return false;
-    }
-    if (pro.purchase_order_status === 'COMPLETED' || pro.purchase_order_status === 'APPROVED' || pro.is_cancel === 'Y') {
-      return false;
-    } else {
+    if (this.accessCheck.can('PO_EDIT_AFFTER_APPROVE') && pro.purchase_order_status === 'CONFIRMED' && pro.purchase_order_status !== 'APPROVED') {
       return true;
+    } else {
+      if (this.checkEmptyData(pro) === false) {
+        return false;
+      }
+      if (this.isConfirm && pro.purchase_order_status !== 'CONFIRMED') {
+        return false;
+      }
+      if (pro.purchase_order_status === 'COMPLETED' || pro.purchase_order_status === 'APPROVED' || pro.is_cancel === 'Y') {
+        return false;
+      } else {
+        return true;
+      }
     }
   }
 
@@ -671,22 +688,22 @@ export class DatagridOrdersComponent implements OnInit {
 
   async changeToPrepare(pro: any) {
 
-    if (this.accessCheck.confirm('PO_EDIT_AFFTER_APPREVE')) {
+    if (this.accessCheck.confirm('PO_EDIT_AFFTER_APPROVE')) {
       this.alertService.confirm('ต้องการเปลี่ยนสถานะใบสั่งซื้อ เป็นเตรียมใบสั่งซื้อ ใช่หรือไม่?')
         .then(async () => {
           // PREPARED
-          let obj: any = {
+          const obj: any = {
             purchase_order_id: pro.purchase_order_id,
             purchase_order_status: 'PREPARED',
             from_status: pro.purchase_order_status
           }
 
-          let items = [];
+          const items = [];
           items.push(obj);
 
           try {
             this.modalLoading.show();
-            let rs: any = await this.purchasingOrderService.updateStatus(items);
+            const rs: any = await this.purchasingOrderService.updateStatus(items);
             if (rs.ok) {
               this.alertService.success();
               this.getPurchaseOrders();
@@ -729,7 +746,7 @@ export class DatagridOrdersComponent implements OnInit {
 
   // change puchase date
   changePurchaseDate() {
-    let items = [];
+    const items = [];
     this.purchaseOrdersSelected.forEach(v => {
 
       if (v.purchase_order_status === 'PREPARED' || v.purchase_order_status === 'CONFIRMED') {
@@ -745,7 +762,7 @@ export class DatagridOrdersComponent implements OnInit {
   }
 
   async doChangePurchaseDate() {
-    let purchaseOrderIds = [];
+    const purchaseOrderIds = [];
     this.itemsChangeDate.forEach(v => {
       purchaseOrderIds.push(v.purchase_order_id);
     });
@@ -755,7 +772,7 @@ export class DatagridOrdersComponent implements OnInit {
 
       try {
         this.modalLoading.show();
-        let rs: any = await this.purchasingOrderService.saveChangePurchaseDate(purchaseOrderIds, purchaseDate);
+        const rs: any = await this.purchasingOrderService.saveChangePurchaseDate(purchaseOrderIds, purchaseDate);
         this.modalLoading.hide();
         if (rs.ok) {
           this.alertService.success();
@@ -778,25 +795,39 @@ export class DatagridOrdersComponent implements OnInit {
   }
 
   async refresh(state: State) {
-    const offset = +state.page.from;
-    const limit = +state.page.size;
+    console.log(this.paginationPo);
 
+    if (!this.currentPage) {
+      if (this.paginationPo) {
+        this.currentPage = this.paginationPo.currentPage;
+      } else {
+        this.currentPage = 1;
+      }
+    } else {
+      if (this.paginationPo) {
+        this.currentPage = this.currentPage > this.paginationPo.lastPage ? this.paginationPo.currentPage : this.paginationPo.currentPage;
+      } else {
+        this.currentPage = 1;
+      }
+    }
+
+    sessionStorage.setItem('poOrderCurrentPage', this.currentPage);
+
+    this.offset = state.page.from;
+    const limit = +state.page.size;
     const start_date = this.start_date !== null ? moment(this.start_date.jsdate).format('YYYY-MM-DD') : '';
     const end_date = this.end_date !== null ? moment(this.end_date.jsdate).format('YYYY-MM-DD') : '';
 
-    let status: Array<any> = ['ORDERPOINT', 'PREPARED', 'CONFIRMED', 'APPROVED', 'SUCCESS', 'COMPLETED'];
+    const status: Array<any> = ['ORDERPOINT', 'PREPARED', 'CONFIRMED', 'APPROVED', 'SUCCESS', 'COMPLETED'];
     if (this.statusFilter === 'PREPARED') {
       this.status = ['PREPARED'];
     } else if (this.statusFilter === 'ORDERPOINT') {
       this.status = ['ORDERPOINT'];
-    }
-    else if (this.statusFilter === 'CONFIRMED') {
+    } else if (this.statusFilter === 'CONFIRMED') {
       this.status = ['CONFIRMED'];
-    }
-    else if (this.statusFilter === 'APPROVED') {
+    } else if (this.statusFilter === 'APPROVED') {
       this.status = ['APPROVED'];
-    }
-    else if (this.statusFilter === 'SUCCESS') {
+    } else if (this.statusFilter === 'SUCCESS') {
       this.status = ['COMPLETED', 'SUCCESS'];
     } else {
       this.status = status;
@@ -804,13 +835,13 @@ export class DatagridOrdersComponent implements OnInit {
 
     try {
       this.modalLoading.show();
-      let rs: any = await this.purchasingOrderService.byStatus(
+      const rs: any = await this.purchasingOrderService.byStatus(
         this.status,
         this.contractFilter,
         this.query,
         start_date,
         end_date,
-        limit, offset);
+        limit, this.offset);
 
       this.modalLoading.hide();
 

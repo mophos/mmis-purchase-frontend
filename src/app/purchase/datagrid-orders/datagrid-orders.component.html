@@ -68,7 +68,7 @@
     </div>
   </div>
 </div> -->
-      <clr-datagrid style="height:80%;" [(clrDgSelected)]="purchaseOrdersSelected" (clrDgRefresh)="refresh($event)">
+      <clr-datagrid style="height:80%;" [(clrDgSelected)]="purchaseOrdersSelected"  (clrDgRefresh)="refresh($event)">
         <clr-dg-column class="datagrid-fixed-column" [style.width.px]="30">
           #
         </clr-dg-column>
@@ -181,8 +181,8 @@
         </clr-dg-row>
 
         <clr-dg-footer>
-          {{paginationPo.firstItem + 1}} - {{paginationPo.lastItem + 1}} of {{paginationPo.totalItems}} รายการ
-          <clr-dg-pagination #paginationPo [clrDgPageSize]="perPage" [clrDgTotalItems]="total"></clr-dg-pagination>
+          {{paginationPo.firstItem + 1}} - {{paginationPo.lastItem + 1}} จาก {{paginationPo.totalItems}} รายการ
+          <clr-dg-pagination [(clrDgPage)]="currentPage" #paginationPo [clrDgPageSize]="perPage" [clrDgTotalItems]="total"></clr-dg-pagination>
         </clr-dg-footer>
       </clr-datagrid>
       <p>
@@ -191,7 +191,7 @@
       </p>
     </clr-tab-content>
   </clr-tab>
-  <clr-tab>
+  <!-- <clr-tab>
     <button clrTabLink id="link2">
       <clr-icon shape="history"></clr-icon>
       ประวัติการสั่งซื้อ
@@ -200,13 +200,13 @@
       <div class="rows" style="margin:1em 0em 1em 0em">
         <div class="card">
           <div class="card-block">
-            <div class="col-md-4">
+            <div class="col-md-4"> -->
               <!-- <div class="form-group">
                 <span style="display:inline-block">Trading Code</span>
                 <input placeholder="" class="form-control" (keyup)="fileChangeEvent($event)" type="text" id="start_id" [(ngModel)]="file"
                   name="file" size="16" style="display:inline-block">
               </div> -->
-            </div>
+            <!-- </div>
           </div>
         </div>
       </div>
@@ -224,16 +224,13 @@
           <clr-dg-cell>{{pro.generic_code}}</clr-dg-cell>
           <clr-dg-cell>{{pro.generic_name}}</clr-dg-cell>
           <clr-dg-cell>
-            <!-- <div style="float:right">
-              <clr-button-group class="btn-sm" [clrMenuPosition]="'bottom-right '">
+            <div style="float:right"> -->
+              <!-- <clr-button-group class="btn-sm" [clrMenuPosition]="'bottom-right '">
                 <clr-button class="btn" (click)="printHistory(pro)">
                   <clr-icon shape="search"></clr-icon> ดูรายละเอียด </clr-button>
-              </clr-button-group>
-            </div> -->
+              </clr-button-group> -->
+            <!-- </div>
           </clr-dg-cell>
-          <!-- <app-product-history *clrIfExpanded ngProjectAs="clr-dg-row-detail" [genericId]="pro.generic_id">
-
-          </app-product-history> -->
           <app-product-history *clrIfExpanded ngProjectAs="clr-dg-row-detail" [genericId]="pro.generic_id">
 
           </app-product-history>
@@ -243,8 +240,8 @@
           <clr-dg-pagination #pagination [clrDgPageSize]="30"></clr-dg-pagination>
         </clr-dg-footer>
       </clr-datagrid>
-    </clr-tab-content>
-  </clr-tab>
+    </clr-tab-content> -->
+  <!-- </clr-tab> -->
 </clr-tabs>
 
 <clr-modal [(clrModalOpen)]="openModal" [clrModalClosable]="false">
