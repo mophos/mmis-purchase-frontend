@@ -187,7 +187,9 @@ export class OrderPointComponent implements OnInit {
     }
   }
 
-  createPreparePurchaseOrder() {
+  async createPreparePurchaseOrder() {
+    let items: any = [];
+
     this.selectedReserved.forEach(v => {
       if (+v.purchase_qty > 0) {
         let obj: any = {};
@@ -199,12 +201,23 @@ export class OrderPointComponent implements OnInit {
         obj.contract_id = v.contract_id || null;
         obj.reserve_id = v.reserve_id;
 
-        this.selectedOrders.push(obj);
+        items.push(obj);
       }
     });
 
-    if (this.selectedOrders.length) {
-      console.log(this.selectedOrders);
+    if (items.length) {
+      
+      try {
+        let rs: any = await this.productService.updateTradeReserved(items);
+        if (rs.ok) {
+          this.alertService.success();
+          this.getProductsReserved();
+        } else {
+          this.alertService.error(rs.error);
+        }
+      } catch (error) {
+        this.alertService.error(JSON.stringify(error));
+      }
     } else {
       this.alertService.error('กรุณาระบุจำนวนที่ต้องการสั่งซื้อ');
     }
@@ -291,6 +304,6 @@ export class OrderPointComponent implements OnInit {
   }
 
   addToOrders() {
-  
+    
   }
 }
