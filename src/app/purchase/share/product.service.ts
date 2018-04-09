@@ -45,6 +45,11 @@ export class ProductService {
     return res.json();
   }
 
+  async removeReservedProducts(reserveId: any) {
+    const res = await this.authHttp.delete(`${this.url}/products/remove-reserved/${reserveId}`).toPromise();
+    return res.json();
+  }
+
   async getProductsListByGeneric(genericId: any) {
     const res = await this.authHttp.get(`${this.url}/products/orderspoint/product-list-by-generic/${genericId}`)
       .toPromise();

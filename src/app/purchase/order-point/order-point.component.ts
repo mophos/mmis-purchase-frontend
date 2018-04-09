@@ -230,7 +230,20 @@ export class OrderPointComponent implements OnInit {
   }
 
   removeWaiting(product: any) {
-
+    this.alertService.confirm('ต้องการลบรายการนี้ ใช่หรือไม่?')
+      .then(async () => {
+        try {
+          let rs: any = await this.productService.removeReservedProducts(product.reserve_id);
+          if (rs.ok) {
+            this.alertService.success();
+            this.getProductsReserved();
+          } else {
+            this.alertService.error(rs.error);
+          }
+        } catch (error) {
+          this.alertService.error(JSON.stringify(error));
+        }
+      }).catch(() => { });
   }
 
 }
