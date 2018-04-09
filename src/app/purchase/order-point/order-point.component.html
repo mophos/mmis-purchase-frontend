@@ -5,7 +5,7 @@
 
 <clr-tabs>
   <clr-tab>
-    <button clrTabLink id="link1">รายการที่ถึงจุดสั่งซื้อ</button>
+    <button clrTabLink id="link1" (click)="clearSelected()">รายการที่ถึงจุดสั่งซื้อ</button>
     <clr-tab-content id="content1" *clrIfActive="true">
       <div class="row wid99">
         <div class="col-md-8">
@@ -55,7 +55,7 @@
     </clr-tab-content>
   </clr-tab>
   <clr-tab>
-    <button clrTabLink>รายการรอจัดซื้อ
+    <button (click)="clearSelected()" clrTabLink>รายการรอจัดซื้อ
       <span class="badge badge-danger">{{totalReserved | number}}</span>
     </button>
     <clr-tab-content *clrIfActive>

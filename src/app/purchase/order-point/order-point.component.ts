@@ -165,14 +165,12 @@ export class OrderPointComponent implements OnInit {
   refresh(state: State) {
     const offset = +state.page.from;
     const limit = +state.page.size;
-
     this.getProducts(limit, offset);
   }
 
   refreshReserved(state: State) {
     const offset = +state.page.from;
     const limit = +state.page.size;
-
     this.getProductsReserved(limit, offset);
   }
 
@@ -246,4 +244,8 @@ export class OrderPointComponent implements OnInit {
       }).catch(() => { });
   }
 
+  clearSelected() {
+    this.selectedProduct = [];
+    this.selectedReserved = [];
+  }
 }
