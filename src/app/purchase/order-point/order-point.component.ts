@@ -107,6 +107,7 @@ export class OrderPointComponent implements OnInit {
   }
 
   changeType() {
+    console.log(this.genericTypeId);
     this.getProducts(this.perPage);
   }
 

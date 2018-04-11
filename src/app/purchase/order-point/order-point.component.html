@@ -17,7 +17,7 @@
         </div>
         <div class="col-md-4">
           <div class="select" style="float: right;">
-            <select name="generic_type_id" [(ngModel)]="generic_type_id" (change)="changeType()">
+            <select name="genericTypeId" [(ngModel)]="genericTypeId" (change)="changeType()">
               <option value="all">ทั้งหมด</option>
               <option *ngFor="let p of productType" [value]="p.generic_type_id">{{ p.generic_type_name }}</option>
             </select>
@@ -142,14 +142,14 @@
             <clr-icon shape="shopping-cart"></clr-icon> ออกใบสั่งซื้อ ({{selectedOrdersReserved.length || 0 | number}} รายการ)
           </button>
         </div>
-        <div class="col-md-4">
+        <!-- <div class="col-md-4">
           <div class="select" style="float: right;">
             <select name="genericTypeIdReserved" [(ngModel)]="genericTypeIdReserved" (change)="changeTypeReserved()">
               <option value="all">ทั้งหมด</option>
               <option *ngFor="let p of productType" [value]="p.generic_type_id">{{ p.generic_type_name }}</option>
             </select>
           </div>
-        </div>
+        </div> -->
       </div>
 
       <clr-datagrid [(clrDgSelected)]="selectedOrdersReserved" style="height: 85%;">
