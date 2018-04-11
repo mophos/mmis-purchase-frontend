@@ -78,6 +78,7 @@ import { TransactionPoComponent } from './directives/transaction-po/transaction-
 import { BudgetRemainComponent } from './directives/budget-remain/budget-remain.component';
 import { TransactionHistoryComponent } from './directives/transaction-history/transaction-history.component';
 import { ProductHistoryComponent } from './directives/product-history/product-history.component';
+import { HistoryOrderComponent } from './history-order/history-order.component';
 
 @NgModule({
   imports: [
@@ -130,7 +131,8 @@ import { ProductHistoryComponent } from './directives/product-history/product-hi
     TransactionPoComponent,
     BudgetRemainComponent,
     TransactionHistoryComponent,
-    ProductHistoryComponent
+    ProductHistoryComponent,
+    HistoryOrderComponent
   ],
   providers: [
     BudgetTransectionService,

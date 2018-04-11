@@ -182,7 +182,7 @@ export class PurchasingOrderService {
   }
 
   async updateStatus(items: any) {
-    let rs: any = await this.authHttp.put(`${this.url}/${this.apiName}/update-purchase/status`, {items: items}).toPromise();
+    let rs: any = await this.authHttp.put(`${this.url}/${this.apiName}/update-purchase/status`, { items: items }).toPromise();
     return rs.json();
   }
 
@@ -242,8 +242,14 @@ export class PurchasingOrderService {
     return res.json();
   }
 
-  async getGeneric() {
-    const res = await this.authHttp.get(`${this.url}/${this.apiName}/getGeneric`)
+  async getGeneric(limit = 15, offset = 0) {
+    const res = await this.authHttp.get(`${this.url}/${this.apiName}/getGeneric?limit=${limit}&offset=${offset}`)
+      .toPromise();
+    return res.json();
+  }
+
+  async getGenericSearch(limit = 15, offset = 0, query: any) {
+    const res = await this.authHttp.get(`${this.url}/${this.apiName}/getGeneric/search?limit=${limit}&offset=${offset}&query=${query}`)
       .toPromise();
     return res.json();
   }
@@ -269,7 +275,7 @@ export class PurchasingOrderService {
     }).toPromise();
     return rs.json();
   }
-  
+
   async saveChangePurchaseDate(purchaseOrderIds: any[], purchaseDate: any) {
     const res = await this.authHttp.post(`${this.url}/${this.apiName}/change-purchase-date`, {
       purchaseOrderIds: purchaseOrderIds,
