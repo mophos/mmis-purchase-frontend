@@ -774,6 +774,7 @@ export class DatagridOrdersComponent implements OnInit {
   // change puchase date
   changePurchaseDate() {
     const items = [];
+    this.itemsChangeDate = [];
     this.purchaseOrdersSelected.forEach(v => {
 
       if (v.purchase_order_status === 'PREPARED' || v.purchase_order_status === 'CONFIRMED') {
