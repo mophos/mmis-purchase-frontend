@@ -270,6 +270,7 @@ export class OrderPointComponent implements OnInit {
         if (rs.ok) {
           this.alertService.success();
           this.getProducts();
+          this.getReservedForOrders();
         } else {
           this.alertService.error(rs.error);
         }
@@ -307,6 +308,8 @@ export class OrderPointComponent implements OnInit {
           if (rs.ok) {
             this.alertService.success();
             this.getProductsReserved();
+            this.getReservedForOrders();
+            this.clearSelected();
           } else {
             this.alertService.error(rs.error);
           }
