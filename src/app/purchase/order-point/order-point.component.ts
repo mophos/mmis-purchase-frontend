@@ -9,6 +9,8 @@ import { ProductService } from 'app/purchase/share/product.service';
 import { JwtHelper } from 'angular2-jwt';
 import { AlertService } from 'app/alert.service';
 import { State } from '@clr/angular';
+import { PurchasingOrderService } from 'app/purchase/share/purchasing-order.service';
+import { Router } from '@angular/router';
 @Component({
   selector: 'po-order-point',
   templateUrl: './order-point.component.html',
@@ -20,12 +22,14 @@ export class OrderPointComponent implements OnInit {
   @ViewChild('modalLoading') modalLoading: ModalLoadingComponent
 
   isPreview: boolean = false;
+  openReservedOrder: boolean = false;
 
   products: any = [];
   reservedItems: any = [];
   selectedProduct: any = [];
   selectedReserved: any = [];
   selectedOrders: any = [];
+  selectedOrdersReserved: any = [];
   printProducts: any = [];
   genericTypeId = 'all';
   genericTypeIdReserved = 'all';
@@ -40,12 +44,24 @@ export class OrderPointComponent implements OnInit {
   totalReserved: number = 0;
   queryReserved: any = '';
 
+  delivery: any;
+  vatRate: number;
+  defaultBudgetYear: any;
+
   constructor(
     private productService: ProductService,
     private alertService: AlertService,
+    private purchasingOrderService: PurchasingOrderService,
+    private router: Router,
     @Inject('API_URL') private apiUrl: any) {
     this.token = sessionStorage.getItem('token');
     const decodedToken = this.jwtHelper.decodeToken(this.token);
+    if (decodedToken) {
+      this.delivery = decodedToken.PC_SHIPPING_DATE || 30;
+      this.vatRate = decodedToken.PC_VAT || 7;
+      this.defaultBudgetYear = decodedToken.PC_DEFAULT_BUDGET_YEAR || moment().get('year');
+    }
+
     this.productGroup = decodedToken.generic_type_id.split(',');
   }
 
@@ -54,6 +70,7 @@ export class OrderPointComponent implements OnInit {
   async ngOnInit() {
     this.getProductType();
     await this.getProductsReserved();
+    await this.getReservedForOrders();
   }
 
   printProduct() {
@@ -118,6 +135,19 @@ export class OrderPointComponent implements OnInit {
     } catch (error) {
       this.modalLoading.hide();
       this.alertService.error(error.message);
+    }
+  }
+
+  async getReservedForOrders() {
+    try {
+      let rs: any = await this.productService.getReorderPointTradeReservedForOrdered();
+      if (rs.ok) {
+        this.selectedOrders = rs.rows;
+      } else {
+        this.alertService.error(rs.error);
+      }
+    } catch (error) {
+      this.alertService.error(JSON.stringify(error));
     }
   }
 
@@ -206,12 +236,12 @@ export class OrderPointComponent implements OnInit {
     });
 
     if (items.length) {
-      
       try {
         let rs: any = await this.productService.updateTradeReserved(items);
         if (rs.ok) {
           this.alertService.success();
           this.getProductsReserved();
+          this.selectedReserved = [];
         } else {
           this.alertService.error(rs.error);
         }
@@ -221,10 +251,6 @@ export class OrderPointComponent implements OnInit {
     } else {
       this.alertService.error('กรุณาระบุจำนวนที่ต้องการสั่งซื้อ');
     }
-  }
-
-  savePreparePurchase(product: any) {
-
   }
 
   async saveReserved() {
@@ -292,6 +318,7 @@ export class OrderPointComponent implements OnInit {
   clearSelected() {
     this.selectedProduct = [];
     this.selectedReserved = [];
+    this.selectedOrdersReserved = [];
   }
 
   getSelectedPrepare() {
@@ -303,7 +330,232 @@ export class OrderPointComponent implements OnInit {
     return items.length;
   }
 
-  addToOrders() {
-    
+  showReservedOrder() {
+    this.openReservedOrder = true;
   }
+
+  async createPurchaseOrders() {
+    const totalPrice = 0;
+    const purchaseSummary: any = {};
+    const purchaseOrderItems: Array<any> = [];
+
+    const purchaseItems = this.selectedOrders;
+
+    // console.log(purchaseItems);
+
+    // group by contract
+    const contractItems = [];
+    const noContractItems = [];
+
+    // group by generictypes
+    const genericGroups = _.uniqBy(purchaseItems, 'generic_type_id');
+    const genericTypeItems = [];
+    // จัดกลุ่มตาม Generic types
+    genericGroups.forEach((g: any) => {
+      const objG: any = [];
+      objG.generic_type_id = g.generic_type_id;
+      objG.items = [];
+
+      purchaseItems.forEach(item => {
+        if (item.generic_type_id === g.generic_type_id) {
+          objG.items.push(item);
+        }
+      });
+
+      genericTypeItems.push(objG);
+    });
+
+    const itemsByGenericsType = [];
+
+    for (const gItem of genericTypeItems) {
+      for (const pItem of gItem.items) {
+        const obj: any = {};
+        obj.generic_type_id = pItem.generic_type_id;
+        obj.contract_id = pItem.contract_id;
+        // obj.contract_no = pItem.contract_no;
+        obj.conversion_qty = pItem.conversion_qty;
+        obj.generic_id = pItem.generic_id;
+        obj.m_labeler_id = pItem.m_labeler_id;
+        obj.v_labeler_id = pItem.v_labeler_id;
+        obj.purchase_cost = pItem.purchase_cost;
+        obj.unit_generic_id = pItem.unit_generic_id;
+        obj.order_qty = pItem.order_qty;
+        obj.product_id = pItem.product_id;
+        obj.reserve_id = pItem.reserve_id;
+        itemsByGenericsType.push(obj);
+      }
+    }
+
+    // แยกสัญญา และไม่ใช่สัญญา
+
+    itemsByGenericsType.forEach(v => {
+      if (v.contract_id) {
+        contractItems.push(v);
+      } else {
+        noContractItems.push(v);
+      }
+    });
+
+    // console.log(noContractItems);
+    // console.log(contractItems);
+
+    const productItems = [];
+    const poItems = [];
+
+    if (contractItems.length || noContractItems.length) {
+
+      if (noContractItems.length) {
+        // group by labeler
+        const labelerItems = [];
+        const labelerGroups = _.uniqBy(noContractItems, 'v_labeler_id');
+
+        for (const l of labelerGroups) {
+          const obj: any = {};
+          obj.v_labeler_id = l.v_labeler_id;
+          obj.generic_type_id = l.generic_type_id;
+          obj.items = [];
+          for (const i of noContractItems) {
+            if (i.v_labeler_id === l.v_labeler_id && i.generic_type_id === l.generic_type_id) {
+              obj.items.push(i);
+            }
+          }
+
+          labelerItems.push(obj);
+
+        }
+
+        // console.log(labelerItems)
+
+        // สร้าง product items
+        for (const v of labelerItems) {
+          // var rnd = new Random(Random.engines.mt19937().seedWithArray([0x12345678, 0x90abcdef]));
+          const purchaseOrderId = Math.floor(new Date().valueOf() * Math.random() * new Date().getUTCMilliseconds());
+
+          for (const i of v.items) {
+            const obj: any = {};
+            obj.purchase_order_id = purchaseOrderId;
+            // obj.generic_type_id = i.generic_type_id;
+            obj.generic_id = i.generic_id;
+            obj.product_id = i.product_id;
+            obj.qty = i.order_qty;
+            obj.unit_price = i.purchase_cost;
+            obj.unit_generic_id = i.unit_generic_id;
+            obj.total_small_qty = i.conversion_qty * i.order_qty;
+            obj.reserve_id = i.reserve_id;
+            // obj.v_labeler_id = i.v_labeler_id;
+
+            productItems.push(obj);
+          }
+
+          const objP = {
+            purchase_order_id: purchaseOrderId,
+            labeler_id: v.v_labeler_id,
+            is_contract: 'N',
+            delivery: this.delivery,
+            vat_rate: this.vatRate,
+            generic_type_id: v.generic_type_id,
+            budget_year: this.defaultBudgetYear,
+            // total_price: totalPrice + vat,
+            order_date: moment().format('YYYY-MM-DD')
+          }
+
+          poItems.push(objP);
+        }
+
+      }
+
+      // มีสัญญา
+      if (contractItems.length) {
+        // group by labeler
+        const ctItems = [];
+        const contractGroups = _.uniqBy(contractItems, 'contract_id');
+
+        for (const l of contractGroups) {
+          const obj: any = {};
+          obj.contract_id = l.contract_id;
+          obj.generic_type_id = l.generic_type_id;
+          obj.v_labeler_id = l.v_labeler_id;
+
+          obj.items = [];
+          for (const i of contractItems) {
+            if (i.contract_id === l.contract_id && i.generic_type_id === l.generic_type_id) {
+              obj.items.push(i);
+            }
+          }
+
+          ctItems.push(obj);
+
+        }
+        // สร้าง product items
+        for (const v of ctItems) {
+          // var rnd = new Random(Random.engines.mt19937().seedWithArray([0x12345678, 0x90abcdef]));
+          const purchaseOrderId = Math.floor(new Date().valueOf() * Math.random() * new Date().getUTCMilliseconds());
+
+          for (const i of v.items) {
+            const obj: any = {};
+            obj.purchase_order_id = purchaseOrderId;
+            // obj.generic_type_id = i.generic_type_id;
+            obj.generic_id = i.generic_id;
+            obj.product_id = i.product_id;
+            obj.qty = i.order_qty;
+            obj.unit_price = i.purchase_cost;
+            obj.unit_generic_id = i.unit_generic_id;
+            obj.total_small_qty = i.conversion_qty * i.order_qty;
+            obj.reserve_id = i.reserve_id;
+            // obj.v_labeler_id = i.v_labeler_id;
+            // obj.contract_id = i.contract_id;
+            // obj.contract_no = i.contract_no;
+
+            productItems.push(obj);
+          }
+
+          const objP = {
+            purchase_order_id: purchaseOrderId,
+            labeler_id: v.v_labeler_id,
+            contract_id: v.contract_id,
+            is_contract: 'Y',
+            delivery: this.delivery,
+            vat_rate: this.vatRate,
+            generic_type_id: v.generic_type_id,
+            budget_year: this.defaultBudgetYear,
+            // total_price: totalPrice + vat,
+            order_date: moment().format('YYYY-MM-DD')
+          }
+
+          poItems.push(objP);
+        }
+      }
+
+      this.alertService.confirm('ต้องการสร้างใบสั่งซื้อใหม่ตามรายการที่กำหนด ใช่หรือไม่?')
+        .then(async () => {
+          this.modalLoading.show();
+          // console.log(poItems);
+          // console.log(productItems);
+          try {
+            const rs: any = await this.purchasingOrderService.saveWithOrderPoint(poItems, productItems);
+            this.modalLoading.hide();
+            // console.log(rs);
+            if (rs.ok) {
+              this.alertService.success();
+              this.router.navigate(['purchase/orders']);
+            } else {
+              this.alertService.error(rs.error);
+            }
+
+          } catch (error) {
+            this.modalLoading.hide();
+            this.alertService.error(error.message);
+          }
+        })
+        .catch(() => {
+          this.modalLoading.hide();
+        });
+
+    } else {
+      this.modalLoading.hide();
+      this.alertService.error('กรุณาระบุรายการที่ต้องการจัดซื้อ');
+    }
+
+  }
+
 }

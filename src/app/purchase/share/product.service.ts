@@ -38,6 +38,11 @@ export class ProductService {
     return res.json();
   }
 
+  async getReorderPointTradeReservedForOrdered() {
+    const res = await this.authHttp.get(`${this.url}/products/reorderpoint/trade/reserved/confirmed`).toPromise();
+    return res.json();
+  }
+
   async updateTradeReserved(items: any[]) {
     const res = await this.authHttp.put(`${this.url}/products/reorderpoint/trade/reserved-update`, {
       items: items
