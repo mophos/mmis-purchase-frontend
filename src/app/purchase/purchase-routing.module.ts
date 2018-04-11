@@ -1,3 +1,4 @@
+import { HistoryOrderComponent } from './history-order/history-order.component';
 import { PurchaseOrderComponent } from './report/purchase-order/purchase-order.component';
 import { PurchasingofficerComponent } from './officer/officer.component';
 import { MappingCommitteeComponent } from './mapping-committee/mapping-committee.component';
@@ -40,6 +41,7 @@ const routes: Routes = [
       { path: 'print', component: PrintComponent },
       { path: 'officer', component: PurchasingofficerComponent },
       { path: 'report/purchase-order', component: PurchaseOrderComponent },
+      { path: 'history-order', component: HistoryOrderComponent },
       { path: 'report/purchase-order-list', component: PurchaseOrderListComponent },
       { path: 'report/purchase-budget-history', component: PurchaseBudgetHistoryComponent },
       { path: '**', component: PageNotFoundComponent },

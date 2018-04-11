@@ -257,8 +257,14 @@ export class PurchasingOrderService {
     return res.json();
   }
 
-  async getGeneric() {
-    const res = await this.authHttp.get(`${this.url}/${this.apiName}/getGeneric`)
+  async getGeneric(limit = 15, offset = 0) {
+    const res = await this.authHttp.get(`${this.url}/${this.apiName}/getGeneric?limit=${limit}&offset=${offset}`)
+      .toPromise();
+    return res.json();
+  }
+
+  async getGenericSearch(limit = 15, offset = 0, query: any) {
+    const res = await this.authHttp.get(`${this.url}/${this.apiName}/getGeneric/search?limit=${limit}&offset=${offset}&query=${query}`)
       .toPromise();
     return res.json();
   }
