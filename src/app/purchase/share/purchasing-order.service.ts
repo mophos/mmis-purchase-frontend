@@ -2,11 +2,13 @@ import { Injectable, Inject } from '@angular/core';
 import { AuthHttp } from 'angular2-jwt';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toPromise';
+// import { resolve } from 'path';
+import { reject } from 'q';
 
 @Injectable()
 export class PurchasingOrderService {
 
-  apiName: string = 'purchasing-order';
+  apiName = 'purchasing-order';
 
   constructor(
     @Inject('API_URL') private url: string,
@@ -35,6 +37,18 @@ export class PurchasingOrderService {
           reject(error);
         });
     });
+  }
+
+  getOrderList(bgSubType: any) {
+    return new Promise((resolve, reject) => {
+      this.authHttp.get(`${this.url}/${this.apiName}/get-list-po/${bgSubType}`)
+        .map(res => res.json())
+        .subscribe(data => {
+          resolve(data);
+        }, error => {
+          reject(error);
+        })
+    })
   }
 
   ordernocontracts() {
@@ -85,7 +99,8 @@ export class PurchasingOrderService {
     });
   }
 
-  byStatus(status: Array<any>, contract: string = "ALL", query: string = '', start_date: string = '', end_date: string = '', limit: number = 20, offset: number = 0) {
+  byStatus(status: Array<any>, contract = 'ALL', query: string = '', start_date: string = '',
+    end_date: string = '', limit: number = 20, offset: number = 0) {
     return new Promise((resolve, reject) => {
       this.authHttp.post(`${this.url}/${this.apiName}/by-status`, {
         status: status,
@@ -164,7 +179,7 @@ export class PurchasingOrderService {
   }
 
   async save(summary: any, items: any, budgetTransaction: any) {
-    let rs: any = await this.authHttp.post(`${this.url}/${this.apiName}`, {
+    const rs: any = await this.authHttp.post(`${this.url}/${this.apiName}`, {
       items: items,
       budgetTransaction: budgetTransaction,
       summary: summary
@@ -173,7 +188,7 @@ export class PurchasingOrderService {
   }
 
   async update(purchaseOrderId: any, summary: any, items: any, budgetTransaction: any) {
-    let rs: any = await this.authHttp.put(`${this.url}/${this.apiName}/${purchaseOrderId}`, {
+    const rs: any = await this.authHttp.put(`${this.url}/${this.apiName}/${purchaseOrderId}`, {
       items: items,
       summary: summary,
       budgetTransaction: budgetTransaction
@@ -182,12 +197,12 @@ export class PurchasingOrderService {
   }
 
   async updateStatus(items: any) {
-    let rs: any = await this.authHttp.put(`${this.url}/${this.apiName}/update-purchase/status`, { items: items }).toPromise();
+    const rs: any = await this.authHttp.put(`${this.url}/${this.apiName}/update-purchase/status`, { items: items }).toPromise();
     return rs.json();
   }
 
   async saveWithOrderPoint(poItems: any, productItems: any) {
-    let rs: any = await this.authHttp.post(`${this.url}/${this.apiName}/purchase-reorder`, {
+    const rs: any = await this.authHttp.post(`${this.url}/${this.apiName}/purchase-reorder`, {
       poItems: poItems,
       productItems: productItems
     }).toPromise();
@@ -212,7 +227,7 @@ export class PurchasingOrderService {
     return new Promise((resolve, reject) => {
       this.authHttp.put(`${this.url}/${this.apiName}/newponumber/${id}`, { data })
         .map(res => res.json())
-        .subscribe(data => {
+          .subscribe(data => {
           resolve(data);
         }, error => {
           reject(error);
@@ -268,7 +283,7 @@ export class PurchasingOrderService {
 
 
   async checkApprove(username: any, password: any, action: any) {
-    let rs: any = await this.authHttp.post(`${this.url}/${this.apiName}/checkApprove`, {
+    const rs: any = await this.authHttp.post(`${this.url}/${this.apiName}/checkApprove`, {
       username: username,
       password: password,
       action: action
@@ -285,4 +300,9 @@ export class PurchasingOrderService {
     return res.json();
   }
 
+  async sysReport(){
+    const res = await this.authHttp.get(`${this.url}/${this.apiName}/sys-report`)
+      .toPromise();
+    return res.json();
+  }
 }

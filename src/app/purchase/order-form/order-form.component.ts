@@ -47,6 +47,7 @@ import { tokenNotExpired, JwtHelper } from 'angular2-jwt';
 import { ModalLoadingComponent } from 'app/modal-loading/modal-loading.component';
 import { SelectSubBudgetComponent } from '../../select-boxes/select-sub-budget/select-sub-budget.component';
 import { SearchVendorComponent } from '../../autocomplete/search-vendor/search-vendor.component';
+import { BudgetRemainComponent } from '../directives/budget-remain/budget-remain.component';
 @Component({
   selector: 'app-order-form',
   templateUrl: './order-form.component.html'
@@ -62,8 +63,9 @@ export class OrderFormComponent implements OnInit {
   @ViewChild('modalLoading') modalLoading: ModalLoadingComponent;
   @ViewChild('subBudgetList') subBudgetList: SelectSubBudgetComponent;
   @ViewChild('searchVendor') searchVendor: SearchVendorComponent;
+  @ViewChild('budgetRemainRef') budgetRemainRef: BudgetRemainComponent;
 
-  detailActive: boolean = true;
+  detailActive = true;
   otherActive: boolean;
   productHistoryActive: boolean;
   bgTransectionActive: boolean;
@@ -76,7 +78,7 @@ export class OrderFormComponent implements OnInit {
   loadingCommittee: boolean;
   loadingProducts: boolean;
   purchaseOrderId: string;
-  tempPrice: boolean = true;
+  tempPrice = true;
 
   contractDetail: any;
   contract_amount: string;
@@ -146,23 +148,23 @@ export class OrderFormComponent implements OnInit {
   vendorContactName: string;
   shipTo: string;
 
-  discountPercentAmount: number = 0;
-  bidAmount: number = 0;
-  discountPercent: number = 0;
-  discountCash: number = 0;
-  subTotal: number = 0;
+  discountPercentAmount = 0;
+  bidAmount = 0;
+  discountPercent = 0;
+  discountCash = 0;
+  subTotal = 0;
   vatRate: number;
   vatRateTmp: number;
-  excludeVat: boolean = false;
-  addVat: boolean = false;
-  vat: number = 0;
-  totalPrice: number = 0;
+  excludeVat = false;
+  addVat = false;
+  vat = 0;
+  totalPrice = 0;
   // incomingBalance: number = 0;
   // bgdetail_id: number = 10;
   budgetDetailId: number;
-  amount: number = 0;
-  balance: number = 0;
-  total: number = 0;
+  amount = 0;
+  balance = 0;
+  total = 0;
   totalFormat: string;
 
   // requisition_date: any;
@@ -175,6 +177,9 @@ export class OrderFormComponent implements OnInit {
   officer: any = [];
   officer1: any = [];
 
+  showChief = true;
+  showBuyer = true;
+
   office: any;
   office1: any;
 
@@ -185,7 +190,7 @@ export class OrderFormComponent implements OnInit {
   buyerId: number;
   chiefId: number;
   // percent_amount: number;
-  count: number = 0;
+  count = 0;
 
   isSaving = false;
 
@@ -200,9 +205,9 @@ export class OrderFormComponent implements OnInit {
   selectedUnit: IGenericUnit = {};
   selectedCost: number;
   selectedQty: number;
-  selectedTotalQty: number = 0;
-  selectedTotalPrice: number = 0;
-  isGiveaway: boolean = false;
+  selectedTotalQty = 0;
+  selectedTotalPrice = 0;
+  isGiveaway = false;
   purchaseOrderItems: Array<IProductOrderItems> = [];
   public jwtHelper: JwtHelper = new JwtHelper();
 
@@ -210,6 +215,8 @@ export class OrderFormComponent implements OnInit {
   currentVatRate = 7;
 
   contractNo: any = null;
+
+  _canSave = false;
 
   constructor(
     private accessCheck: AccessCheck,
@@ -255,8 +262,8 @@ export class OrderFormComponent implements OnInit {
       }
     });
 
-    let token = sessionStorage.getItem('token');
-    let decoded = this.jwtHelper.decodeToken(token);
+    const token = sessionStorage.getItem('token');
+    const decoded = this.jwtHelper.decodeToken(token);
 
     this.vatRateTmp = decoded.PC_VAT ? decoded.PC_VAT : 7;
     this.vatRate = this.vatRateTmp;
@@ -276,7 +283,6 @@ export class OrderFormComponent implements OnInit {
       this.newOrder();
       await this.checkIsHoliday(moment().format('YYYY-MM-DD'));
     }
-
   }
 
   productSearchSelected(product: IProductOrderItem) {
@@ -294,7 +300,7 @@ export class OrderFormComponent implements OnInit {
   }
 
   addProductSelected() {
-    let product: IProductOrderItems = {};
+    const product: IProductOrderItems = {};
     // console.log(this.selectedCost);
     product.cost = +this.selectedCost;
     product.product_id = this.selectedProduct.product_id;
@@ -309,7 +315,7 @@ export class OrderFormComponent implements OnInit {
     product.total_small_qty = this.selectedQty * this.selectedUnit.qty;
 
     if (this.checkDuplicatedItem(product)) {
-      let items = _.filter(this.purchaseOrderItems, { product_id: product.product_id });
+      const items = _.filter(this.purchaseOrderItems, { product_id: product.product_id });
       // console.log(items.length);
       if (items.length > 1) {
         this.alertService.error('ไม่สามารถเพิ่มรายการเดียวกันได้เกิน 2 รายการ');
@@ -338,13 +344,15 @@ export class OrderFormComponent implements OnInit {
         if (this.purchaseOrderItems[idx].is_giveaway === 'Y') {
           this.purchaseOrderItems.splice(idx, 1);
         } else {
-          let productId = this.purchaseOrderItems[idx].product_id;
+          const productId = this.purchaseOrderItems[idx].product_id;
           // remove primary product
           this.purchaseOrderItems.splice(idx, 1);
 
           // remove giveaway items
-          let _idx = _.findIndex(this.purchaseOrderItems, { product_id: productId });
-          if (_idx > -1) this.purchaseOrderItems.splice(_idx, 1);
+          const _idx = _.findIndex(this.purchaseOrderItems, { product_id: productId });
+          if (_idx > -1) {
+            this.purchaseOrderItems.splice(_idx, 1);
+          }
         }
         this.calAmount();
       }).catch(() => {
@@ -423,7 +431,7 @@ export class OrderFormComponent implements OnInit {
   }
 
   checkDuplicatedItem(product: IProductOrderItems) {
-    let idx = _.findIndex(this.purchaseOrderItems, { product_id: product.product_id, is_giveaway: product.is_giveaway });
+    const idx = _.findIndex(this.purchaseOrderItems, { product_id: product.product_id, is_giveaway: product.is_giveaway });
     if (idx > -1) {
       return true;
     } else {
@@ -437,7 +445,7 @@ export class OrderFormComponent implements OnInit {
 
   onDateChanged(event: IMyDateModel) {
     // event properties are: event.date, event.jsdate, event.formatted and event.epoc
-    let selectDate: string = moment(event.jsdate).format('YYYY-MM-DD');
+    const selectDate: string = moment(event.jsdate).format('YYYY-MM-DD');
     if (selectDate !== 'Invalid date') {
       this.checkIsHoliday(selectDate);
     } else {
@@ -460,16 +468,15 @@ export class OrderFormComponent implements OnInit {
   }
 
   onBudgetCalculated(event: any) {
-    console.log(event);
     this.budgetData = event;
+    this._canSave = true;
   }
 
   checkVat(event: any) {
-    if (event == 'excludeVat' && this.excludeVat) {
+    if (event === 'excludeVat' && this.excludeVat) {
       this.addVat = false
       this.vatRate = this.vatRateTmp
-    }
-    else if (event == 'addVat' && this.addVat) {
+    } else if (event === 'addVat' && this.addVat) {
       this.excludeVat = false
       this.vatRate = this.vatRateTmp
     }
@@ -477,15 +484,15 @@ export class OrderFormComponent implements OnInit {
   }
 
   calAmount() {
-    let afterDiscount: number = 0;
-    let discount: number = 0;
-    let checkloop = 0;
+    let afterDiscount = 0;
+    let discount = 0;
+    const checkloop = 0;
     this.subTotal = 0;
     this.totalPrice = 0;
     // let _purchaseOrderItems: any = [];
 
     this.purchaseOrderItems.forEach(v => {
-      if (v.is_giveaway == "N") {
+      if (v.is_giveaway === 'N') {
         this.subTotal += +v.total_cost;
       }
     });
@@ -501,8 +508,7 @@ export class OrderFormComponent implements OnInit {
       this.totalPrice = this.subTotal - discount;
       this.vat = this.totalPrice * (this.vatRate / 100);
       this.totalPrice = this.totalPrice + this.vat;
-    }
-    else {
+    } else {
       this.vatRate = null;
       this.vat = 0;
       this.totalPrice = this.subTotal - discount;
@@ -552,25 +558,15 @@ export class OrderFormComponent implements OnInit {
   }
 
   newOrder() {
-    // this.tempPrice = false;
-    this.isUpdate = false;
-    // let d = new Date();
-    // let i: number = 0;
-    // const purchasingID = d.getTime().toString() + i++;
-    // const purchasingOrderID = d.getTime().toString() + i++;
-    // const budgetTransectionId = d.getTime().toString() + i++;
 
-    // this.purchasing_id = purchasingID;
-    // this.purchase_order_id = purchasingOrderID;
+    this.isUpdate = false;
+
     this.purchaseOrderItems = [];
     this.purchaseOrderNumber = null;
     this.subTotal = 0;
     this.discountPercent = null;
     this.discountCash = 0;
-    // this.vat = 0;
-    // this.budgettype_id = '1';
     this.totalPrice = 0;
-    // this.labelerName = null;
 
     this.purchaseDate = {
       date: {
@@ -581,11 +577,9 @@ export class OrderFormComponent implements OnInit {
     };
 
     this.budgetType = 'spend';
-    // this.getBidAmount(this.purchase_method);
   }
 
   async setOrderDetail(data: any) {
-    // this.labelerName = data.labeler_name;
     this.isUpdate = true;
     this.purchasingId = data.purchasing_id;
     this.purchaseOrderBookNumber = data.purchase_order_book_number;
@@ -714,14 +708,15 @@ export class OrderFormComponent implements OnInit {
   }
 
   async _save() {
-    let isErrorBidAmount: boolean = this.bidAmount < this.totalPrice;
+
+    const isErrorBidAmount: boolean = this.bidAmount < this.totalPrice;
 
     if (isErrorBidAmount) {
       // วงเงินเกินวิธีการจัดซื้อ
       this.alertService.error('ราคารวมสุทธิเกินวงเงินที่กำหนดตามวิธีการจัดซื้อ');
     } else {
-      let dataPurchasing: any = {};
-      let summary: any = {};
+      const dataPurchasing: any = {};
+      const summary: any = {};
 
       // ตรวจสอบว่ามีรายการใดที่จำนวนจัดซื้อเป็น 0 หรือ ไม่ได้ระบุราคา
       let isError = false;
@@ -740,7 +735,21 @@ export class OrderFormComponent implements OnInit {
         } else if (this.budgetData.contractRemainAfterPurchase < 0 && this.contractId) {
           this.alertService.error('ยอดจัดซื้อครั้งนี้ เกินกว่ายอดคงเหลือของสัญญา?')
         } else {
-          this.doSavePurchase();
+          this._canSave = false;
+          this.modalLoading.show();
+          // calculate new budget transaction
+          await this.budgetRemainRef.getBudget();
+
+          if (this._canSave) {
+            this.modalLoading.hide();
+            this.alertService.confirm('กรุณาตรวจสอบรายการให้ถูกต้องการทำการบันทึก ต้องการบันทึก ใช่หรือไม่?')
+              .then(async () => {
+                this.doSavePurchase();
+              }).catch(() => { });
+          } else {
+            this.modalLoading.hide();
+            this.alertService.error('ไม่สามารถประมวลผล Transaction ของงบประมาณได้')
+          }
         }
       }
 
@@ -749,10 +758,16 @@ export class OrderFormComponent implements OnInit {
 
   async doSavePurchase() {
     let summary: any = {};
-
     try {
 
-      let purchaseDate = `${this.purchaseDate.date.year}-${this.purchaseDate.date.month}-${this.purchaseDate.date.day}`;
+      const purchaseDate = `${this.purchaseDate.date.year}-${this.purchaseDate.date.month}-${this.purchaseDate.date.day}`;
+
+      if (!this.showChief) {
+        this.chiefId = null;
+      }
+      if (!this.showBuyer) {
+        this.buyerId = null;
+      }
 
       summary = {
         // purchase_order_id: this.purchaseOrderId,
@@ -825,7 +840,7 @@ export class OrderFormComponent implements OnInit {
     this.modalLoading.show();
 
     try {
-      let rs: any = await this.purchasingOrderService.detail(orderId);
+      const rs: any = await this.purchasingOrderService.detail(orderId);
       if (rs.ok) {
         this.purchaseOrder = rs.detail;
         this.isContract = rs.detail.is_contract === 'T' ? true : false;
@@ -851,13 +866,13 @@ export class OrderFormComponent implements OnInit {
   async getPurchaseOrderItems(orderId: string) {
     try {
       this.modalLoading.show();
-      let rs: any = await this.purchasingOrderItemService.allByOrderID(orderId);
+      const rs: any = await this.purchasingOrderItemService.allByOrderID(orderId);
       this.modalLoading.hide();
       if (rs.ok) {
-        let products = rs.rows;
+        const products = rs.rows;
 
-        for (let v of products) {
-          let obj: IProductOrderItems = {
+        for (const v of products) {
+          const obj: IProductOrderItems = {
             product_id: v.product_id,
             product_name: v.product_name,
             generic_id: v.generic_id,
@@ -973,12 +988,12 @@ export class OrderFormComponent implements OnInit {
       return true;
     }
 
-    if (this.isContract == true) {
+    if (this.isContract === true) {
       return true;
     }
 
     if (this.purchaseOrderStatus === 'APPROVED') {
-      if (this.accessCheck.can('PO_EDIT_AFFTER_APPREVE')) {
+      if (this.accessCheck.can('PO_EDIT_AFFTER_APPROVE')) {
         return false;
       }
       return true;
@@ -989,13 +1004,26 @@ export class OrderFormComponent implements OnInit {
   disableSave() {
     // if (this.tempPrice) return this.tempPrice;
 
-    if (!this.labelerId) return true;
-    if (this.purchaseOrderItems.length == 0) return true;
-    if (this.purchaseOrderStatus === 'COMPLETED') return true;
+    if (!this.labelerId) {
+      return true;
+    }
+    if (this.purchaseOrderItems.length === 0) {
+      return true;
+    }
+    if (this.purchaseOrderStatus === 'COMPLETED') {
+      return true;
+    }
     // if (this.isContract === true)  return true;
 
     if (this.purchaseOrderStatus === 'APPROVED') {
-      if (this.accessCheck.can('PO_EDIT_AFFTER_APPREVE')) {
+      if (this.accessCheck.can('PO_EDIT_AFFTER_APPROVE')) {
+        return false;
+      }
+      return true;
+    }
+
+    if (this.purchaseOrderStatus === 'CONFIRMED') {
+      if (this.accessCheck.can('PO_EDIT_AFFTER_APPROVE')) {
         return false;
       }
       return true;
@@ -1013,7 +1041,7 @@ export class OrderFormComponent implements OnInit {
   async getCommitteePeople(committeeId: string) {
     this.modalLoading.show();
     try {
-      let rs: any = await this.committeePeopleService.allByCommitteeId(committeeId);
+      const rs: any = await this.committeePeopleService.allByCommitteeId(committeeId);
       this.modalLoading.hide();
       if (rs.ok) {
         this.committeeSelected = rs.rows;
@@ -1084,5 +1112,4 @@ export class OrderFormComponent implements OnInit {
       this.searchProductLabeler.setApiUrl(this.labelerId);
     }
   }
-
 }

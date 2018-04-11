@@ -23,6 +23,18 @@ export class BudgetTypeService {
     });
   }
 
+  getSubType() {
+    return new Promise((resolve, reject) => {
+      this.authHttp.get(`${this.url}/${this.apiName}/list`)
+        .map(res => res.json())
+        .subscribe(data => {
+          resolve(data);
+        }, error => {
+          reject(error);
+        });
+    });
+  }
+
   allActive() {
     return new Promise((resolve, reject) => {
       this.authHttp.get(`${this.url}/${this.apiName}/allactive`)

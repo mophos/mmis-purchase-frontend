@@ -71,7 +71,7 @@
                 <clr-icon clrVerticalNavIcon shape="plus"></clr-icon>
                 ออกใบสั่งซื้อ
             </a>
-            <a clrVerticalNavLink routerLink="/purchase/reorder-point" routerLinkActive="active">
+            <a clrVerticalNavLink routerLink="/purchase/order-point" routerLinkActive="active">
                 <clr-icon clrVerticalNavIcon shape="warning-standard"></clr-icon>
                 รายการที่ถึงจุดสั่งซื้อ
             </a>
@@ -125,6 +125,18 @@
                     </a>
 
                 </clr-vertical-nav-group-children>
+                <clr-vertical-nav-group-children *clrIfExpanded="false">
+                    <a clrVerticalNavLink routerLink="/purchase/report/purchase-order-list" [queryParams]="{id: '01'}" routerLinkActive="active">
+                        รายงานสรุปรายการเวชภัณฑ์ที่สั่งซื้อ
+                    </a>
+
+                </clr-vertical-nav-group-children>
+                <!-- <clr-vertical-nav-group-children *clrIfExpanded="false">
+                    <a clrVerticalNavLink routerLink="/purchase/report/purchase-budget-history" [queryParams]="{id: '01'}" routerLinkActive="active">
+                        รายงานประวัติการใช้งบประมาณ
+                    </a>
+
+                </clr-vertical-nav-group-children> -->
             </clr-vertical-nav-group>
 
             <clr-vertical-nav-group>

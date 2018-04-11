@@ -16,6 +16,9 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { MainLayoutComponent } from './main-layout/main-layout.component';
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
+import { PurchaseOrderListComponent } from './report/purchase-order-list/purchase-order-list.component';
+import { OrderPointComponent } from './order-point/order-point.component';
+import { PurchaseBudgetHistoryComponent } from './report/purchase-budget-history/purchase-budget-history.component';
 
 
 const routes: Routes = [
@@ -24,9 +27,9 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     component: MainLayoutComponent,
     children: [
-      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-      { path: 'dashboard', component: DashboardComponent },
-      { path: 'reorder-point', component: ReorderPointComponent },
+      { path: '', redirectTo: 'order-point', pathMatch: 'full' },
+      // { path: 'reorder-point', component: ReorderPointComponent },
+      { path: 'order-point', component: OrderPointComponent },
       { path: 'orders', component: OrdersComponent },
       { path: 'orders-approve', component: OrdersApproveComponent },
       { path: 'orders-warehouse', component: OrdersWarehouseComponent },
@@ -39,6 +42,8 @@ const routes: Routes = [
       { path: 'officer', component: PurchasingofficerComponent },
       { path: 'report/purchase-order', component: PurchaseOrderComponent },
       { path: 'history-order', component: HistoryOrderComponent },
+      { path: 'report/purchase-order-list', component: PurchaseOrderListComponent },
+      { path: 'report/purchase-budget-history', component: PurchaseBudgetHistoryComponent },
       { path: '**', component: PageNotFoundComponent },
     ]
   }
