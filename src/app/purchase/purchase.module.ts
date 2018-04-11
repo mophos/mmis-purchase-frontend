@@ -71,11 +71,17 @@ import { PurchasingofficerComponent } from './officer/officer.component';
 import { PurchaseOrderComponent } from './report/purchase-order/purchase-order.component';
 import { GridReorderPointProductsComponent } from 'app/purchase/directives/grid-reorder-point-products/grid-reorder-point-products.component';
 import { ModalLoadingComponent } from 'app/modal-loading/modal-loading.component';
-import { BudgetransectionComponent } from './directives/budgetransection/budgetransection.component';
 import { ModalReceivesComponent } from './modal-receives/modal-receives.component';
 import { ExpandReceiveItemsComponent } from './expand-receive-items/expand-receive-items.component';
 import { ReceiveService } from 'app/purchase/share/receive.service';
 import { TransactionPoComponent } from './directives/transaction-po/transaction-po.component';
+import { BudgetRemainComponent } from './directives/budget-remain/budget-remain.component';
+import { TransactionHistoryComponent } from './directives/transaction-history/transaction-history.component';
+import { ProductHistoryComponent } from './directives/product-history/product-history.component';
+import { HistoryOrderComponent } from './history-order/history-order.component';
+import { PurchaseOrderListComponent } from './report/purchase-order-list/purchase-order-list.component';
+import { OrderPointComponent } from './order-point/order-point.component';
+import { PurchaseBudgetHistoryComponent } from './report/purchase-budget-history/purchase-budget-history.component';
 
 @NgModule({
   imports: [
@@ -90,6 +96,7 @@ import { TransactionPoComponent } from './directives/transaction-po/transaction-
     AutocompleteModule,
     SelectBoxesModule,
     PurchaseRoutingModule,
+    SelectBoxesModule
   ],
   declarations: [
     PurchaseCancelComponent,
@@ -122,10 +129,16 @@ import { TransactionPoComponent } from './directives/transaction-po/transaction-
     PurchaseOrderComponent,
     GridReorderPointProductsComponent,
     ModalLoadingComponent,
-    BudgetransectionComponent,
     ModalReceivesComponent,
     ExpandReceiveItemsComponent,
-    TransactionPoComponent
+    TransactionPoComponent,
+    BudgetRemainComponent,
+    TransactionHistoryComponent,
+    ProductHistoryComponent,
+    HistoryOrderComponent,
+    PurchaseOrderListComponent,
+    OrderPointComponent,
+    PurchaseBudgetHistoryComponent
   ],
   providers: [
     BudgetTransectionService,

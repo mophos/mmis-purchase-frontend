@@ -2,7 +2,7 @@
   Loading...
 </span>
 <div class="select" *ngIf="!loading" style="width: 100%;">
-  <select name="unit" [disabled]="disabled" [(ngModel)]="selectedUnitGenericId" style="border-bottom: 0px;" (change)="setSelect($event)">
+  <select name="unit" [disabled]="disabled" [(ngModel)]="selectedId" style="border-bottom: 0px;" (change)="setSelect($event)">
     <option *ngFor="let unit of units" [value]="unit.unit_generic_id">
       {{ unit.from_unit_name }} ({{unit.qty | number}} {{unit.to_unit_name}})
     </option>

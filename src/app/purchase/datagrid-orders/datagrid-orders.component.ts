@@ -15,6 +15,7 @@ import { ModalReceivesComponent } from 'app/purchase/modal-receives/modal-receiv
 import { ProductService } from './../share/product.service'
 import { tokenNotExpired, JwtHelper } from 'angular2-jwt';
 import { SettingService } from './../share/setting.service';
+import { State } from '@clr/angular';
 @Component({
   selector: 'app-datagrid-orders',
   templateUrl: './datagrid-orders.component.html',
@@ -27,11 +28,15 @@ export class DatagridOrdersComponent implements OnInit {
   @ViewChild('modalCancel') modalCancel: PurchaseCancelComponent;
   @ViewChild('htmlPrview') htmlPrview: HtmlPreviewComponent;
   @ViewChild('modalLoading') modalLoading: ModalLoadingComponent;
-  @ViewChild('modalReceives') modalReceives: ModalReceivesComponent
+  @ViewChild('modalReceives') modalReceives: ModalReceivesComponent;
+  @ViewChild('paginationPo') paginationPo: any;
+
   /**
    * @params status
    *  'PREPARED','CONFIRMED','APPROVED','COMPLETED'
    */
+  @Input() genericId: string;
+  productOrders: Array<any> = [];
   @Input() status: Array<any> = ['ORDERPOINT'];
   @Input() isCancel: boolean;
 
@@ -45,10 +50,10 @@ export class DatagridOrdersComponent implements OnInit {
   loading: boolean;
   purchaseOrders: Array<any> = [];
   purchaseOrdersSelected: Array<any> = [];
-  contractFilter: string = 'ALL';
-  statusFilter: string = 'ALL';
-  status_po: string = 'ALL';
-  openModal: boolean = false;
+  contractFilter = 'ALL';
+  statusFilter = 'ALL';
+  status_po = 'ALL';
+  openModal = false;
   generic: any;
   generic_type_id: any;
   genericType: any;
@@ -58,7 +63,33 @@ export class DatagridOrdersComponent implements OnInit {
     dateFormat: 'dd mmm yyyy',
     editableDateField: false,
   };
+  genericOrders: Array<any> = [];
+  modal: any = false;
+  file: any;
+  purchaseOrderId: any;
+  generic_name: any;
+
+  openChangeDate = false;
+  editPurchaseDate: any = null;
+  itemsChangeDate: any = [];
+
   isConfirm: any;
+  openModalConfirm = false;
+  confirmApprove = false;
+  tmpOderApprove: any;
+  username: any;
+  password: any;
+  action: any = 'PC_ORDERS';
+  total = 0;
+  perPage = 20;
+  page: any;
+
+  public jwtHelper: JwtHelper = new JwtHelper()
+
+  token: any;
+  offset: any = 0;
+  currentPage: any = 1;
+
   constructor(
     private ref: ChangeDetectorRef,
     private alertService: AlertService,
@@ -71,10 +102,20 @@ export class DatagridOrdersComponent implements OnInit {
     private router: Router,
     private productService: ProductService,
     private settingService: SettingService
-  ) { }
-  public jwtHelper: JwtHelper = new JwtHelper()
+  ) {
+    this.token = sessionStorage.getItem('token');
+    const decoded = this.jwtHelper.decodeToken(this.token);
+    if (decoded) {
+      this.isConfirm = decoded.PC_CONFIRM || 'N';
+      this.isConfirm = this.isConfirm === 'Y' ? true : false;
+    }
+
+    this.currentPage = +sessionStorage.getItem('poOrderCurrentPage') ? +sessionStorage.getItem('poOrderCurrentPage') : 1;
+    console.log('=', this.currentPage)
+
+  }
+
   ngOnInit() {
-    this.settings();
     this.getProductType();
     this.purchaseOrders = [];
     moment.locale('th');
@@ -90,6 +131,15 @@ export class DatagridOrdersComponent implements OnInit {
         day: 1
       }
     };
+
+    this.editPurchaseDate = {
+      date: {
+        year: moment().get('year'),
+        month: moment().get('month') + 1,
+        day: moment().get('date')
+      }
+    };
+
     this.end_date = {
       date: {
         year: moment().get('year'),
@@ -102,7 +152,8 @@ export class DatagridOrdersComponent implements OnInit {
         day: moment().get('date')
       }
     };
-    this.getPurchaseOrders();
+    // this.getPurchaseOrders();
+    this.getOrders();
   }
 
   handleKeyDown(event: any) {
@@ -112,6 +163,8 @@ export class DatagridOrdersComponent implements OnInit {
   }
 
   search() {
+    this.currentPage = 1
+    this.offset = 0
     this.getPurchaseOrders();
   }
 
@@ -121,19 +174,16 @@ export class DatagridOrdersComponent implements OnInit {
     const start_date = this.start_date !== null ? moment(this.start_date.jsdate).format('YYYY-MM-DD') : '';
     const end_date = this.end_date !== null ? moment(this.end_date.jsdate).format('YYYY-MM-DD') : '';
 
-    let status: Array<any> = ['ORDERPOINT', 'PREPARED', 'CONFIRMED', 'APPROVED', 'SUCCESS', 'COMPLETED'];
+    const status: Array<any> = ['ORDERPOINT', 'PREPARED', 'CONFIRMED', 'APPROVED', 'SUCCESS', 'COMPLETED'];
     if (this.statusFilter === 'PREPARED') {
       this.status = ['PREPARED'];
     } else if (this.statusFilter === 'ORDERPOINT') {
       this.status = ['ORDERPOINT'];
-    }
-    else if (this.statusFilter === 'CONFIRMED') {
+    } else if (this.statusFilter === 'CONFIRMED') {
       this.status = ['CONFIRMED'];
-    }
-    else if (this.statusFilter === 'APPROVED') {
+    } else if (this.statusFilter === 'APPROVED') {
       this.status = ['APPROVED'];
-    }
-    else if (this.statusFilter === 'SUCCESS') {
+    } else if (this.statusFilter === 'SUCCESS') {
       this.status = ['COMPLETED', 'SUCCESS'];
     } else {
       this.status = status;
@@ -141,22 +191,21 @@ export class DatagridOrdersComponent implements OnInit {
 
     try {
       this.modalLoading.show();
-      if (this.isCancel) {
-        result = await this.purchasingOrderService.isCancel();
-      } else {
-        result = await this.purchasingOrderService.byStatus(
-          this.status,
-          this.contractFilter,
-          this.query,
-          start_date,
-          end_date,
-          this.number_start,
-          this.number_end);
-      }
+      console.log(this.offset + '---');
+
+      result = await this.purchasingOrderService.byStatus(
+        this.status,
+        this.contractFilter,
+        this.query,
+        start_date,
+        end_date,
+        this.perPage, this.offset);
 
       this.modalLoading.hide();
 
       this.purchaseOrders = result.rows;
+      this.total = +result.total;
+
     } catch (error) {
       this.alertService.error(error);
       this.modalLoading.hide();
@@ -164,11 +213,11 @@ export class DatagridOrdersComponent implements OnInit {
   }
 
   async confirm(order: any) {
-    let purchases = [];
+    const purchases = [];
     if (this.accessCheck.confirm('PO_CONFIRM')) {
-      if (order.purchase_order_status !== "ORDERPOINT" && order.is_cancel !== 1) {
+      if (order.purchase_order_status !== 'ORDERPOINT' && order.is_cancel !== 'Y') {
         if (this.canUpdateStatus(order.purchase_order_status, 'CONFIRMED')) {
-          let data = {
+          const data = {
             purchase_order_id: order.purchase_order_id,
             purchase_order_status: 'CONFIRMED',
             from_status: order.purchase_order_status
@@ -179,7 +228,7 @@ export class DatagridOrdersComponent implements OnInit {
       if (purchases.length) {
         try {
           this.modalLoading.show();
-          let rs: any = await this.purchasingOrderService.updateStatus(purchases);
+          const rs: any = await this.purchasingOrderService.updateStatus(purchases);
           this.purchaseOrdersSelected = [];
           if (rs.ok) {
             this.alertService.success();
@@ -202,11 +251,39 @@ export class DatagridOrdersComponent implements OnInit {
   }
 
   async approve(order: any) {
-    let purchases = [];
-    if (this.accessCheck.confirm('PO_APPROVE')) {
-      if (order.purchase_order_status !== "ORDERPOINT" && order.is_cancel !== 1) {
+    this.page = 1
+    const checked = await this.accessCheck.can('PO_APPROVE')
+    if (checked) {
+      this.confirmApprove = true
+      this.approveConfirm(order)
+    } else {
+      this.openModalConfirm = true
+      this.tmpOderApprove = order
+    }
+  }
+
+  async checkApprove(username: any, password: any) {
+    const rs: any = await this.purchasingOrderService.checkApprove(username, password, this.action);
+    // console.log(rs);
+
+    if (rs.ok) {
+      if (this.page === 1) {
+        this.confirmApprove = true
+        this.approveConfirm(this.tmpOderApprove)
+      } else if (this.page === 2) {
+        this.confirmAll('APPROVED')
+      }
+    } else {
+      this.alertService.error('ไม่มีสิทธิ์อนุมัติใบสั่งซื้อ');
+    }
+  }
+
+  async approveConfirm(order: any) {
+    const purchases = [];
+    if (this.confirmApprove) {
+      if (order.purchase_order_status !== 'ORDERPOINT' && order.is_cancel !== 'Y') {
         if (this.canUpdateStatus(order.purchase_order_status, 'APPROVED')) {
-          let data = {
+          const data = {
             purchase_order_id: order.purchase_order_id,
             purchase_order_status: 'APPROVED',
             from_status: order.purchase_order_status
@@ -214,11 +291,10 @@ export class DatagridOrdersComponent implements OnInit {
           purchases.push(data);
         }
       }
-
       if (purchases.length) {
         this.modalLoading.show();
         try {
-          let rs: any = await this.purchasingOrderService.updateStatus(purchases);
+          const rs: any = await this.purchasingOrderService.updateStatus(purchases);
           this.purchaseOrdersSelected = [];
           this.modalLoading.hide();
           if (rs.ok) {
@@ -238,19 +314,38 @@ export class DatagridOrdersComponent implements OnInit {
     } else {
       this.alertService.error('ไม่มีสิทธิ์อนุมัติใบสั่งซื้อ');
     }
+    this.close()
   }
 
+  close() {
+    this.openModalConfirm = false
+    this.username = ''
+    this.password = ''
+  }
+
+  async allApprove() {
+    this.page = 2
+    const checked = await (this.accessCheck.can('PO_APPROVE') && this.accessCheck.can('PO_CONFIRM'))
+    if (checked) {
+      this.confirmAll('APPROVED')
+    } else {
+      this.openModalConfirm = true
+    }
+  }
+
+
   async confirmAll(type: string) {
-    let promise: Array<any> = [];
+    const promise: Array<any> = [];
     const message: string = (type === 'CONFIRMED' ?
       'คุณต้องการที่จะยืนยันใบสั่งซื้อใช่หรือไม่' :
       'คุณต้องการที่จะอนุมัติใบสั่งซื้อใช่หรือไม่');
+    const checked = type === 'APPROVED' ? true : false;
+    const dataConfirm = [];
+    if (this.accessCheck.confirm(type === 'CONFIRMED' ? 'PO_CONFIRM' : 'PO_APPROVE') || checked) {
 
-    let dataConfirm = [];
-    if (this.accessCheck.confirm(type === 'CONFIRMED' ? 'PO_CONFIRM' : 'PO_APPROVE')) {
       this.alertService.confirm(message).then(async () => {
         this.purchaseOrdersSelected.forEach(element => {
-          if (element.purchase_order_status !== "ORDERPOINT" && element.is_cancel !== 1) {
+          if (element.purchase_order_status !== 'ORDERPOINT' && element.is_cancel !== 'Y') {
             if (this.canUpdateStatus(element.purchase_order_status, type)) {
               if (this.getConfirmData(type, element) !== false) {
                 const data: any = this.getConfirmData(type, element);
@@ -263,7 +358,7 @@ export class DatagridOrdersComponent implements OnInit {
 
         if (dataConfirm.length) {
           try {
-            let rs: any = await this.purchasingOrderService.updateStatus(dataConfirm);
+            const rs: any = await this.purchasingOrderService.updateStatus(dataConfirm);
             this.purchaseOrdersSelected = [];
             if (rs.ok) {
               this.alertService.success();
@@ -287,6 +382,7 @@ export class DatagridOrdersComponent implements OnInit {
     } else {
       this.alertService.error('คุณไม่มีสิทธ์ในการอนุมัติ!', 'Access denied!');
     }
+    this.close()
   }
 
   canUpdateStatus(currentStatus: string, updateStatus: string) {
@@ -318,7 +414,6 @@ export class DatagridOrdersComponent implements OnInit {
         from_status: po.purchase_order_status,
         purchase_order_status: 'APPROVED',
         approved_date: moment().format('YYYY-MM-DD HH:mm:ss'),
-        //approved_by:1
       };
     }
     return false;
@@ -386,9 +481,9 @@ export class DatagridOrdersComponent implements OnInit {
     this.getPurchaseOrders();
   }
 
-  getStatusTextCancel(pro: any) {
-    return pro.is_cancel == 1 ? '' : '';
-  }
+  // getStatusTextCancel(pro: any) {
+  //   return pro.is_cancel === 'Y' ? '' : '';
+  // }
 
   btnEditIsActive(pro: any) {
     if (pro.purchase_order_status === 'COMPLETED' || pro.purchase_order_status === 'APPROVED') {
@@ -399,7 +494,7 @@ export class DatagridOrdersComponent implements OnInit {
   }
 
   btnCancelIsActive(pro: any) {
-    if (pro.purchase_order_status === 'COMPLETED' || pro.is_cancel === 1 || pro.recieve_count > 0) {
+    if (pro.purchase_order_status === 'COMPLETED' || pro.is_cancel === 'Y' || pro.recieve_count > 0) {
       return false;
     } else {
       return true;
@@ -413,10 +508,10 @@ export class DatagridOrdersComponent implements OnInit {
     if (!pro.budget_detail_id) {
       return false;
     }
-    if (!pro.purchase_type) {
+    if (!pro.purchase_type_id) {
       return false;
     }
-    if (!pro.purchase_method) {
+    if (!pro.purchase_method_id) {
       return false;
     }
     if (!pro.buyer_id) {
@@ -435,34 +530,42 @@ export class DatagridOrdersComponent implements OnInit {
 
   btnConfirmIsActive(pro: any) {
 
-    if (this.checkEmptyData(pro) === false) {
-      return false;
-    }
-    if(!this.isConfirm){
-      return false;
-    }
-    if (pro.purchase_order_status === 'COMPLETED'
-      || pro.purchase_order_status === 'CONFIRMED'
-      || pro.purchase_order_status === 'APPROVED'
-      || pro.is_cancel === 1) {
-      return false;
-    } else {
+    if (this.accessCheck.can('PO_EDIT_AFFTER_APPROVE') && pro.purchase_order_status !== 'APPROVED' && pro.purchase_order_status !== 'CONFIRMED') {
       return true;
+    } else {
+      if (this.checkEmptyData(pro) === false) {
+        return false;
+      }
+      if (!this.isConfirm) {
+        return false;
+      }
+      if (pro.purchase_order_status === 'COMPLETED'
+        || pro.purchase_order_status === 'CONFIRMED'
+        || pro.purchase_order_status === 'APPROVED'
+        || pro.is_cancel === 'Y') {
+        return false;
+      } else {
+        return true;
+      }
     }
   }
 
   btnApproveIsActive(pro: any) {
 
-    if (this.checkEmptyData(pro) === false) {
-      return false;
-    }
-    if(this.isConfirm && pro.purchase_order_status !== 'CONFIRMED'){
-      return false;
-    }
-    if (pro.purchase_order_status === 'COMPLETED' || pro.purchase_order_status === 'APPROVED' || pro.is_cancel === 1) {
-      return false;
-    } else {
+    if (this.accessCheck.can('PO_EDIT_AFFTER_APPROVE') && pro.purchase_order_status === 'CONFIRMED' && pro.purchase_order_status !== 'APPROVED') {
       return true;
+    } else {
+      if (this.checkEmptyData(pro) === false) {
+        return false;
+      }
+      if (this.isConfirm && pro.purchase_order_status !== 'CONFIRMED') {
+        return false;
+      }
+      if (pro.purchase_order_status === 'COMPLETED' || pro.purchase_order_status === 'APPROVED' || pro.is_cancel === 'Y') {
+        return false;
+      } else {
+        return true;
+      }
     }
   }
 
@@ -493,27 +596,28 @@ export class DatagridOrdersComponent implements OnInit {
     this.purchaseOrdersSelected.forEach((value: any, index: number) => {
       f1++;
       if (value.purchase_order_status !== 'ORDERPOINT') {
-        poItems.push('porder=' + value.purchase_order_id);
+        poItems.push('purchaOrderId=' + value.purchase_order_id);
       } else {
         f2++;
       }
     });
-    console.log(f1, f2);
+
     if (f1 !== f2) {
-      this.htmlPrview.showReport(this.url + '/report/getporder/singburi/?' + poItems.join('&'));
+      this.htmlPrview.showReport(this.url + `/report/po/egp/singburi/?token=${this.token}&` + poItems.join('&'));
     } else {
       this.alertService.error('ข้อมุูลไม่ครบถ้วน');
     }
-    console.log(poItems);
+
   }
 
   printRequistionSingburi(row: any) {
     this.htmlPrview.printRequistionSingburi(row);
   }
+
   goEdit(purchase_order_id) {
 
     if (this.accessCheck.confirm('PO_EDIT')) {
-      this.router.navigateByUrl('/purchase/order-form/edit?id=' + purchase_order_id);
+      this.router.navigateByUrl('/purchase/edit?purchaseOrderId=' + purchase_order_id);
     } else {
       this.alertService.error('คุณไม่มีสิทธิ์ในการแก้ไข', 'Access denied!');
     }
@@ -532,7 +636,8 @@ export class DatagridOrdersComponent implements OnInit {
     this.productType = rs.rows;
     this.generic_type_id = this.productType[0].generic_type_id;
   }
-  async print_id() {
+
+  async printPo() {
     const printId: any = [];
     let print_non: any = 0;
     const rs: any = await this.purchasingOrderService.getPOid(this.start_id, this.end_id, this.generic_type_id, this.status_po);
@@ -547,7 +652,7 @@ export class DatagridOrdersComponent implements OnInit {
       this.alertService.error('ข้อมุูลไม่ครบถ้วน');
     }
     if (print_non > 0) {
-      this.htmlPrview.showReport(this.url + '/report/getporder/singburi/?' + printId.join('&'));
+      this.htmlPrview.showReport(this.url + `/report/getporder/singburi/?token=${this.token}&` + printId.join('&'));
       this.openModal = false;
     } else {
       this.alertService.error('ข้อมุูลไม่ครบถ้วน');
@@ -555,6 +660,31 @@ export class DatagridOrdersComponent implements OnInit {
     this.start_id = '';
     this.end_id = '';
   }
+
+  async printEgp() {
+    const printId: any = [];
+    let print_non: any = 0;
+    const rs: any = await this.purchasingOrderService.getPOid(this.start_id, this.end_id, this.generic_type_id, this.status_po);
+    if (rs.rows) {
+      rs.rows.forEach(e => {
+        if (e.purchase_order_status !== 'ORDERPOINT') {
+          printId.push('porder=' + e.purchase_order_id);
+          print_non++;
+        }
+      });
+    } else {
+      this.alertService.error('ข้อมุูลไม่ครบถ้วน');
+    }
+    if (print_non > 0) {
+      this.htmlPrview.showReport(this.url + `/report/getporder/singburi/?token=${this.token}&` + printId.join('&'));
+      this.openModal = false;
+    } else {
+      this.alertService.error('ข้อมุูลไม่ครบถ้วน');
+    }
+    this.start_id = '';
+    this.end_id = '';
+  }
+
   async print_date() {
     const printId: any = [];
     let print_non: any = 0;
@@ -572,7 +702,7 @@ export class DatagridOrdersComponent implements OnInit {
       this.alertService.error('ไม่มีข้อมูล');
     }
     if (print_non > 0) {
-      this.htmlPrview.showReport(this.url + '/report/getporder/singburi/?' + printId.join('&'));
+      this.htmlPrview.showReport(this.url + `/report/getporder/singburi/?token=${this.token}&` + printId.join('&'));
       this.openModal = false;
     } else {
       this.alertService.error('ข้อมุูลไม่ครบถ้วน');
@@ -585,22 +715,22 @@ export class DatagridOrdersComponent implements OnInit {
 
   async changeToPrepare(pro: any) {
 
-    if (this.accessCheck.confirm('PO_EDIT_AFFTER_APPREVE')) {
+    if (this.accessCheck.confirm('PO_EDIT_AFFTER_APPROVE')) {
       this.alertService.confirm('ต้องการเปลี่ยนสถานะใบสั่งซื้อ เป็นเตรียมใบสั่งซื้อ ใช่หรือไม่?')
         .then(async () => {
           // PREPARED
-          let obj: any = {
+          const obj: any = {
             purchase_order_id: pro.purchase_order_id,
             purchase_order_status: 'PREPARED',
             from_status: pro.purchase_order_status
           }
 
-          let items = [];
+          const items = [];
           items.push(obj);
 
           try {
             this.modalLoading.show();
-            let rs: any = await this.purchasingOrderService.updateStatus(items);
+            const rs: any = await this.purchasingOrderService.updateStatus(items);
             if (rs.ok) {
               this.alertService.success();
               this.getPurchaseOrders();
@@ -617,16 +747,137 @@ export class DatagridOrdersComponent implements OnInit {
     }
 
   }
-  settings(){
-    this.settingService.byModule('PC')
-    .then(async (results: any) => {
-      this.settingConfig = results.rows;
-      const confirm = _.find(this.settingConfig, { 'action_name': 'PC_CONFIRM' });
-      this.isConfirm = (confirm.value == null || confirm.value == '' )? confirm.default : confirm.value;
-      this.isConfirm = this.isConfirm === 'Y' ? true : false;
-    })
-    .catch(error => {
-      this.alertService.serverError(error);
+
+  async getOrders() {
+    const rs: any = await this.purchasingOrderService.getGeneric();
+    this.genericOrders = rs.rows;
+    // console.log(this.genericOrders);
+  }
+
+  printHistory(generic_name: any) {
+    this.generic_name = generic_name;
+    this.htmlPrview.showReport(this.url + `/report/getProductHistory/${generic_name.generic_code}?token=${this.token}`);
+    console.log(generic_name.generic_code);
+  }
+
+  async fileChangeEvent(e: any) {
+    if (e.target.value !== '') {
+      const rs: any = await this.purchasingOrderService.searchGenericHistory(e.target.value);
+      this.genericOrders = rs.rows;
+    } else {
+      const rs: any = await this.purchasingOrderService.getGeneric();
+      this.genericOrders = rs.rows;
+    }
+    // console.log(e.target.value);
+  }
+
+  // change puchase date
+  changePurchaseDate() {
+    const items = [];
+    this.itemsChangeDate = [];
+    this.purchaseOrdersSelected.forEach(v => {
+
+      if (v.purchase_order_status === 'PREPARED' || v.purchase_order_status === 'CONFIRMED') {
+        this.itemsChangeDate.push(v);
+      }
     });
+
+    if (this.itemsChangeDate.length) {
+      this.openChangeDate = true;
+    } else {
+      this.alertService.error('กรุณาระบุรายการที่ต้องการแก้ไขวันที่ (เฉพาะรายการที่เตรียมใบสีั่งซื้อ/ยืนยัน เท่านั้น)')
+    }
+  }
+
+  async doChangePurchaseDate() {
+    const purchaseOrderIds = [];
+    this.itemsChangeDate.forEach(v => {
+      purchaseOrderIds.push(v.purchase_order_id);
+    });
+
+    if (this.editPurchaseDate) {
+      const purchaseDate = this.editPurchaseDate ? moment(this.editPurchaseDate.jsdate).format('YYYY-MM-DD') : null;
+
+      try {
+        this.modalLoading.show();
+        const rs: any = await this.purchasingOrderService.saveChangePurchaseDate(purchaseOrderIds, purchaseDate);
+        this.modalLoading.hide();
+        if (rs.ok) {
+          this.alertService.success();
+          this.openChangeDate = false;
+
+          this.getPurchaseOrders();
+          this.getOrders();
+
+        } else {
+          this.alertService.error(rs.error);
+        }
+      } catch (error) {
+        this.modalLoading.hide();
+        this.alertService.error(JSON.stringify(error));
+      }
+
+    } else {
+      this.alertService.error('กรุณาระบุวันที่จัดซื้อ');
+    }
+  }
+
+  async refresh(state: State) {
+    console.log(this.paginationPo);
+
+    if (!this.currentPage) {
+      if (this.paginationPo) {
+        this.currentPage = this.paginationPo.currentPage;
+      } else {
+        this.currentPage = 1;
+      }
+    } else {
+      if (this.paginationPo) {
+        this.currentPage = this.paginationPo.currentPage;
+      } else {
+        this.currentPage = 1;
+      }
+    }
+
+    sessionStorage.setItem('poOrderCurrentPage', this.currentPage);
+
+    this.offset = state.page.from;
+    const limit = +state.page.size;
+    const start_date = this.start_date !== null ? moment(this.start_date.jsdate).format('YYYY-MM-DD') : '';
+    const end_date = this.end_date !== null ? moment(this.end_date.jsdate).format('YYYY-MM-DD') : '';
+
+    const status: Array<any> = ['ORDERPOINT', 'PREPARED', 'CONFIRMED', 'APPROVED', 'SUCCESS', 'COMPLETED'];
+    if (this.statusFilter === 'PREPARED') {
+      this.status = ['PREPARED'];
+    } else if (this.statusFilter === 'ORDERPOINT') {
+      this.status = ['ORDERPOINT'];
+    } else if (this.statusFilter === 'CONFIRMED') {
+      this.status = ['CONFIRMED'];
+    } else if (this.statusFilter === 'APPROVED') {
+      this.status = ['APPROVED'];
+    } else if (this.statusFilter === 'SUCCESS') {
+      this.status = ['COMPLETED', 'SUCCESS'];
+    } else {
+      this.status = status;
+    }
+
+    try {
+      this.modalLoading.show();
+      const rs: any = await this.purchasingOrderService.byStatus(
+        this.status,
+        this.contractFilter,
+        this.query,
+        start_date,
+        end_date,
+        limit, this.offset);
+
+      this.modalLoading.hide();
+      this.purchaseOrders = rs.rows;
+      this.total = +rs.total;
+
+    } catch (error) {
+      this.alertService.error(error);
+      this.modalLoading.hide();
+    }
   }
 }

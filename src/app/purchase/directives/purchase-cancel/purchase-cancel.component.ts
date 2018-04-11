@@ -73,7 +73,7 @@ export class PurchaseCancelComponent implements OnInit {
   }
 
   async onSave() {
-    const bgtData = await this.budgetTransectionService.getCancel(this.purchase_order_id);
+    // const bgtData = await this.budgetTransectionService.getCancel(this.purchase_order_id);
     const promises: Array<any> = [];
     let items = [];
     const data: any = {
@@ -86,22 +86,22 @@ export class PurchaseCancelComponent implements OnInit {
     };
 
     items.push(data);
-    const budgetTransection: any = {
-      incoming_balance: bgtData.rows[0].incoming_balance,
-      amount: bgtData.rows[0].amount,
-      balance: bgtData.rows[0].balance,
-      type: 'revoke'
-    };
+    // const budgetTransection: any = {
+    //   incoming_balance: bgtData.rows[0].incoming_balance,
+    //   amount: bgtData.rows[0].amount,
+    //   balance: bgtData.rows[0].balance,
+    //   type: 'revoke'
+    // };
 
     try {
       let rs: any = await this.purchasingOrderService.updateStatus(items);
-      let rs2: any = await this.budgetTransectionService.cancel(bgtData.rows[0].transection_id, budgetTransection);
-      if (rs.ok && rs2.ok) {
+      // let rs2: any = await this.budgetTransectionService.cancel(bgtData.rows[0].transection_id, budgetTransection);
+      if (rs.ok) {
         this.alertService.success();
         this.onAfterSave.emit(true);
         this.closeModal();
       } else {
-        this.alertService.error(rs.error + ', ' + rs2.error);
+        this.alertService.error(rs.error);
         this.onAfterSave.emit(true);
         this.closeModal();
       }

@@ -1,0 +1,48 @@
+
+<nav class="breadcrumb">
+  <a class="breadcrumb-item" href="javascript://" routerLink="/">หน้าหลัก</a>
+  <span class="breadcrumb-item active">ประวัติการสั่งซื้อ</span>
+</nav>
+
+<div class="card">
+  <div class="card-block">
+    <div class="row">
+      <div class="col-md-2">
+        <span>Trading Code</span>
+      </div>
+      <div class="col-md-4">
+        <input type="text" placeholder="ค้นหา ชื่อสามัญ,รหัสสามัญ" name="query" (keyup)="keyupQuery($event)" [(ngModel)]="query">
+      </div>  
+    </div>
+  </div>
+</div>
+    <clr-datagrid (clrDgRefresh)="refresh($event)"> 
+      <clr-dg-column [style.width.px]="150">
+        Generic Code
+      </clr-dg-column>
+      <clr-dg-column>
+        ชื่อสามัญ
+      </clr-dg-column>
+      <clr-dg-column>
+
+      </clr-dg-column>
+      <clr-dg-row *ngFor="let pro of genericOrders" [clrDgItem]="pro">
+        <clr-dg-cell>{{pro.generic_code}}</clr-dg-cell>
+        <clr-dg-cell>{{pro.generic_name}}</clr-dg-cell>
+        <clr-dg-cell>
+          <!-- <div style="float:right">
+            <clr-button-group class="btn-sm" [clrMenuPosition]="'bottom-right '">
+              <clr-button class="btn" (click)="printHistory(pro)">
+                <clr-icon shape="search"></clr-icon> ดูรายละเอียด </clr-button>
+            </clr-button-group>
+          </div> -->
+        </clr-dg-cell>
+        <app-product-history *clrIfExpanded ngProjectAs="clr-dg-row-detail" [genericId]="pro.generic_id">
+
+        </app-product-history>
+      </clr-dg-row>
+      <clr-dg-footer>
+        {{pagination.firstItem + 1}} - {{pagination.lastItem + 1}} จาก {{pagination.totalItems}} รายการ
+        <clr-dg-pagination #pagination [clrDgPageSize]="perPage" [clrDgTotalItems]="totalGeneric"></clr-dg-pagination>
+      </clr-dg-footer>
+    </clr-datagrid>

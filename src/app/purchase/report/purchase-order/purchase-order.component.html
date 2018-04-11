@@ -2,46 +2,44 @@
   <a class="breadcrumb-item" href="javascript://" routerLink="/">หน้าหลัก</a>
   <span class="breadcrumb-item active">รายงานสั่งซื้อเวชภัณฑ์</span>
 </nav>
-<div class="card">
-  <div class="card-block">
-    <form>
-      <section class="form-block">
-        <div class="form-group row">
-          <div class="col-md-2">
-            <label for="startDate" class="required">ประเภทรายงาน</label>
-          </div>
-          <div class="select col-lg-3 col-md-3 col-sm-12 col-xs-12">
-            <select id="generic_type_id" name="generic_type_id" [(ngModel)]="generic_type_id">
-              <option value=""> ทั้งหมด</option>
-              <option *ngFor="let p of productType" [value]="p.generic_type_id">{{ p.generic_type_name }}</option>
-            </select>
-          </div>
-        </div>
-        <div class="form-group row">
-          <div class="col-lg-1 col-md-1 col-sm-12 col-xs-12">
-            <label for="startDate" class="required">ตั้งแต่</label>
-          </div>
-          <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-            <my-date-picker-th name="mydate" [options]="myDatePickerOptions" [(ngModel)]="startDate" required></my-date-picker-th>
-          </div>
-          <div class="col-lg-1 col-md-1 col-sm-12 col-xs-12">
-            <label for="endDate" class="required">ถึง</label>
-          </div>
-          <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-            <my-date-picker-th name="mydate" [options]="myDatePickerOptions" [(ngModel)]="endDate" required></my-date-picker-th>
-          </div>
-          <div class="col-md-2">
-            <button style="margin-top: 0px;" class="btn btn-primary" [disabled]="isPreview" (click)="showReport()">แสดงรายงาน</button>
-          </div>
-        </div>
-      </section>
-    </form>
-    <span class="spinner spinner-inline" *ngIf="isPreview">
-      Loading...
-    </span>
-    <span *ngIf="isPreview">
-      Loading...
-    </span>
-    <app-html-preview #htmlPreview></app-html-preview>
+
+<div class="row wid99">
+  <div class="col-md-6">
+    <button [disabled]="!selectedProduct.length" class="btn btn-sm btn-success btn-icon" (click)="printProduct()">
+      <clr-icon shape="printer"></clr-icon> พิมพ์รายการ
+    </button>
+  </div>
+  <div class="col-md-6">
+    <div class="select" style="float: right;">
+      <select  name="generic_type_id" [(ngModel)]="generic_type_id" (change)="changeType()">
+        <option value="all">ทั้งหมด</option>
+        <option *ngFor="let p of productType" [value]="p.generic_type_id">{{ p.generic_type_name }}</option>
+      </select>
+    </div>
   </div>
 </div>
+<clr-datagrid [(clrDgSelected)]="selectedProduct">
+  <clr-dg-column [clrDgField]="'generic_name'">ชื่อสินค้า (Generic Name)</clr-dg-column>
+  <clr-dg-column [clrDgField]="'product_name'">ชื่อสินค้า (Trade Name)</clr-dg-column>
+  <clr-dg-column [clrDgField]="'min_qty'" style="width: 120px;">Min</clr-dg-column>
+  <clr-dg-column [clrDgField]="'max_qty'" style="width: 120px;">Max</clr-dg-column>
+  <clr-dg-column [clrDgField]="'remain_qty'" style="width: 120px;">คงเหลือ</clr-dg-column>
+  <clr-dg-column [clrDgField]="'labeler_name'">ผู้จำหน่าย</clr-dg-column>
+  <clr-dg-column [clrDgField]="'generic_type_name'">ประเภท</clr-dg-column>
+
+  <clr-dg-row *clrDgItems="let p of products" [clrDgItem]="p">
+    <clr-dg-cell>{{p.generic_name}}</clr-dg-cell>
+  <clr-dg-cell>{{p.product_name}}</clr-dg-cell>
+  <clr-dg-cell style="text-align: right;">{{p.min_qty | number}}</clr-dg-cell>
+  <clr-dg-cell style="text-align: right;">{{p.max_qty | number}}</clr-dg-cell>
+  <clr-dg-cell style="text-align: right;">{{p.remain_qty | number}}</clr-dg-cell>
+  <clr-dg-cell>{{p.labeler_name}}</clr-dg-cell>
+  <clr-dg-cell>{{p.generic_type_name}}</clr-dg-cell>
+  </clr-dg-row>
+
+  <clr-dg-footer>{{products.length}} รายการ</clr-dg-footer>
+</clr-datagrid>
+  
+
+<app-modal-loading #modalLoading></app-modal-loading>
+<app-html-preview #htmlPreview></app-html-preview>

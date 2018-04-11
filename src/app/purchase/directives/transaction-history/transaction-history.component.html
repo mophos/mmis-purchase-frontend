@@ -1,0 +1,24 @@
+<clr-datagrid class="grid-order" [(clrDgLoading)]="loading" style="height: 270px;">
+  <clr-dg-column>วันที่</clr-dg-column>
+  <clr-dg-column>เลขที่ใบสั่งซื้อ</clr-dg-column>
+  <clr-dg-column>ยอดคงเหลือยกมา</clr-dg-column>
+  <clr-dg-column>ยอดจัดซื้อ</clr-dg-column>
+  <clr-dg-column>ยอดคงเหลือ</clr-dg-column>
+  <clr-dg-column>สถานะ</clr-dg-column>
+  <clr-dg-row *clrDgItems="let p of transactions" [clrDgItem]="p">
+    <clr-dg-cell>{{p.date_time | toThaiDate}}</clr-dg-cell>
+    <clr-dg-cell>{{p.purchase_order_number}}</clr-dg-cell>
+    <clr-dg-cell style="text-align: right;">{{p.incoming_balance | number:'1.2-2'}}</clr-dg-cell>
+    <clr-dg-cell style="text-align: right;"><strong>{{p.amount | number:'1.2-2'}}</strong></clr-dg-cell>
+    <clr-dg-cell style="text-align: right;"><strong>{{p.balance | number:'1.2-2'}}</strong></clr-dg-cell>
+    <clr-dg-cell style="text-align: center;">
+      <span *ngIf="p.transaction_status==='REVOKE'" style="color: red; font-weight: bold;">คืนงบ</span>
+      <span *ngIf="p.transaction_status==='SPEND'" style="color: green; font-weight: bold;">ตัดงบ</span>
+    </clr-dg-cell>
+  </clr-dg-row>
+  <clr-dg-footer>
+    <clr-dg-pagination #pagination [clrDgPageSize]="10">
+      {{pagination.firstItem + 1}} - {{pagination.lastItem + 1}} จาก {{pagination.totalItems}} รายการ
+    </clr-dg-pagination>
+  </clr-dg-footer>
+</clr-datagrid>

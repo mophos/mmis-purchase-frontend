@@ -2,21 +2,22 @@
   <nav class="breadcrumb">
     <a class="breadcrumb-item" href="javascript://" routerLink="/">หน้าหลัก</a>
     <span class="breadcrumb-item active">ใบสั่งซื้อ</span>
-    <span style="margin-left: 2%; font-size:20px; font-weight:bold;">{{purchase_order_number}}</span>
+    <span style="margin-left: 2%; font-size:20px; font-weight:bold;">{{purchaseOrderNumber}}</span>
+    <!-- <span *ngIf="contractId" style="color: red; margin-left: 2%; font-size:20px; font-weight:bold;">เลขที่สัญญา {{contractNo}}</span> -->
     <span style="margin-left:35px">
-      <app-order-status [status]="purchase_order_status"></app-order-status>
+      <app-order-status [status]="purchaseOrderStatus"></app-order-status>
     </span>
     <span style="float:right;">
       <span>ราคารวมสุทธิ</span>
       <span style="margin:10px;font-size:20px;font-weight:bold;" class="text-success">
-        {{total_price | number: '1.2-2'}}
+        {{totalPrice | number: '1.2-2'}}
       </span>
     </span>
   </nav>
 
-  <span *ngIf="contract_id" class="label label-info">เลขที่สัญญา:
-    <strong>{{contract_id}}</strong>
-  </span>
+  <!-- <span *ngIf="contractId" class="label label-info">เลขที่สัญญา:
+    <strong>{{contractId}}</strong>
+  </span> -->
   <small class="p5" *ngIf="holidayText">
     <clr-icon shape="info-standard"></clr-icon> {{holidayText}}</small>
 
@@ -33,16 +34,16 @@
         <div class="row">
           <div class="col-md-4">
             <div class="form-group">
-              <label for="purchase_order_book_number">เลขที่อ้างอิง</label>
-              <input class="form-control" type="text" id="purchase_order_book_number" name="purchase_order_book_number" [(ngModel)]="purchase_order_book_number"
-                placeholder="เลขที่อ้างอิงหนังสือ..." [disabled]="isUpdate">
+              <label for="purchaseOrderBookNumber">เลขที่อ้างอิง</label>
+              <input class="form-control" type="text" id="purchaseOrderBookNumber" name="purchaseOrderBookNumber" [(ngModel)]="purchaseOrderBookNumber"
+                placeholder="เลขที่อ้างอิงหนังสือ...">
             </div>
           </div>
 
           <div class="col-md-4">
             <div class="form-group">
               <label class="required" for="nin">วันที่ออกใบสั่งซื้อ</label>
-              <my-date-picker-th (dateChanged)="onDateChanged($event)" name="order_date" [(ngModel)]="order_date" [options]="myDatePickerOptions"
+              <my-date-picker-th (dateChanged)="onDateChanged($event)" name="purchaseDate" [(ngModel)]="purchaseDate" [options]="myDatePickerOptions"
                 required></my-date-picker-th>
             </div>
           </div>
@@ -50,7 +51,7 @@
             <div class="form-group">
               <label class="required" for="generic_type_id">ประเภท</label>
               <div class="select" style="width:100%">
-                <select [disabled]="isContaract()" #selectGenericTypeId id="generic_type_id" name="generic_type_id" [(ngModel)]="generic_type_id"
+                <select [disabled]="contractId" #selectGenericTypeId id="genericTypeId" name="genericTypeId" [(ngModel)]="genericTypeId"
                   (change)="onChangeGenericType(selectGenericTypeId.value)">
                   <option> กรุณาเลือก...</option>
                   <option *ngFor="let p of productType" [value]="p.generic_type_id">{{ p.generic_type_name }}</option>
@@ -64,33 +65,25 @@
           <div class="col-md-4">
             <div class="form-group">
               <label style="width: 120px;" class="required" for="labeler_id">ผู้จำหน่าย</label>
-              <app-search-labeler style="width:100%" (onSelected)="onLabelerSelected($event)" [labelerName]="labelerName"></app-search-labeler>
+              <!-- <app-search-labeler style="width:100%" (onSelected)="onLabelerSelected($event)" [labelerName]="labelerName"></app-search-labeler> -->
+              <po-search-vendor [disabled]="contractId" #searchVendor (onChange)="onChangeVendor($event)" (onSelect)="onSelectVendor($event)"
+                style="width: 100%;"></po-search-vendor>
             </div>
           </div>
 
 
           <div class="col-md-4">
             <div class="form-group">
-              <label class="required" for="budgettype_id">ประเภทงบประมาณ</label>
-              <div class="select" style="width:100%">
-                <select [disabled]="isContaract()" #selectBudgettypeId id="budgettype_id" name="budgettype_id" [(ngModel)]="budgettype_id"
-                  (change)="onChangeBudgetTypeId(selectBudgettypeId.value)">
-                  <option> กรุณาเลือก...</option>
-                  <option *ngFor="let b of budgetTypes" [value]="b.bgtype_id">{{ b.bgtype_name }}</option>
-                </select>
-              </div>
+              <label class="required" for="budgetTypeId">ประเภทงบประมาณ</label>
+              <po-select-budget style="width: 100%;" (onChange)="onChangeBudgetType($event)"></po-select-budget>
             </div>
           </div>
 
           <div class="col-md-4">
             <div class="form-group">
-              <label class="required" for="budget_detail_id">งบประมาณ</label>
-              <div class="select" style="width:100%">
-                <select [disabled]="isContaract()" id="budget_detail_id" name="budget_detail_id" [(ngModel)]="budget_detail_id" (change)="onChangeBudgetSoruce($event)">
-                  <option> กรุณาเลือก...</option>
-                  <option *ngFor="let b of budgets" [value]="b.bgdetail_id">{{ b.bgtypesub_name }}</option>
-                </select>
-              </div>
+              <label class="required" for="budget_detail_id">งบประมาณย่อย</label>
+              <po-select-sub-budget [selectedId]="budgetDetailId" (onChange)="onChangeSubBudget($event)" style="width: 100%;" #subBudgetList
+                [year]="budgetYear" [budgetTypeId]="budgetTypeId"></po-select-sub-budget>
             </div>
           </div>
         </div>
@@ -99,26 +92,15 @@
 
           <div class="col-md-4">
             <div class="form-group">
-              <label class="required" for="purchase_type">รูปแบบการจัดซื้อ</label>
-              <div class="select" style="width:100%">
-                <select [disabled]="isContaract()" #bidId id="purchase_type" name="purchase_type" [(ngModel)]="purchase_type" (change)="_getCommittee(purchase_type)">
-                  <option> กรุณาเลือก...</option>
-                  <option *ngFor="let p of bidType" [value]="p.bid_id">{{ p.bid_name }}</option>
-                </select>
-              </div>
+              <label class="required" for="purchaseTypeId">รูปแบบการจัดซื้อ</label>
+              <po-select-bid (onChange)="onChangePurchaseType($event)" style="width:100%"></po-select-bid>
             </div>
           </div>
 
           <div class="col-md-4">
             <div class="form-group">
-              <label class="required" for="purchase_method">วิธีการจัดซื้อ</label>
-              <div class="select" style="width:100%">
-                <select [disabled]="isContaract()" id="purchase_method" name="purchase_method" [(ngModel)]="purchase_method" (change)="onChangeBidAmount($event)">
-                  <option> กรุณาเลือก...</option>
-                  <option *ngFor="let p of bidProcess" [value]="p.id">
-                    {{ p.name }} - วงเงิน {{p.f_amount | number:'1.0'}} บาท</option>
-                </select>
-              </div>
+              <label class="required" for="purchaseMethodId">วิธีการจัดซื้อ</label>
+              <po-select-bid-process (onChange)="onChangePurchaseMethod($event)" style="width: 100%;"></po-select-bid-process>
             </div>
           </div>
 
@@ -138,61 +120,61 @@
     </div>
 
     <clr-datagrid class="grid-order" style="padding-top:15px;">
-      <clr-dg-column [style.width.%]="35">
+      <clr-dg-column>
         <ng-container *clrDgHideableColumn="{hidden: false}">
           รายละเอียด
         </ng-container>
       </clr-dg-column>
 
-      <clr-dg-column class="header-right" [style.width.%]="5">
+      <clr-dg-column class="header-right" [style.width.px]="100">
         <ng-container *clrDgHideableColumn="{hidden: false}">
-          จำนวน
+          จำนวน Pack
         </ng-container>
       </clr-dg-column>
 
-      <clr-dg-column class="header-right" [style.width.%]="12">
+      <clr-dg-column class="header-right" [style.width.px]="150">
         <ng-container *clrDgHideableColumn="{hidden: false}">
           ขนาดบรรจุ
         </ng-container>
       </clr-dg-column>
 
-      <clr-dg-column class="header-right" [style.width.%]="5">
+      <clr-dg-column class="header-right" [style.width.px]="120">
         <ng-container *clrDgHideableColumn="{hidden: false}">
-          จำนวนรวม
+          รวม (Base Unit)
         </ng-container>
       </clr-dg-column>
 
-      <clr-dg-column class="header-right" [style.width.%]="10">
+      <clr-dg-column class="header-right" [style.width.px]="120">
         <ng-container *clrDgHideableColumn="{hidden: false}">
           ราคาต่อขนาดบรรจุ
         </ng-container>
       </clr-dg-column>
 
-      <clr-dg-column class="header-right" [style.width.%]="5">
+      <clr-dg-column class="header-right" [style.width.px]="120">
         <ng-container *clrDgHideableColumn="{hidden: false}">
           ราคารวม
         </ng-container>
       </clr-dg-column>
-      <clr-dg-column [style.width.%]="5">
+      <clr-dg-column [style.width.px]="100">
         <ng-container *clrDgHideableColumn="{hidden: false}">
           ของแถม
         </ng-container>
       </clr-dg-column>
-      <clr-dg-column [style.width.%]="5">
+      <clr-dg-column [style.width.px]="120">
         #
       </clr-dg-column>
       <clr-dg-row *ngFor="let p of purchaseOrderItems; let idx=index;" [clrDgItem]="p">
         <clr-dg-cell>
-          {{p.product_name}} ({{p.generic_name}})
+          {{idx + 1}}. {{p.product_name}}
         </clr-dg-cell>
         <clr-dg-cell>
           <input type="text" name="qty" class="wm-edit-box-number" style="background-color: #FFF9C4" [value]="p.qty" #qty (keyup)="onChangeEditQty(qty.value, idx)"
             appNumberWithoutDot>
         </clr-dg-cell>
         <clr-dg-cell>
-          <app-select-box-units [selectedUnitGenericId]="p.unit_generic_id" [genericId]="p.generic_id" (onSelect)="onSelectedEditUnits($event, idx)"></app-select-box-units>
+          <app-select-box-units [selectedId]="p.unit_generic_id" [genericId]="p.generic_id" (onChange)="onSelectedEditUnits($event, idx)"></app-select-box-units>
         </clr-dg-cell>
-        <clr-dg-cell style="text-align: right;">{{p.total_small_qty | number}}</clr-dg-cell>
+        <clr-dg-cell style="text-align: right;">{{p.qty * p.small_qty | number}}</clr-dg-cell>
         <clr-dg-cell>
           <input autocomplete="off" type="text" [value]="p.cost" name="cost" #cost class="wm-edit-box-number" style="background-color: #FFF9C4"
             appNumberOnly (keyup)="onChangeEditCost(cost.value, idx)">
@@ -216,25 +198,23 @@
 
       <clr-dg-row class="wm-add-row">
         <clr-dg-cell>
-          <app-search-product-vendor [disabled]="!labelerName" #searchProductLabeler (onSelect)="productSearchSelected($event)" [labelerId]="labelerId"></app-search-product-vendor>
+          <app-search-product-vendor [disabled]="!labelerId" #searchProductLabeler (onSelect)="productSearchSelected($event)" [labelerId]="labelerId"></app-search-product-vendor>
         </clr-dg-cell>
         <clr-dg-cell>
-          <input type="text" [disabled]="!selectedProduct.product_id" name="qty" class="wm-edit-box-number" style="background-color: #FFF9C4"
-            [(ngModel)]="selectedQty" appNumberWithoutDot>
+          <input type="text" name="qty" class="wm-edit-box-number" style="background-color: #FFF9C4" [(ngModel)]="selectedQty" appNumberWithoutDot>
         </clr-dg-cell>
         <clr-dg-cell>
-          <app-select-box-units [disabled]="!selectedProduct.product_id" #selectBoxUnit (onSelect)="onSelectedUnits($event)"></app-select-box-units>
+          <app-select-box-units #selectBoxUnit (onChange)="onChangeUnit($event)"></app-select-box-units>
         </clr-dg-cell>
         <clr-dg-cell style="text-align: right;">{{selectedUnit.qty * selectedQty | number}}</clr-dg-cell>
         <clr-dg-cell>
-          <input autocomplete="off" [disabled]="!selectedProduct.product_id" type="text" name="cost" class="wm-edit-box-number" style="background-color: #FFF9C4"
-            [(ngModel)]="selectedCost" appNumberOnly>
+          <input autocomplete="off" type="text" name="cost" class="wm-edit-box-number" style="background-color: #FFF9C4" [(ngModel)]="selectedCost"
+            appNumberOnly>
         </clr-dg-cell>
         <clr-dg-cell style="text-align: right;">{{selectedCost * selectedQty | number: '1.2-2'}}</clr-dg-cell>
         <clr-dg-cell style="text-align: center;">
           <div class="toggle-switch">
-            <input autocomplete="off" [disabled]="!selectedProduct.product_id" type="checkbox" id="giveaway" name="giveaway" [(ngModel)]="isGiveaway"
-              (change)="onChangeGiveaway($event)">
+            <input autocomplete="off" type="checkbox" id="giveaway" name="giveaway" [(ngModel)]="isGiveaway" (change)="onChangeGiveaway($event)">
             <label for="giveaway"></label>
           </div>
         </clr-dg-cell>
@@ -244,7 +224,7 @@
               (click)="addProductSelected()">
               <clr-icon shape="plus"></clr-icon>
             </button>
-            <button class="btn btn-sm btn-danger wm-small-btn" (click)="removeSelected()">
+            <button [disabled]="!selectedProduct.product_id" class="btn btn-sm btn-danger wm-small-btn" (click)="removeSelected()">
               <clr-icon shape="trash"></clr-icon>
             </button>
           </div>
@@ -261,248 +241,203 @@
 
   </form>
 
+  <div class="row">
+    <div class="col-md-6">
+      <clr-tabs>
+        <clr-tab>
+          <button clrTabLink>เจ้าหน้าที่/กรรมการตรวจรับ</button>
+          <clr-tab-content *clrIfActive="true">
+            <div class="card" style="min-height:255px;">
+              <div class="card-block">
 
-  <clr-tabs>
-    <clr-tab>
-      <button clrTabLink>รายละเอียด</button>
-      <clr-tab-content id="tab-detail-1" *clrIfActive="true">
-        <div style="padding-top:10px;">
-          <div class="row">
-            <div class="col-md-4">
-              <div class="card" style="min-height:255px;">
-                <div class="card-block">
-
-                  <div class="form-group">
-                    <label for="chief_fullname"> ชื่อหัวหน้างาน</label>
-                    <div class="select">
-                      <select [(ngModel)]="office">
-                        <option *ngFor="let item of officer" [value]="item.people_id">{{item.fullname}} {{item.type_name}}</option>
-                        <option  value="0">ไม่ระบุ</option>
-                      </select>
+                <div class="form-group">
+                  <label for="chief_fullname"> ชื่อหัวหน้างาน</label>
+                  <div class="row">
+                    <div class="col-md-11">
+                      <po-select-officer [selectedId]="office" officerTypeCode="CHIEF" (onChange)="changeOfficer($event)" style="width: 100%;"></po-select-officer>
                     </div>
-                  </div>
-
-                  <div class="form-group">
-                    <label for="buyer_fullname"> ชื่อเจ้าหน้าที่</label>
-                    <div class="select">
-                      <select [(ngModel)]="office1">
-                        <option *ngFor="let item of officer1" [value]="item.people_id">{{item.fullname}} {{item.type_name}}</option>
-                        <option  value="0" >ไม่ระบุ</option>
-                      </select>
+                    <div class="col-md-1">
+                      <div class="checkbox">
+                        <clr-checkbox name="showChief" [(ngModel)]="showChief" [clrChecked]="showChief"></clr-checkbox>
+                      </div>
                     </div>
-                  </div>
-
-                  <div class="form-group">
-                    <label class="required" for="verify_committee_id">กรรมการตรวจรับ
-                      <span class="text-danger">*</span>
-                    </label>
-                    <div class="select" style="width:100%">
-                      <select (ngModelChange)="onChangeCommittee($event)" id="verify_committee_id" name="verify_committee_id" [(ngModel)]="verify_committee_id">
-                        <option *ngFor="let c of committees" [value]="c.committee_id">{{ c.committee_name }}</option>
-                      </select>
-                    </div>
-                  </div>
-                  <ol>
-                    <li *ngFor="let p of committeeSelected">
-                      <span>
-                        {{p.fullname}} ( {{p.cp_position_name}} )
-                      </span>
-                      <small style="display:block;margin-top:-5px;padding:0 0 0 7px;">
-                        <i> {{p.position_name}}</i>
-                      </small>
-
-                    </li>
-                  </ol>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="card" style="min-height:255px;">
-                <div class="card-block  form-right">
-                  <div class="form-group">
-                    <label for="amount">งบประมาณ</label>
-                    <input type="text" class="form-control" value="{{ budgetTypeDetail? budgetTypeDetail.bgtype_name: 0 }} ({{budgetTypeDetail? budgetTypeDetail.bgsubtype_name: 0}})"
-                      readonly>
-                  </div>
-                  <div class="form-group">
-                    <label for="amount">ยอดที่จัดสรร</label>
-                    <input type="text" class="form-control" value="{{(budgetTypeDetail? budgetTypeDetail.amount:0) | number:'1.2-2'}}" readonly>
-                  </div>
-                  <div class="form-group">
-                    <label for="amount">ยอดที่จัดซื้อแล้ว</label>
-                    <input type="text" value="{{amount | number:'1.2-2'}}   ({{(amount*100)/budgetTypeDetail.amount | number:'1.2-2'}}%)" class="form-control"
-                      readonly>
-                  </div>
-                  <div class="form-group">
-                    <label for="amount">ยอดคงเหลือยกมา</label>
-                    <input type="text" value="{{budgetTypeDetail.amount-amount | number:'1.2-2'}}" class="form-control" readonly>
-                  </div>
-                  <div class="form-group">
-                    <label for="amount">ยอดจัดซื้อครั้งนี้</label>
-                    <input type="text" value="{{total_price | number:'1.2-2'}}" class="form-control" readonly>
-                  </div>
-                  <div class="form-group">
-                    <label for="amount">ยอดคงเหลือครั้งนี้</label>
-                    <input type="text" value="{{(budgetTypeDetail.amount-amount)-total_price | number:'1.2-2'}}" class="form-control" readonly>
-                  </div>
-                  <hr class="hr">
-                  <div class="form-group">
-                    <label for="amount">เลขที่สัญญา</label>
-                    <input type="text" class="form-control" value="{{contract_id}}" readonly>
-                  </div>
-                  <div class="form-group">
-                    <label for="amount">วงเงินในสัญญา</label>
-                    <input type="text" class="form-control" value="{{contract_amount | number:'1.2-2'}}" readonly>
                   </div>
                 </div>
+
+                <div class="form-group">
+                  <label for="buyer_fullname"> ชื่อเจ้าหน้าที่</label>
+                  <div class="row">
+                    <div class="col-md-11">
+                      <po-select-officer officerTypeCode="BUYYER" [selectedId]="office1" (onChange)="changeOffice($event)" style="width: 100%;"></po-select-officer>
+                    </div>
+                    <div class="col-md-1">
+                      <div class="checkbox">
+                        <clr-checkbox name="showBuyer" [(ngModel)]="showBuyer" [clrChecked]="showBuyer"></clr-checkbox>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="required" for="verify_committee_id">กรรมการตรวจรับ
+                    <span class="text-danger">*</span>
+                  </label>
+                  <po-select-committee [selectedId]="verifyCommitteeId" style="width: 100%;" (onChange)="changeCommittee($event)"></po-select-committee>
+                </div>
+                <ol>
+                  <li *ngFor="let p of committeeSelected">
+                    <span>
+                      {{p.fullname}} ( {{p.cp_position_name}} )
+                    </span>
+                    <small style="display:block;margin-top:-5px;padding:0 0 0 7px;">
+                      <i> {{p.position_name}}</i>
+                    </small>
+                  </li>
+                </ol>
               </div>
             </div>
-            <div class="col-md-4">
-              <div class="card" style="min-height:255px;">
-                <div class="card-block ">
-                  <form class="compact box-pricing" style="margin-top:0px;padding-top:0;">
-                    <section class="form-block" style="margin-top:0px;">
-                      <div class="form-group">
-                        <label for="isBeforeVat">
-                          <input type="checkbox" id="isBeforeVat" name="isBeforeVat" [(ngModel)]="isBeforeVat" (change)="calAmount()"> ถอดภาษี</label>
-                        <div class="form-control" style="height:24px; line-height:24px; margin-top:5px;"></div>
-                      </div>
+          </clr-tab-content>
+        </clr-tab>
+        <clr-tab>
+          <button clrTabLink>อื่นๆ</button>
+          <clr-tab-content id="tab-detail-2" *clrIfActive>
 
-                      <div class="form-group">
-                        <label for="sub_total">ราคารวม</label>
-                        <input type="text" class="form-control text-primary" id="sub_total" name="sub_total" value="{{sub_total | number:'1.2-2'}}"
-                          disabled>
-                      </div>
+            <div class="row" style="padding-top:20px;">
 
-                      <div class="form-group">
-                        <label for="discount_percent">ส่วนลด ( % )</label>
-                        <div class="inline-box">
-                          <input type="number" min="0" max="100" style="width:30%" id="discount_percent" name="discount_percent" [(ngModel)]="discount_percent"
-                            (keyup)="calAmount()" (change)="calAmount()">
-                          <input type="text" id="discount_percent_amount" style="width:70%" name="discount_percent_amount" value="{{discount_percent_amount | number:'1.2-2'}}"
-                            disabled>
+              <div class="col-md-6">
+                <div class="card">
+                  <div class="card-block">
+                    <section class="form-block">
+                      <div class="form-group row">
+                        <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                          <label for="gForm_1">เลขที่ eGP</label>
+                        </div>
+                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                          <input class="form-control" type="text" id="egpId" name="egpId" pattern="[0-9]+" [(ngModel)]="egpId" placeholder="">
                         </div>
                       </div>
-                      <div class="form-group">
-                        <label for="discount_cash">ส่วนลด ( บาท )</label>
-                        <input type="text" class="form-control text-primary" id="discount_cash" name="discount_cash" [(ngModel)]="discount_cash"
-                          (keyup)="calAmount()">
-                      </div>
-                      <div class="form-group">
-                        <label for="vat_rate">
-                          <input type="checkbox" name="include_vat" [(ngModel)]="include_vat" (change)="calAmount()"> ภาษี ( % ) </label>
-                        <div class="inline-box">
-                          <input type="number" min="0" max="100" style="width:30%" id="vat_rate" name="vat_rate" [(ngModel)]="vat_rate" (keyup)="calAmount()"
-                            (change)="calAmount()">
-                          <input type="text" class="" id="vat" name="vat" style="width:70%" value="{{vat | number:'1.2-2'}}" disabled>
+                      <div class="form-group row">
+                        <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                          <label for="gForm_1">ผู้ติดต่อ</label>
+                        </div>
+                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                          <input type="text" class="form-control" id="vendorContactName" name="vendorContactName" [(ngModel)]="vendorContactName">
                         </div>
                       </div>
-                      <div class="form-group">
-                        <label for="total_price">ราคารวมสุทธิ</label>
-                        <input type="text" class="form-control text-primary" id="total_price" name="total_price" value="{{total_price | number:'1.2-2'}}">
+                      <div class="form-group row">
+                        <label for="gForm_1">ที่อยู่สำหรับจัดส่ง</label>
+                        <textarea rows="1" class="form-control" id="shipTo" name="shipTo" [(ngModel)]="shipTo"> </textarea>
                       </div>
                     </section>
-                  </form>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="card">
+                  <div class="card-block">
+                    <label for="noteToVender">หมายเหตุถึงผู้จำหน่าย</label>
+                    <textarea rows="1" class="form-control" id="noteToVender" name="noteToVender" [(ngModel)]="noteToVender"> </textarea>
+                    <label for="comment">หมายเหตุถึงคลังสินค้า</label>
+                    <textarea rows="1" class="form-control" id="comment" name="comment" [(ngModel)]="comment"> </textarea>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      </clr-tab-content>
-    </clr-tab>
 
-    <clr-tab>
-      <button clrTabLink>อื่นๆ</button>
-      <clr-tab-content id="tab-detail-2" *clrIfActive>
+          </clr-tab-content>
+        </clr-tab>
 
-        <div class="row" style="padding-top:20px;">
+        <clr-tab>
+          <button clrTabLink>ประวัติการตัดงบ</button>
+          <clr-tab-content *clrIfActive>
+            <po-transaction-history [budgetDetailId]="budgetDetailId"></po-transaction-history>
+          </clr-tab-content>
+        </clr-tab>
+      </clr-tabs>
+    </div>
+    <div class="col-md-6">
+      <clr-tabs>
+        <clr-tab>
+          <button clrTabLink>รายละเอียดการใช้งบ/มูลค่าจัดซื้อ</button>
+          <clr-tab-content *clrIfActive>
+            <div class="row">
+              <div class="col-md-6">
+                <po-budget-remain #budgetRemainRef [contractId]="contractId" [purchaseOrderId]="purchaseOrderId" (onCalculated)="onBudgetCalculated($event)"
+                  [purchaseAmount]="totalPrice" [budgetDetailId]="budgetDetailId" [budgetYear]="budgetYear"></po-budget-remain>
+              </div>
+              <div class="col-md-6">
+                <div class="card" style="height:299px;">
+                  <div class="card-block">
+                    <form class="compact box-pricing" style="margin-top:0px;padding-top:0;">
+                      <section class="form-block" style="margin-top:0px;">
+                        <div class="form-control" style="height:24px; line-height:24px; margin-top:5px;">
+                          <label for="excludeVat">
+                            <input type="checkbox" id="isBeforeVat" name="excludeVat" [(ngModel)]="excludeVat" (change)="checkVat('excludeVat')"> ถอดภาษี</label>
+                          <label for="addVat" style="margin-left:20px;">
+                            <input type="checkbox" id="isAddVat" name="addVat" [(ngModel)]="addVat" (change)="checkVat('addVat')"> เพิ่มภาษี</label>
+                          <!-- <div class="form-control" style="height:24px; line-height:24px; margin-top:5px;"></div> -->
+                        </div>
 
-          <div class="col-md-6">
-            <div class="card">
-              <div class="card-block">
-                <div class="form-group">
-                  <label for="purchase_order_book_number">เลขที่หนังสือ</label>
-                  <input class="form-control" type="text" id="purchase_order_book_number" name="purchase_order_book_number" pattern="[0-9]+"
-                    [(ngModel)]="purchase_order_book_number" placeholder="" required>
+                        <div class="form-group">
+                          <label for="subTotal">ราคารวม</label>
+                          <input type="text" class="form-control text-primary" id="subTotal" name="subTotal" value="{{subTotal | number:'1.2-2'}}"
+                            disabled>
+                        </div>
+
+                        <div class="form-group">
+                          <label for="discountPercent" style="width: 90px;">ส่วนลด ( % )</label>
+                          <div class="inline-box">
+                            <input type="number" min="0" max="100" style="width:30%" id="discountPercent" name="discountPercent" [(ngModel)]="discountPercent"
+                              (keyup)="calAmount()" (change)="calAmount()">
+                            <input type="text" id="discountPercentAmount" style="width:70%" name="discountPercentAmount" value="{{discountPercentAmount | number:'1.2-2'}}"
+                              disabled>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label for="discountCash" style="width: 90px;">ส่วนลด ( บาท )</label>
+                          <input type="text" class="form-control text-primary" id="discountCash" name="discountCash" [(ngModel)]="discountCash" (keyup)="calAmount()">
+                        </div>
+                        <div class="form-group">
+                          <label for="vatRate">ภาษี ( % )</label>
+                          <div class="inline-box">
+                            <input type="number" [disabled]="!excludeVat&&!this.addVat" min="0" max="100" style="width:30%" id="vatRate" name="vatRate"
+                              [(ngModel)]="vatRate" (keyup)="calAmount()" (change)="calAmount()">
+                            <input type="text" class="" id="vat" name="vat" style="width:70%" value="{{vat | number:'1.2-2'}}" disabled>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label for="totalPrice">ราคารวมสุทธิ</label>
+                          <input type="text" class="form-control text-primary" id="totalPrice" name="totalPrice" value="{{totalPrice | number:'1.2-2'}}">
+                        </div>
+                      </section>
+                    </form>
+                  </div>
                 </div>
-
-                <div class="form-group">
-                  <label for="egp_id"> เลขที่ eGP</label>
-                  <input class="form-control" type="text" id="egp_id" name="egp_id" pattern="[0-9]+" [(ngModel)]="egp_id" placeholder="" required>
-                </div>
-
-
-                <div class="form-group">
-                  <label for="vendor_contact_name">ผู้ติดต่อ</label>
-                  <input type="text" class="form-control" id="vendor_contact_name" name="vendor_contact_name" [(ngModel)]="vendor_contact_name">
-                </div>
-
-                <div class="form-group">
-                  <label for="ship_to">ที่อยู่สำหรับจัดส่ง</label>
-                  <textarea rows="1" class="form-control" id="ship_to" name="ship_to" [(ngModel)]="ship_to"> </textarea>
-                </div>
-
               </div>
             </div>
-          </div>
+          </clr-tab-content>
+        </clr-tab>
 
-          <div class="col-md-6">
-            <div class="card">
-              <div class="card-block">
-                <label for="note_to_vender">หมายเหตุถึงผู้จำหน่าย</label>
-                <textarea rows="1" class="form-control" id="note_to_vender" name="note_to_vender" [(ngModel)]="note_to_vender"> </textarea>
-                <label for="comment">หมายเหตุถึงคลังสินค้า</label>
-                <textarea rows="1" class="form-control" id="comment" name="comment" [(ngModel)]="comment"> </textarea>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </clr-tab-content>
-    </clr-tab>
-
-    <clr-tab>
-      <button clrTabLink>ประวัติการสั่งซื้อ</button>
-      <clr-tab-content id="tab-detail-3" *clrIfActive>
-        <br>
-        <orders-history #orderHistory></orders-history>
-      </clr-tab-content>
-    </clr-tab>
-
-    <clr-tab>
-      <button clrTabLink>ประวัติการตัดงบ</button>
-      <clr-tab-content id="tab-detail-4" *clrIfActive>
-        <br>
-        <app-budgetransection #bgTransection [budgetYear]="budget_year" [budgetDetailId]="budget_detail_id"></app-budgetransection>
-      </clr-tab-content>
-    </clr-tab>
-    
-    <clr-tab>
-      <button clrTabLink>ประวัติการแก้ไข</button>
-      <clr-tab-content id="tab-detail-5" *clrIfActive>
-        <br>
-        <app-transaction-po #transactionPo [purchaseOrderId]="purchase_order_id"></app-transaction-po>
-      </clr-tab-content>
-    </clr-tab>
-  </clr-tabs>
+      </clr-tabs>
+    </div>
+  </div>
 
   <hr class="hr">
 
   <div class="text-right">
-    <!-- <button type="button" class="btn btn-default"  (click)="printRequistion(purchaseOrder)" > <clr-icon shape="printer" ></clr-icon> พิมพ์ใบขอสั่งซื้อ</button>
-        <button type="button" class="btn btn-default" (click)="printPurchaseOrder(purchaseOrder)" > <clr-icon shape="printer" ></clr-icon> พิมพ์ใบสั่งซื้อ</button> -->
     <button type="button" [disabled]="isUpdate" (click)="reset()" class="btn btn-outline-danger btn-sm">
-      <clr-icon shape="refresh"></clr-icon> รีเซ็ต</button>
+      <clr-icon shape="refresh"></clr-icon> รีเซ็ต
+    </button>
     <button [disabled]="disableSave() || isSaving" type="button" (click)="save()" class="btn btn-sm btn-success">
-      <clr-icon shape="floppy"></clr-icon> บันทึก</button>
+      <clr-icon shape="floppy"></clr-icon> บันทึก
+    </button>
     <button type="button" (click)="cancel()" class="btn btn-danger btn-sm">
-      <clr-icon shape="home"></clr-icon> กลับหน้าหลัก</button>
+      <clr-icon shape="home"></clr-icon> กลับหน้าหลัก
+    </button>
 
   </div>
 
-
-  <app-products-select #productsSelect (onSelectedChange)="onSelectedProduct($event)" (onMultiSelectedChange)="onMultiSelectedProduct($event)">
-  </app-products-select>
 </div>
 <app-html-preview #htmlPrview></app-html-preview>
 

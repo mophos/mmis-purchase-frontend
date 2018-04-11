@@ -12,7 +12,9 @@ import * as _ from 'lodash';
 import { State } from '@clr/angular';
 import { SettingService } from 'app/purchase/share/setting.service';
 import { ModalLoadingComponent } from 'app/modal-loading/modal-loading.component';
+import { JwtHelper } from 'angular2-jwt';
 
+import * as Random from 'random-js';
 @Component({
   selector: 'app-reorder-point',
   templateUrl: './reorder-point.component.html',
@@ -21,12 +23,12 @@ export class ReorderPointComponent implements OnInit {
 
   @ViewChild('modalLoading') modalLoading: ModalLoadingComponent
   loading: boolean;
-  total: number = 0;
-  perPage: number = 50;
+  total = 0;
+  perPage = 50;
 
   labelerName: string;
-  contractFilter: string = 'all';
-  minMaxFilter: string = 'min';
+  contractFilter = 'all';
+  minMaxFilter = 'min';
   query: string;
   generic_type_id: string = null;
   products: any = [];
@@ -38,6 +40,9 @@ export class ReorderPointComponent implements OnInit {
   defaultBudgetYear: number;
 
   orderItems: any = [];
+  token: any;
+  jwtHelper: JwtHelper = new JwtHelper();
+  vatRate: any;
 
   constructor(
     private ref: ChangeDetectorRef,
@@ -50,10 +55,17 @@ export class ReorderPointComponent implements OnInit {
     private purchasingOrderItemService: PurchasingOrderItemService,
     private genericTypeService: GenericTypeService,
     private settingService: SettingService
-  ) { }
+  ) {
+    this.token = sessionStorage.getItem('token');
+    const decoded = this.jwtHelper.decodeToken(this.token);
+    if (decoded) {
+      this.delivery = decoded.PC_SHIPPING_DATE || 30;
+      this.vatRate = decoded.PC_VAT || 7;
+      this.defaultBudgetYear = decoded.PC_DEFAULT_BUDGET_YEAR || moment().get('year');
+    }
+  }
 
   async ngOnInit() {
-    this.settings('PC');
     await this.getGenerictType();
   }
 
@@ -68,36 +80,21 @@ export class ReorderPointComponent implements OnInit {
   }
 
   async refresh(state: State) {
-    this.loading = true;
-    let offset = +state.page.from;
-    let limit = +state.page.size;
-    try {
+    const offset = +state.page.from;
+    const limit = +state.page.size;
 
-      // const res: any = await this.productService.ordersPoint(this.query, this.contractFilter, this.minMaxFilter, this.generic_type_id, limit, offset);
-      // this.products = res.ok ? res.rows : [];
-      // this.total = res.total || 0;
-      // this.loading = false;
-      // this.calReorderPointUnit();
-      // this.ref.detectChanges();
-      this.getProducts(this.query, limit, offset);
-    } catch (error) {
-      this.alertService.serverError(error);
-      this.loading = false;
-    }
-  }
-
-  async getProducts(q: string = '', limit: number = 100, offset: number = 0) {
-    this.modalLoading.show();
     try {
-      const rs: any = await this.productService.ordersPoint(q, this.contractFilter, this.minMaxFilter, this.generic_type_id, limit, offset);
+      this.modalLoading.show();
+      // if (!this.generic_type_id) this.generic_type_id = this.generictsType[0].generic_type_id;
+      const rs: any = await this.productService.ordersPoint(this.query, this.contractFilter, this.generic_type_id, limit, offset);
       this.products = [];
-      // this.products = res.ok ? res.rows : [];
       if (rs.ok) {
         rs.rows.forEach(v => {
-          let obj: any = {};
+          const obj: any = {};
           obj.generic_id = v.generic_id;
           obj.generic_name = v.generic_name;
           obj.generic_type_name = v.generic_type_name;
+          obj.generic_type_id = v.generic_type_id;
           obj.max_qty = v.max_qty;
           obj.min_qty = v.min_qty;
           obj.primary_unit_name = v.primary_unit_name;
@@ -113,6 +110,45 @@ export class ReorderPointComponent implements OnInit {
         this.modalLoading.hide();
         // this.calReorderPointUnit();
       } else {
+        this.modalLoading.hide();
+        this.alertService.error(rs.error);
+      }
+    } catch (error) {
+      this.alertService.error(JSON.stringify(error));
+      this.modalLoading.hide();
+    }
+  }
+
+  async getProducts(q: string = '', limit: number = 100, offset: number = 0) {
+    this.modalLoading.show();
+    try {
+      // if (!this.generic_type_id) this.generic_type_id = this.generictsType[0].generic_type_id;
+      const rs: any = await this.productService.ordersPoint(q, this.contractFilter, this.generic_type_id, limit, offset);
+      this.products = [];
+      // this.products = res.ok ? res.rows : [];
+      if (rs.ok) {
+        rs.rows.forEach(v => {
+          const obj: any = {};
+          obj.generic_id = v.generic_id;
+          obj.generic_name = v.generic_name;
+          obj.generic_type_name = v.generic_type_name;
+          obj.generic_type_id = v.generic_type_id;
+          obj.max_qty = v.max_qty;
+          obj.min_qty = v.min_qty;
+          obj.primary_unit_name = v.primary_unit_name;
+          obj.remain_qty = v.remain_qty;
+          obj.working_code = v.working_code;
+          obj.total_purchased = v.total_purchased;
+          obj.items = [];
+
+          this.products.push(obj);
+        });
+
+        this.total = rs.total || 0;
+        this.modalLoading.hide();
+        // this.calReorderPointUnit();
+      } else {
+        this.modalLoading.hide();
         this.alertService.error(rs.error);
       }
     } catch (error) {
@@ -122,56 +158,51 @@ export class ReorderPointComponent implements OnInit {
   }
 
   async getGenerictType() {
-    this.modalLoading.show();
+    // this.modalLoading.show();
     try {
       const res: any = await this.genericTypeService.all();
-      this.generictsType = res.ok ? res.rows : [];
-      // if (this.generictsType.length > 0) {
-      //   this.generic_type_id = this.generictsType[0].generic_type_id;
-      // }
-      this.modalLoading.hide();
-      this.ref.detectChanges();
+
+      const decoded = this.jwtHelper.decodeToken(this.token);
+      const genericIds = decoded.generic_type_id ? decoded.generic_type_id.split(',') : [];
+
+      const data = res.ok ? res.rows : [];
+
+      data.forEach(v => {
+        genericIds.forEach(i => {
+          if (+i === +v.generic_type_id) {
+            this.generictsType.push(v);
+          }
+        })
+      })
+
+      // this.modalLoading.hide();
+      // this.ref.detectChanges();
     } catch (error) {
       this.alertService.serverError(error);
-      this.modalLoading.hide();
+      // this.modalLoading.hide();
     }
   }
-
-  // calReorderPointUnit() {
-  //   this.products.forEach((item, index) => {
-  //     let rec_amount: number = Math.ceil((item.max_qty - item.remain) / item.qty);
-
-  //     let rec_baseunit_amount: number = Math.ceil((item.rec_amount * item.qty));
-  //     if (item.remain <= item.min_qty) {
-  //       item.rec_amount = isNaN(rec_amount) ? 0 : rec_amount;
-  //       item.rec_baseunit_amount = isNaN(rec_baseunit_amount) ? 0 : +rec_baseunit_amount;
-  //     } else {
-  //       item.rec_amount = 0;
-  //       item.rec_baseunit_amount = 0;
-  //     }
-  //   });
-  // }
 
   getRemainStatus(data: any) {
     if (data.remain < data.min_qty) {
       return 'text-danger';
-    }
-    else if (data.remain > data.min_qty) {
+    } else if (data.remain > data.min_qty) {
       return 'text-info';
     }
   }
 
   async createPurchaseOrders() {
-    let totalPrice = 0;
-    let purchaseSummary: any = {};
+    const totalPrice = 0;
+    const purchaseSummary: any = {};
     const purchaseOrderItems: Array<any> = [];
 
-    let purchaseItems = [];
+    const purchaseItems = [];
 
     this.products.forEach(v => {
       if (v.items.length) {
         v.items.forEach(x => {
           if (x.order_qty > 0) {
+            x.generic_type_id = v.generic_type_id;
             purchaseItems.push(x);
           }
         })
@@ -180,62 +211,192 @@ export class ReorderPointComponent implements OnInit {
 
     // console.log(purchaseItems);
 
-    let labelerGroup = _.uniqBy(purchaseItems, 'v_labeler_id');
-    let productItems = [];
-    let poItems = [];
+    // group by contract
+    const contractItems = [];
+    const noContractItems = [];
 
-    if (labelerGroup.length) {
-      labelerGroup.forEach((p, i) => {
-        const d = new Date();
-        const purchaseOrderId = d.getTime().toString() + i++;
-        let totalPrice = 0;
-        // purchase items
-        purchaseItems.forEach(x => {
-          // const total = x.order_qty * x.cost; // ((x.order_qty * x.purchase_conversion_qty) * (x.cost/x.purchase_conversion_qty));
-          // totalPrice += total;
-          if (x.v_labeler_id === p.v_labeler_id) {
-            let obj: any = {
-              purchase_order_id: purchaseOrderId,
-              generic_id: x.generic_id,
-              product_id: x.product_id,
-              qty: x.order_qty,
-              unit_price: x.cost, // / x.purchase_conversion_qty,
-              unit_generic_id: x.purchase_unit_generic_id,
-              total_small_qty: x.purchase_conversion_qty * x.order_qty,
-              // total_price: total
-            }
-            productItems.push(obj);
-          }
-        });
+    // group by generictypes
+    const genericGroups = _.uniqBy(purchaseItems, 'generic_type_id');
+    const genericTypeItems = [];
+    // จัดกลุ่มตาม Generic types
+    genericGroups.forEach(g => {
+      const objG: any = [];
+      objG.generic_type_id = g.generic_type_id;
+      objG.items = [];
 
-        // purchase detail
-        // const vat = (totalPrice * 7) / 100;
-        let objP = {
-          purchase_order_id: purchaseOrderId,
-          purchase_order_book_number: '',
-          labeler_id: p.v_labeler_id,
-          is_contract: 'F',
-          // sub_total: totalPrice,
-          delivery: this.delivery,
-          vat_rate: 7,
-          // vat: vat,
-          is_reorder: 1,
-          budget_year: this.defaultBudgetYear,
-          // total_price: totalPrice + vat,
-          order_date: moment().format('YYYY-MM-DD')
+      purchaseItems.forEach(item => {
+        if (item.generic_type_id === g.generic_type_id) {
+          objG.items.push(item);
         }
-        poItems.push(objP);
       });
 
-      // console.log(poItems);
-      // console.log(productItems);
+      genericTypeItems.push(objG);
+    });
+
+    const itemsByGenericsType = [];
+
+    for (const gItem of genericTypeItems) {
+      for (const pItem of gItem.items) {
+        const obj: any = {};
+        obj.generic_type_id = pItem.generic_type_id;
+        obj.contract_id = pItem.contract_id;
+        obj.contract_no = pItem.contract_no;
+        obj.conversion_qty = pItem.conversion_qty;
+        obj.generic_id = pItem.generic_id;
+        obj.m_labeler_id = pItem.m_labeler_id;
+        obj.v_labeler_id = pItem.v_labeler_id;
+        obj.purchase_cost = pItem.purchase_cost;
+        obj.unit_generic_id = pItem.unit_generic_id;
+        obj.order_qty = pItem.order_qty;
+        obj.product_id = pItem.product_id
+        itemsByGenericsType.push(obj);
+      }
+    }
+
+    // แยกสัญญา และไม่ใช่สัญญา
+
+    itemsByGenericsType.forEach(v => {
+      if (v.contract_id) {
+        contractItems.push(v);
+      } else {
+        noContractItems.push(v);
+      }
+      });
+
+    // console.log(noContractItems);
+    // console.log(contractItems);
+
+    const productItems = [];
+    const poItems = [];
+
+    if (contractItems.length || noContractItems.length) {
+
+      if (noContractItems.length) {
+        // group by labeler
+        const labelerItems = [];
+        const labelerGroups = _.uniqBy(noContractItems, 'v_labeler_id');
+
+        for (const l of labelerGroups) {
+          const obj: any = {};
+          obj.v_labeler_id = l.v_labeler_id;
+          obj.generic_type_id = l.generic_type_id;
+          obj.items = [];
+          for (const i of noContractItems) {
+            if (i.v_labeler_id === l.v_labeler_id && i.generic_type_id === l.generic_type_id) {
+              obj.items.push(i);
+            }
+          }
+
+          labelerItems.push(obj);
+
+        }
+
+        // console.log(labelerItems)
+
+        // สร้าง product items
+        for (const v of labelerItems) {
+          // var rnd = new Random(Random.engines.mt19937().seedWithArray([0x12345678, 0x90abcdef]));
+          const purchaseOrderId = Math.floor(new Date().valueOf() * Math.random() * new Date().getUTCMilliseconds());
+
+          for (const i of v.items) {
+            const obj: any = {};
+            obj.purchase_order_id = purchaseOrderId;
+            // obj.generic_type_id = i.generic_type_id;
+            obj.generic_id = i.generic_id;
+            obj.product_id = i.product_id;
+            obj.qty = i.order_qty;
+            obj.unit_price = i.purchase_cost;
+            obj.unit_generic_id = i.unit_generic_id;
+            obj.total_small_qty = i.conversion_qty * i.order_qty;
+            // obj.v_labeler_id = i.v_labeler_id;
+
+            productItems.push(obj);
+          }
+
+          const objP = {
+            purchase_order_id: purchaseOrderId,
+            labeler_id: v.v_labeler_id,
+            is_contract: 'N',
+            delivery: this.delivery,
+            vat_rate: this.vatRate,
+            generic_type_id: v.generic_type_id,
+            budget_year: this.defaultBudgetYear,
+            // total_price: totalPrice + vat,
+            order_date: moment().format('YYYY-MM-DD')
+          }
+
+          poItems.push(objP);
+        }
+
+      }
+
+      // มีสัญญา
+      if (contractItems.length) {
+        // group by labeler
+        const ctItems = [];
+        const contractGroups = _.uniqBy(contractItems, 'contract_id');
+
+        for (const l of contractGroups) {
+          const obj: any = {};
+          obj.contract_id = l.contract_id;
+          obj.generic_type_id = l.generic_type_id;
+          obj.v_labeler_id = l.v_labeler_id;
+
+          obj.items = [];
+          for (const i of contractItems) {
+            if (i.contract_id === l.contract_id && i.generic_type_id === l.generic_type_id) {
+              obj.items.push(i);
+            }
+          }
+
+          ctItems.push(obj);
+
+        }
+        // สร้าง product items
+        for (const v of ctItems) {
+          // var rnd = new Random(Random.engines.mt19937().seedWithArray([0x12345678, 0x90abcdef]));
+          const purchaseOrderId = Math.floor(new Date().valueOf() * Math.random() * new Date().getUTCMilliseconds());
+
+          for (const i of v.items) {
+            const obj: any = {};
+            obj.purchase_order_id = purchaseOrderId;
+            // obj.generic_type_id = i.generic_type_id;
+            obj.generic_id = i.generic_id;
+            obj.product_id = i.product_id;
+            obj.qty = i.order_qty;
+            obj.unit_price = i.purchase_cost;
+            obj.unit_generic_id = i.unit_generic_id;
+            obj.total_small_qty = i.conversion_qty * i.order_qty;
+            // obj.v_labeler_id = i.v_labeler_id;
+            // obj.contract_id = i.contract_id;
+            // obj.contract_no = i.contract_no;
+
+            productItems.push(obj);
+          }
+
+          const objP = {
+            purchase_order_id: purchaseOrderId,
+            labeler_id: v.v_labeler_id,
+            contract_id: v.contract_id,
+            is_contract: 'Y',
+            delivery: this.delivery,
+            vat_rate: this.vatRate,
+            generic_type_id: v.generic_type_id,
+            budget_year: this.defaultBudgetYear,
+            // total_price: totalPrice + vat,
+            order_date: moment().format('YYYY-MM-DD')
+          }
+
+          poItems.push(objP);
+        }
+      }
 
       this.alertService.confirm('ต้องการสร้างใบสั่งซื้อใหม่ตามรายการที่กำหนด ใช่หรือไม่?')
         .then(async () => {
           this.modalLoading.show();
           try {
             this.loading = true;
-            let rs: any = await this.purchasingOrderService.saveWithOrderPoint(poItems, productItems);
+            const rs: any = await this.purchasingOrderService.saveWithOrderPoint(poItems, productItems);
             this.modalLoading.hide();
             // console.log(rs);
             if (rs.ok) {
@@ -253,7 +414,7 @@ export class ReorderPointComponent implements OnInit {
         })
         .catch(() => {
           this.modalLoading.hide();
-        })
+        });
 
     } else {
       this.modalLoading.hide();
@@ -262,35 +423,21 @@ export class ReorderPointComponent implements OnInit {
 
   }
 
-  settings(module: string) {
-    this.settingService.byModule(module)
-      .then((results: any) => {
-        this.settingConfig = results.rows;
-        const delivery = _.find(this.settingConfig, { 'action_name': 'PC_SHIPPING_DATE' });
-        this.delivery = delivery.value;
-        const budgetYear = _.find(this.settingConfig, { 'action_name': 'PC_DEFAULT_BUDGET_YEAR' });
-        if (budgetYear) {
-          this.defaultBudgetYear = budgetYear.value;
-        }
-        this.ref.detectChanges();
-      })
-      .catch(error => {
-        this.alertService.serverError(error);
-      });
-  }
-
   onSuccessReorderPoint(event: any) {
-    let idx = _.findIndex(this.orderItems, { product_id: event.product_id });
+    const idx = _.findIndex(this.orderItems, { product_id: event.product_id });
     if (idx > -1) {
       this.orderItems[idx].order_qty = +event.order_qty;
+      this.orderItems[idx].purchase_cost = +event.purchase_cost;
+      this.orderItems[idx].conversion_qty = +event.conversion_qty;
+
     } else {
       this.orderItems.push(event);
     }
 
-    let idxG = _.findIndex(this.products, { generic_id: event.generic_id });
+    const idxG = _.findIndex(this.products, { generic_id: event.generic_id });
 
     if (idxG > -1) {
-      let idxP = _.findIndex(this.products[idxG].items, { product_id: event.product_id });
+      const idxP = _.findIndex(this.products[idxG].items, { product_id: event.product_id });
       if (idxP > -1) {
         this.products[idxG].items[idxP].order_qty = +event.order_qty;
       } else {

@@ -17,27 +17,26 @@ export class SearchProductVendorComponent implements OnInit {
     this._labelerId = value;
     this.setApiUrl(value);
   }
+
   _disabled: boolean = false;
-  
-    @Input('disabled')
-    set setDisabled(value: boolean) {
-      this._disabled = value;
-    }  
+
+  @Input('disabled')
+  set setDisabled(value: boolean) {
+    this._disabled = value;
+  }
 
   token: any;
   query: any = null;
-  searchProductUrl: any;
+  url: any = null;
 
   constructor(
     @Inject('API_URL') private apiUrl: string) {
-
     this.token = sessionStorage.getItem('token');
-    this.searchProductUrl = `${this.apiUrl}/products/search/autocomplete-labeler?token=${this.token}&labelerId=${this._labelerId}`;
+    this.url = `${this.apiUrl}/products/search/autocomplete-labeler?token=${this.token}&labelerId=${this._labelerId}`;
   }
 
   setApiUrl(labelerId: any) {
-    this.labelerId = labelerId;
-    this.searchProductUrl = `${this.apiUrl}/products/search/autocomplete-labeler?token=${this.token}&labelerId=${this.labelerId}`;
+    this.url = `${this.apiUrl}/products/search/autocomplete-labeler?token=${this.token}&labelerId=${labelerId}`;
   }
 
   ngOnInit() {
@@ -48,17 +47,21 @@ export class SearchProductVendorComponent implements OnInit {
   }
 
   clearSelected(event: any) {
-    if (event.keyCode === 13 || event.keyCode === 37 || event.keyCode === 38 || event.keyCode === 39 || event.keyCode === 40) {
-      this.onChange.emit(false);
+    if (event) {
+      if (event.keyCode === 13 || event.keyCode === 37 || event.keyCode === 38 || event.keyCode === 39 || event.keyCode === 40) {
+        this.onChange.emit(false);
+      } else {
+        this.onChange.emit(true);
+      }
     } else {
-      this.onChange.emit(true);
+      this.onChange.emit(false);
     }
+    
   }
 
   handleResultSelected(event: any) {
     this.onSelect.emit(event);
-    this.query = `${event.product_name} (${event.generic_name})`;
+    this.query = event.product_name;
   }
-
 
 }

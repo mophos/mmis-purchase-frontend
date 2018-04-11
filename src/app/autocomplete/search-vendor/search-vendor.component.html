@@ -1,0 +1,6 @@
+<input type="text" [disabled]="_disabled" [(ngModel)]="query" style="width: 100%;" placeholder="ค้นหาผู้จัดจำหน่าย..."
+  agxTypeahead (keyup)="clearSelected($event)" [taUrl]="url" taApi="http" [taItemTpl]="itemTpl" (taSelected)="handleResultSelected($event)">
+
+<ng-template #itemTpl let-result>
+  {{ result.result.labeler_name }}
+</ng-template>

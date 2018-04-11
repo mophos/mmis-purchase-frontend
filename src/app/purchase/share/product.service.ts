@@ -18,16 +18,64 @@ export class ProductService {
     return res.json();
   }
 
+  async getReorderPointTrade(genericTypeId: any, limit: number = 20, offset: number = 0, query: any = '') {
+    const res = await this.authHttp.post(`${this.url}/products/reorderpoint/trade`, {
+      genericTypeId: genericTypeId,
+      limit: limit,
+      offset: offset,
+      query: query
+    }).toPromise();
+    return res.json();
+  }
+
+  async getReorderPointTradeReserved(genericTypeId: any, limit: number = 20, offset: number = 0, query: any = '') {
+    const res = await this.authHttp.post(`${this.url}/products/reorderpoint/trade/reserved`, {
+      genericTypeId: genericTypeId,
+      limit: limit,
+      offset: offset,
+      query: query
+    }).toPromise();
+    return res.json();
+  }
+
+  async getReorderPointTradeReservedForOrdered() {
+    const res = await this.authHttp.get(`${this.url}/products/reorderpoint/trade/reserved/confirmed`).toPromise();
+    return res.json();
+  }
+
+  async updateTradeReserved(items: any[]) {
+    const res = await this.authHttp.put(`${this.url}/products/reorderpoint/trade/reserved-update`, {
+      items: items
+    }).toPromise();
+    return res.json();
+  }
+
+  async saveReservedProducts(items: any[]) {
+    const res = await this.authHttp.post(`${this.url}/products/save-reserved`, {
+      items: items
+    }).toPromise();
+    return res.json();
+  }
+
+  async removeReservedProducts(reserveId: any) {
+    const res = await this.authHttp.delete(`${this.url}/products/remove-reserved/${reserveId}`).toPromise();
+    return res.json();
+  }
+
   async getProductsListByGeneric(genericId: any) {
     const res = await this.authHttp.get(`${this.url}/products/orderspoint/product-list-by-generic/${genericId}`)
       .toPromise();
     return res.json();
   }
 
-  async ordersPoint(q:string='', contractFilter='all', minMaxFilter='0',genericType:string ='',limit:number=50, offset:number=0) {
-    const res = await this.authHttp.post(`${this.url}/${this.apiName}/orderspoint?q=${q}&contract=${contractFilter}&minmax=${minMaxFilter}&generictype=${genericType}`,{
+  async ordersPoint(q:string='', contractFilter='all', genericType: any, limit:number=50, offset:number=0) {
+    const res = await this.authHttp.post(`${this.url}/${this.apiName}/orderspoint`,{
       limit,
-      offset
+      offset,
+      q: q,
+      contract: contractFilter,
+      generictype: genericType,
+
     }).toPromise();
     return res.json();
   }

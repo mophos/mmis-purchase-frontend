@@ -19,12 +19,26 @@ export class MappingCommitteeComponent implements OnInit {
     await this.getListBidType();
     await this.getCommittee();
   }
+
   async select(e, id) {
     const bid_id = e.target.value;
-    await this.commiteeService.removecommitteebid(bid_id);
-    await this.commiteeService.updatecommitteebid(id, bid_id);
-    this.getCommittee();
+    this.commiteeService.removecommitteebid(bid_id)
+      .then((results: any) => {
+        console.log(id, bid_id)
+        this.commiteeService.updatecommitteebid(id, bid_id)
+          .then((res: any) => {
+            this.alertService.success();
+            this.getCommittee();
+          })
+          .catch((err) => {
+            this.alertService.error(err);
+          })
+      })
+      .catch((error) => {
+        this.alertService.error(error);
+      })
   }
+
   getCommittee() {
     this.loading = true;
     this.commiteeService.allbid()
@@ -39,6 +53,7 @@ export class MappingCommitteeComponent implements OnInit {
         this.alertService.serverError();
       });
   }
+
   getListBidType() {
     this.commiteeService.listbidtype()
       .then((results: any) => {

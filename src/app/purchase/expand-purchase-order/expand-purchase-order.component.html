@@ -39,11 +39,14 @@
     </clr-dg-row>
 
     <clr-dg-footer>
-      ราคารวม: {{totalPrice | number:'1.2'}} ส่วนลด({{purchaseOrder.discount_percent}}%) {{(purchaseOrder.discount_percent*totalPrice
-      / 100) | number:'1.2'}} ส่วนลดเงินสด: {{purchaseOrder.discount_cash | number:'1.2'}} ภาษี ({{purchaseOrder.vat_rate}}%):
-      {{totalPrice*purchaseOrder.vat_rate/100 | number:'1.2'}} ราคารวมสุทธิ:
-      <strong class="text-success">{{totalPrice+(totalPrice*purchaseOrder.vat_rate/100) | number:'1.2'}}</strong> | {{pagination.firstItem + 1}} - {{pagination.lastItem
-      + 1}} จาก {{pagination.totalItems}} รายการ
+      ราคารวม: {{totalPrice | number:'1.2'}} บาท
+      ส่วนลด({{purchaseOrder.discount_percent | number:'1.2'}}%) 
+      {{(purchaseOrder.discount_percent*totalPrice / 100) | number:'1.2'}}  บาท
+      ส่วนลดเงินสด: {{purchaseOrder.discount_cash | number:'1.2'}}  บาท
+      ภาษี ({{purchaseOrder.vat_rate | number }}%):{{totalPrice*purchaseOrder.vat_rate/100 | number:'1.2'}}
+        <strong *ngIf="purchaseOrder.exclude_vat==='Y'" class="text-success" > ราคารวมสุทธิ: {{totalPrice+(totalPrice*purchaseOrder.vat_rate/100) | number:'1.2'}}</strong>
+        <strong *ngIf="purchaseOrder.exclude_vat==='N'" class="text-success"  > ราคารวมสุทธิ: {{totalPrice | number:'1.2'}}</strong>
+       | {{pagination.firstItem + 1}} - {{pagination.lastItem+ 1}} จาก {{pagination.totalItems}} รายการ
       <clr-dg-pagination #pagination [clrDgPageSize]="20"></clr-dg-pagination>
     </clr-dg-footer>
   </clr-datagrid>

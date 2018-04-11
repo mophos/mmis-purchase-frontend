@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
 import { AlertService } from 'app/alert.service';
-import { UnitsService } from 'app/services/units.service';
+import { StandardService } from 'app/services/standard.service';
 import * as _ from 'lodash';
 
 @Component({
@@ -11,9 +11,9 @@ import * as _ from 'lodash';
 export class SelectBoxUnitsComponent implements OnInit {
 
   @Input() public genericId: any;
-  @Input() public selectedUnitGenericId: any;
+  @Input() public selectedId: any;
   @Input() public disabled: any;
-  @Output('onSelect') onSelect: EventEmitter<any> = new EventEmitter<any>();
+  @Output('onChange') onChange: EventEmitter<any> = new EventEmitter<any>();
 
   units = [];
   unitGenericId = null;
@@ -21,7 +21,7 @@ export class SelectBoxUnitsComponent implements OnInit {
 
   constructor(
     private alertService: AlertService,
-    private unitService: UnitsService
+    private stdService: StandardService
   ) { }
 
   ngOnInit() {
@@ -32,53 +32,51 @@ export class SelectBoxUnitsComponent implements OnInit {
 
   setSelect(event: any) {
     const idx = _.findIndex(this.units, { unit_generic_id: +event.target.value });
-      if (idx > -1) {
-        this.onSelect.emit(this.units[idx]);
-      }
+    if (idx > -1) {
+      this.onChange.emit(this.units[idx]);
+    }
   }
 
   setGenericId(genericId: any) {
     if (genericId) {
       this.genericId = genericId;
+      this.selectedId = null;
       this.getUnits(this.genericId);
     }
   }
 
   async getUnits(genericId: any) {
-    console.log(this.selectedUnitGenericId);
     this.loading = true;
     try {
-      let rs: any = await this.unitService.getGenericUnits(genericId);
+      let rs: any = await this.stdService.getGenericUnits(genericId);
       this.loading = false;
       if (rs.ok) {
         this.units = rs.rows;
         if (this.units.length) {
-          if (this.selectedUnitGenericId) {
-            this.unitGenericId = this.selectedUnitGenericId;
-            const idx = _.findIndex(this.units, { unit_generic_id: this.selectedUnitGenericId });
+          if (this.selectedId) {
+            const idx = _.findIndex(this.units, { unit_generic_id: +this.selectedId });
             if (idx > -1) {
-              this.onSelect.emit(this.units[idx]);
+              this.onChange.emit(this.units[idx]);
             } else {
-              this.onSelect.emit(this.units[0]);
+              this.onChange.emit(this.units[0]);
             }
           } else {
-            this.selectedUnitGenericId = this.units[0].unit_generic_id;
-            this.unitGenericId = this.selectedUnitGenericId;
-            this.onSelect.emit(this.units[0]);
+            this.selectedId = this.units[0].unit_generic_id;
+            this.onChange.emit(this.units[0]);
           }
         }
       } else {
-        this.loading = false;
         this.alertService.error(rs.error);
       }
     } catch (error) {
       this.loading = false;
-      this.alertService.error(error.message); 
+      this.alertService.error(error.message);
     }
   }
 
   clearUnits() {
     this.genericId = null;
+    this.selectedId = null;
     this.units = [];
     // this.modalUom.clearUnits();
   }

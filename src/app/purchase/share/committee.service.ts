@@ -21,6 +21,7 @@ export class CommitteeService {
         });
     });
   }
+  
   allbid() {
     return new Promise((resolve, reject) => {
       this.authHttp.get(`${this.url}/${this.apiName}/bid`)
@@ -32,6 +33,7 @@ export class CommitteeService {
         });
     });
   }
+  
   listbidtype() {
     return new Promise((resolve, reject) => {
       this.authHttp.get(`${this.url}/${this.apiName}/listbidtype`)
@@ -43,6 +45,7 @@ export class CommitteeService {
         });
     });
   }
+
   removecommitteebid(id) {
     return new Promise((resolve, reject) => {
       this.authHttp.delete(`${this.url}/${this.apiName}/removecommitteebid?id=${id}`)
@@ -54,6 +57,7 @@ export class CommitteeService {
         });
     });
   }
+
   updatecommitteebid(id, bid_id) {
     return new Promise((resolve, reject) => {
       this.authHttp.put(`${this.url}/${this.apiName}/updatecommitteebid`, { id: id, bid_id: bid_id })
@@ -125,7 +129,8 @@ export class CommitteeService {
         });
     });
   }
-  _getCommittee(bidId: any) {
+
+  getCommittee(bidId: any) {
     return new Promise((resolve, reject) => {
       this.authHttp.get(`${this.url}/${this.apiName}/getcommittee/${bidId}`)
         .map(res => res.json())

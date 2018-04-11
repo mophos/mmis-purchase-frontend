@@ -7,8 +7,39 @@
             </a>
         </div>
         <div class="header-nav">
-            <a class=" nav-link nav-icon" href="{{homeUrl}}" routerLinkActive='active'>
+            <a href="{{homeUrl}}" class=" nav-link nav-icon tooltip tooltip-md tooltip-bottom-right" role="tooltip" aria-haspopup="true">
                 <clr-icon shape="home"></clr-icon>
+                <span class="tooltip-content">Home</span>
+            </a>
+            <a class=" nav-link nav-icon tooltip tooltip-md tooltip-bottom-right" routerLink="{{env.purchasingUrl}}" routerLinkActive="active"
+                role="tooltip" aria-haspopup="true">
+                <clr-icon shape="shopping-cart"></clr-icon>
+                <span class="tooltip-content">Purchasing</span>
+            </a>
+            <a href="{{env.planningUrl}}" *ngIf="Planning" class=" nav-link nav-icon tooltip tooltip-md tooltip-bottom-right" role="tooltip"
+                aria-haspopup="true">
+                <clr-icon shape="event"></clr-icon>
+                <span class="tooltip-content">Planning</span>
+            </a>
+            <a href="{{env.inventoryUrl}}" *ngIf="Inventory || InventoryWarehouse" class=" nav-link nav-icon tooltip tooltip-md tooltip-bottom-right"
+                role="tooltip" aria-haspopup="true">
+                <clr-icon shape="data-cluster"></clr-icon>
+                <span class="tooltip-content">Inventory</span>
+            </a>
+            <a href="{{env.materialsUrl}}" *ngIf="Materials" class=" nav-link nav-icon tooltip tooltip-md tooltip-bottom-right" role="tooltip"
+                aria-haspopup="true">
+                <clr-icon shape="storage"></clr-icon>
+                <span class="tooltip-content">Materials</span>
+            </a>
+            <a href="{{env.contractsUrl}}" *ngIf="Contracts" class=" nav-link nav-icon tooltip tooltip-md tooltip-bottom-right" role="tooltip"
+                aria-haspopup="true">
+                <clr-icon shape="scroll"></clr-icon>
+                <span class="tooltip-content">Contracts</span>
+            </a>
+            <a href="{{env.umUrl}}" *ngIf="Administrator" class=" nav-link nav-icon tooltip tooltip-md tooltip-bottom-right" role="tooltip"
+                aria-haspopup="true">
+                <clr-icon shape="cog"></clr-icon>
+                <span class="tooltip-content">Administrator</span>
             </a>
             <!-- <a class=" nav-link nav-icon" routerLink='/purchasing/dashboard' routerLinkActive='active'>
                 <clr-icon shape="analytics"></clr-icon>
@@ -16,19 +47,17 @@
 
         </div>
         <div class="header-actions">
-        <clr-dropdown class="dropdown bottom-right">
-            <button class="nav-text" clrDropdownToggle>
-                        <!-- <clr-icon shape="user"></clr-icon> -->
-                        {{ fullname }}
-                        <clr-icon shape="caret down"></clr-icon>
-                    </button>
-            <div class="dropdown-menu">
-              <!-- <a (click)="downloadManual()" clrDropdownItem>คู่มือ</a> -->
-                <a href="javascript://" (click)="openChangePasswordModal()" clrDropdownItem>เปลี่ยนรหัสผ่าน</a>
-                <a (click)="logout()" clrDropdownItem>ออกจากระบบ</a>
-            </div>
-        </clr-dropdown>
-      </div>
+            <clr-dropdown>
+                <button class="nav-text" clrDropdownTrigger>
+                    {{ fullname }}
+                    <clr-icon shape="caret down"></clr-icon>
+                </button>
+                <clr-dropdown-menu *clrIfOpen clrPosition="bottom-right">
+                    <a href="javascript://" (click)="openChangePasswordModal()" clrDropdownItem>เปลี่ยนรหัสผ่าน</a>
+                    <a (click)="logout()" clrDropdownItem>ออกจากระบบ</a>
+                </clr-dropdown-menu>
+            </clr-dropdown>
+        </div>
     </clr-header>
 
     <div class="content-container">
@@ -38,11 +67,11 @@
 
         <clr-vertical-nav [clrVerticalNavCollapsible]="collapsible" [(clrVerticalNavCollapsed)]="collapsed">
 
-            <a clrVerticalNavLink routerLink="/purchase/order-form" routerLinkActive="active">
+            <a clrVerticalNavLink routerLink="/purchase/new" routerLinkActive="active">
                 <clr-icon clrVerticalNavIcon shape="plus"></clr-icon>
                 ออกใบสั่งซื้อ
             </a>
-            <a clrVerticalNavLink routerLink="/purchase/reorder-point" routerLinkActive="active">
+            <a clrVerticalNavLink routerLink="/purchase/order-point" routerLinkActive="active">
                 <clr-icon clrVerticalNavIcon shape="warning-standard"></clr-icon>
                 รายการที่ถึงจุดสั่งซื้อ
             </a>
@@ -50,6 +79,11 @@
             <a clrVerticalNavLink routerLink="/purchase/orders" routerLinkActive="active">
                 <clr-icon clrVerticalNavIcon shape="shopping-bag"></clr-icon>
                 รายการสั่งซื้อ
+            </a>
+
+            <a clrVerticalNavLink routerLink="/purchase/history-order" routerLinkActive="active">
+                <clr-icon clrVerticalNavIcon shape="history"></clr-icon>
+                ประวัติการสั่งซื้อ
             </a>
 
             <!-- <clr-vertical-nav-group routerLinkActive="active">
@@ -86,11 +120,23 @@
                     รายงาน
                 </a>
                 <clr-vertical-nav-group-children *clrIfExpanded="false">
-                    <a clrVerticalNavLink  routerLink="/purchase/report/purchase-order" [queryParams]="{id: '01'}"  routerLinkActive="active">
+                    <a clrVerticalNavLink routerLink="/purchase/report/purchase-order" [queryParams]="{id: '01'}" routerLinkActive="active">
                         รายงานสั่งซื้อเวชภัณฑ์
                     </a>
-                    
+
                 </clr-vertical-nav-group-children>
+                <clr-vertical-nav-group-children *clrIfExpanded="false">
+                    <a clrVerticalNavLink routerLink="/purchase/report/purchase-order-list" [queryParams]="{id: '01'}" routerLinkActive="active">
+                        รายงานสรุปรายการเวชภัณฑ์ที่สั่งซื้อ
+                    </a>
+
+                </clr-vertical-nav-group-children>
+                <!-- <clr-vertical-nav-group-children *clrIfExpanded="false">
+                    <a clrVerticalNavLink routerLink="/purchase/report/purchase-budget-history" [queryParams]="{id: '01'}" routerLinkActive="active">
+                        รายงานประวัติการใช้งบประมาณ
+                    </a>
+
+                </clr-vertical-nav-group-children> -->
             </clr-vertical-nav-group>
 
             <clr-vertical-nav-group>
@@ -100,7 +146,7 @@
                 </a>
                 <clr-vertical-nav-group-children *clrIfExpanded="false">
                     <a clrVerticalNavLink routerLink="/purchase/committee" routerLinkActive="active">
-                            ชุดกรรมการ
+                        ชุดกรรมการ
                     </a>
                     <a clrVerticalNavLink routerLink="/purchase/mapping-committee" routerLinkActive="active">
                         จับคู่กรรมการและการจัดซื้อ
@@ -123,35 +169,35 @@
 <clr-modal [(clrModalOpen)]="ChangePasswordModal" [clrModalClosable]="false" [clrModalSize]="'md'">
     <h3 class="modal-title">เปลี่ยนรหัสผ่าน</h3>
     <div class="modal-body" style="height:205px;">
-  
-      <form>
-        <section class="form-block">
-          <!-- <label>เปลี่ยนรหัสผ่านผู้ใช้งาน</label> -->
-          <div class="form-group" >
-            <label for="password" class="required">ระบุรหัสผ่านใหม่</label>
-            <input type="password" name="password" placeholder="**********" [(ngModel)]="password">
-            <input type="password" name="password2" placeholder="**********" [(ngModel)]="password2">
-          </div>
-          <!-- <div class="form-group"> -->
-            <div class="row form-group">
-              <div class="col-md-12">
-                <label *ngIf="password.length <= 3 && password != ''">**รหัสผ่านต้องมากกว่า 4 ตัวอักษร</label>
-              </div>
-              <div class="col-md-12">
-                <label *ngIf="password != password2 && password2 != null">***รหัสผ่านไม่ตรงกัน</label>
-              </div>
-            </div>
-          <!-- </div> -->
-        </section>
-      </form>
-  
+
+        <form>
+            <section class="form-block">
+                <!-- <label>เปลี่ยนรหัสผ่านผู้ใช้งาน</label> -->
+                <div class="form-group">
+                    <label for="password" class="required">ระบุรหัสผ่านใหม่</label>
+                    <input type="password" name="password" placeholder="**********" [(ngModel)]="password">
+                    <input type="password" name="password2" placeholder="**********" [(ngModel)]="password2">
+                </div>
+                <!-- <div class="form-group"> -->
+                <div class="row form-group">
+                    <div class="col-md-12">
+                        <label *ngIf="password.length <= 3 && password != ''">**รหัสผ่านต้องมากกว่า 4 ตัวอักษร</label>
+                    </div>
+                    <div class="col-md-12">
+                        <label *ngIf="password != password2 && password2 != null">***รหัสผ่านไม่ตรงกัน</label>
+                    </div>
+                </div>
+                <!-- </div> -->
+            </section>
+        </form>
+
     </div>
     <div class="modal-footer">
-      <button type="button" class="btn btn-success btn-sm" (click)="chanagePassword()" [disabled]="!password || password.length <= 3 || isSaving || password!=password2">
-        เปลี่ยนรหัสผ่าน
-      </button>
-      <button type="button" class="btn btn-danger btn-sm" (click)="closeModal()">
-        ปิดหน้าต่าง
-      </button>
+        <button type="button" class="btn btn-success btn-sm" (click)="chanagePassword()" [disabled]="!password || password.length <= 3 || isSaving || password!=password2">
+            เปลี่ยนรหัสผ่าน
+        </button>
+        <button type="button" class="btn btn-danger btn-sm" (click)="closeModal()">
+            ปิดหน้าต่าง
+        </button>
     </div>
-  </clr-modal>
+</clr-modal>
