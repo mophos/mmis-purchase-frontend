@@ -530,7 +530,7 @@ export class DatagridOrdersComponent implements OnInit {
 
   btnConfirmIsActive(pro: any) {
 
-    if (this.accessCheck.can('PO_EDIT_AFFTER_APPROVE') && pro.purchase_order_status !== 'APPROVED' && pro.purchase_order_status !== 'CONFIRMED') {
+    if (this.accessCheck.can('PO_EDIT_AFFTER_APPROVE') && pro.purchase_order_status !== 'APPROVED' && pro.purchase_order_status !== 'CONFIRMED' && pro.purchase_order_status !== 'ORDERPOINT') {
       return true;
     } else {
       if (this.checkEmptyData(pro) === false) {
@@ -676,7 +676,7 @@ export class DatagridOrdersComponent implements OnInit {
       this.alertService.error('ข้อมุูลไม่ครบถ้วน');
     }
     if (print_non > 0) {
-      this.htmlPrview.showReport(this.url + `/report/getporder/singburi/?token=${this.token}&` + printId.join('&'));
+      this.htmlPrview.showReport(this.url + `/report/allpo/egp/singburi/?token=${this.token}&` + printId.join('&'));
       this.openModal = false;
     } else {
       this.alertService.error('ข้อมุูลไม่ครบถ้วน');
