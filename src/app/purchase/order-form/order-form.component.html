@@ -245,7 +245,7 @@
     <div class="col-md-6">
       <clr-tabs>
         <clr-tab>
-          <button clrTabLink>เพิ่มเติม</button>
+          <button clrTabLink>เจ้าหน้าที่/กรรมการตรวจรับ</button>
           <clr-tab-content *clrIfActive="true">
             <div class="card" style="min-height:255px;">
               <div class="card-block">
@@ -298,6 +298,56 @@
             </div>
           </clr-tab-content>
         </clr-tab>
+        <clr-tab>
+          <button clrTabLink>อื่นๆ</button>
+          <clr-tab-content id="tab-detail-2" *clrIfActive>
+
+            <div class="row" style="padding-top:20px;">
+
+              <div class="col-md-6">
+                <div class="card">
+                  <div class="card-block">
+                    <section class="form-block">
+                      <div class="form-group row">
+                        <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                          <label for="gForm_1">เลขที่ eGP</label>
+                        </div>
+                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                          <input class="form-control" type="text" id="egpId" name="egpId" pattern="[0-9]+" [(ngModel)]="egpId" placeholder="">
+                        </div>
+                      </div>
+                      <div class="form-group row">
+                        <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                          <label for="gForm_1">ผู้ติดต่อ</label>
+                        </div>
+                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                          <input type="text" class="form-control" id="vendorContactName" name="vendorContactName" [(ngModel)]="vendorContactName">
+                        </div>
+                      </div>
+                      <div class="form-group row">
+                        <label for="gForm_1">ที่อยู่สำหรับจัดส่ง</label>
+                        <textarea rows="1" class="form-control" id="shipTo" name="shipTo" [(ngModel)]="shipTo"> </textarea>
+                      </div>
+                    </section>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="card">
+                  <div class="card-block">
+                    <label for="noteToVender">หมายเหตุถึงผู้จำหน่าย</label>
+                    <textarea rows="1" class="form-control" id="noteToVender" name="noteToVender" [(ngModel)]="noteToVender"> </textarea>
+                    <label for="comment">หมายเหตุถึงคลังสินค้า</label>
+                    <textarea rows="1" class="form-control" id="comment" name="comment" [(ngModel)]="comment"> </textarea>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </clr-tab-content>
+        </clr-tab>
+
         <clr-tab>
           <button clrTabLink>ประวัติการตัดงบ</button>
           <clr-tab-content *clrIfActive>

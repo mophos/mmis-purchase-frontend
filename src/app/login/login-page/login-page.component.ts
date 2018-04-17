@@ -24,7 +24,7 @@ export class LoginPageComponent implements OnInit {
 
   ngOnInit() {
     if (sessionStorage.getItem('token')) {
-      this.router.navigate(['purchase/reorder-point']);
+      this.router.navigate(['purchase/order-point']);
     }
   }
 
@@ -48,7 +48,7 @@ export class LoginPageComponent implements OnInit {
         // hide spinner
         this.isLogging = false;
         // redirect to admin module
-        this.router.navigate(['purchase/reorder-point']);
+        this.router.navigate(['purchase/order-point']);
       })
       .catch((error) => {
         this.isLogging = false;

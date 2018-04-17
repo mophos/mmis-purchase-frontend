@@ -1,3 +1,4 @@
+import { State } from '@clr/angular';
 import { Component, OnInit, Input, Output, EventEmitter, ViewChild, Inject } from '@angular/core';
 import { IMyOptions, IMyDateModel } from 'mydatepicker-th';
 import * as _ from 'lodash';
@@ -33,6 +34,9 @@ export class PurchaseOrderComponent implements OnInit {
   myDatePickerOptions: IMyOptions = {
     dateFormat: 'dd mmm yyyy',
   };
+
+  perPage = 10;
+  totalProduct: any;
   public jwtHelper: JwtHelper = new JwtHelper();
   token: any;
   constructor(
@@ -91,17 +95,43 @@ export class PurchaseOrderComponent implements OnInit {
       this.modalLoading.show();
       let rs: any;
       if (this.generic_type_id === 'all') {
-        rs = await this.productService.getReorderPointTrade(this.productGroup);
+        rs = await this.productService.getReorderPointTrade(this.productGroup, this.perPage, 0);
       } else {
         const _generic_type_id = [this.generic_type_id];
-        rs = await this.productService.getReorderPointTrade(_generic_type_id);
+        rs = await this.productService.getReorderPointTrade(_generic_type_id, this.perPage, 0);
       }
-      this.modalLoading.hide();
       if (rs.ok) {
         this.products = rs.rows;
+        this.totalProduct = rs.total;
       } else {
         this.alertService.error(rs.error);
       }
+      this.modalLoading.hide();
+    } catch (error) {
+      this.modalLoading.hide();
+      this.alertService.error(error.message);
+    }
+  }
+
+  async refresh(state: State) {
+    const offset = +state.page.from;
+    const limit = +state.page.size;
+    try {
+      this.modalLoading.show();
+      let rs: any;
+      if (this.generic_type_id === 'all') {
+        rs = await this.productService.getReorderPointTrade(this.productGroup, limit, offset);
+      } else {
+        const _generic_type_id = [this.generic_type_id];
+        rs = await this.productService.getReorderPointTrade(_generic_type_id, limit, offset);
+      }
+      if (rs.ok) {
+        this.products = rs.rows;
+        this.totalProduct = rs.total;
+      } else {
+        this.alertService.error(rs.error);
+      }
+      this.modalLoading.hide();
     } catch (error) {
       this.modalLoading.hide();
       this.alertService.error(error.message);
@@ -114,7 +144,6 @@ export class PurchaseOrderComponent implements OnInit {
       const rs: any = await this.productService.type(this.productGroup);
       if (rs.ok) {
         this.productType = rs.rows;
-        await this.getProducts();
       } else {
         this.modalLoading.hide();
         this.alertService.error(rs.error);
