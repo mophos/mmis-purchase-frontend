@@ -14,6 +14,7 @@
           <button [disabled]="!selectedProduct.length" class="btn btn-sm btn-success btn-icon" (click)="saveReserved()">
             <clr-icon shape="plus"></clr-icon> เตรียมจัดสั่งซื้อ ({{selectedProduct.length | number}} รายการ)
           </button>
+          <button (click)="log()"></button>
         </div>
         <div class="col-md-4">
           <div class="select" style="float: right;">
@@ -51,7 +52,7 @@
 
         <clr-dg-footer>
           {{pagination.firstItem + 1 | number}} - {{pagination.lastItem + 1 | number}} จาก {{pagination.totalItems | number}} รายการ
-          <clr-dg-pagination #pagination [clrDgPageSize]="perPage" [clrDgTotalItems]="total"></clr-dg-pagination>
+          <clr-dg-pagination #pagination [clrDgPageSize]="perPage" [(clrDgPage)]="curentPage" [clrDgTotalItems]="total"></clr-dg-pagination>
         </clr-dg-footer>
       </clr-datagrid>
     </clr-tab-content>
