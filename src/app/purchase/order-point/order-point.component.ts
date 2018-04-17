@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, Inject } from '@angular/core';
 import { IMyDateModel } from 'mydatepicker-th';
 import * as moment from 'moment';
-import * as _ from 'lodash';  
+import * as _ from 'lodash';
 
 import { HtmlPreviewComponent } from 'app/helper/html-preview/html-preview.component';
 import { ModalLoadingComponent } from 'app/modal-loading/modal-loading.component';
@@ -48,6 +48,7 @@ export class OrderPointComponent implements OnInit {
   vatRate: number;
   defaultBudgetYear: any;
 
+  curentPage = 1;
   constructor(
     private productService: ProductService,
     private alertService: AlertService,
@@ -107,7 +108,7 @@ export class OrderPointComponent implements OnInit {
   }
 
   changeType() {
-    console.log(this.genericTypeId);
+    this.curentPage = 1;
     this.getProducts(this.perPage);
   }
 
@@ -238,10 +239,11 @@ export class OrderPointComponent implements OnInit {
 
     if (items.length) {
       try {
-        let rs: any = await this.productService.updateTradeReserved(items);
+        const rs: any = await this.productService.updateTradeReserved(items);
         if (rs.ok) {
           this.alertService.success();
           this.getProductsReserved();
+          this.getReservedForOrders();
           this.selectedReserved = [];
         } else {
           this.alertService.error(rs.error);
@@ -257,20 +259,22 @@ export class OrderPointComponent implements OnInit {
   async saveReserved() {
     if (this.selectedProduct.length) {
       try {
-        let items: any = [];
+        this.curentPage = 1;
+        const items: any = [];
         this.selectedProduct.forEach(v => {
-          let obj: any = {};
+          const obj: any = {};
           obj.product_id = v.product_id;
           obj.generic_id = v.generic_id;
           items.push(obj);
         });
-
+        this.selectedProduct = [];
         this.modalLoading.show();
-        let rs: any = await this.productService.saveReservedProducts(items);
+        const rs: any = await this.productService.saveReservedProducts(items);
         if (rs.ok) {
           this.alertService.success();
           this.getProducts();
           this.getReservedForOrders();
+          this.getProductsReserved();
         } else {
           this.alertService.error(rs.error);
         }
@@ -561,5 +565,8 @@ export class OrderPointComponent implements OnInit {
     }
 
   }
+  log() {
+    console.log(this.selectedProduct);
 
+  }
 }
