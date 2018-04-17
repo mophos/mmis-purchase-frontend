@@ -65,6 +65,7 @@ export class PurchaseOrderComponent implements OnInit {
     const url = `${this.apiUrl}/report/list/purchase-trade-select/?token=${this.token}&${productIds}`;
     this.htmlPreview.showReport(url);
 
+    this.printProducts = [];
   }
 
   onDateStartChanged(event: IMyDateModel) {

@@ -75,7 +75,7 @@ export class OrderPointComponent implements OnInit {
   }
 
   printProduct() {
-    this.selectedProduct.forEach(v => {
+    this.selectedReserved.forEach(v => {
       this.printProducts.push(v.product_id);
     });
 
