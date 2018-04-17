@@ -781,7 +781,7 @@ export class DatagridOrdersComponent implements OnInit {
         this.itemsChangeDate.push(v);
       }
     });
-
+    this.purchaseOrdersSelected = [];
     if (this.itemsChangeDate.length) {
       this.openChangeDate = true;
     } else {
