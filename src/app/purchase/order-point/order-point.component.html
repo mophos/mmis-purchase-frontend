@@ -178,7 +178,7 @@
           <clr-dg-cell>{{p.contract_id}}</clr-dg-cell>
           <clr-dg-cell style="text-align: right;">{{p.purchase_cost | number: '1.2-2'}}</clr-dg-cell>
           <clr-dg-cell style="text-align: right; font-weight: bold;">{{ p.order_qty | number }}</clr-dg-cell>
-          <clr-dg-cell>{{p.from_unit_name}} ({{p.conversion_qty}}x{{p.to_unit_name}})</clr-dg-cell>
+          <clr-dg-cell>{{p.from_unit_name}} ({{p.conversion_qty}} {{p.to_unit_name}})</clr-dg-cell>
           <clr-dg-cell style="text-align: right; font-weight: bold;">{{ p.order_qty*p.purchase_cost | number }}</clr-dg-cell>
           <clr-dg-cell style="text-align: center;">
             <button class="btn btn-sm btn-danger wm-small-btn" (click)="removeWaiting(p)">
