@@ -7,7 +7,7 @@
       <clr-dg-column [style.width.px]="140">จำนวน</clr-dg-column>
       <clr-dg-column [style.width.px]="130">ขนาดบรรจุ</clr-dg-column>
       <clr-dg-column [style.width.px]="120">จำนวนรวม</clr-dg-column>
-      <clr-dg-column [style.width.px]="120">ราคาต่อหน่วย</clr-dg-column>
+      <clr-dg-column [style.width.px]="120">ราคาต่อแพค</clr-dg-column>
       <clr-dg-column [style.width.px]="120">ราคารวม</clr-dg-column>
   
       <clr-dg-row *clrDgItems="let pro of productOrders" [clrDgItem]="pro">
@@ -18,7 +18,7 @@
         <clr-dg-cell style="text-align:right">{{pro.qty}}</clr-dg-cell>
         <clr-dg-cell style="text-align:right">{{pro.large_unit_name}}({{pro.conversion_qty}} {{pro.small_large_unit_name}})</clr-dg-cell>
         <clr-dg-cell style="text-align:right">{{pro.qty*pro.conversion_qty}} {{pro.small_large_unit_name}}</clr-dg-cell>
-        <clr-dg-cell style="text-align:right">{{pro.unit_price | number :'1.2-2'}}</clr-dg-cell>
+        <clr-dg-cell style="text-align:right">{{pro.unit_price*pro.conversion_qty | number :'1.2-2'}}</clr-dg-cell>
         <clr-dg-cell class="text-success" style="text-align:right">{{pro.total_price | number :'1.2-2'}}</clr-dg-cell>
       </clr-dg-row>
   
