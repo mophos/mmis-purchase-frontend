@@ -565,8 +565,4 @@ export class OrderPointComponent implements OnInit {
     }
 
   }
-  log() {
-    console.log(this.selectedProduct);
-
-  }
 }
