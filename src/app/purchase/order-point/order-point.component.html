@@ -108,7 +108,7 @@
           <clr-dg-cell style="text-align: right;">{{p.min_qty | number}}/{{p.max_qty | number}}</clr-dg-cell>
           <clr-dg-cell style="text-align: right;">{{p.remain_qty | number}}</clr-dg-cell>
           <clr-dg-cell>{{p.generic_type_name}}</clr-dg-cell>
-          <clr-dg-cell></clr-dg-cell>
+          <clr-dg-cell>{{p.contract_no}}</clr-dg-cell>
           <clr-dg-cell style="text-align: right;">{{p.cost | number: '1.2-2'}}</clr-dg-cell>
           <clr-dg-cell>
             <input type="text" #qty (keyup)="onChangeQty(qty.value, p)" style="width: 100%; text-align: right; background-color:#FFF9C4"
@@ -174,7 +174,7 @@
           </clr-dg-cell>
           <clr-dg-cell>{{p.labeler_name}}</clr-dg-cell>
           <clr-dg-cell>{{p.generic_type_name}}</clr-dg-cell>
-          <clr-dg-cell>{{p.contract_id}}</clr-dg-cell>
+          <clr-dg-cell>{{p.contract_no}}</clr-dg-cell>
           <clr-dg-cell style="text-align: right;">{{p.purchase_cost | number: '1.2-2'}}</clr-dg-cell>
           <clr-dg-cell style="text-align: right; font-weight: bold;">{{ p.order_qty | number }}</clr-dg-cell>
           <clr-dg-cell>{{p.from_unit_name}} ({{p.conversion_qty}} {{p.to_unit_name}})</clr-dg-cell>

@@ -5,7 +5,7 @@ import 'rxjs/add/operator/map';
 @Injectable()
 export class ProductService {
 
-  apiName: string = 'products';
+  apiName = 'products';
 
   constructor(
     @Inject('API_URL') private url: String,
@@ -68,8 +68,8 @@ export class ProductService {
     return res.json();
   }
 
-  async ordersPoint(q:string='', contractFilter='all', genericType: any, limit:number=50, offset:number=0) {
-    const res = await this.authHttp.post(`${this.url}/${this.apiName}/orderspoint`,{
+  async ordersPoint(q: string = '', contractFilter = 'all', genericType: any, limit: number = 50, offset: number = 0) {
+    const res = await this.authHttp.post(`${this.url}/${this.apiName}/orderspoint`, {
       limit,
       offset,
       q: q,
@@ -82,7 +82,7 @@ export class ProductService {
 
   productHistory(productId) {
     return new Promise((resolve, reject) => {
-      let url: string =`${this.url}/purchasing-orderitem/product-history/${productId}`;
+      const url = `${this.url}/purchasing-orderitem/product-history/${productId}`;
       this.authHttp.get(url)
         .map(res => res.json())
         .subscribe(data => {
@@ -95,7 +95,7 @@ export class ProductService {
 
   all(type: string = 'all') {
     return new Promise((resolve, reject) => {
-      let url: string = type === 'all' ? `${this.url}/${this.apiName}` : `${this.url}/${this.apiName}/type/${type}`;
+      const url = type === 'all' ? `${this.url}/${this.apiName}` : `${this.url}/${this.apiName}/type/${type}`;
       this.authHttp.get(url)
         .map(res => res.json())
         .subscribe(data => {
@@ -130,7 +130,7 @@ export class ProductService {
     });
   }
 
-  productsByLabeler(labelerId: string, query:string="") {
+  productsByLabeler(labelerId: string, query: string = '') {
     return new Promise((resolve, reject) => {
       this.authHttp.post(`${this.url}/${this.apiName}/productsbylabeler/${labelerId}`, {
         q: query
@@ -181,8 +181,8 @@ export class ProductService {
   }
   type(types) {
     return new Promise((resolve, reject) => {
-      this.authHttp.post(`${this.url}/${this.apiName}/types`,{
-        types : types
+      this.authHttp.post(`${this.url}/${this.apiName}/types`, {
+        types: types
       })
         .map(res => res.json())
         .subscribe(data => {
