@@ -12,7 +12,7 @@ import { State } from '@clr/angular';
 import { PurchasingOrderService } from 'app/purchase/share/purchasing-order.service';
 import { Router } from '@angular/router';
 @Component({
-  selector: 'po-order-point',
+  selector: 'app-order-point',
   templateUrl: './order-point.component.html',
   styles: []
 })
@@ -21,8 +21,8 @@ export class OrderPointComponent implements OnInit {
   @ViewChild('htmlPreview') public htmlPreview: HtmlPreviewComponent;
   @ViewChild('modalLoading') modalLoading: ModalLoadingComponent
 
-  isPreview: boolean = false;
-  openReservedOrder: boolean = false;
+  isPreview = false;
+  openReservedOrder = false;
 
   products: any = [];
   reservedItems: any = [];
@@ -37,11 +37,11 @@ export class OrderPointComponent implements OnInit {
   productType: Array<any> = [];
 
   token: any;
-  perPage: number = 20;
-  perPageReserved: number = 100;
-  total: number = 0;
+  perPage = 20;
+  perPageReserved = 100;
+  total = 0;
   query: any = '';
-  totalReserved: number = 0;
+  totalReserved = 0;
   queryReserved: any = '';
 
   delivery: any;
@@ -49,6 +49,9 @@ export class OrderPointComponent implements OnInit {
   defaultBudgetYear: any;
 
   curentPage = 1;
+
+  public jwtHelper: JwtHelper = new JwtHelper();
+
   constructor(
     private productService: ProductService,
     private alertService: AlertService,
@@ -66,7 +69,6 @@ export class OrderPointComponent implements OnInit {
     this.productGroup = decodedToken.generic_type_id.split(',');
   }
 
-  public jwtHelper: JwtHelper = new JwtHelper();
 
   async ngOnInit() {
     this.getProductType();
@@ -92,7 +94,7 @@ export class OrderPointComponent implements OnInit {
   onDateStartChanged(event: IMyDateModel) {
     const selectDate: any = moment(event.jsdate).format('YYYY-MM-DD');
     if (selectDate !== 'Invalid date') {
-      //this._start_date = selectDate;
+      // this._start_date = selectDate;
     } else {
 
     }
@@ -101,7 +103,7 @@ export class OrderPointComponent implements OnInit {
   onDateEndChanged(event: IMyDateModel) {
     const selectDate: any = moment(event.jsdate).format('YYYY-MM-DD');
     if (selectDate !== 'Invalid date') {
-      //this._end_date = selectDate;
+      // this._end_date = selectDate;
     } else {
 
     }
@@ -123,7 +125,7 @@ export class OrderPointComponent implements OnInit {
       if (this.genericTypeId === 'all') {
         rs = await this.productService.getReorderPointTrade(this.productGroup, limit, offset, this.query);
       } else {
-        let productGroup: any = [];
+        const productGroup: any = [];
         productGroup.push(this.genericTypeId);
         rs = await this.productService.getReorderPointTrade(productGroup, limit, offset, this.query);
       }
@@ -142,7 +144,7 @@ export class OrderPointComponent implements OnInit {
 
   async getReservedForOrders() {
     try {
-      let rs: any = await this.productService.getReorderPointTradeReservedForOrdered();
+      const rs: any = await this.productService.getReorderPointTradeReservedForOrdered();
       if (rs.ok) {
         this.selectedOrders = rs.rows;
       } else {
@@ -160,7 +162,7 @@ export class OrderPointComponent implements OnInit {
       if (this.genericTypeIdReserved === 'all') {
         rs = await this.productService.getReorderPointTradeReserved(this.productGroup, limit, offset, this.queryReserved);
       } else {
-        let productGroup: any = [];
+        const productGroup: any = [];
         productGroup.push(this.genericTypeIdReserved);
         rs = await this.productService.getReorderPointTradeReserved(productGroup, limit, offset, this.queryReserved);
       }
@@ -220,11 +222,11 @@ export class OrderPointComponent implements OnInit {
   }
 
   async createPreparePurchaseOrder() {
-    let items: any = [];
+    const items: any = [];
 
     this.selectedReserved.forEach(v => {
       if (+v.purchase_qty > 0) {
-        let obj: any = {};
+        const obj: any = {};
         obj.generic_id = v.generic_id;
         obj.unit_generic_id = v.unit_generic_id;
         obj.cost = v.cost;
@@ -290,7 +292,7 @@ export class OrderPointComponent implements OnInit {
   }
 
   onChangeUnit(event: any, product: any) {
-    let idx = _.findIndex(this.reservedItems, { product_id: product.product_id });
+    const idx = _.findIndex(this.reservedItems, { product_id: product.product_id });
     if (idx > -1) {
       this.reservedItems[idx].cost = +event.cost;
       this.reservedItems[idx].unit_generic_id = +event.unit_generic_id;
@@ -298,7 +300,7 @@ export class OrderPointComponent implements OnInit {
   }
 
   onChangeQty(qty: any, product: any) {
-    let idx = _.findIndex(this.reservedItems, { product_id: product.product_id });
+    const idx = _.findIndex(this.reservedItems, { product_id: product.product_id });
     if (idx > -1) {
       this.reservedItems[idx].purchase_qty = +qty;
     }
@@ -308,7 +310,7 @@ export class OrderPointComponent implements OnInit {
     this.alertService.confirm('ต้องการลบรายการนี้ ใช่หรือไม่?')
       .then(async () => {
         try {
-          let rs: any = await this.productService.removeReservedProducts(product.reserve_id);
+          const rs: any = await this.productService.removeReservedProducts(product.reserve_id);
           if (rs.ok) {
             this.alertService.success();
             this.getProductsReserved();
@@ -330,9 +332,10 @@ export class OrderPointComponent implements OnInit {
   }
 
   getSelectedPrepare() {
-    let items = [];
+    const items = [];
     this.selectedReserved.forEach(v => {
-      if (+v.purchase_qty > 0) items.push(v);
+      if (+v.purchase_qty > 0) {
+      } items.push(v);
     });
 
     return items.length;
