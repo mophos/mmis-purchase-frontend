@@ -39,7 +39,6 @@ export class HtmlPreviewComponent implements OnInit {
   }
 
   printPurchaseOrder(row: any) {
-    console.log(this.urlReport)
     this.showReport(this.url + `${this.urlReport}/?token=${this.token}&purchaOrderId=` + row.purchase_order_id);
   }
   printpPurchasing(row: any) {
@@ -66,10 +65,10 @@ export class HtmlPreviewComponent implements OnInit {
 
   printReportItems(id: string, order_id: string) {
     const forms: Array<any> = [
-      { 'id': '1', 'name': 'บันทึกข้อความขอความ (สิงห์บุรี)', path: this.url + `/report/purchasing/10/?purchaOrderId=${order_id}&type=8&bgtype=1&token=${this.token}` },
-      { 'id': '2', 'name': 'ใบสั่งซื้อ (สิงห์บุรี)', path: this.url + `/report/purchasingorder/?orderId=${order_id}&token=${this.token}` },
-      { 'id': '3', 'name': 'ใบองค์การเภสัชกรรม (สิงห์บุรี)', path: this.url + `/report/purchasing/11/?purchaOrderId=${order_id}&type=8&bgtype=1&token=${this.token}` },
-      { 'id': '4', 'name': 'ใบสั่งซื้อที่เลือก (สิงห์บุรี)', path: this.url + `/report/getporder?token=${this.token}` },
+      { 'id': '1', 'name': 'บันทึกข้อความขอความ', path: this.url + `/report/purchasing/10/?purchaOrderId=${order_id}&type=8&bgtype=1&token=${this.token}` },
+      { 'id': '2', 'name': 'ใบสั่งซื้อ', path: this.url + `/report/purchasingorder/?orderId=${order_id}&token=${this.token}` },
+      { 'id': '3', 'name': 'ใบองค์การเภสัชกรรม', path: this.url + `/report/purchasing/11/?purchaOrderId=${order_id}&type=8&bgtype=1&token=${this.token}` },
+      { 'id': '4', 'name': 'ใบสั่งซื้อที่เลือก', path: this.url + `/report/getporder?token=${this.token}` },
       { 'id': '5', 'name': 'แบบฟอ์รม e-GP', path: this.url + `/report/allpo/egp/singburi?porder=${order_id}&type=8&token=${this.token}` },
     ];
     const print = _.find(forms, { 'id': id });
