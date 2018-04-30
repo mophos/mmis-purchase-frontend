@@ -37,9 +37,11 @@ export class ExpandPurchaseOrderComponent implements OnInit {
       .then((results: any) => {
         this.purchaseOrderItems = results.rows;
         results.rows.forEach(v => {
-          this.totalPrice += v.unit_price * v.qty;
+          if (v.giveaway === 'N') {
+            this.totalPrice += v.unit_price * v.qty;
+          }
         });
-        
+
         this.ref.detectChanges();
         this.loading = false;
       })
@@ -52,12 +54,12 @@ export class ExpandPurchaseOrderComponent implements OnInit {
     this.loading = true;
     this.purchasingOrderService.detail(orderId)
       .then((results: any) => {
-          this.purchaseOrder = results.detail;
-          this.ref.detectChanges();
-          this.loading = false;
+        this.purchaseOrder = results.detail;
+        this.ref.detectChanges();
+        this.loading = false;
       })
       .catch(error => {
-          this.alertService.serverError(error);
+        this.alertService.serverError(error);
       });
   }
 
