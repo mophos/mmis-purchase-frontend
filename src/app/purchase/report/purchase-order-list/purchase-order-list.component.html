@@ -42,7 +42,7 @@
 </div>
 <clr-datagrid>
   <clr-dg-column [clrDgField]="'purchase_order_number'">เลขที่ใบสั่งซื้อ</clr-dg-column>
-  <clr-dg-column [clrDgField]="'created_date'" style="width: 300px;">วันที่ออกใบสั่งซื้อ</clr-dg-column>
+  <clr-dg-column [clrDgField]="'order_date'" style="width: 300px;">วันที่ออกใบสั่งซื้อ</clr-dg-column>
   <clr-dg-column [clrDgField]="'total_price'" style="width: 200px;">ราคารวมสุทธิ</clr-dg-column>
   <!-- <clr-dg-column [clrDgField]="'max_qty'" style="width: 120px;">Max</clr-dg-column>
   <clr-dg-column [clrDgField]="'remain_qty'" style="width: 120px;">คงเหลือ</clr-dg-column>
@@ -52,7 +52,7 @@
   <clr-dg-row *clrDgItems="let o of purchaseOrder" [clrDgItem]="o">
     <clr-dg-cell *ngIf="!o.purchase_order_book_number">{{o.purchase_order_number}}</clr-dg-cell>
     <clr-dg-cell *ngIf="o.purchase_order_book_number">{{o.purchase_order_book_number}}</clr-dg-cell>
-    <clr-dg-cell>{{o.created_date | toThaiDate}}</clr-dg-cell>
+    <clr-dg-cell>{{o.order_date | toThaiDate}}</clr-dg-cell>
     <clr-dg-cell style="text-align: right;">{{o.total_price | number}}</clr-dg-cell>
     <!-- <clr-dg-cell style="text-align: right;">{{p.max_qty | number}}</clr-dg-cell>
     <clr-dg-cell style="text-align: right;">{{p.remain_qty | number}}</clr-dg-cell>
