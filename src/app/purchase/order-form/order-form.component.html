@@ -363,7 +363,7 @@
           <clr-tab-content *clrIfActive>
             <div class="row">
               <div class="col-md-6">
-                <po-budget-remain #budgetRemainRef [contractId]="contractId" [purchaseOrderId]="purchaseOrderId" (onCalculated)="onBudgetCalculated($event)"
+                <po-budget-remain #budgetRemainRef [contractId]="contractId" [contractCost]="contractCost" [purchaseOrderId]="purchaseOrderId" (onCalculated)="onBudgetCalculated($event)"
                   [purchaseAmount]="totalPrice" [budgetDetailId]="budgetDetailId" [budgetYear]="budgetYear"></po-budget-remain>
               </div>
               <div class="col-md-6">

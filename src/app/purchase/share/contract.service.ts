@@ -60,7 +60,7 @@ export class ContractService {
 
   remainDetail(id: string) {
     return new Promise((resolve, reject) => {
-      this.authHttp.get(`${this.url}/${this.apiName}/remain-detail?contractId=${id}`)
+      this.authHttp.get(`${this.url}/${this.apiName}/detail-contract?contractId=${id}`)
         .map(res => res.json())
         .subscribe(data => {
           resolve(data);

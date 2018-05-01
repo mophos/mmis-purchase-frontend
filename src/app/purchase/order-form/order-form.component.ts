@@ -1,3 +1,4 @@
+import { async } from '@angular/core/testing';
 import { BudgetTransectionService } from '../share/budget-transection.service';
 import { SettingService } from './../share/setting.service';
 import { AccessCheck } from '../share/access-check';
@@ -79,6 +80,8 @@ export class OrderFormComponent implements OnInit {
   loadingProducts: boolean;
   purchaseOrderId: string;
   tempPrice = true;
+
+  contractCost: number = 0;
 
   contractDetail: any;
   contract_amount: string;
@@ -299,6 +302,14 @@ export class OrderFormComponent implements OnInit {
     // this.getBidAmount(+e.target.checked);
   }
 
+  async getContractProduct(productId: any, cost: any) {
+    const rs: any = await this.purchasingOrderService.getContractId(productId);
+    if (rs.ok) {
+      this.contractCost += cost;
+      this.contractId = rs.rows.contract_id;
+    }
+  }
+
   addProductSelected() {
     const product: IProductOrderItems = {};
     // console.log(this.selectedCost);
@@ -313,6 +324,8 @@ export class OrderFormComponent implements OnInit {
     product.small_qty = this.selectedUnit.qty;
     product.total_cost = this.selectedCost * this.selectedQty;
     product.total_small_qty = this.selectedQty * this.selectedUnit.qty;
+
+    this.getContractProduct(this.selectedProduct.product_id, product.total_cost);
 
     if (this.checkDuplicatedItem(product)) {
       const items = _.filter(this.purchaseOrderItems, { product_id: product.product_id });
@@ -872,6 +885,7 @@ export class OrderFormComponent implements OnInit {
         const products = rs.rows;
 
         for (const v of products) {
+          this.getContractProduct(v.product_id, v.unit_price * v.qty);
           const obj: IProductOrderItems = {
             product_id: v.product_id,
             product_name: v.product_name,

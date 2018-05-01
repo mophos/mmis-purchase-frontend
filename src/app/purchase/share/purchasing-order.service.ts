@@ -227,7 +227,7 @@ export class PurchasingOrderService {
     return new Promise((resolve, reject) => {
       this.authHttp.put(`${this.url}/${this.apiName}/newponumber/${id}`, { data })
         .map(res => res.json())
-          .subscribe(data => {
+        .subscribe(data => {
           resolve(data);
         }, error => {
           reject(error);
@@ -300,8 +300,14 @@ export class PurchasingOrderService {
     return res.json();
   }
 
-  async sysReport(){
+  async sysReport() {
     const res = await this.authHttp.get(`${this.url}/${this.apiName}/sys-report`)
+      .toPromise();
+    return res.json();
+  }
+
+  async getContractId(productId: any) {
+    const res = await this.authHttp.get(`${this.url}/${this.apiName}/view-contract?productId=${productId}`)
       .toPromise();
     return res.json();
   }
