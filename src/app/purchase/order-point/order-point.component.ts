@@ -352,7 +352,7 @@ export class OrderPointComponent implements OnInit {
     const purchaseSummary: any = {};
     const purchaseOrderItems: Array<any> = [];
 
-    const purchaseItems = this.selectedOrders;
+    const purchaseItems = this.selectedOrdersReserved;
 
     // console.log(purchaseItems);
 
