@@ -18,7 +18,7 @@
         <clr-dg-cell style="text-align:right">{{pro.qty}}</clr-dg-cell>
         <clr-dg-cell style="text-align:right">{{pro.large_unit_name}}({{pro.conversion_qty}} {{pro.small_large_unit_name}})</clr-dg-cell>
         <clr-dg-cell style="text-align:right">{{pro.qty*pro.conversion_qty}} {{pro.small_large_unit_name}}</clr-dg-cell>
-        <clr-dg-cell style="text-align:right">{{pro.unit_price*pro.conversion_qty | number :'1.2-2'}}</clr-dg-cell>
+        <clr-dg-cell style="text-align:right">{{pro.unit_price | number :'1.2-2'}}</clr-dg-cell>
         <clr-dg-cell class="text-success" style="text-align:right">{{pro.total_price | number :'1.2-2'}}</clr-dg-cell>
       </clr-dg-row>
   
