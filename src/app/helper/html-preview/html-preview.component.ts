@@ -12,7 +12,8 @@ export class HtmlPreviewComponent implements OnInit {
   startDate: any;
   endDate: any;
 
-  urlReport: any;
+  urlReportPO: any;
+  urlReportEGP: any;
   reportURL: any;
   isShow = false;
   token: any;
@@ -35,12 +36,17 @@ export class HtmlPreviewComponent implements OnInit {
 
   async getSysReport() {
     let rs = await this.model.sysReport();
-    this.urlReport = rs.rows.report_url;
+    let idxPo: any = _.findIndex(rs.rows, { report_type: "PO" });
+    idxPo > -1 ? this.urlReportPO = rs.rows[idxPo].report_url : this.urlReportPO = null
+    
+    let idxEGP: any = _.findIndex(rs.rows, { report_type: "EGP" });
+    idxEGP > -1 ? this.urlReportEGP = rs.rows[idxEGP].report_url : this.urlReportEGP = null
   }
 
   printPurchaseOrder(row: any) {
-    this.showReport(this.url + `${this.urlReport}/?token=${this.token}&purchaOrderId=` + row.purchase_order_id);
+    this.showReport(this.url + `${this.urlReportPO}/?token=${this.token}&purchaOrderId=` + row.purchase_order_id);
   }
+
   printpPurchasing(row: any) {
     const created_date = row.created_date.substring(0, 10);
     this.showReport(this.url + `/report/purchasing/${created_date}/${created_date}?token=${this.token}`);
@@ -69,7 +75,7 @@ export class HtmlPreviewComponent implements OnInit {
       { 'id': '2', 'name': 'ใบสั่งซื้อ', path: this.url + `/report/purchasingorder/?orderId=${order_id}&token=${this.token}` },
       { 'id': '3', 'name': 'ใบองค์การเภสัชกรรม', path: this.url + `/report/purchasing/11/?purchaOrderId=${order_id}&type=8&bgtype=1&token=${this.token}` },
       { 'id': '4', 'name': 'ใบสั่งซื้อที่เลือก', path: this.url + `/report/getporder?token=${this.token}` },
-      { 'id': '5', 'name': 'แบบฟอ์รม e-GP', path: this.url + `/report/allpo/egp/singburi?porder=${order_id}&type=8&token=${this.token}` },
+      { 'id': '5', 'name': 'แบบฟอ์รม e-GP', path: this.url + `${this.urlReportEGP}?porder=${order_id}&type=8&token=${this.token}` },
     ];
     const print = _.find(forms, { 'id': id });
     this.showReport(print ? print.path : this.url);
