@@ -44,7 +44,7 @@ export class HtmlPreviewComponent implements OnInit {
   }
 
   printPurchaseOrder(row: any) {
-    this.showReport(this.url + `${this.urlReportPO}/?token=${this.token}&purchaOrderId=` + row.purchase_order_id);
+    this.showReport(this.url + `${this.urlReportPO}/?token=${this.token}&porder=` + row.purchase_order_id);
   }
 
   printpPurchasing(row: any) {

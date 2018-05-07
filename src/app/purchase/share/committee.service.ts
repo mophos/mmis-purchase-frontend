@@ -21,7 +21,7 @@ export class CommitteeService {
         });
     });
   }
-  
+
   allbid() {
     return new Promise((resolve, reject) => {
       this.authHttp.get(`${this.url}/${this.apiName}/bid`)
@@ -33,7 +33,7 @@ export class CommitteeService {
         });
     });
   }
-  
+
   listbidtype() {
     return new Promise((resolve, reject) => {
       this.authHttp.get(`${this.url}/${this.apiName}/listbidtype`)
@@ -109,6 +109,18 @@ export class CommitteeService {
   update(id: string, data: object) {
     return new Promise((resolve, reject) => {
       this.authHttp.put(`${this.url}/${this.apiName}/${id}`, { data })
+        .map(res => res.json())
+        .subscribe(data => {
+          resolve(data);
+        }, error => {
+          reject(error);
+        });
+    });
+  }
+
+  updateIsdelete(id: string) {
+    return new Promise((resolve, reject) => {
+      this.authHttp.put(`${this.url}/${this.apiName}/remove/${id}`, {})
         .map(res => res.json())
         .subscribe(data => {
           resolve(data);
