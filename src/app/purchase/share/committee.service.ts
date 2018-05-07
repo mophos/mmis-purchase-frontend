@@ -98,8 +98,8 @@ export class CommitteeService {
     return new Promise((resolve, reject) => {
       this.authHttp.post(`${this.url}/${this.apiName}`, { data })
         .map(res => res.json())
-        .subscribe(data => {
-          resolve(data);
+        .subscribe(d => {
+          resolve(d);
         }, error => {
           reject(error);
         });

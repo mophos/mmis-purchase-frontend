@@ -1,3 +1,4 @@
+
 import { BudgetTransectionService } from '../share/budget-transection.service';
 import { SettingService } from './../share/setting.service';
 import { AccessCheck } from '../share/access-check';
@@ -47,6 +48,7 @@ import { tokenNotExpired, JwtHelper } from 'angular2-jwt';
 import { ModalLoadingComponent } from 'app/modal-loading/modal-loading.component';
 import { SelectSubBudgetComponent } from '../../select-boxes/select-sub-budget/select-sub-budget.component';
 import { SearchVendorComponent } from '../../autocomplete/search-vendor/search-vendor.component';
+import { SearchPeopleComponent } from '../../autocomplete/search-people/search-people.component';
 import { BudgetRemainComponent } from '../directives/budget-remain/budget-remain.component';
 import { BUTTON_GROUP_DIRECTIVES } from '@clr/angular';
 @Component({
@@ -65,6 +67,9 @@ export class OrderFormComponent implements OnInit {
   @ViewChild('subBudgetList') subBudgetList: SelectSubBudgetComponent;
   @ViewChild('searchVendor') searchVendor: SearchVendorComponent;
   @ViewChild('budgetRemainRef') budgetRemainRef: BudgetRemainComponent;
+  @ViewChild('searchPeople1') searchPeople1: SearchPeopleComponent;
+  @ViewChild('searchPeople2') searchPeople2: SearchPeopleComponent;
+  @ViewChild('searchPeople3') searchPeople3: SearchPeopleComponent;
 
   detailActive = true;
   otherActive: boolean;
@@ -136,7 +141,7 @@ export class OrderFormComponent implements OnInit {
   // project_name: string;
   // projectId: string;
   // project_control_id: string;
-  verifyCommitteeId: string;
+  verifyCommitteeId: any;
   checkPriceCommitteeId: string;
 
   egpId: string;
@@ -144,6 +149,12 @@ export class OrderFormComponent implements OnInit {
   purchaseTypeId: number;
   labelerId: string;
   oldLabelerId: string;
+  peopleId1 = null;
+  peopleId2 = null;
+  peopleId3 = null;
+  // oldPeopleId1: string;
+  // oldPeopleId2: string;
+  // oldPeopleId3: string;
   // labelerName: string;
   // purchasingCreatedDate: string;
   vendorContactName: string;
@@ -233,7 +244,7 @@ export class OrderFormComponent implements OnInit {
     private holidayService: HolidayService,
     private budgetTypeService: BudgetTypeService,
     private budgetTransectionService: BudgetTransectionService,
-    // private committeeService: CommitteeService,
+    private committeeService: CommitteeService,
     // private peopleService: PeopleService,
     // private contractService: ContractService,
     // private packageService: PackageService,
@@ -410,7 +421,7 @@ export class OrderFormComponent implements OnInit {
     this.purchaseOrderItems[idx].qty = qty;
     this.purchaseOrderItems[idx].total_small_qty = this.purchaseOrderItems[idx].qty * this.purchaseOrderItems[idx].small_qty;
     if (this.purchaseOrderItems[idx].is_giveaway === 'Y') {
-      this.purchaseOrderItems[idx].total_cost
+      // this.purchaseOrderItems[idx].total_cost
     } else {
       this.purchaseOrderItems[idx].total_cost = this.purchaseOrderItems[idx].cost * this.purchaseOrderItems[idx].qty;
     }
@@ -656,6 +667,8 @@ export class OrderFormComponent implements OnInit {
     if (this.purchaseOrder.verify_committee_id) {
       this.verifyCommitteeId = this.purchaseOrder.verify_committee_id;
       await this.getCommitteePeople(this.purchaseOrder.verify_committee_id);
+      console.log(this.verifyCommitteeId);
+
     }
 
     if (this.contractRef) {
@@ -667,14 +680,14 @@ export class OrderFormComponent implements OnInit {
     }
 
     this.searchVendor.setSelected(data.labeler_name);
+    // this.searchPeople.setSelected
 
   }
 
   async save() {
-
     if (this.purchaseDate && this.labelerId && this.purchaseMethodId &&
       this.budgetTypeId && this.genericTypeId && this.purchaseOrderItems.length &&
-      this.totalPrice > 0 && this.budgetDetailId && this.verifyCommitteeId) {
+      this.totalPrice > 0 && this.budgetDetailId && this.verifyCommitteeId != null) {
 
       const purchaseDate = this.purchaseDate ?
         `${this.purchaseDate.date.year}-${this.purchaseDate.date.month}-${this.purchaseDate.date.day}` :
@@ -768,6 +781,46 @@ export class OrderFormComponent implements OnInit {
       }
       if (!this.showBuyer) {
         this.buyerId = null;
+      }
+      const peopleCommittee = [];
+      // let committeeId =
+      // เช็คกรรมการตรวจรับว่าเป็นแบบอื่นๆหรือไม่
+      if (this.verifyCommitteeId === 0) {
+        const committeeHead = {
+          committee_name: 'อื่นๆ',
+          committee_type: 0,
+          datetime_start: moment(new Date()).format('YYYY-MM-DD'),
+          is_delete: 'Y'
+        }
+        const committeeHeadIdRs: any = await this.committeeService.save(committeeHead);
+        this.verifyCommitteeId = committeeHeadIdRs.rows[0];
+        console.log(this.verifyCommitteeId);
+
+        if (this.peopleId1) {
+          const committeeDetail = {
+            committee_id: this.verifyCommitteeId,
+            people_id: this.peopleId1,
+            position_name: 'ประธาน'
+          }
+          peopleCommittee.push(committeeDetail)
+        }
+        if (this.peopleId2) {
+          const committeeDetail = {
+            committee_id: this.verifyCommitteeId,
+            people_id: this.peopleId2,
+            position_name: 'กรรมการ'
+          }
+          peopleCommittee.push(committeeDetail)
+        }
+        if (this.peopleId3) {
+          const committeeDetail = {
+            committee_id: this.verifyCommitteeId,
+            people_id: this.peopleId3,
+            position_name: 'กรรมการ'
+          }
+          peopleCommittee.push(committeeDetail)
+        }
+        await this.committeePeopleService.save(peopleCommittee);
       }
 
       summary = {
@@ -1035,24 +1088,69 @@ export class OrderFormComponent implements OnInit {
 
   changeCommittee(event: any) {
     this.verifyCommitteeId = event ? event.committee_id : null;
+    console.log(this.verifyCommitteeId);
+    this.peopleId1 = null;
+    this.peopleId2 = null;
+    this.peopleId3 = null;
     this.getCommitteePeople(event.committee_id);
+
   }
 
   // แสดงรายชื่อกรรมการ
-  async getCommitteePeople(committeeId: string) {
+  async getCommitteePeople(committeeId: any) {
     this.modalLoading.show();
-    try {
+    console.log(committeeId);
+    if (this.purchaseOrderId) {
       const rs: any = await this.committeePeopleService.allByCommitteeId(committeeId);
-      this.modalLoading.hide();
       if (rs.ok) {
-        this.committeeSelected = rs.rows;
-      } else {
-        this.alertService.error(rs.error);
+        if (+rs.rows[0].committee_type === 0) {
+          this.verifyCommitteeId = 0;
+          if (rs.rows[0]) {
+            this.searchPeople1.setSelected(rs.rows[0].fullname);
+            this.peopleId1 = rs.rows[0].people_id;
+          }
+          if (rs.rows[1]) {
+            this.searchPeople2.setSelected(rs.rows[1].fullname);
+            this.peopleId2 = rs.rows[1].people_id;
+          }
+          if (rs.rows[2]) {
+            this.searchPeople3.setSelected(rs.rows[2].fullname);
+            this.peopleId3 = rs.rows[2].people_id;
+          }
+          // rs.rows.forEach(v => {
+          //   this.searchPeople1.setSelected(v.fullname)
+          // });
+        }
+        console.log(rs.rows);
+
       }
-    } catch (error) {
-      this.modalLoading.hide();
-      this.alertService.error(JSON.stringify(error));
+    } else {
+      if (committeeId !== 0) {
+        const rs: any = await this.committeePeopleService.allByCommitteeId(committeeId);
+        this.modalLoading.hide();
+        if (rs.ok) {
+          console.log(rs.rows[0]);
+
+          if (+rs.rows[0].committee_type === 0) {
+            this.verifyCommitteeId = 0;
+          }
+          this.committeeSelected = rs.rows;
+          console.log(this.committeeSelected);
+          console.log(this.verifyCommitteeId);
+
+        } else {
+          this.alertService.error(rs.error);
+        }
+      } else {
+        this.searchPeople1.setSelected('');
+        this.searchPeople2.setSelected('');
+        this.searchPeople3.setSelected('');
+        this.modalLoading.hide();
+      }
     }
+
+    // try {
+
   }
 
   changeOfficer(event: any) {
@@ -1095,22 +1193,60 @@ export class OrderFormComponent implements OnInit {
   // search vendor
   onChangeVendor(event: any) {
     if (event) {
-      // console.log(this.labelerId);
       this.labelerId = null;
     }
   }
 
   onSelectVendor(event: any) {
     if (event) {
-
       if (this.oldLabelerId !== event.labeler_id) {
         this.purchaseOrderItems = [];
       }
-
       this.labelerId = event.labeler_id;
       this.oldLabelerId = event.labeler_id;
 
       this.searchProductLabeler.setApiUrl(this.labelerId);
+    }
+  }
+
+  onChangePeople(event: any, idx) {
+    if (event) {
+      if (idx === 1) {
+        this.peopleId1 = null;
+      }
+      if (idx === 2) {
+        this.peopleId2 = null;
+      }
+      if (idx === 3) {
+        this.peopleId3 = null;
+      }
+
+    }
+  }
+
+  onSelectPeople(event: any, idx) {
+    if (event) {
+      if (idx === 1) {
+        // if (this.oldPeopleId1 !== event.people_id) {
+        //   this.purchaseOrderItems = [];
+        // }
+        this.peopleId1 = event.people_id;
+        // this.oldPeopleId1 = event.people_id;
+      }
+      if (idx === 2) {
+        // if (this.oldPeopleId2 !== event.people_id) {
+        //   this.purchaseOrderItems = [];
+        // }
+        this.peopleId2 = event.people_id;
+        // this.oldPeopleId2 = event.people_id;
+      }
+      if (idx === 3) {
+        // if (this.oldPeopleId3 !== event.people_id) {
+        //   this.purchaseOrderItems = [];
+        // }
+        this.peopleId3 = event.people_id;
+        // this.oldPeopleId3 = event.people_id;
+      }
     }
   }
 }
