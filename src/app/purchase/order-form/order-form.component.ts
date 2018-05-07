@@ -209,7 +209,7 @@ export class OrderFormComponent implements OnInit {
     dateFormat: 'dd mmm yyyy',
     editableDateField: false,
     showClearDateBtn: false,
-    satHighlight: true,
+    // satHighlight: true,
     markDates: this.holidays,
   };
 
