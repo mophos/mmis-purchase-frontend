@@ -163,11 +163,10 @@ export class DatagridOrdersComponent implements OnInit {
   }
 
   async getSysReport() {
-    let rs = await this.model.sysReport();
-    let idxPo: any = _.findIndex(rs.rows, { report_type: "PO" });
+    const rs = await this.model.sysReport();
+    const idxPo: any = _.findIndex(rs.rows, { report_type: 'PO' });
     idxPo > -1 ? this.urlReportPO = rs.rows[idxPo].report_url : this.urlReportPO = null
-    
-    let idxEGP: any = _.findIndex(rs.rows, { report_type: "EGP" });
+    const idxEGP: any = _.findIndex(rs.rows, { report_type: 'EGP' });
     idxEGP > -1 ? this.urlReportEGP = rs.rows[idxEGP].report_url : this.urlReportEGP = null
   }
 
