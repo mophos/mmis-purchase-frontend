@@ -741,19 +741,30 @@ export class OrderFormComponent implements OnInit {
           // calculate new budget transaction
           await this.budgetRemainRef.getBudget();
 
+          let checkBookNumber: boolean = true;
+          if (this.purchaseOrderBookNumber) {
+            const bookNumber = await this.purchasingOrderService.getPoBookNumber();
+            const idx = _.findIndex(bookNumber.rows, { purchase_order_book_number: this.purchaseOrderBookNumber });
+            idx > -1 ? checkBookNumber = false : checkBookNumber = true;
+          }
+
           if (this._canSave) {
-            this.modalLoading.hide();
-            this.alertService.confirm('กรุณาตรวจสอบรายการให้ถูกต้องการทำการบันทึก ต้องการบันทึก ใช่หรือไม่?')
-              .then(async () => {
-                this.doSavePurchase();
-              }).catch(() => { });
+            if (checkBookNumber) {
+              this.modalLoading.hide();
+              this.alertService.confirm('กรุณาตรวจสอบรายการให้ถูกต้องการทำการบันทึก ต้องการบันทึก ใช่หรือไม่?')
+                .then(async () => {
+                  this.doSavePurchase();
+                }).catch(() => { });
+            } else {
+              this.modalLoading.hide();
+              this.alertService.error('เลขที่อ้างอิงซ้ำ')
+            }
           } else {
             this.modalLoading.hide();
             this.alertService.error('ไม่สามารถประมวลผล Transaction ของงบประมาณได้')
           }
         }
       }
-
     }
   }
 
