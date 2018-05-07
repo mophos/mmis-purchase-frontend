@@ -288,6 +288,10 @@ export class OrderFormComponent implements OnInit {
 
   async ngOnInit() {
     await this.getProductType();
+    const holiday: any = await this.holidayService.all();
+    console.log((moment(new Date()).get('year')));
+
+    console.log(holiday.rows);
 
     if (this.purchaseOrderId) {
       await this.getPurchaseOrderDetail(this.purchaseOrderId);
@@ -459,7 +463,7 @@ export class OrderFormComponent implements OnInit {
     // event properties are: event.date, event.jsdate, event.formatted and event.epoc
     const selectDate: string = moment(event.jsdate).format('YYYY-MM-DD');
     if (selectDate !== 'Invalid date') {
-      this.checkIsHoliday(selectDate);
+      // this.checkIsHoliday(selectDate);
     } else {
       this.holidayText = null;
     }
@@ -1099,7 +1103,6 @@ export class OrderFormComponent implements OnInit {
   // แสดงรายชื่อกรรมการ
   async getCommitteePeople(committeeId: any) {
     this.modalLoading.show();
-    console.log(committeeId);
     if (this.purchaseOrderId) {
       const rs: any = await this.committeePeopleService.allByCommitteeId(committeeId);
       if (rs.ok) {
@@ -1117,27 +1120,18 @@ export class OrderFormComponent implements OnInit {
             this.searchPeople3.setSelected(rs.rows[2].fullname);
             this.peopleId3 = rs.rows[2].people_id;
           }
-          // rs.rows.forEach(v => {
-          //   this.searchPeople1.setSelected(v.fullname)
-          // });
         }
-        console.log(rs.rows);
-
       }
+      this.modalLoading.hide();
     } else {
       if (committeeId !== 0) {
         const rs: any = await this.committeePeopleService.allByCommitteeId(committeeId);
         this.modalLoading.hide();
         if (rs.ok) {
-          console.log(rs.rows[0]);
-
           if (+rs.rows[0].committee_type === 0) {
             this.verifyCommitteeId = 0;
           }
           this.committeeSelected = rs.rows;
-          console.log(this.committeeSelected);
-          console.log(this.verifyCommitteeId);
-
         } else {
           this.alertService.error(rs.error);
         }
