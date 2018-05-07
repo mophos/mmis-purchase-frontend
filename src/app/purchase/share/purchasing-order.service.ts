@@ -305,4 +305,10 @@ export class PurchasingOrderService {
       .toPromise();
     return res.json();
   }
+
+  async getPoBookNumber(){
+    const res = await this.authHttp.get(`${this.url}/${this.apiName}/book-number`)
+      .toPromise();
+    return res.json();
+  }
 }
