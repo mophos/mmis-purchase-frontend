@@ -21,6 +21,7 @@ export class OrderPointComponent implements OnInit {
   @ViewChild('htmlPreview') public htmlPreview: HtmlPreviewComponent;
   @ViewChild('modalLoading') modalLoading: ModalLoadingComponent
 
+  showNotPurchased = false;
   isPreview = false;
   openReservedOrder = false;
 
@@ -124,12 +125,13 @@ export class OrderPointComponent implements OnInit {
     try {
       this.modalLoading.show();
       let rs: any;
+      let showNotPurchased = this.showNotPurchased ? 'Y' : 'N';
       if (this.genericTypeId === 'all') {
-        rs = await this.productService.getReorderPointTrade(this.productGroup, limit, offset, this.query);
+        rs = await this.productService.getReorderPointTrade(this.productGroup, limit, offset, this.query, showNotPurchased);
       } else {
         const productGroup: any = [];
         productGroup.push(this.genericTypeId);
-        rs = await this.productService.getReorderPointTrade(productGroup, limit, offset, this.query);
+        rs = await this.productService.getReorderPointTrade(productGroup, limit, offset, this.query, showNotPurchased);
       }
       this.modalLoading.hide();
       if (rs.ok) {
@@ -569,5 +571,9 @@ export class OrderPointComponent implements OnInit {
       this.alertService.error('กรุณาระบุรายการที่ต้องการจัดซื้อ');
     }
 
+  }
+
+  onChangePurchaseStatus() {
+    this.getProducts(this.perPage);
   }
 }

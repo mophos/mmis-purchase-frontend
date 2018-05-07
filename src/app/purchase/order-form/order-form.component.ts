@@ -50,6 +50,7 @@ import { SelectSubBudgetComponent } from '../../select-boxes/select-sub-budget/s
 import { SearchVendorComponent } from '../../autocomplete/search-vendor/search-vendor.component';
 import { SearchPeopleComponent } from '../../autocomplete/search-people/search-people.component';
 import { BudgetRemainComponent } from '../directives/budget-remain/budget-remain.component';
+import { BUTTON_GROUP_DIRECTIVES } from '@clr/angular';
 @Component({
   selector: 'app-order-form',
   templateUrl: './order-form.component.html'
@@ -166,7 +167,7 @@ export class OrderFormComponent implements OnInit {
   subTotal = 0;
   vatRate: number;
   vatRateTmp: number;
-  excludeVat = false;
+  excludeVat = true;
   addVat = false;
   vat = 0;
   totalPrice = 0;
