@@ -8,14 +8,17 @@
     <button clrTabLink id="link1" (click)="clearSelected()">1. รายการที่ถึงจุดสั่งซื้อ</button>
     <clr-tab-content id="content1" *clrIfActive="true">
       <div class="row wid99">
-        <div class="col-md-8">
+        <div class="col-md-9">
           <label for="">ค้นหา</label>
           <input (keyup)="doSearch($event)" type="text" placeholder="ชื่อ, working code, keyword" [(ngModel)]="query" style="width: 350px;">
           <button [disabled]="!selectedProduct.length" class="btn btn-sm btn-success btn-icon" (click)="saveReserved()">
             <clr-icon shape="plus"></clr-icon> เตรียมจัดสั่งซื้อ ({{selectedProduct.length | number}} รายการ)
           </button>
+          <clr-checkbox (change)="onChangePurchaseStatus()" [clrInline]="true" name="showNotPurchased" id="showNotPurchased" [(ngModel)]="showNotPurchased">
+            แสดงรายการที่ไม่เคยสั่งซื้อ
+          </clr-checkbox>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
           <div class="select" style="float: right;">
             <select name="genericTypeId" [(ngModel)]="genericTypeId" (change)="changeType()">
               <option value="all">ทั้งหมด</option>
@@ -44,7 +47,7 @@
           <clr-dg-cell>{{p.labeler_name}}</clr-dg-cell>
           <clr-dg-cell style="text-align: right;">{{p.min_qty | number}}</clr-dg-cell>
           <clr-dg-cell style="text-align: right;">{{p.max_qty | number}}</clr-dg-cell>
-          <clr-dg-cell style="text-align: right; font-weight: bold; color: #F52F22;">{{p.remain_qty | number}}</clr-dg-cell>
+          <clr-dg-cell style="text-align: right; font-weight: bold; color: #F52F22;">{{p.remain_qty || 0 | number}}</clr-dg-cell>
           <clr-dg-cell style="text-align: right; font-weight: bold; color: #0065AB;">{{p.total_purchased || 0 | number}}</clr-dg-cell>
           <clr-dg-cell>{{p.generic_type_name}}</clr-dg-cell>
         </clr-dg-row>
