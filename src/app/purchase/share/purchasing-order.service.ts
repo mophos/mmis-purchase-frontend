@@ -306,6 +306,12 @@ export class PurchasingOrderService {
     return res.json();
   }
 
+  async getPoBookNumber() {
+    const res = await this.authHttp.get(`${this.url}/${this.apiName}/book-number`)
+      .toPromise();
+    return res.json();
+  }
+
   async getContractId(productId: any) {
     const res = await this.authHttp.get(`${this.url}/${this.apiName}/view-contract?productId=${productId}`)
       .toPromise();

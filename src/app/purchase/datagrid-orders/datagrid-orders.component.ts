@@ -84,6 +84,9 @@ export class DatagridOrdersComponent implements OnInit {
   perPage = 20;
   page: any;
 
+  urlReportPO: any;
+  urlReportEGP: any;
+
   public jwtHelper: JwtHelper = new JwtHelper()
 
   token: any;
@@ -91,6 +94,7 @@ export class DatagridOrdersComponent implements OnInit {
   currentPage: any = 1;
 
   constructor(
+    private model: PurchasingOrderService,
     private ref: ChangeDetectorRef,
     private alertService: AlertService,
     private purchasingService: PurchasingService,
@@ -154,6 +158,16 @@ export class DatagridOrdersComponent implements OnInit {
     };
     // this.getPurchaseOrders();
     this.getOrders();
+
+    this.getSysReport();
+  }
+
+  async getSysReport() {
+    const rs = await this.model.sysReport();
+    const idxPo: any = _.findIndex(rs.rows, { report_type: 'PO' });
+    idxPo > -1 ? this.urlReportPO = rs.rows[idxPo].report_url : this.urlReportPO = null
+    const idxEGP: any = _.findIndex(rs.rows, { report_type: 'EGP' });
+    idxEGP > -1 ? this.urlReportEGP = rs.rows[idxEGP].report_url : this.urlReportEGP = null
   }
 
   handleKeyDown(event: any) {
@@ -652,7 +666,7 @@ export class DatagridOrdersComponent implements OnInit {
       this.alertService.error('ข้อมุูลไม่ครบถ้วน');
     }
     if (print_non > 0) {
-      this.htmlPrview.showReport(this.url + `/report/getporder/singburi/?token=${this.token}&` + printId.join('&'));
+      this.htmlPrview.showReport(this.url + `${this.urlReportPO}/?token=${this.token}&` + printId.join('&'));
       this.openModal = false;
     } else {
       this.alertService.error('ข้อมุูลไม่ครบถ้วน');
@@ -676,7 +690,7 @@ export class DatagridOrdersComponent implements OnInit {
       this.alertService.error('ข้อมุูลไม่ครบถ้วน');
     }
     if (print_non > 0) {
-      this.htmlPrview.showReport(this.url + `/report/allpo/egp/singburi/?token=${this.token}&` + printId.join('&'));
+      this.htmlPrview.showReport(this.url + `${this.urlReportEGP}/?token=${this.token}&` + printId.join('&'));
       this.openModal = false;
     } else {
       this.alertService.error('ข้อมุูลไม่ครบถ้วน');

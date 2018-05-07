@@ -18,7 +18,7 @@ export class SearchProductVendorComponent implements OnInit {
     this.setApiUrl(value);
   }
 
-  _disabled: boolean = false;
+  _disabled = false;
 
   @Input('disabled')
   set setDisabled(value: boolean) {
@@ -56,7 +56,6 @@ export class SearchProductVendorComponent implements OnInit {
     } else {
       this.onChange.emit(false);
     }
-    
   }
 
   handleResultSelected(event: any) {

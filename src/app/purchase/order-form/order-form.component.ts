@@ -48,6 +48,7 @@ import { tokenNotExpired, JwtHelper } from 'angular2-jwt';
 import { ModalLoadingComponent } from 'app/modal-loading/modal-loading.component';
 import { SelectSubBudgetComponent } from '../../select-boxes/select-sub-budget/select-sub-budget.component';
 import { SearchVendorComponent } from '../../autocomplete/search-vendor/search-vendor.component';
+import { SearchPeopleComponent } from '../../autocomplete/search-people/search-people.component';
 import { BudgetRemainComponent } from '../directives/budget-remain/budget-remain.component';
 @Component({
   selector: 'app-order-form',
@@ -65,6 +66,9 @@ export class OrderFormComponent implements OnInit {
   @ViewChild('subBudgetList') subBudgetList: SelectSubBudgetComponent;
   @ViewChild('searchVendor') searchVendor: SearchVendorComponent;
   @ViewChild('budgetRemainRef') budgetRemainRef: BudgetRemainComponent;
+  @ViewChild('searchPeople1') searchPeople1: SearchPeopleComponent;
+  @ViewChild('searchPeople2') searchPeople2: SearchPeopleComponent;
+  @ViewChild('searchPeople3') searchPeople3: SearchPeopleComponent;
 
   detailActive = true;
   otherActive: boolean;
@@ -81,7 +85,7 @@ export class OrderFormComponent implements OnInit {
   purchaseOrderId: string;
   tempPrice = true;
 
-  contractCost: number = 0;
+  contractCost = 0;
 
   contractDetail: any;
   contract_amount: string;
@@ -138,7 +142,7 @@ export class OrderFormComponent implements OnInit {
   // project_name: string;
   // projectId: string;
   // project_control_id: string;
-  verifyCommitteeId: string;
+  verifyCommitteeId: any;
   checkPriceCommitteeId: string;
 
   egpId: string;
@@ -146,6 +150,12 @@ export class OrderFormComponent implements OnInit {
   purchaseTypeId: number;
   labelerId: string;
   oldLabelerId: string;
+  peopleId1 = null;
+  peopleId2 = null;
+  peopleId3 = null;
+  // oldPeopleId1: string;
+  // oldPeopleId2: string;
+  // oldPeopleId3: string;
   // labelerName: string;
   // purchasingCreatedDate: string;
   vendorContactName: string;
@@ -196,11 +206,13 @@ export class OrderFormComponent implements OnInit {
   count = 0;
 
   isSaving = false;
-
+  holidays: any = [];
   myDatePickerOptions: IMyOptions = {
     dateFormat: 'dd mmm yyyy',
     editableDateField: false,
-    showClearDateBtn: false
+    showClearDateBtn: false,
+    // satHighlight: true,
+    markDates: this.holidays,
   };
 
   /* satit */
@@ -221,6 +233,7 @@ export class OrderFormComponent implements OnInit {
 
   _canSave = false;
 
+
   constructor(
     private accessCheck: AccessCheck,
     private router: Router,
@@ -235,7 +248,7 @@ export class OrderFormComponent implements OnInit {
     private holidayService: HolidayService,
     private budgetTypeService: BudgetTypeService,
     private budgetTransectionService: BudgetTransectionService,
-    // private committeeService: CommitteeService,
+    private committeeService: CommitteeService,
     // private peopleService: PeopleService,
     // private contractService: ContractService,
     // private packageService: PackageService,
@@ -279,6 +292,7 @@ export class OrderFormComponent implements OnInit {
 
   async ngOnInit() {
     await this.getProductType();
+    await this.getHoliday();
 
     if (this.purchaseOrderId) {
       await this.getPurchaseOrderDetail(this.purchaseOrderId);
@@ -422,7 +436,7 @@ export class OrderFormComponent implements OnInit {
     this.purchaseOrderItems[idx].qty = qty;
     this.purchaseOrderItems[idx].total_small_qty = this.purchaseOrderItems[idx].qty * this.purchaseOrderItems[idx].small_qty;
     if (this.purchaseOrderItems[idx].is_giveaway === 'Y') {
-      this.purchaseOrderItems[idx].total_cost
+      // this.purchaseOrderItems[idx].total_cost
     } else {
       this.purchaseOrderItems[idx].total_cost = this.purchaseOrderItems[idx].cost * this.purchaseOrderItems[idx].qty;
     }
@@ -460,7 +474,7 @@ export class OrderFormComponent implements OnInit {
     // event properties are: event.date, event.jsdate, event.formatted and event.epoc
     const selectDate: string = moment(event.jsdate).format('YYYY-MM-DD');
     if (selectDate !== 'Invalid date') {
-      this.checkIsHoliday(selectDate);
+      // this.checkIsHoliday(selectDate);
     } else {
       this.holidayText = null;
     }
@@ -668,6 +682,8 @@ export class OrderFormComponent implements OnInit {
     if (this.purchaseOrder.verify_committee_id) {
       this.verifyCommitteeId = this.purchaseOrder.verify_committee_id;
       await this.getCommitteePeople(this.purchaseOrder.verify_committee_id);
+      console.log(this.verifyCommitteeId);
+
     }
 
     if (this.contractRef) {
@@ -679,14 +695,14 @@ export class OrderFormComponent implements OnInit {
     }
 
     this.searchVendor.setSelected(data.labeler_name);
+    // this.searchPeople.setSelected
 
   }
 
   async save() {
-
     if (this.purchaseDate && this.labelerId && this.purchaseMethodId &&
       this.budgetTypeId && this.genericTypeId && this.purchaseOrderItems.length &&
-      this.totalPrice > 0 && this.budgetDetailId && this.verifyCommitteeId) {
+      this.totalPrice > 0 && this.budgetDetailId && this.verifyCommitteeId != null) {
 
       const purchaseDate = this.purchaseDate ?
         `${this.purchaseDate.date.year}-${this.purchaseDate.date.month}-${this.purchaseDate.date.day}` :
@@ -721,51 +737,56 @@ export class OrderFormComponent implements OnInit {
   }
 
   async _save() {
+    const bookNumber = await this.purchasingOrderService.getPoBookNumber();
+    const idx = _.findIndex(bookNumber.rows, { purchase_order_book_number: this.purchaseOrderBookNumber });
+    if (idx === -1) {
+      const isErrorBidAmount: boolean = this.bidAmount < this.totalPrice;
 
-    const isErrorBidAmount: boolean = this.bidAmount < this.totalPrice;
-
-    if (isErrorBidAmount) {
-      // วงเงินเกินวิธีการจัดซื้อ
-      this.alertService.error('ราคารวมสุทธิเกินวงเงินที่กำหนดตามวิธีการจัดซื้อ');
-    } else {
-      const dataPurchasing: any = {};
-      const summary: any = {};
-
-      // ตรวจสอบว่ามีรายการใดที่จำนวนจัดซื้อเป็น 0 หรือ ไม่ได้ระบุราคา
-      let isError = false;
-      this.purchaseOrderItems.forEach((v: IProductOrderItems) => {
-        if (!v.product_id || v.qty <= 0 || !v.unit_generic_id && !v.cost) {
-          isError = true;
-        }
-      });
-
-      if (isError) {
-        this.alertService.error('กรุณาระบุรายละเอียดสินค้าให้ครบถ้วน เช่น ราคา, จำนวนจัดซื้อและหน่วยสำหรับจัดซื้อ')
+      if (isErrorBidAmount) {
+        // วงเงินเกินวิธีการจัดซื้อ
+        this.alertService.error('ราคารวมสุทธิเกินวงเงินที่กำหนดตามวิธีการจัดซื้อ');
       } else {
-        // ตรวจสอบยอดสั่งซื้อกับวงเงินของงบคงเหลือ
-        if (this.budgetData.RemainAfterPurchase < 0) {
-          this.alertService.error('ยอดจัดซื้อครั้งนี้ เกินกว่ายอดคงเหลือของงบประมาณ?')
-        } else if (this.budgetData.contractRemainAfterPurchase < 0 && this.contractId) {
-          this.alertService.error('ยอดจัดซื้อครั้งนี้ เกินกว่ายอดคงเหลือของสัญญา?')
-        } else {
-          this._canSave = false;
-          this.modalLoading.show();
-          // calculate new budget transaction
-          await this.budgetRemainRef.getBudget();
+        const dataPurchasing: any = {};
+        const summary: any = {};
 
-          if (this._canSave) {
-            this.modalLoading.hide();
-            this.alertService.confirm('กรุณาตรวจสอบรายการให้ถูกต้องการทำการบันทึก ต้องการบันทึก ใช่หรือไม่?')
-              .then(async () => {
-                this.doSavePurchase();
-              }).catch(() => { });
+        // ตรวจสอบว่ามีรายการใดที่จำนวนจัดซื้อเป็น 0 หรือ ไม่ได้ระบุราคา
+        let isError = false;
+        this.purchaseOrderItems.forEach((v: IProductOrderItems) => {
+          if (!v.product_id || v.qty <= 0 || !v.unit_generic_id && !v.cost) {
+            isError = true;
+          }
+        });
+
+        if (isError) {
+          this.alertService.error('กรุณาระบุรายละเอียดสินค้าให้ครบถ้วน เช่น ราคา, จำนวนจัดซื้อและหน่วยสำหรับจัดซื้อ')
+        } else {
+          // ตรวจสอบยอดสั่งซื้อกับวงเงินของงบคงเหลือ
+          if (this.budgetData.RemainAfterPurchase < 0) {
+            this.alertService.error('ยอดจัดซื้อครั้งนี้ เกินกว่ายอดคงเหลือของงบประมาณ?')
+          } else if (this.budgetData.contractRemainAfterPurchase < 0 && this.contractId) {
+            this.alertService.error('ยอดจัดซื้อครั้งนี้ เกินกว่ายอดคงเหลือของสัญญา?')
           } else {
-            this.modalLoading.hide();
-            this.alertService.error('ไม่สามารถประมวลผล Transaction ของงบประมาณได้')
+            this._canSave = false;
+            this.modalLoading.show();
+            // calculate new budget transaction
+            await this.budgetRemainRef.getBudget();
+
+            if (this._canSave) {
+              this.modalLoading.hide();
+              this.alertService.confirm('กรุณาตรวจสอบรายการให้ถูกต้องการทำการบันทึก ต้องการบันทึก ใช่หรือไม่?')
+                .then(async () => {
+                  this.doSavePurchase();
+                }).catch(() => { });
+            } else {
+              this.modalLoading.hide();
+              this.alertService.error('ไม่สามารถประมวลผล Transaction ของงบประมาณได้')
+            }
           }
         }
       }
-
+    } else {
+      this.modalLoading.hide();
+      this.alertService.error('เลขที่อ้างอิงซ้ำ')
     }
   }
 
@@ -780,6 +801,46 @@ export class OrderFormComponent implements OnInit {
       }
       if (!this.showBuyer) {
         this.buyerId = null;
+      }
+      const peopleCommittee = [];
+      // let committeeId =
+      // เช็คกรรมการตรวจรับว่าเป็นแบบอื่นๆหรือไม่
+      if (this.verifyCommitteeId === 0) {
+        const committeeHead = {
+          committee_name: 'อื่นๆ',
+          committee_type: 0,
+          datetime_start: moment(new Date()).format('YYYY-MM-DD'),
+          is_delete: 'Y'
+        }
+        const committeeHeadIdRs: any = await this.committeeService.save(committeeHead);
+        this.verifyCommitteeId = committeeHeadIdRs.rows[0];
+        console.log(this.verifyCommitteeId);
+
+        if (this.peopleId1) {
+          const committeeDetail = {
+            committee_id: this.verifyCommitteeId,
+            people_id: this.peopleId1,
+            position_name: 'ประธาน'
+          }
+          peopleCommittee.push(committeeDetail)
+        }
+        if (this.peopleId2) {
+          const committeeDetail = {
+            committee_id: this.verifyCommitteeId,
+            people_id: this.peopleId2,
+            position_name: 'กรรมการ'
+          }
+          peopleCommittee.push(committeeDetail)
+        }
+        if (this.peopleId3) {
+          const committeeDetail = {
+            committee_id: this.verifyCommitteeId,
+            people_id: this.peopleId3,
+            position_name: 'กรรมการ'
+          }
+          peopleCommittee.push(committeeDetail)
+        }
+        await this.committeePeopleService.save(peopleCommittee);
       }
 
       summary = {
@@ -1048,23 +1109,55 @@ export class OrderFormComponent implements OnInit {
 
   changeCommittee(event: any) {
     this.verifyCommitteeId = event ? event.committee_id : null;
+    this.peopleId1 = null;
+    this.peopleId2 = null;
+    this.peopleId3 = null;
     this.getCommitteePeople(event.committee_id);
+
   }
 
   // แสดงรายชื่อกรรมการ
-  async getCommitteePeople(committeeId: string) {
+  async getCommitteePeople(committeeId: any) {
     this.modalLoading.show();
-    try {
+    if (this.purchaseOrderId) {
       const rs: any = await this.committeePeopleService.allByCommitteeId(committeeId);
-      this.modalLoading.hide();
       if (rs.ok) {
         this.committeeSelected = rs.rows;
-      } else {
-        this.alertService.error(rs.error);
+        if (+rs.rows[0].committee_type === 0) {
+          this.verifyCommitteeId = 0;
+          if (rs.rows[0]) {
+            this.searchPeople1.setSelected(rs.rows[0].fullname);
+            this.peopleId1 = rs.rows[0].people_id;
+          }
+          if (rs.rows[1]) {
+            this.searchPeople2.setSelected(rs.rows[1].fullname);
+            this.peopleId2 = rs.rows[1].people_id;
+          }
+          if (rs.rows[2]) {
+            this.searchPeople3.setSelected(rs.rows[2].fullname);
+            this.peopleId3 = rs.rows[2].people_id;
+          }
+        }
       }
-    } catch (error) {
       this.modalLoading.hide();
-      this.alertService.error(JSON.stringify(error));
+    } else {
+      if (committeeId !== 0) {
+        const rs: any = await this.committeePeopleService.allByCommitteeId(committeeId);
+        this.modalLoading.hide();
+        if (rs.ok) {
+          if (+rs.rows[0].committee_type === 0) {
+            this.verifyCommitteeId = 0;
+          }
+          this.committeeSelected = rs.rows;
+        } else {
+          this.alertService.error(rs.error);
+        }
+      } else {
+        this.searchPeople1.setSelected('');
+        this.searchPeople2.setSelected('');
+        this.searchPeople3.setSelected('');
+        this.modalLoading.hide();
+      }
     }
   }
 
@@ -1108,22 +1201,69 @@ export class OrderFormComponent implements OnInit {
   // search vendor
   onChangeVendor(event: any) {
     if (event) {
-      // console.log(this.labelerId);
       this.labelerId = null;
     }
   }
 
   onSelectVendor(event: any) {
     if (event) {
-
       if (this.oldLabelerId !== event.labeler_id) {
         this.purchaseOrderItems = [];
       }
-
       this.labelerId = event.labeler_id;
       this.oldLabelerId = event.labeler_id;
 
       this.searchProductLabeler.setApiUrl(this.labelerId);
     }
+  }
+
+  onChangePeople(event: any, idx) {
+    if (event) {
+      if (idx === 1) {
+        this.peopleId1 = null;
+      }
+      if (idx === 2) {
+        this.peopleId2 = null;
+      }
+      if (idx === 3) {
+        this.peopleId3 = null;
+      }
+
+    }
+  }
+
+  onSelectPeople(event: any, idx) {
+    if (event) {
+      if (idx === 1) {
+        this.peopleId1 = event.people_id;
+      }
+      if (idx === 2) {
+        this.peopleId2 = event.people_id;
+      }
+      if (idx === 3) {
+        this.peopleId3 = event.people_id;
+      }
+    }
+  }
+  async getHoliday() {
+    const holiday: any = await this.holidayService.all();
+    console.log((moment(new Date()).get('year')));
+    const holidays = [];
+    holiday.rows.forEach(v => {
+      const obj: any = {};
+      if (+v.is_year === 1) {
+        obj.year = moment(new Date()).get('year');
+        obj.month = (moment(v.date).get('month')) + 1
+        obj.day = moment(v.date).get('date')
+        holidays.push(obj);
+      } else {
+        obj.year = moment(v.date).get('year');
+        obj.month = (moment(v.date).get('month')) + 1
+        obj.day = moment(v.date).get('date')
+        holidays.push(obj);
+      }
+    });
+    const objDate = { 'dates': holidays, 'color': 'red' };
+    this.holidays.push(objDate);
   }
 }
