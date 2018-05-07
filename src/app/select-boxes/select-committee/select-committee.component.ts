@@ -57,9 +57,16 @@ export class SelectCommitteeComponent implements OnInit {
   }
 
   setSelected(event: any) {
-    const idx = _.findIndex(this.items, { committee_id: event.target.value });
-    if (idx > -1) {
-      this.onChange.emit(this.items[idx]);
+    if (event.target.value === '0') {
+      const item = {
+        committee_id: 0
+      }
+      this.onChange.emit(item)
+    } else {
+      const idx = _.findIndex(this.items, { committee_id: +event.target.value });
+      if (idx > -1) {
+        this.onChange.emit(this.items[idx]);
+      }
     }
   }
 

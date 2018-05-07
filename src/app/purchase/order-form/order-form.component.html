@@ -284,16 +284,34 @@
                   </label>
                   <po-select-committee [selectedId]="verifyCommitteeId" style="width: 100%;" (onChange)="changeCommittee($event)"></po-select-committee>
                 </div>
-                <ol>
-                  <li *ngFor="let p of committeeSelected">
-                    <span>
-                      {{p.fullname}} ( {{p.cp_position_name}} )
-                    </span>
-                    <small style="display:block;margin-top:-5px;padding:0 0 0 7px;">
-                      <i> {{p.position_name}}</i>
-                    </small>
-                  </li>
-                </ol>
+                <div [ngClass]="{'hidden':verifyCommitteeId!=0}">
+                  <ol>
+                    <li> ประธาน
+                      <app-search-people [disabled]="verifyCommitteeId != 0" #searchPeople1 (onChange)="onChangePeople($event,1)" (onSelect)="onSelectPeople($event,1)"
+                        style="width: 100%;"></app-search-people>
+                    </li>
+                    <li> กรรมการ
+                      <app-search-people [disabled]="verifyCommitteeId != 0" #searchPeople2 (onChange)="onChangePeople($event,2)" (onSelect)="onSelectPeople($event,2)"
+                        style="width: 100%;"></app-search-people>
+                    </li>
+                    <li> กรรมการ
+                      <app-search-people [disabled]="verifyCommitteeId != 0" #searchPeople3 (onChange)="onChangePeople($event,3)" (onSelect)="onSelectPeople($event,3)"
+                        style="width: 100%;"></app-search-people>
+                    </li>
+                  </ol>
+                </div>
+                <div *ngIf="verifyCommitteeId != 0">
+                  <ol>
+                      <li *ngFor="let p of committeeSelected">
+                          <span>
+                            {{p.fullname}} ( {{p.cp_position_name}} )
+                          </span>
+                          <small style="display:block;margin-top:-5px;padding:0 0 0 7px;">
+                            <i> {{p.position_name}}</i>
+                          </small>
+                        </li>
+                  </ol>
+                </div>
               </div>
             </div>
           </clr-tab-content>
