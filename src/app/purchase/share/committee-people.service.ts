@@ -23,7 +23,7 @@ export class CommitteePeopleService {
     });
   }
 
-  allByCommitteeId(committeeId:string) {
+  allByCommitteeId(committeeId: string) {
     return new Promise((resolve, reject) => {
       this.authHttp.get(`${this.url}/${this.apiName}/all/${committeeId}`)
         .map(res => res.json())
@@ -38,11 +38,11 @@ export class CommitteePeopleService {
   save(data: object) {
     return new Promise((resolve, reject) => {
       this.authHttp.post(`${this.url}/${this.apiName}`, {
-        data:data
+        data: data
       })
         .map(res => res.json())
-        .subscribe(data => {
-          resolve(data);
+        .subscribe(d => {
+          resolve(d);
         }, error => {
           reject(error);
         });
