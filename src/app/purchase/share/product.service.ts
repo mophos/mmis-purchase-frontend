@@ -18,12 +18,13 @@ export class ProductService {
     return res.json();
   }
 
-  async getReorderPointTrade(genericTypeId: any, limit: number = 20, offset: number = 0, query: any = '') {
+  async getReorderPointTrade(genericTypeId: any, limit: number = 20, offset: number = 0, query: any = '', showNotPurchased: any = 'N') {
     const res = await this.authHttp.post(`${this.url}/products/reorderpoint/trade`, {
       genericTypeId: genericTypeId,
       limit: limit,
       offset: offset,
-      query: query
+      query: query,
+      showNotPurchased: showNotPurchased
     }).toPromise();
     return res.json();
   }

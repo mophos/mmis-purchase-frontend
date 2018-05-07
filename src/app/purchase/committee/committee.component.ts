@@ -17,7 +17,7 @@ export class CommitteeComponent implements OnInit {
   committeeSelected: Array<any> = [];
   committeeIsUpdate: boolean = false;
   loading: boolean = false;
-  
+
   @ViewChild('cmt') form: CommitteeFormComponent;
 
   constructor(
@@ -25,43 +25,42 @@ export class CommitteeComponent implements OnInit {
     private peopleService: PeopleService,
     private alertService: AlertService,
     private ref: ChangeDetectorRef
-  ) {}
-  
+  ) { }
+
   ngOnInit() {
     this.getCommittee();
     this.getPeoples();
-    
+
   }
 
-  newCommittee(){
+  newCommittee() {
     this.form.newCommittee();
   }
 
-  deleteComittee(row: any){
-console.log(row);
+  deleteComittee(row: any) {
+    console.log(row);
     this.alertService.confirm('คุณต้องการที่จะลบคณะกรรมการใช่หรือไม่?').then(() => {
-      this.commiteeService.remove(row.committee_id) 
-      .then((results: any) => {
-        this.ref.detectChanges();
-        this.loading = false;
-        this.alertService.success('ลบรายการเสร็จเรียบร้อย...');
-        this.getCommittee();
-      })
-      .catch(error => {
-        this.loading = false;
-        this.alertService.serverError();
-      });
+      this.commiteeService.updateIsdelete(row.committee_id)
+        .then((results: any) => {
+          this.ref.detectChanges();
+          this.loading = false;
+          this.alertService.success('ลบรายการเสร็จเรียบร้อย...');
+          this.getCommittee();
+        })
+        .catch(error => {
+          this.loading = false;
+          this.alertService.serverError();
+        });
     })
-    .catch(() => {
+      .catch(() => {
 
-    });
+      });
   }
 
-  affterSaveCommittee(e)
-  {
+  affterSaveCommittee(e) {
     this.getCommittee();
   }
-  
+
   getCommittee() {
     this.loading = true;
     this.commiteeService.all()
