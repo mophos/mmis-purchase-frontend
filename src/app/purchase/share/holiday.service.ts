@@ -4,7 +4,7 @@ import { AuthHttp } from 'angular2-jwt';
 @Injectable()
 export class HolidayService {
 
-  apiName: string = 'holidays';
+  apiName = 'holidays';
 
   constructor(
     @Inject('API_URL') private url: String,
@@ -63,8 +63,8 @@ export class HolidayService {
     return new Promise((resolve, reject) => {
       this.authHttp.post(`${this.url}/${this.apiName}`, {data})
         .map(res => res.json())
-        .subscribe(data => {
-          resolve(data);
+        .subscribe(d => {
+          resolve(d);
         }, error => {
           reject(error);
         });
@@ -75,8 +75,8 @@ export class HolidayService {
     return new Promise((resolve, reject) => {
       this.authHttp.put(`${this.url}/${this.apiName}/${id}`, {data})
         .map(res => res.json())
-        .subscribe(data => {
-          resolve(data);
+        .subscribe(d => {
+          resolve(d);
         }, error => {
           reject(error);
         });
