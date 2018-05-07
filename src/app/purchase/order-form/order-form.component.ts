@@ -1091,7 +1091,6 @@ export class OrderFormComponent implements OnInit {
 
   changeCommittee(event: any) {
     this.verifyCommitteeId = event ? event.committee_id : null;
-    console.log(this.verifyCommitteeId);
     this.peopleId1 = null;
     this.peopleId2 = null;
     this.peopleId3 = null;
@@ -1105,6 +1104,7 @@ export class OrderFormComponent implements OnInit {
     if (this.purchaseOrderId) {
       const rs: any = await this.committeePeopleService.allByCommitteeId(committeeId);
       if (rs.ok) {
+        this.committeeSelected = rs.rows;
         if (+rs.rows[0].committee_type === 0) {
           this.verifyCommitteeId = 0;
           if (rs.rows[0]) {
@@ -1141,9 +1141,6 @@ export class OrderFormComponent implements OnInit {
         this.modalLoading.hide();
       }
     }
-
-    // try {
-
   }
 
   changeOfficer(event: any) {
