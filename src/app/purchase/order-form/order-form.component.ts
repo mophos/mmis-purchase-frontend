@@ -726,47 +726,41 @@ export class OrderFormComponent implements OnInit {
   }
 
   async _save() {
+    const bookNumber = await this.purchasingOrderService.getPoBookNumber();
+    const idx = _.findIndex(bookNumber.rows, { purchase_order_book_number: this.purchaseOrderBookNumber });
+    if (idx === -1) {
+      const isErrorBidAmount: boolean = this.bidAmount < this.totalPrice;
 
-    const isErrorBidAmount: boolean = this.bidAmount < this.totalPrice;
-
-    if (isErrorBidAmount) {
-      // วงเงินเกินวิธีการจัดซื้อ
-      this.alertService.error('ราคารวมสุทธิเกินวงเงินที่กำหนดตามวิธีการจัดซื้อ');
-    } else {
-      const dataPurchasing: any = {};
-      const summary: any = {};
-
-      // ตรวจสอบว่ามีรายการใดที่จำนวนจัดซื้อเป็น 0 หรือ ไม่ได้ระบุราคา
-      let isError = false;
-      this.purchaseOrderItems.forEach((v: IProductOrderItems) => {
-        if (!v.product_id || v.qty <= 0 || !v.unit_generic_id && !v.cost) {
-          isError = true;
-        }
-      });
-
-      if (isError) {
-        this.alertService.error('กรุณาระบุรายละเอียดสินค้าให้ครบถ้วน เช่น ราคา, จำนวนจัดซื้อและหน่วยสำหรับจัดซื้อ')
+      if (isErrorBidAmount) {
+        // วงเงินเกินวิธีการจัดซื้อ
+        this.alertService.error('ราคารวมสุทธิเกินวงเงินที่กำหนดตามวิธีการจัดซื้อ');
       } else {
-        // ตรวจสอบยอดสั่งซื้อกับวงเงินของงบคงเหลือ
-        if (this.budgetData.RemainAfterPurchase < 0) {
-          this.alertService.error('ยอดจัดซื้อครั้งนี้ เกินกว่ายอดคงเหลือของงบประมาณ?')
-        } else if (this.budgetData.contractRemainAfterPurchase < 0 && this.contractId) {
-          this.alertService.error('ยอดจัดซื้อครั้งนี้ เกินกว่ายอดคงเหลือของสัญญา?')
-        } else {
-          this._canSave = false;
-          this.modalLoading.show();
-          // calculate new budget transaction
-          await this.budgetRemainRef.getBudget();
+        const dataPurchasing: any = {};
+        const summary: any = {};
 
-          let checkBookNumber: boolean = true;
-          if (this.purchaseOrderBookNumber) {
-            const bookNumber = await this.purchasingOrderService.getPoBookNumber();
-            const idx = _.findIndex(bookNumber.rows, { purchase_order_book_number: this.purchaseOrderBookNumber });
-            idx > -1 ? checkBookNumber = false : checkBookNumber = true;
+        // ตรวจสอบว่ามีรายการใดที่จำนวนจัดซื้อเป็น 0 หรือ ไม่ได้ระบุราคา
+        let isError = false;
+        this.purchaseOrderItems.forEach((v: IProductOrderItems) => {
+          if (!v.product_id || v.qty <= 0 || !v.unit_generic_id && !v.cost) {
+            isError = true;
           }
+        });
 
-          if (this._canSave) {
-            if (checkBookNumber) {
+        if (isError) {
+          this.alertService.error('กรุณาระบุรายละเอียดสินค้าให้ครบถ้วน เช่น ราคา, จำนวนจัดซื้อและหน่วยสำหรับจัดซื้อ')
+        } else {
+          // ตรวจสอบยอดสั่งซื้อกับวงเงินของงบคงเหลือ
+          if (this.budgetData.RemainAfterPurchase < 0) {
+            this.alertService.error('ยอดจัดซื้อครั้งนี้ เกินกว่ายอดคงเหลือของงบประมาณ?')
+          } else if (this.budgetData.contractRemainAfterPurchase < 0 && this.contractId) {
+            this.alertService.error('ยอดจัดซื้อครั้งนี้ เกินกว่ายอดคงเหลือของสัญญา?')
+          } else {
+            this._canSave = false;
+            this.modalLoading.show();
+            // calculate new budget transaction
+            await this.budgetRemainRef.getBudget();
+
+            if (this._canSave) {
               this.modalLoading.hide();
               this.alertService.confirm('กรุณาตรวจสอบรายการให้ถูกต้องการทำการบันทึก ต้องการบันทึก ใช่หรือไม่?')
                 .then(async () => {
@@ -774,14 +768,14 @@ export class OrderFormComponent implements OnInit {
                 }).catch(() => { });
             } else {
               this.modalLoading.hide();
-              this.alertService.error('เลขที่อ้างอิงซ้ำ')
+              this.alertService.error('ไม่สามารถประมวลผล Transaction ของงบประมาณได้')
             }
-          } else {
-            this.modalLoading.hide();
-            this.alertService.error('ไม่สามารถประมวลผล Transaction ของงบประมาณได้')
           }
         }
       }
+    } else {
+      this.modalLoading.hide();
+      this.alertService.error('เลขที่อ้างอิงซ้ำ')
     }
   }
 
