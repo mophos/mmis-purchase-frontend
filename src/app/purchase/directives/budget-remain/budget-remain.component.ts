@@ -51,9 +51,11 @@ export class BudgetRemainComponent implements OnInit {
 
   @Input('contractId')
   set setContractId(value: any) {
+    console.log(value);
     this._contractId = value;
-  }
-
+    this.getContractDetail(this._contractId);
+  }  
+  
   @Input('purchaseOrderId') purchaseOrderId: any;
 
   @Output('onCalculated') onCalculated: EventEmitter<any> = new EventEmitter<any>();
@@ -91,23 +93,28 @@ export class BudgetRemainComponent implements OnInit {
     }
   }
 
-  async getContractDetail() {
-    if (this._contractId) {
+  clearContractDetail() {
+    this.contractAmount = 0;
+    this.contractNo = null;
+    this.contractPurchaseAmount = 0;
+    this.contractRemain = 0;
+    this.contractRemainAfterPurchase = 0;
+  }
+
+  async getContractDetail(contractId: any, purchaseId: any = '') {
+    if (contractId) {
       try {
-        const rs: any = await this.contractServices.remainDetail(this._contractId);
+        let rs: any = await this.contractServices.remainDetail(contractId, purchaseId);
         if (rs.ok) {
-          rs.detail.forEach(v => {
-            if (this.purchaseOrderId !== v.purchase_order_id) {
-              this.contractRemain += v.total_price;
-            }
-          });
-          this.contractNo = rs.detail[0] ? rs.detail[0].contract_no : null;
-          this.contractAmount = rs.detail[0] ? rs.detail[0].amount : 0;
-          this.contractRemain = this.contractAmount - this.contractRemain
-          // this.contractPurchaseAmount = rs.detail[0] ? rs.detail[0].total_purchase : 0;
-          // this.contractRemain = this.contractAmount - (this.contractPurchaseAmount - this.totalPurchaseAmount);
-          // console.log(this.contractRemain);
-          this.contractRemainAfterPurchase = this.contractRemain - this.cost;
+          this.contractAmount = rs.detail ? rs.detail.amount : 0;
+          this.contractNo = rs.detail ? rs.detail.contract_no : null;
+          this.contractPurchaseAmount = rs.detail ? rs.detail.total_purchase : 0;
+
+          this.contractRemain = this.contractAmount - this.contractPurchaseAmount;
+          this.contractRemainAfterPurchase = this.contractRemain - this.totalPurchaseAmount;
+          this.returnData();
+        } else {
+          this.alertService.error('เกิดข้อผิดพลาดในการดึงข้อมูลสัญญา');
         }
       } catch (error) {
         console.log(error);
