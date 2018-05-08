@@ -143,8 +143,8 @@
             <button *ngIf="btnApproveIsActive(pro)" class="action-item" (click)="approve(pro)">
               <clr-icon shape="tasks"></clr-icon> อนุมัติการสั่งซื้อ</button>
 
-            <button class="action-item" (click)="printRequistionSingburi(pro)" [disabled]="pro.purchase_order_status === 'ORDERPOINT' || pro.is_cancel == 'Y'">
-              <clr-icon shape="printer"></clr-icon> พิมพ์ใบขอซื้อ
+            <button class="action-item" (click)="printPuchasing10(pro)" [disabled]="pro.purchase_order_status === 'ORDERPOINT' || pro.is_cancel == 'Y'">
+              <clr-icon shape="printer"></clr-icon> พิมพ์ใบขออนุมัติซื้อ
             </button>
             <button class="action-item" (click)="printPurchaseOrder(pro)" [disabled]="pro.purchase_order_status === 'ORDERPOINT' || pro.is_cancel == 'Y'">
               <clr-icon shape="printer"></clr-icon> พิมพ์ใบสั่งซื้อ
