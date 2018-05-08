@@ -81,6 +81,14 @@ export class BudgetRemainComponent implements OnInit {
     }
   }
 
+  clearContractDetail() {
+    this.contractAmount = 0;
+    this.contractNo = null;
+    this.contractPurchaseAmount = 0;
+    this.contractRemain = 0;
+    this.contractRemainAfterPurchase = 0;
+  }
+
   async getContractDetail(contractId: any, purchaseId: any = '') {
     if (contractId) {
       try {
