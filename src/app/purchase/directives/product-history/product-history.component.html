@@ -14,7 +14,8 @@
       <clr-dg-row *clrDgItems="let pro of productOrders" [clrDgItem]="pro">
         <clr-dg-cell>{{pro.trading_code}}</clr-dg-cell>
         <clr-dg-cell>{{pro.product_name}}<br>({{pro.labeler_name}})</clr-dg-cell>
-        <clr-dg-cell>{{pro.purchase_order_number}}</clr-dg-cell>
+        <clr-dg-cell *ngIf="pro.purchase_order_book_number == null">{{pro.purchase_order_number}}</clr-dg-cell>
+        <clr-dg-cell *ngIf="pro.purchase_order_book_number != null">{{pro.purchase_order_book_number}}</clr-dg-cell>
         <clr-dg-cell class="text-success" style="text-align:right">{{pro.contract_id}}</clr-dg-cell>
         <clr-dg-cell style="text-align:right">{{pro.qty}}</clr-dg-cell>
         <clr-dg-cell style="text-align:right">{{pro.large_unit_name}}({{pro.conversion_qty}} {{pro.small_large_unit_name}})</clr-dg-cell>
