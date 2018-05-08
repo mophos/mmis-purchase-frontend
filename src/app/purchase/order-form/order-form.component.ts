@@ -50,7 +50,6 @@ import { SelectSubBudgetComponent } from '../../select-boxes/select-sub-budget/s
 import { SearchVendorComponent } from '../../autocomplete/search-vendor/search-vendor.component';
 import { SearchPeopleComponent } from '../../autocomplete/search-people/search-people.component';
 import { BudgetRemainComponent } from '../directives/budget-remain/budget-remain.component';
-import { BUTTON_GROUP_DIRECTIVES } from '@clr/angular';
 @Component({
   selector: 'app-order-form',
   templateUrl: './order-form.component.html'
@@ -167,7 +166,7 @@ export class OrderFormComponent implements OnInit {
   subTotal = 0;
   vatRate: number;
   vatRateTmp: number;
-  excludeVat = true;
+  excludeVat = false;
   addVat = false;
   vat = 0;
   totalPrice = 0;
@@ -205,11 +204,13 @@ export class OrderFormComponent implements OnInit {
   count = 0;
 
   isSaving = false;
-
+  holidays: any = [];
   myDatePickerOptions: IMyOptions = {
     dateFormat: 'dd mmm yyyy',
     editableDateField: false,
-    showClearDateBtn: false
+    showClearDateBtn: false,
+    // satHighlight: true,
+    markDates: this.holidays,
   };
 
   /* satit */
@@ -229,6 +230,7 @@ export class OrderFormComponent implements OnInit {
   contractNo: any = null;
 
   _canSave = false;
+
 
   constructor(
     private accessCheck: AccessCheck,
@@ -288,10 +290,7 @@ export class OrderFormComponent implements OnInit {
 
   async ngOnInit() {
     await this.getProductType();
-    const holiday: any = await this.holidayService.all();
-    console.log((moment(new Date()).get('year')));
-
-    console.log(holiday.rows);
+    await this.getHoliday();
 
     if (this.purchaseOrderId) {
       await this.getPurchaseOrderDetail(this.purchaseOrderId);
@@ -1223,26 +1222,35 @@ export class OrderFormComponent implements OnInit {
   onSelectPeople(event: any, idx) {
     if (event) {
       if (idx === 1) {
-        // if (this.oldPeopleId1 !== event.people_id) {
-        //   this.purchaseOrderItems = [];
-        // }
         this.peopleId1 = event.people_id;
-        // this.oldPeopleId1 = event.people_id;
       }
       if (idx === 2) {
-        // if (this.oldPeopleId2 !== event.people_id) {
-        //   this.purchaseOrderItems = [];
-        // }
         this.peopleId2 = event.people_id;
-        // this.oldPeopleId2 = event.people_id;
       }
       if (idx === 3) {
-        // if (this.oldPeopleId3 !== event.people_id) {
-        //   this.purchaseOrderItems = [];
-        // }
         this.peopleId3 = event.people_id;
-        // this.oldPeopleId3 = event.people_id;
       }
     }
+  }
+  async getHoliday() {
+    const holiday: any = await this.holidayService.all();
+    console.log((moment(new Date()).get('year')));
+    const holidays = [];
+    holiday.rows.forEach(v => {
+      const obj: any = {};
+      if (+v.is_year === 1) {
+        obj.year = moment(new Date()).get('year');
+        obj.month = (moment(v.date).get('month')) + 1
+        obj.day = moment(v.date).get('date')
+        holidays.push(obj);
+      } else {
+        obj.year = moment(v.date).get('year');
+        obj.month = (moment(v.date).get('month')) + 1
+        obj.day = moment(v.date).get('date')
+        holidays.push(obj);
+      }
+    });
+    const objDate = { 'dates': holidays, 'color': 'red' };
+    this.holidays.push(objDate);
   }
 }

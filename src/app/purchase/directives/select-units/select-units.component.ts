@@ -1,7 +1,7 @@
 import { UnitService } from './../../share/unit.service';
 import { Component, OnInit, Input, Output, ChangeDetectorRef, EventEmitter, ViewContainerRef, AfterViewInit } from '@angular/core';
 import 'rxjs/Rx';
-import {Observable} from 'rxjs/Observable';  
+import { Observable } from 'rxjs/Observable';
 import * as _ from 'lodash';
 
 @Component({
@@ -10,30 +10,30 @@ import * as _ from 'lodash';
 })
 
 export class SelectUnitsComponent implements AfterViewInit, OnInit {
-loading: boolean;
-units: Array<any> = [];
-private _isNewRecord: string;
+  loading: boolean;
+  units: Array<any> = [];
+  private _isNewRecord: string;
 
-@Input() set isNewRecord(value: string) {
-   this._isNewRecord = value;
-}
+  @Input() set isNewRecord(value: string) {
+    this._isNewRecord = value;
+  }
 
-get isNewRecord(): string {
+  get isNewRecord(): string {
     return this._isNewRecord;
-}
+  }
 
-@Input() unitId: string;
-@Input() productId: string;
-@Output() onChange: EventEmitter<any> = new EventEmitter<any>(false);
+  @Input() unitId: string;
+  @Input() productId: string;
+  @Output() onChange: EventEmitter<any> = new EventEmitter<any>(false);
 
   constructor(
     private unitService: UnitService,
     private viewContainerRef: ViewContainerRef,
     private ref: ChangeDetectorRef
-  ) {}
+  ) { }
 
   ngOnInit() {
-    if(this.productId) {
+    if (this.productId) {
       this.getUnitsByGeneric(this.productId, this.unitId);
     }
     // console.log(this._isNewRecord);
@@ -48,7 +48,7 @@ get isNewRecord(): string {
   }
 
   onChangeUnit(unit_generic_id: string) {
-    const unitObject: any =  _.find(this.units, { 'unit_generic_id': +unit_generic_id });
+    const unitObject: any = _.find(this.units, { 'unit_generic_id': +unit_generic_id });
     this.onChange.emit(unitObject);
   }
 
@@ -57,18 +57,18 @@ get isNewRecord(): string {
     this.unitService.byProduct(productId)
       .then((results: any) => {
         this.ref.detectChanges();
-        this.units =  results.rows;
-          if(unit_product_id) {
-            const unitObject: any =  _.find(this.units, { 'unit_product_id': +unit_product_id });
-            if(unitObject){
-              this.unitId = unitObject.unit_product_id;
-              this.onChangeUnit(this.unitId);
-            }else{
-              console.log('empty purchase unit default');
-            }
-          }else{
-            this.onChangeUnit(this.units[0].unit_product_id);
+        this.units = results.rows;
+        if (unit_product_id) {
+          const unitObject: any = _.find(this.units, { 'unit_product_id': +unit_product_id });
+          if (unitObject) {
+            this.unitId = unitObject.unit_product_id;
+            this.onChangeUnit(this.unitId);
+          } else {
+            console.log('empty purchase unit default');
           }
+        } else {
+          this.onChangeUnit(this.units[0].unit_product_id);
+        }
         this.loading = false;
       })
       .catch(error => {
@@ -82,28 +82,28 @@ get isNewRecord(): string {
     this.unitService.byGeneric(genericId)
       .then((results: any) => {
         this.ref.detectChanges();
-        this.units =  results.rows;
-          if(purchase_unit_generic_id) {
-            const unitObject: any =  _.find(this.units, { 'unit_generic_id': +purchase_unit_generic_id });
-            if(unitObject) {
-              this.unitId = unitObject.unit_generic_id;
-              if(this._isNewRecord) {
-                this.onChangeUnit(this.unitId);
-              }
-            } else {
-              console.log('empty purchase unit default');
+        this.units = results.rows;
+        if (purchase_unit_generic_id) {
+          const unitObject: any = _.find(this.units, { 'unit_generic_id': +purchase_unit_generic_id });
+          if (unitObject) {
+            this.unitId = unitObject.unit_generic_id;
+            if (this._isNewRecord) {
+              this.onChangeUnit(this.unitId);
             }
           } else {
-            if(this.units.length > 0){
-              // console.log('selected unit index[0]');
-              this.unitId = this.units[0].unit_generic_id;
-              if(this._isNewRecord) {
-                this.onChangeUnit(this.unitId);
-              }
-            }else{
-              console.log('unit is Empty');
-            }
+            console.log('empty purchase unit default');
           }
+        } else {
+          if (this.units.length > 0) {
+            // console.log('selected unit index[0]');
+            this.unitId = this.units[0].unit_generic_id;
+            if (this._isNewRecord) {
+              this.onChangeUnit(this.unitId);
+            }
+          } else {
+            console.log('unit is Empty');
+          }
+        }
         this.loading = false;
       })
       .catch(error => {
