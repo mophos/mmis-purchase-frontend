@@ -279,27 +279,33 @@ export class OrderFormComponent implements OnInit {
   }
 
   addProductSelected() {
-    if (this.selectedProduct.contract_id) {
-      this.alertService.confirm('รายการนี้มีสัญญา หากเพิ่มรายการนี้ รายการอื่นๆที่ไม่มีสัญญาจะถูกยกเลิก แล้วออก PO เป็นแบบมีสัญญาแทน ต้องการสร้าง PO แบบมีสัญญาใช่หรือไม่?')
-        .then(() => {
-          // ออก PO แบบมีสัญญา
-          this.contractId = this.selectedProduct.contract_id;
-          this.contractNo = this.selectedProduct.contract_no;
-          this.purchaseOrderItems.forEach((v, i) => {
-            if (v.contract_id !== v.contract_id) {
-              this.purchaseOrderItems.splice(i, 1);
-            }
-          });
-          // get contract info
-          this.budgetRemainRef.getContractDetail(this.contractId, this.purchaseOrderId);
-          this._doAddProduct();
-        }).catch(() => { });
-    } else if (this.contractId) { 
+
+    if (this.contractId) {
       if (this.selectedProduct.contract_id !== this.contractId) {
-        this.alertService.error('รายการนี้ไม่ได้อยู่ในสัญญาที่ได้กำหนดเอาไว้ กรุณาตรวจสอบข้อมูล');
+        this.alertService.error('รายการนี้ไม่ได้อยู่ในสัญญา กรุณาตรวจสอบข้อมูล');
+      } else {
+        this.budgetRemainRef.getContractDetail(this.contractId, this.purchaseOrderId);
+        this._doAddProduct();
       }
     } else {
-      this._doAddProduct();
+      if (this.selectedProduct.contract_id) {
+        this.alertService.confirm('หากเพิ่มรายการนี้รายการอื่นๆที่ไม่มีสัญญาจะถูกยกเลิก แล้วออก PO เป็นแบบมีสัญญาแทน ต้องการสร้าง PO แบบมีสัญญาใช่หรือไม่?', 'รายการนี้มีสัญญา')
+          .then(() => {
+            // ออก PO แบบมีสัญญา
+            this.contractId = this.selectedProduct.contract_id;
+            this.contractNo = this.selectedProduct.contract_no;
+            this.purchaseOrderItems.forEach((v, i) => {
+              if (v.contract_id !== v.contract_id) {
+                this.purchaseOrderItems.splice(i, 1);
+              }
+            });
+            // get contract budget
+            this.budgetRemainRef.getContractDetail(this.contractId, this.purchaseOrderId);
+            this._doAddProduct();
+          }).catch(() => { });
+      } else {
+        this._doAddProduct();
+      }
     }
   }
 
@@ -640,12 +646,6 @@ export class OrderFormComponent implements OnInit {
     if (this.purchaseOrder.verify_committee_id) {
       this.verifyCommitteeId = this.purchaseOrder.verify_committee_id;
       await this.getCommitteePeople(this.purchaseOrder.verify_committee_id);
-      console.log(this.verifyCommitteeId);
-
-    }
-
-    if (this.contractRef) {
-      // this.getDetailContract(this.contract_ref);
     }
 
     if (data.budget_detail_id) {
@@ -655,9 +655,14 @@ export class OrderFormComponent implements OnInit {
     this.searchVendor.setSelected(data.labeler_name);
     // this.searchPeople.setSelected
 
+    if (this.contractId) {
+      this.budgetRemainRef.getContractDetail(this.contractId, this.purchaseOrderId);
+    }
+    
   }
 
   async save() {
+    this.isSaving = true;
     if (this.purchaseDate && this.labelerId && this.purchaseMethodId &&
       this.budgetTypeId && this.genericTypeId && this.purchaseOrderItems.length &&
       this.totalPrice > 0 && this.budgetDetailId && this.verifyCommitteeId != null) {
@@ -687,8 +692,10 @@ export class OrderFormComponent implements OnInit {
         this._save();
       } else {
         // cancel save purchase
+        this.isSaving = false;
       }
     } else {
+      this.isSaving = false;
       this.alertService.error('กรุณาระบุข้อมูลให้ครบถ้วน');
     }
 
@@ -703,8 +710,10 @@ export class OrderFormComponent implements OnInit {
       if (isErrorBidAmount) {
         // วงเงินเกินวิธีการจัดซื้อ
         this.alertService.error('ราคารวมสุทธิเกินวงเงินที่กำหนดตามวิธีการจัดซื้อ');
+        this.isSaving = false;
       } else if (this.budgetData.remainAfterPurchase < 0) {
         this.alertService.error('ราคารวมสุทธิเกินวงเงินของสัญญา');
+        this.isSaving = false;
       } else {
         const dataPurchasing: any = {};
         const summary: any = {};
@@ -718,13 +727,16 @@ export class OrderFormComponent implements OnInit {
         });
 
         if (isError) {
-          this.alertService.error('กรุณาระบุรายละเอียดสินค้าให้ครบถ้วน เช่น ราคา, จำนวนจัดซื้อและหน่วยสำหรับจัดซื้อ')
+          this.alertService.error('กรุณาระบุรายละเอียดสินค้าให้ครบถ้วน เช่น ราคา, จำนวนจัดซื้อและหน่วยสำหรับจัดซื้อ');
+          this.isSaving = false;
         } else {
           // ตรวจสอบยอดสั่งซื้อกับวงเงินของงบคงเหลือ
           if (this.budgetData.RemainAfterPurchase < 0) {
-            this.alertService.error('ยอดจัดซื้อครั้งนี้ เกินกว่ายอดคงเหลือของงบประมาณ?')
+            this.alertService.error('ยอดจัดซื้อครั้งนี้ เกินกว่ายอดคงเหลือของงบประมาณ?');
+            this.isSaving = false;
           } else if (this.budgetData.contractRemainAfterPurchase < 0 && this.contractId) {
-            this.alertService.error('ยอดจัดซื้อครั้งนี้ เกินกว่ายอดคงเหลือของสัญญา?')
+            this.alertService.error('ยอดจัดซื้อครั้งนี้ เกินกว่ายอดคงเหลือของสัญญา?');
+            this.isSaving = false;
           } else {
             this._canSave = false;
             this.modalLoading.show();
@@ -736,8 +748,11 @@ export class OrderFormComponent implements OnInit {
               this.alertService.confirm('กรุณาตรวจสอบรายการให้ถูกต้องการทำการบันทึก ต้องการบันทึก ใช่หรือไม่?')
                 .then(async () => {
                   this.doSavePurchase();
-                }).catch(() => { });
+                }).catch(() => { 
+                  this.isSaving = false;
+                });
             } else {
+              this.isSaving = false;
               this.modalLoading.hide();
               this.alertService.error('ไม่สามารถประมวลผล Transaction ของงบประมาณได้')
             }
@@ -745,12 +760,15 @@ export class OrderFormComponent implements OnInit {
         }
       }
     } else {
+      this.isSaving = false;
       this.modalLoading.hide();
       this.alertService.error('เลขที่อ้างอิงซ้ำ')
     }
   }
 
   async doSavePurchase() {
+    this.isSaving = true;
+    this.modalLoading.show();
     let summary: any = {};
     try {
 
@@ -840,9 +858,6 @@ export class OrderFormComponent implements OnInit {
         // is_reorder: this.isReorder === 'Y' ? 2 : this.isReorder
       };
 
-      this.isSaving = true;
-      this.modalLoading.show();
-
       let rs: any;
 
       if (this.isUpdate) {
@@ -859,6 +874,8 @@ export class OrderFormComponent implements OnInit {
         this.alertService.success();
         this.router.navigate(['/purchase/orders'])
       } else {
+        this.modalLoading.hide();
+        this.isSaving = false;
         this.alertService.error(rs.error);
       }
     } catch (error) {

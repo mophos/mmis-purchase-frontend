@@ -100,6 +100,9 @@ export class BudgetRemainComponent implements OnInit {
 
           this.contractRemain = this.contractAmount - this.contractPurchaseAmount;
           this.contractRemainAfterPurchase = this.contractRemain - this.totalPurchaseAmount;
+          this.returnData();
+        } else {
+          this.alertService.error('เกิดข้อผิดพลาดในการดึงข้อมูลสัญญา');
         }
       } catch (error) {
         console.log(error);

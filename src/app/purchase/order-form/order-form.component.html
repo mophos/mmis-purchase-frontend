@@ -194,7 +194,7 @@
           <app-search-product-vendor [disabled]="!labelerId" #searchProductLabeler (onSelect)="productSearchSelected($event)" [labelerId]="labelerId"></app-search-product-vendor>
         </clr-dg-cell>
         <clr-dg-cell>
-          <input type="text" name="qty" class="wm-edit-box-number" style="background-color: #FFF9C4" [(ngModel)]="selectedQty" appNumberWithoutDot>
+          <input type="text" autocomplete="off" name="qty" class="wm-edit-box-number" style="background-color: #FFF9C4" [(ngModel)]="selectedQty" appNumberWithoutDot>
         </clr-dg-cell>
         <clr-dg-cell>
           <app-select-box-units #selectBoxUnit (onChange)="onChangeUnit($event)"></app-select-box-units>
