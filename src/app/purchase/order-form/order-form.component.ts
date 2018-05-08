@@ -867,18 +867,11 @@ export class OrderFormComponent implements OnInit {
     };
 
     let rs: any;
+
     if (this.isUpdate) {
       if (this.purchaseOrderStatus === 'ORDERPOINT') {
         summary.from_status = 'ORDERPOINT';
         summary.purchase_order_status = 'PREPARED';
-        if (rs.ok) {
-          this.alertService.success();
-          this.router.navigate(['/purchase/orders'])
-        } else {
-          this.modalLoading.hide();
-          this.isSaving = false;
-          this.alertService.error(rs.error);
-        }
         rs = await this.purchasingOrderService.update(this.purchaseOrderId, summary, this.purchaseOrderItems, this.budgetData);
       } else {
         rs = await this.purchasingOrderService.save(summary, this.purchaseOrderItems, this.budgetData);
@@ -888,15 +881,14 @@ export class OrderFormComponent implements OnInit {
         this.alertService.success();
         this.router.navigate(['/purchase/orders'])
       } else {
+        this.modalLoading.hide();
+        this.isSaving = false;
         this.alertService.error(rs.error);
       }
-      // } catch (error) {
-      //   this.modalLoading.hide();
-      //   this.isSaving = false;
-      //   this.alertService.error(JSON.stringify(error));
-      // }
+
     }
   }
+  
   async getPurchaseOrderDetail(orderId: string) {
     this.loading = true;
     this.modalLoading.show();
