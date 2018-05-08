@@ -13,4 +13,6 @@ export interface IProductOrderItems extends IProductOrderItem {
   is_giveaway?: any;
   unit_generic_id?: any;
   small_qty?: number;
+  contract_id?: any;
+  contract_no?: any;
 }

@@ -8,6 +8,9 @@
       <app-order-status [status]="purchaseOrderStatus"></app-order-status>
     </span>
     <span style="float:right;">
+      <span *ngIf="contractId" class="label label-danger">เลขที่สัญญา:
+        <strong>{{contractNo}}</strong>
+      </span>
       <span>ราคารวมสุทธิ</span>
       <span style="margin:10px;font-size:20px;font-weight:bold;" class="text-success">
         {{totalPrice | number: '1.2-2'}}
@@ -15,9 +18,6 @@
     </span>
   </nav>
 
-  <!-- <span *ngIf="contractId" class="label label-info">เลขที่สัญญา:
-    <strong>{{contractId}}</strong>
-  </span> -->
   <small class="p5" *ngIf="holidayText">
     <clr-icon shape="info-standard"></clr-icon> {{holidayText}}</small>
     
@@ -194,7 +194,7 @@
           <app-search-product-vendor [disabled]="!labelerId" #searchProductLabeler (onSelect)="productSearchSelected($event)" [labelerId]="labelerId"></app-search-product-vendor>
         </clr-dg-cell>
         <clr-dg-cell>
-          <input type="text" name="qty" class="wm-edit-box-number" style="background-color: #FFF9C4" [(ngModel)]="selectedQty" appNumberWithoutDot>
+          <input type="text" autocomplete="off" name="qty" class="wm-edit-box-number" style="background-color: #FFF9C4" [(ngModel)]="selectedQty" appNumberWithoutDot>
         </clr-dg-cell>
         <clr-dg-cell>
           <app-select-box-units #selectBoxUnit (onChange)="onChangeUnit($event)"></app-select-box-units>
