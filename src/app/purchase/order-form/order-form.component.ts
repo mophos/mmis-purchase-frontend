@@ -470,6 +470,7 @@ export class OrderFormComponent implements OnInit {
   }
 
   onBudgetCalculated(event: any) {
+    console.log(event);
     this.budgetData = event;
     this._canSave = true;
   }
@@ -698,6 +699,8 @@ export class OrderFormComponent implements OnInit {
       if (isErrorBidAmount) {
         // วงเงินเกินวิธีการจัดซื้อ
         this.alertService.error('ราคารวมสุทธิเกินวงเงินที่กำหนดตามวิธีการจัดซื้อ');
+      } else if (this.budgetData.remainAfterPurchase < 0) {
+        this.alertService.error('ราคารวมสุทธิเกินวงเงินของสัญญา');
       } else {
         const dataPurchasing: any = {};
         const summary: any = {};
