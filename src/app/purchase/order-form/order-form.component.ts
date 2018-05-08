@@ -294,6 +294,10 @@ export class OrderFormComponent implements OnInit {
           this.budgetRemainRef.getContractDetail(this.contractId, this.purchaseOrderId);
           this._doAddProduct();
         }).catch(() => { });
+    } else if (this.contractId) { 
+      if (this.selectedProduct.contract_id !== this.contractId) {
+        this.alertService.error('รายการนี้ไม่ได้อยู่ในสัญญาที่ได้กำหนดเอาไว้ กรุณาตรวจสอบข้อมูล');
+      }
     } else {
       this._doAddProduct();
     }
