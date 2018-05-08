@@ -770,7 +770,6 @@ export class OrderFormComponent implements OnInit {
         }
         const committeeHeadIdRs: any = await this.committeeService.save(committeeHead);
         this.verifyCommitteeId = committeeHeadIdRs.rows[0];
-        console.log(this.verifyCommitteeId);
 
         if (this.peopleId1) {
           const committeeDetail = {
