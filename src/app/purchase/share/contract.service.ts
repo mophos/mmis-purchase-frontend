@@ -3,8 +3,6 @@ import { AuthHttp } from 'angular2-jwt';
 @Injectable()
 export class ContractService {
 
-  apiName: string = 'contracts';
-
   constructor(
     @Inject('API_URL') private url: String,
     private authHttp: AuthHttp
@@ -12,7 +10,7 @@ export class ContractService {
 
   all() {
     return new Promise((resolve, reject) => {
-      this.authHttp.get(`${this.url}/${this.apiName}`)
+      this.authHttp.get(`${this.url}/contracts`)
         .map(res => res.json())
         .subscribe(data => {
           resolve(data);
@@ -24,7 +22,7 @@ export class ContractService {
 
   allGroupContractID() {
     return new Promise((resolve, reject) => {
-      this.authHttp.get(`${this.url}/${this.apiName}/group-contractid`)
+      this.authHttp.get(`${this.url}/contracts/group-contractid`)
         .map(res => res.json())
         .subscribe(data => {
           resolve(data);
@@ -36,7 +34,7 @@ export class ContractService {
 
   allActive() {
     return new Promise((resolve, reject) => {
-      this.authHttp.get(`${this.url}/${this.apiName}/allactive`)
+      this.authHttp.get(`${this.url}/contracts/allactive`)
         .map(res => res.json())
         .subscribe(data => {
           resolve(data);
@@ -48,7 +46,7 @@ export class ContractService {
 
   detail(id: string) {
     return new Promise((resolve, reject) => {
-      this.authHttp.get(`${this.url}/${this.apiName}/detail/${id}`)
+      this.authHttp.get(`${this.url}/contracts/detail/${id}`)
         .map(res => res.json())
         .subscribe(data => {
           resolve(data);
@@ -58,9 +56,9 @@ export class ContractService {
     });
   }
 
-  remainDetail(id: string) {
+  remainDetail(contractId: string, purchaseId: any = '') {
     return new Promise((resolve, reject) => {
-      this.authHttp.get(`${this.url}/${this.apiName}/detail-contract?contractId=${id}`)
+      this.authHttp.get(`${this.url}/contracts/remain-detail?contractId=${contractId}&purchaseId=${purchaseId}`)
         .map(res => res.json())
         .subscribe(data => {
           resolve(data);
@@ -72,7 +70,7 @@ export class ContractService {
 
   save(data: object) {
     return new Promise((resolve, reject) => {
-      this.authHttp.post(`${this.url}/${this.apiName}`, {data})
+      this.authHttp.post(`${this.url}/contracts`, {data})
         .map(res => res.json())
         .subscribe(data => {
           resolve(data);
@@ -84,7 +82,7 @@ export class ContractService {
 
   update(id: string, data: object) {
     return new Promise((resolve, reject) => {
-      this.authHttp.put(`${this.url}/${this.apiName}/${id}`, {data})
+      this.authHttp.put(`${this.url}/contracts/${id}`, {data})
         .map(res => res.json())
         .subscribe(data => {
           resolve(data);
@@ -96,7 +94,7 @@ export class ContractService {
 
   remove(id: string) {
     return new Promise((resolve, reject) => {
-      this.authHttp.delete(`${this.url}/${this.apiName}/${id}`)
+      this.authHttp.delete(`${this.url}/contracts/${id}`)
         .map(res => res.json())
         .subscribe(data => {
           resolve(data);
