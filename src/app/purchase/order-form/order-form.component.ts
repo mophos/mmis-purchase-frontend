@@ -780,27 +780,31 @@ export class OrderFormComponent implements OnInit {
 
   async doSavePurchase() {
     let summary: any = {};
-    try {
+    // try {
 
-      const purchaseDate = `${this.purchaseDate.date.year}-${this.purchaseDate.date.month}-${this.purchaseDate.date.day}`;
+    const purchaseDate = `${this.purchaseDate.date.year}-${this.purchaseDate.date.month}-${this.purchaseDate.date.day}`;
 
-      if (!this.showChief) {
-        this.chiefId = null;
+    if (!this.showChief) {
+      this.chiefId = null;
+    }
+    if (!this.showBuyer) {
+      this.buyerId = null;
+    }
+    const peopleCommittee = [];
+    // let committeeId =
+    // เช็คกรรมการตรวจรับว่าเป็นแบบอื่นๆหรือไม่
+    console.log(this.verifyCommitteeId);
+
+    if (this.verifyCommitteeId === 0) {
+      const committeeHead = {
+        committee_name: 'อื่นๆ',
+        committee_type: 0,
+        datetime_start: moment(new Date()).format('YYYY-MM-DD'),
+        is_delete: 'Y'
       }
-      if (!this.showBuyer) {
-        this.buyerId = null;
-      }
-      const peopleCommittee = [];
-      // let committeeId =
-      // เช็คกรรมการตรวจรับว่าเป็นแบบอื่นๆหรือไม่
-      if (this.verifyCommitteeId === 0) {
-        const committeeHead = {
-          committee_name: 'อื่นๆ',
-          committee_type: 0,
-          datetime_start: moment(new Date()).format('YYYY-MM-DD'),
-          is_delete: 'Y'
-        }
-        const committeeHeadIdRs: any = await this.committeeService.save(committeeHead);
+      const committeeHeadIdRs: any = await this.committeeService.save(committeeHead);
+      console.log(committeeHeadIdRs);
+      if (committeeHeadIdRs.ok) {
         this.verifyCommitteeId = committeeHeadIdRs.rows[0];
         console.log(this.verifyCommitteeId);
 
@@ -829,72 +833,76 @@ export class OrderFormComponent implements OnInit {
           peopleCommittee.push(committeeDetail)
         }
         await this.committeePeopleService.save(peopleCommittee);
-      }
-
-      summary = {
-        // purchase_order_id: this.purchaseOrderId,
-        purchase_order_book_number: this.purchaseOrderBookNumber,
-        purchase_order_number: this.purchaseOrderNumber,
-        purchase_order_status: this.purchaseOrderStatus,
-        // purchasing_id: this.purchasingId,
-        labeler_id: this.labelerId,
-        verify_committee_id: this.verifyCommitteeId,
-        check_price_committee_id: this.checkPriceCommitteeId,
-        egp_id: this.egpId,
-        is_contract: this.isContract,
-        contract_id: this.contractId,
-        purchase_method_id: this.purchaseMethodId,
-        budgettype_id: this.budgetTypeId,
-        budget_detail_id: this.budgetDetailId,
-        generic_type_id: this.genericTypeId,
-        purchase_type_id: this.purchaseTypeId,
-        sub_total: this.subTotal,
-        delivery: this.delivery,
-        discount_percent: this.discountPercent,
-        discount_cash: this.discountCash,
-        vat_rate: this.vatRate,
-        vat: this.vat,
-        include_vat: this.addVat ? 'Y' : 'N',
-        exclude_vat: this.excludeVat ? 'Y' : 'N',
-        // is_before_vat: this.isBeforeVat ? 'Y' : 'N',
-        total_price: this.totalPrice,
-        ship_to: this.shipTo,
-        vendor_contact_name: this.vendorContactName,
-        order_date: purchaseDate,
-        comment: this.comment,
-        note_to_vender: this.noteToVender,
-        chief_id: this.chiefId,
-        buyer_id: this.buyerId,
-        budget_year: this.budgetYear,
-        // is_reorder: this.isReorder === 'Y' ? 2 : this.isReorder
-      };
-
-      this.isSaving = true;
-      this.modalLoading.show();
-
-      let rs: any;
-
-      if (this.isUpdate) {
-        if (this.purchaseOrderStatus === 'ORDERPOINT') {
-          summary.from_status = 'ORDERPOINT';
-          summary.purchase_order_status = 'PREPARED';
-        }
-        rs = await this.purchasingOrderService.update(this.purchaseOrderId, summary, this.purchaseOrderItems, this.budgetData);
       } else {
-        rs = await this.purchasingOrderService.save(summary, this.purchaseOrderItems, this.budgetData);
-      }
+        console.log('error');
 
-      if (rs.ok) {
-        this.alertService.success();
-        this.router.navigate(['/purchase/orders'])
-      } else {
-        this.alertService.error(rs.error);
       }
-    } catch (error) {
-      this.modalLoading.hide();
-      this.isSaving = false;
-      this.alertService.error(JSON.stringify(error));
     }
+
+    summary = {
+      // purchase_order_id: this.purchaseOrderId,
+      purchase_order_book_number: this.purchaseOrderBookNumber,
+      purchase_order_number: this.purchaseOrderNumber,
+      purchase_order_status: this.purchaseOrderStatus,
+      // purchasing_id: this.purchasingId,
+      labeler_id: this.labelerId,
+      verify_committee_id: this.verifyCommitteeId,
+      check_price_committee_id: this.checkPriceCommitteeId,
+      egp_id: this.egpId,
+      is_contract: this.isContract,
+      contract_id: this.contractId,
+      purchase_method_id: this.purchaseMethodId,
+      budgettype_id: this.budgetTypeId,
+      budget_detail_id: this.budgetDetailId,
+      generic_type_id: this.genericTypeId,
+      purchase_type_id: this.purchaseTypeId,
+      sub_total: this.subTotal,
+      delivery: this.delivery,
+      discount_percent: this.discountPercent,
+      discount_cash: this.discountCash,
+      vat_rate: this.vatRate,
+      vat: this.vat,
+      include_vat: this.addVat ? 'Y' : 'N',
+      exclude_vat: this.excludeVat ? 'Y' : 'N',
+      // is_before_vat: this.isBeforeVat ? 'Y' : 'N',
+      total_price: this.totalPrice,
+      ship_to: this.shipTo,
+      vendor_contact_name: this.vendorContactName,
+      order_date: purchaseDate,
+      comment: this.comment,
+      note_to_vender: this.noteToVender,
+      chief_id: this.chiefId,
+      buyer_id: this.buyerId,
+      budget_year: this.budgetYear,
+      // is_reorder: this.isReorder === 'Y' ? 2 : this.isReorder
+    };
+
+    this.isSaving = true;
+    this.modalLoading.show();
+
+    let rs: any;
+
+    if (this.isUpdate) {
+      if (this.purchaseOrderStatus === 'ORDERPOINT') {
+        summary.from_status = 'ORDERPOINT';
+        summary.purchase_order_status = 'PREPARED';
+      }
+      rs = await this.purchasingOrderService.update(this.purchaseOrderId, summary, this.purchaseOrderItems, this.budgetData);
+    } else {
+      rs = await this.purchasingOrderService.save(summary, this.purchaseOrderItems, this.budgetData);
+    }
+
+    if (rs.ok) {
+      this.alertService.success();
+      this.router.navigate(['/purchase/orders'])
+    } else {
+      this.alertService.error(rs.error);
+    }
+    // } catch (error) {
+    //   this.modalLoading.hide();
+    //   this.isSaving = false;
+    //   this.alertService.error(JSON.stringify(error));
+    // }
   }
 
   async getPurchaseOrderDetail(orderId: string) {
@@ -1107,26 +1115,33 @@ export class OrderFormComponent implements OnInit {
   async getCommitteePeople(committeeId: any) {
     this.modalLoading.show();
     if (this.purchaseOrderId) {
-      const rs: any = await this.committeePeopleService.allByCommitteeId(committeeId);
-      if (rs.ok) {
-        this.committeeSelected = rs.rows;
-        if (+rs.rows[0].committee_type === 0) {
-          this.verifyCommitteeId = 0;
-          if (rs.rows[0]) {
-            this.searchPeople1.setSelected(rs.rows[0].fullname);
-            this.peopleId1 = rs.rows[0].people_id;
-          }
-          if (rs.rows[1]) {
-            this.searchPeople2.setSelected(rs.rows[1].fullname);
-            this.peopleId2 = rs.rows[1].people_id;
-          }
-          if (rs.rows[2]) {
-            this.searchPeople3.setSelected(rs.rows[2].fullname);
-            this.peopleId3 = rs.rows[2].people_id;
+      if (committeeId !== 0) {
+        const rs: any = await this.committeePeopleService.allByCommitteeId(committeeId);
+        if (rs.ok) {
+          this.committeeSelected = rs.rows;
+          if (+rs.rows[0].committee_type === 0) {
+            this.verifyCommitteeId = 0;
+            if (rs.rows[0]) {
+              this.searchPeople1.setSelected(rs.rows[0].fullname);
+              this.peopleId1 = rs.rows[0].people_id;
+            }
+            if (rs.rows[1]) {
+              this.searchPeople2.setSelected(rs.rows[1].fullname);
+              this.peopleId2 = rs.rows[1].people_id;
+            }
+            if (rs.rows[2]) {
+              this.searchPeople3.setSelected(rs.rows[2].fullname);
+              this.peopleId3 = rs.rows[2].people_id;
+            }
           }
         }
+        this.modalLoading.hide();
+      } else {
+        this.searchPeople1.setSelected('');
+        this.searchPeople2.setSelected('');
+        this.searchPeople3.setSelected('');
+        this.modalLoading.hide();
       }
-      this.modalLoading.hide();
     } else {
       if (committeeId !== 0) {
         const rs: any = await this.committeePeopleService.allByCommitteeId(committeeId);
