@@ -45,6 +45,8 @@ export class DatagridOrdersComponent implements OnInit {
   number_end: string;
   start_id: string;
   end_id: string;
+  startPO = 'PO-'
+  endPO = 'PO-'
   start_date: any;
   end_date: any;
   loading: boolean;
@@ -655,6 +657,7 @@ export class DatagridOrdersComponent implements OnInit {
     const printId: any = [];
     let print_non: any = 0;
     const rs: any = await this.purchasingOrderService.getPOid(this.start_id, this.end_id, this.generic_type_id, this.status_po);
+    console.log(rs.rows);
     if (rs.rows) {
       rs.rows.forEach(e => {
         if (e.purchase_order_status !== 'ORDERPOINT') {
@@ -893,5 +896,12 @@ export class DatagridOrdersComponent implements OnInit {
       this.alertService.error(error);
       this.modalLoading.hide();
     }
+  }
+
+  setString() {
+    this.startPO += this.start_id;
+    this.endPO += this.end_id;
+    this.start_id = this.start_id.substring(0, 2)
+    console.log(this.startPO, ',', this.endPO, this.start_id);
   }
 }
