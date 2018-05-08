@@ -7,7 +7,7 @@ import { OrdersHistoryComponent } from './../directives/orders-history/orders-hi
 import { SelectUnitsComponent } from './../directives/select-units/select-units.component';
 import { UnitService } from './../share/unit.service';
 import { ProductsSelectComponent } from './../directives/products-select/products-select.component';
-import { IMyOptions, IMyDateModel } from 'mydatepicker-th';
+import { IMyOptions, IMyDateModel, IMyMarkedDates } from 'mydatepicker-th';
 import { Component, OnInit, Inject, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { AuthHttp } from 'angular2-jwt';
@@ -197,10 +197,9 @@ export class OrderFormComponent implements OnInit {
   myDatePickerOptions: IMyOptions = {
     dateFormat: 'dd mmm yyyy',
     editableDateField: false,
-    showClearDateBtn: false
+    showClearDateBtn: false,
   };
 
-  /* satit */
   selectedProduct: IProductOrderItem = {};
   selectedUnit: IGenericUnit = {};
   selectedCost: number;
