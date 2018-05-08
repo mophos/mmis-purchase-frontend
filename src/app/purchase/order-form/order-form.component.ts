@@ -213,7 +213,7 @@ export class OrderFormComponent implements OnInit {
     markDates: this.holidays,
   };
 
-  selectedProduct: IProductOrderItem = {};
+  selectedProduct: any = {};
   selectedUnit: IGenericUnit = {};
   selectedCost: number;
   selectedQty: number;
@@ -314,7 +314,17 @@ export class OrderFormComponent implements OnInit {
   }
 
   addProductSelected() {
-    const product: IProductOrderItems = {};
+    if (this.selectedProduct.contract_id) {
+      this.alertService.confirm('รายการนี้มีสัญญา หากเพิ่มรายการนี้ รายการอื่นๆที่ไม่มีสัญญาจะถูกยกเลิก แล้วออก PO เป็นแบบมีสัญญาแทน ต้องการสร้าง PO แบบมีสัญญาใช่หรือไม่?')
+        .then(() => {
+          // ออก PO แบบมีสัญญา
+          this.contractId = this.selectedProduct.contract_id;
+          this.contractNo = this.selectedProduct.contract_no;
+        }).catch(() => { });
+    } else {
+
+    }
+    const product: any = {};
     // console.log(this.selectedCost);
     product.cost = +this.selectedCost;
     product.product_id = this.selectedProduct.product_id;
@@ -327,7 +337,9 @@ export class OrderFormComponent implements OnInit {
     product.small_qty = this.selectedUnit.qty;
     product.total_cost = this.selectedCost * this.selectedQty;
     product.total_small_qty = this.selectedQty * this.selectedUnit.qty;
-
+    product.contract_no = this.selectedProduct.contract_no;
+    product.contract_id = this.selectedProduct.contract_id;
+    
     if (this.checkDuplicatedItem(product)) {
       const items = _.filter(this.purchaseOrderItems, { product_id: product.product_id });
       // console.log(items.length);
