@@ -9,6 +9,7 @@
       <clr-dg-column [style.width.px]="120">จำนวนรวม</clr-dg-column>
       <clr-dg-column [style.width.px]="120">ราคาต่อแพค</clr-dg-column>
       <clr-dg-column [style.width.px]="120">ราคารวม</clr-dg-column>
+      <clr-dg-column [style.width.px]="50">ของแถม</clr-dg-column>
   
       <clr-dg-row *clrDgItems="let pro of productOrders" [clrDgItem]="pro">
         <clr-dg-cell>{{pro.trading_code}}</clr-dg-cell>
@@ -20,6 +21,10 @@
         <clr-dg-cell style="text-align:right">{{pro.qty*pro.conversion_qty}} {{pro.small_large_unit_name}}</clr-dg-cell>
         <clr-dg-cell style="text-align:right">{{pro.unit_price | number :'1.2-2'}}</clr-dg-cell>
         <clr-dg-cell class="text-success" style="text-align:right">{{pro.total_price | number :'1.2-2'}}</clr-dg-cell>
+        <clr-dg-cell>
+            <clr-icon *ngIf="pro.giveaway==='Y' " shape="check" class="is-success" size="20"></clr-icon>
+            <clr-icon *ngIf="pro.giveaway==='N' " shape="times" class="is-danger" size="20"></clr-icon>
+        </clr-dg-cell>
       </clr-dg-row>
   
       <clr-dg-footer>

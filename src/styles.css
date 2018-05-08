@@ -300,3 +300,7 @@ app-modal-loading .modal-backdrop {
 .wid99{
     width: 99%;
 }
+.hidden {
+    display: none;
+    visibility: hidden;
+  } 

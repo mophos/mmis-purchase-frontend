@@ -87,7 +87,7 @@
           วันที่
         </clr-dg-column>
 
-        <clr-dg-column [clrDgField]="'labeler_name'">
+        <clr-dg-column >
           ผู้จำหน่าย
         </clr-dg-column>
         <clr-dg-column [style.width.px]="130">
@@ -270,7 +270,7 @@
     <div class="row" style="margin:1em">
       <div class="card">
         <div style="margin:0.5em">ใบสั่งซื้อ : 
-          <input placeholder="เลขที่ตั้งต้น" (keydown)="handleKeyDown($event)" class="form-control" type="text" id="start_id" [(ngModel)]="start_id"
+          PO-<input placeholder="เลขที่ตั้งต้น" (keydown)="handleKeyDown($event)" class="form-control" type="text" id="start_id" [(ngModel)]="start_id"
             name="start_id" size="16"> &nbsp;&nbsp;&nbsp;
           <input placeholder="เลขที่สุดท้าย" (keydown)="handleKeyDown($event)" class="form-control" type="text" id="end_id" [(ngModel)]="end_id"
             name="end_id" size="16"> &nbsp;&nbsp;&nbsp;
@@ -328,7 +328,8 @@
       <clr-dg-column style="width: 150px;">มูลค่า</clr-dg-column>
 
       <clr-dg-row *ngFor="let i of itemsChangeDate">
-        <clr-dg-cell>{{i.purchase_order_number}}</clr-dg-cell>
+        <clr-dg-cell *ngIf="i.purchase_order_book_number == null">{{i.purchase_order_number}}</clr-dg-cell>
+        <clr-dg-cell *ngIf="i.purchase_order_book_number != null">{{i.purchase_order_book_number}}</clr-dg-cell>
         <clr-dg-cell>{{i.order_date | toThaiDate}}</clr-dg-cell>
         <clr-dg-cell>{{i.labeler_name}}</clr-dg-cell>
         <clr-dg-cell style="text-align: right; font-weight: bold;">{{i.total_price | number: '1.2-2'}}</clr-dg-cell>
@@ -340,8 +341,8 @@
 
   </div>
   <div class="modal-footer">
-    <button type="button" class="btn btn-danger btn-md" (click)="openChangeDate = false">ยกเลิก</button>
     <button type="button" class="btn btn-primary btn-md" [disabled]="!itemsChangeDate.length" (click)="doChangePurchaseDate()">ตกลง</button>
+    <button type="button" class="btn btn-danger btn-md" (click)="openChangeDate = false">ยกเลิก</button>
   </div>
 </clr-modal>
 
