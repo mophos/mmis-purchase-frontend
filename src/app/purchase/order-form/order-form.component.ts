@@ -320,10 +320,21 @@ export class OrderFormComponent implements OnInit {
           // ออก PO แบบมีสัญญา
           this.contractId = this.selectedProduct.contract_id;
           this.contractNo = this.selectedProduct.contract_no;
+          this.purchaseOrderItems.forEach((v, i) => {
+            if (v.contract_id !== v.contract_id) {
+              this.purchaseOrderItems.splice(i, 1);
+            }
+          });
+          // get contract info
+          this.budgetRemainRef.getContractDetail(this.contractId, this.purchaseOrderId);
+          this._doAddProduct();
         }).catch(() => { });
     } else {
-
+      this._doAddProduct();
     }
+  }
+
+  _doAddProduct() {
     const product: any = {};
     // console.log(this.selectedCost);
     product.cost = +this.selectedCost;
@@ -339,7 +350,7 @@ export class OrderFormComponent implements OnInit {
     product.total_small_qty = this.selectedQty * this.selectedUnit.qty;
     product.contract_no = this.selectedProduct.contract_no;
     product.contract_id = this.selectedProduct.contract_id;
-    
+
     if (this.checkDuplicatedItem(product)) {
       const items = _.filter(this.purchaseOrderItems, { product_id: product.product_id });
       // console.log(items.length);
@@ -1245,7 +1256,6 @@ export class OrderFormComponent implements OnInit {
   }
   async getHoliday() {
     const holiday: any = await this.holidayService.all();
-    console.log((moment(new Date()).get('year')));
     const holidays = [];
     holiday.rows.forEach(v => {
       const obj: any = {};

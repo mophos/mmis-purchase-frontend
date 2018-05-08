@@ -44,8 +44,9 @@ export class BudgetRemainComponent implements OnInit {
   
   @Input('contractId')
   set setContractId(value: any) {
+    console.log(value);
     this._contractId = value;
-    this.getContractDetail();
+    this.getContractDetail(this._contractId);
   }  
   
   @Input('purchaseOrderId') purchaseOrderId: any;
@@ -80,15 +81,16 @@ export class BudgetRemainComponent implements OnInit {
     }
   }
 
-  async getContractDetail() {
-    if (this._contractId) {
+  async getContractDetail(contractId: any, purchaseId: any = '') {
+    if (contractId) {
       try {
-        let rs: any = await this.contractServices.remainDetail(this._contractId);
+        let rs: any = await this.contractServices.remainDetail(contractId, purchaseId);
         if (rs.ok) {
           this.contractAmount = rs.detail ? rs.detail.amount : 0;
           this.contractNo = rs.detail ? rs.detail.contract_no : null;
           this.contractPurchaseAmount = rs.detail ? rs.detail.total_purchase : 0;
-          this.contractRemain = this.contractAmount - (this.contractPurchaseAmount - this.totalPurchaseAmount);
+
+          this.contractRemain = this.contractAmount - this.contractPurchaseAmount;
           this.contractRemainAfterPurchase = this.contractRemain - this.totalPurchaseAmount;
         }
       } catch (error) {
