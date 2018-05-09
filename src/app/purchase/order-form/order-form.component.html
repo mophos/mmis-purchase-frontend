@@ -20,7 +20,7 @@
 
   <small class="p5" *ngIf="holidayText">
     <clr-icon shape="info-standard"></clr-icon> {{holidayText}}</small>
-    
+
   <form>
     <div class="card">
       <div class="card-block form-fid">
@@ -194,7 +194,8 @@
           <app-search-product-vendor [disabled]="!labelerId" #searchProductLabeler (onSelect)="productSearchSelected($event)" [labelerId]="labelerId"></app-search-product-vendor>
         </clr-dg-cell>
         <clr-dg-cell>
-          <input type="text" autocomplete="off" name="qty" class="wm-edit-box-number" style="background-color: #FFF9C4" [(ngModel)]="selectedQty" appNumberWithoutDot>
+          <input type="text" autocomplete="off" name="qty" class="wm-edit-box-number" style="background-color: #FFF9C4" [(ngModel)]="selectedQty"
+            appNumberWithoutDot>
         </clr-dg-cell>
         <clr-dg-cell>
           <app-select-box-units #selectBoxUnit (onChange)="onChangeUnit($event)"></app-select-box-units>
@@ -295,14 +296,14 @@
                 </div>
                 <div *ngIf="verifyCommitteeId != 0">
                   <ol>
-                      <li *ngFor="let p of committeeSelected">
-                          <span>
-                            {{p.fullname}} ( {{p.cp_position_name}} )
-                          </span>
-                          <small style="display:block;margin-top:-5px;padding:0 0 0 7px;">
-                            <i> {{p.position_name}}</i>
-                          </small>
-                        </li>
+                    <li *ngFor="let p of committeeSelected">
+                      <span>
+                        {{p.fullname}} ( {{p.cp_position_name}} )
+                      </span>
+                      <small style="display:block;margin-top:-5px;padding:0 0 0 7px;">
+                        <i> {{p.position_name}}</i>
+                      </small>
+                    </li>
                   </ol>
                 </div>
               </div>
