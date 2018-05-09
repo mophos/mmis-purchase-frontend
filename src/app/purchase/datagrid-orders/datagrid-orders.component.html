@@ -102,7 +102,7 @@
 
         <clr-dg-row *ngFor="let pro of purchaseOrders" [clrDgItem]="pro">
           <clr-dg-cell class="datagrid-fixed-column">
-            <span role="tooltip" aria-haspopup="true" class="tooltip tooltip-sm">
+            <span role="tooltip" aria-haspopup="true" class="tooltip tooltip-sm tooltip-right">
               <clr-icon *ngIf="pro.recieve_count > 0" shape="lock" class="{{getStatusLabel(pro,'color')}}"></clr-icon>
               <clr-icon *ngIf="pro.recieve_count==0" shape="circle" class="{{getStatusLabel(pro,'color')}}"></clr-icon>
               <span class="tooltip-content">{{getStatusLabel(pro)}}</span>
@@ -111,7 +111,7 @@
           <clr-dg-cell>
             <del *ngIf="pro.is_cancel === 'Y'" class="{{getStatusLabel(pro,'color')}}">{{getStatusLabel(pro)}}</del>
             <span *ngIf="pro.is_cancel !== 'Y'" class="{{getStatusLabel(pro,'color')}}">{{getStatusLabel(pro)}}</span>
-            <span *ngIf="pro.contract_id" role="tooltip" aria-haspopup="true" class="tooltip tooltip-md tooltip-bottom-right">
+            <span *ngIf="pro.contract_id" role="tooltip" aria-haspopup="true" class="tooltip tooltip-md tooltip-right">
               <clr-icon class="text-success" shape="certificate"></clr-icon>
               <span class="tooltip-content">เลขที่สัญญา {{pro.contract_no}}</span>
             </span>
