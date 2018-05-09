@@ -624,8 +624,8 @@ export class DatagridOrdersComponent implements OnInit {
 
   }
 
-  printRequistionSingburi(row: any) {
-    this.htmlPrview.printRequistionSingburi(row);
+  printPuchasing10(row: any) {
+    this.htmlPrview.printPuchasing10(row);
   }
 
   goEdit(purchase_order_id) {
