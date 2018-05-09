@@ -143,7 +143,7 @@ export class OrderFormComponent implements OnInit {
   subTotal = 0;
   vatRate: number;
   vatRateTmp: number;
-  excludeVat = false;
+  excludeVat = true;
   addVat = false;
   vat = 0;
   totalPrice = 0;
