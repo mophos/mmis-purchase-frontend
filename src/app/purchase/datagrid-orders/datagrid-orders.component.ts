@@ -1,3 +1,4 @@
+import { log } from 'util';
 import { Router } from '@angular/router';
 import { AccessCheck } from '../share/access-check';
 import { HtmlPreviewComponent } from './../../helper/html-preview/html-preview.component';
@@ -45,6 +46,8 @@ export class DatagridOrdersComponent implements OnInit {
   number_end: string;
   start_id: string;
   end_id: string;
+  startPO = 'PO-'
+  endPO = 'PO-'
   start_date: any;
   end_date: any;
   loading: boolean;
@@ -83,6 +86,8 @@ export class DatagridOrdersComponent implements OnInit {
   total = 0;
   perPage = 20;
   page: any;
+  yearPO = moment().get('year');
+  dataYear = [];
 
   urlReportPO: any;
   urlReportEGP: any;
@@ -160,6 +165,12 @@ export class DatagridOrdersComponent implements OnInit {
     this.getOrders();
 
     this.getSysReport();
+    for (let i = 0; i < 10; i++) {
+      this.dataYear.push({
+        yearText: (((this.yearPO + i) + 543).toString()).substring(2, 4),
+        year: this.yearPO + i
+      })
+    }
   }
 
   async getSysReport() {
@@ -624,8 +635,8 @@ export class DatagridOrdersComponent implements OnInit {
 
   }
 
-  printRequistionSingburi(row: any) {
-    this.htmlPrview.printRequistionSingburi(row);
+  printPuchasing10(row: any) {
+    this.htmlPrview.printPuchasing10(row);
   }
 
   goEdit(purchase_order_id) {
@@ -654,7 +665,7 @@ export class DatagridOrdersComponent implements OnInit {
   async printPo() {
     const printId: any = [];
     let print_non: any = 0;
-    const rs: any = await this.purchasingOrderService.getPOid(this.start_id, this.end_id, this.generic_type_id, this.status_po);
+    const rs: any = await this.purchasingOrderService.getPOid(this.start_id, this.end_id, this.generic_type_id, this.status_po, this.yearPO);
     if (rs.rows) {
       rs.rows.forEach(e => {
         if (e.purchase_order_status !== 'ORDERPOINT') {
@@ -678,7 +689,7 @@ export class DatagridOrdersComponent implements OnInit {
   async printEgp() {
     const printId: any = [];
     let print_non: any = 0;
-    const rs: any = await this.purchasingOrderService.getPOid(this.start_id, this.end_id, this.generic_type_id, this.status_po);
+    const rs: any = await this.purchasingOrderService.getPOid(this.start_id, this.end_id, this.generic_type_id, this.status_po, this.yearPO);
     if (rs.rows) {
       rs.rows.forEach(e => {
         if (e.purchase_order_status !== 'ORDERPOINT') {
@@ -699,7 +710,7 @@ export class DatagridOrdersComponent implements OnInit {
     this.end_id = '';
   }
 
-  async print_date() {
+  async printDatePO() {
     const printId: any = [];
     let print_non: any = 0;
     const start_date = this.start_date !== null ? moment(this.start_date.jsdate).format('YYYY-MM-DD') : '';
@@ -716,7 +727,31 @@ export class DatagridOrdersComponent implements OnInit {
       this.alertService.error('ไม่มีข้อมูล');
     }
     if (print_non > 0) {
-      this.htmlPrview.showReport(this.url + `/report/getporder/singburi/?token=${this.token}&` + printId.join('&'));
+      this.htmlPrview.showReport(this.url + `${this.urlReportPO}/?token=${this.token}&` + printId.join('&'));
+      this.openModal = false;
+    } else {
+      this.alertService.error('ข้อมุูลไม่ครบถ้วน');
+    }
+  }
+
+  async printDateEGP() {
+    const printId: any = [];
+    let print_non: any = 0;
+    const start_date = this.start_date !== null ? moment(this.start_date.jsdate).format('YYYY-MM-DD') : '';
+    const end_date = this.end_date !== null ? moment(this.end_date.jsdate).format('YYYY-MM-DD') : '';
+    const rs: any = await this.purchasingOrderService.getPrintDate(start_date, end_date, this.generic_type_id, this.status_po);
+    if (rs.rows) {
+      rs.rows.forEach(e => {
+        if (e.purchase_order_status !== 'ORDERPOINT') {
+          printId.push('porder=' + e.purchase_order_id);
+          print_non++;
+        }
+      });
+    } else {
+      this.alertService.error('ไม่มีข้อมูล');
+    }
+    if (print_non > 0) {
+      this.htmlPrview.showReport(this.url + `${this.urlReportEGP}/?token=${this.token}&` + printId.join('&'));
       this.openModal = false;
     } else {
       this.alertService.error('ข้อมุูลไม่ครบถ้วน');
@@ -893,5 +928,12 @@ export class DatagridOrdersComponent implements OnInit {
       this.alertService.error(error);
       this.modalLoading.hide();
     }
+  }
+
+  setString() {
+    this.startPO += this.start_id;
+    this.endPO += this.end_id;
+    this.start_id = this.start_id.substring(0, 2)
+    console.log(this.startPO, ',', this.endPO, this.start_id);
   }
 }

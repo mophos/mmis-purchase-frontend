@@ -120,9 +120,9 @@ export class PurchasingOrderService {
     });
   }
 
-  getPOid(s_id: any, e_id: any, genericTypeId: any, statusFilter: any) {
+  getPOid(s_id: any, e_id: any, genericTypeId: any, statusFilter: any, yearPO: any) {
     return new Promise((resolve, reject) => {
-      this.authHttp.get(`${this.url}/${this.apiName}/getpoId/${s_id}/${e_id}/${genericTypeId}/${statusFilter}`)
+      this.authHttp.get(`${this.url}/${this.apiName}/getpoId/${s_id}/${e_id}/${genericTypeId}/${statusFilter}/${yearPO}`)
         .map(res => res.json())
         .subscribe(data => {
           resolve(data);
@@ -227,7 +227,7 @@ export class PurchasingOrderService {
     return new Promise((resolve, reject) => {
       this.authHttp.put(`${this.url}/${this.apiName}/newponumber/${id}`, { data })
         .map(res => res.json())
-          .subscribe(data => {
+        .subscribe(data => {
           resolve(data);
         }, error => {
           reject(error);
@@ -300,14 +300,20 @@ export class PurchasingOrderService {
     return res.json();
   }
 
-  async sysReport(){
+  async sysReport() {
     const res = await this.authHttp.get(`${this.url}/${this.apiName}/sys-report`)
       .toPromise();
     return res.json();
   }
 
-  async getPoBookNumber(){
+  async getPoBookNumber() {
     const res = await this.authHttp.get(`${this.url}/${this.apiName}/book-number`)
+      .toPromise();
+    return res.json();
+  }
+
+  async getContractId(productId: any) {
+    const res = await this.authHttp.get(`${this.url}/${this.apiName}/view-contract?productId=${productId}`)
       .toPromise();
     return res.json();
   }
