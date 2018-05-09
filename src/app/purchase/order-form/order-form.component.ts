@@ -1012,17 +1012,15 @@ export class OrderFormComponent implements OnInit {
     if (this.purchaseOrderStatus === 'APPROVED') {
       if (this.accessCheck.can('PO_EDIT_AFFTER_APPROVE')) {
         return false;
-      } else {
-        return true;
       }
+      return true;
     }
 
     if (this.purchaseOrderStatus === 'CONFIRMED') {
       if (this.accessCheck.can('PO_EDIT_AFFTER_APPROVE')) {
         return false;
-      } else {
-        return true;
       }
+      return true;
     }
 
     return false;
