@@ -1,4 +1,3 @@
-import { log } from 'util';
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { BudgetTransectionService } from 'app/purchase/share/budget-transection.service';
 import { AlertService } from 'app/alert.service';
@@ -16,7 +15,6 @@ export class BudgetRemainComponent implements OnInit {
   totalPurchaseAmount = 0;
   budgetAmount = 0;
   budgetRemain = 0;
-  cost = 0;
   budgetName: string;
   contractNo: string;
   purchaseAmount: number;
@@ -38,11 +36,6 @@ export class BudgetRemainComponent implements OnInit {
     this._budgetYear = value;
   }
 
-  @Input('contractCost')
-  set setCost(value: any) {
-    this.changeContractAmount(value);
-  }
-
   @Input('budgetDetailId')
   set setBudgetDetailId(value: any) {
     this._budgetDetailId = value;
@@ -54,8 +47,8 @@ export class BudgetRemainComponent implements OnInit {
     console.log(value);
     this._contractId = value;
     this.getContractDetail(this._contractId);
-  }  
-  
+  }
+
   @Input('purchaseOrderId') purchaseOrderId: any;
 
   @Output('onCalculated') onCalculated: EventEmitter<any> = new EventEmitter<any>();
@@ -67,15 +60,10 @@ export class BudgetRemainComponent implements OnInit {
 
   ngOnInit() { }
 
-  changeContractAmount(amount: number) {
-    this.cost += +amount;
-    this.getContractDetail();
-  }
-
   changePurchaseAmount(amount: number) {
     this.totalPurchaseAmount = +amount;
     // this.contractRemain = this.contractAmount - (this.contractPurchaseAmount - this.totalPurchaseAmount);
-    // this.contractRemainAfterPurchase = this.contractRemain - this.totalPurchaseAmount;
+    this.contractRemainAfterPurchase = this.contractRemain - this.totalPurchaseAmount;
 
     this.returnData();
   }
@@ -104,7 +92,7 @@ export class BudgetRemainComponent implements OnInit {
   async getContractDetail(contractId: any, purchaseId: any = '') {
     if (contractId) {
       try {
-        let rs: any = await this.contractServices.remainDetail(contractId, purchaseId);
+        const rs: any = await this.contractServices.remainDetail(contractId, purchaseId);
         if (rs.ok) {
           this.contractAmount = rs.detail ? rs.detail.amount : 0;
           this.contractNo = rs.detail ? rs.detail.contract_no : null;
