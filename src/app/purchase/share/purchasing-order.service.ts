@@ -121,9 +121,9 @@ export class PurchasingOrderService {
     });
   }
 
-  getPOid(s_id: any, e_id: any, genericTypeId: any, statusFilter: any) {
+  getPOid(s_id: any, e_id: any, genericTypeId: any, statusFilter: any, yearPO: any) {
     return new Promise((resolve, reject) => {
-      this.authHttp.get(`${this.url}/${this.apiName}/getpoId/${s_id}/${e_id}/${genericTypeId}/${statusFilter}`)
+      this.authHttp.get(`${this.url}/${this.apiName}/getpoId/${s_id}/${e_id}/${genericTypeId}/${statusFilter}/${yearPO}`)
         .map(res => res.json())
         .subscribe(data => {
           resolve(data);
@@ -318,6 +318,12 @@ export class PurchasingOrderService {
 
   async getPoBookNumber() {
     const res = await this.authHttp.get(`${this.url}/${this.apiName}/book-number`)
+      .toPromise();
+    return res.json();
+  }
+
+  async getContractId(productId: any) {
+    const res = await this.authHttp.get(`${this.url}/${this.apiName}/view-contract?productId=${productId}`)
       .toPromise();
     return res.json();
   }

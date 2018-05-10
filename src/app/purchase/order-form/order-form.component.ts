@@ -143,7 +143,7 @@ export class OrderFormComponent implements OnInit {
   subTotal = 0;
   vatRate: number;
   vatRateTmp: number;
-  excludeVat = false;
+  excludeVat = true;
   addVat = false;
   vat = 0;
   totalPrice = 0;
@@ -202,7 +202,7 @@ export class OrderFormComponent implements OnInit {
   contractNo: any = null;
 
   _canSave = false;
-
+  dupBookNumber = false; // false = ห้ามซ้ำ
   constructor(
     private accessCheck: AccessCheck,
     private router: Router,
@@ -250,6 +250,7 @@ export class OrderFormComponent implements OnInit {
     this.delivery = decoded.PC_SHIPPING_DATE ? decoded.PC_SHIPPING_DATE : 30;
     this.budgetYear = decoded.PC_DEFAULT_BUDGET_YEAR;
     this.currentBudgetYear = decoded.PC_DEFAULT_BUDGET_YEAR;
+    this.dupBookNumber = decoded.PC_BOOK_NUMBER_DUPLICATE === 'Y' ? true : false;
   }
 
   async ngOnInit() {
@@ -704,7 +705,7 @@ export class OrderFormComponent implements OnInit {
   async _save() {
     const bookNumber = await this.purchasingOrderService.getPoBookNumber();
     const idx = _.findIndex(bookNumber.rows, { purchase_order_book_number: this.purchaseOrderBookNumber });
-    if (idx === -1) {
+    if ((!this.dupBookNumber && idx === -1) || this.dupBookNumber) {
       const isErrorBidAmount: boolean = this.bidAmount < this.totalPrice;
 
       if (isErrorBidAmount) {
@@ -872,23 +873,22 @@ export class OrderFormComponent implements OnInit {
       if (this.purchaseOrderStatus === 'ORDERPOINT') {
         summary.from_status = 'ORDERPOINT';
         summary.purchase_order_status = 'PREPARED';
-        rs = await this.purchasingOrderService.update(this.purchaseOrderId, summary, this.purchaseOrderItems, this.budgetData);
-      } else {
-        rs = await this.purchasingOrderService.save(summary, this.purchaseOrderItems, this.budgetData);
       }
+      rs = await this.purchasingOrderService.update(this.purchaseOrderId, summary, this.purchaseOrderItems, this.budgetData);
+    } else {
+      rs = await this.purchasingOrderService.save(summary, this.purchaseOrderItems, this.budgetData);
+    }
 
-      if (rs.ok) {
-        this.alertService.success();
-        this.router.navigate(['/purchase/orders'])
-      } else {
-        this.modalLoading.hide();
-        this.isSaving = false;
-        this.alertService.error(rs.error);
-      }
-
+    if (rs.ok) {
+      this.alertService.success();
+      this.router.navigate(['/purchase/orders'])
+    } else {
+      this.modalLoading.hide();
+      this.isSaving = false;
+      this.alertService.error(rs.error);
     }
   }
-  
+
   async getPurchaseOrderDetail(orderId: string) {
     this.loading = true;
     this.modalLoading.show();

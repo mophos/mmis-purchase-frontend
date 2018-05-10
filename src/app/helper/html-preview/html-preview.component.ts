@@ -14,6 +14,9 @@ export class HtmlPreviewComponent implements OnInit {
 
   urlReportPO: any;
   urlReportEGP: any;
+  urlReportP10: any;
+  urlReportP11: any;
+
   reportURL: any;
   isShow = false;
   token: any;
@@ -38,9 +41,15 @@ export class HtmlPreviewComponent implements OnInit {
     let rs = await this.model.sysReport();
     let idxPo: any = _.findIndex(rs.rows, { report_type: "PO" });
     idxPo > -1 ? this.urlReportPO = rs.rows[idxPo].report_url : this.urlReportPO = null
-    
+
     let idxEGP: any = _.findIndex(rs.rows, { report_type: "EGP" });
     idxEGP > -1 ? this.urlReportEGP = rs.rows[idxEGP].report_url : this.urlReportEGP = null
+
+    let idxP10: any = _.findIndex(rs.rows, { report_type: "P10" });
+    idxP10 > -1 ? this.urlReportP10 = rs.rows[idxP10].report_url : this.urlReportP10 = null
+   
+    let idxP11: any = _.findIndex(rs.rows, { report_type: "P11" });
+    idxP11 > -1 ? this.urlReportP11 = rs.rows[idxP11].report_url : this.urlReportP11 = null
   }
 
   printPurchaseOrder(row: any) {
@@ -52,8 +61,8 @@ export class HtmlPreviewComponent implements OnInit {
     this.showReport(this.url + `/report/purchasing/${created_date}/${created_date}?token=${this.token}`);
   }
 
-  printRequistionSingburi(row: any) {
-    this.showReport(this.url + `/report/purchasing/10?purchaOrderId=${row.purchase_order_id}&type=8&bgtype=1&token=${this.token}`);
+  printPuchasing10(row: any) {
+    this.showReport(this.url + `${this.urlReportP10}?purchaOrderId=${row.purchase_order_id}&type=8&bgtype=1&token=${this.token}`);
   }
 
   printRequistion(row: any) {
@@ -73,7 +82,7 @@ export class HtmlPreviewComponent implements OnInit {
     const forms: Array<any> = [
       { 'id': '1', 'name': 'บันทึกข้อความขอความ', path: this.url + `/report/purchasing/10/?purchaOrderId=${order_id}&type=8&bgtype=1&token=${this.token}` },
       { 'id': '2', 'name': 'ใบสั่งซื้อ', path: this.url + `/report/purchasingorder/?orderId=${order_id}&token=${this.token}` },
-      { 'id': '3', 'name': 'ใบองค์การเภสัชกรรม', path: this.url + `/report/purchasing/11/?purchaOrderId=${order_id}&type=8&bgtype=1&token=${this.token}` },
+      { 'id': '3', 'name': 'ใบองค์การเภสัชกรรม', path: this.url + `${this.urlReportP11}/?purchaOrderId=${order_id}&type=8&bgtype=1&token=${this.token}` },
       { 'id': '4', 'name': 'ใบสั่งซื้อที่เลือก', path: this.url + `/report/getporder?token=${this.token}` },
       { 'id': '5', 'name': 'แบบฟอ์รม e-GP', path: this.url + `${this.urlReportEGP}?porder=${order_id}&type=8&token=${this.token}` },
     ];

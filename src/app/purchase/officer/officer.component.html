@@ -17,10 +17,10 @@
                 <clr-icon shape="note"></clr-icon>
                 แก้ไขข้อมูล
             </button>
-            <button class="action-item" (click)="onClickDelete(row)">
+            <!-- <button class="action-item" (click)="onClickDelete(row)">
                 <clr-icon shape="trash" class="is-error"></clr-icon>
                 ลบ
-            </button>
+            </button> -->
         </clr-dg-action-overflow>
         <clr-dg-cell>{{row.fullname}}</clr-dg-cell>
         <clr-dg-cell>{{row.type_name}}</clr-dg-cell>
@@ -31,7 +31,6 @@
         <clr-dg-pagination #pagination [clrDgPageSize]="15"></clr-dg-pagination>
     </clr-dg-footer>
 </clr-datagrid>
-
 
 <clr-modal [(clrModalOpen)]="modalInput" [clrModalClosable]="true" [clrModalSize]="'md'">
     <h3 class="modal-title">ข้อมูลเจ้าหน้าที่พัสดุ &nbsp; เพิ่ม/แก้ไข</h3>
