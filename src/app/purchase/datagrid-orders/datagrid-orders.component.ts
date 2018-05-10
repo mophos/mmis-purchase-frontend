@@ -40,6 +40,8 @@ export class DatagridOrdersComponent implements OnInit {
   @Input() status: Array<any> = ['ORDERPOINT'];
   @Input() isCancel: boolean;
 
+  sort: any = {};
+
   query: string;
   number_start: string;
   number_end: string;
@@ -205,7 +207,6 @@ export class DatagridOrdersComponent implements OnInit {
 
     try {
       this.modalLoading.show();
-      console.log(this.offset + '---');
 
       result = await this.purchasingOrderService.byStatus(
         this.status,
@@ -213,7 +214,10 @@ export class DatagridOrdersComponent implements OnInit {
         this.query,
         start_date,
         end_date,
-        this.perPage, this.offset);
+        this.perPage,
+        this.offset,
+        this.sort
+      );
 
       this.modalLoading.hide();
 
@@ -837,7 +841,6 @@ export class DatagridOrdersComponent implements OnInit {
   }
 
   async refresh(state: State) {
-    console.log(this.paginationPo);
 
     if (!this.currentPage) {
       if (this.paginationPo) {
@@ -855,7 +858,9 @@ export class DatagridOrdersComponent implements OnInit {
 
     sessionStorage.setItem('poOrderCurrentPage', this.currentPage);
 
+    this.sort = state.sort;
     this.offset = state.page.from;
+
     const limit = +state.page.size;
     const start_date = this.start_date !== null ? moment(this.start_date.jsdate).format('YYYY-MM-DD') : '';
     const end_date = this.end_date !== null ? moment(this.end_date.jsdate).format('YYYY-MM-DD') : '';
@@ -883,7 +888,9 @@ export class DatagridOrdersComponent implements OnInit {
         this.query,
         start_date,
         end_date,
-        limit, this.offset);
+        limit,
+        this.offset,
+        this.sort);
 
       this.modalLoading.hide();
       this.purchaseOrders = rs.rows;

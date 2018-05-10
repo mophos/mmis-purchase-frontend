@@ -61,21 +61,15 @@
           </div>
         </div>
       </div>
-      <!-- <div class="row">
-  <div class="col-md-12">
-    <div style="float:right; padding-top: 2px; padding-bottom: 2px;">
-      
-    </div>
-  </div>
-</div> -->
-      <clr-datagrid style="height:80%;" [(clrDgSelected)]="purchaseOrdersSelected"  (clrDgRefresh)="refresh($event)">
+
+      <clr-datagrid style="height:80%;" [(clrDgSelected)]="purchaseOrdersSelected" (clrDgRefresh)="refresh($event)">
         <clr-dg-column class="datagrid-fixed-column" [style.width.px]="30">
           #
         </clr-dg-column>
         <clr-dg-column [style.width.px]="150">
           สถานะ
         </clr-dg-column>
-        <clr-dg-column [style.width.px]="140">
+        <clr-dg-column [style.width.px]="140" [clrDgField]="'purchase_order_number'">
           เลขที่ใบสั่งซื้อ
         </clr-dg-column>
 
@@ -83,17 +77,17 @@
           มูลค่า
         </clr-dg-column>
 
-        <clr-dg-column [style.width.px]="150">
+        <clr-dg-column [clrDgField]="'order_date'" [style.width.px]="150">
           วันที่
         </clr-dg-column>
 
-        <clr-dg-column >
+        <clr-dg-column [clrDgField]="'labeler_name'">
           ผู้จำหน่าย
         </clr-dg-column>
-        <clr-dg-column [style.width.px]="130">
+        <clr-dg-column [clrDgField]="'bid_process_name'" [style.width.px]="130">
           วิธีการจัดซื้อ
         </clr-dg-column>
-        <clr-dg-column [style.width.px]="130">
+        <clr-dg-column [clrDgField]="'bgtypesub_name'" [style.width.px]="130">
           งบประมาณย่อย
         </clr-dg-column>
         <clr-dg-column [style.width.px]="130">
@@ -134,8 +128,7 @@
           <clr-dg-cell>{{pro.contract_no}}</clr-dg-cell>
 
           <clr-dg-action-overflow>
-            <button class="action-item" [disabled]="pro.recieve_count > 0 || pro.is_cancel ==='Y'"
-              (click)="goEdit(pro.purchase_order_id)">
+            <button class="action-item" [disabled]="pro.recieve_count > 0 || pro.is_cancel ==='Y'" (click)="goEdit(pro.purchase_order_id)">
               <clr-icon shape="note-edit"></clr-icon> แก้ไข</button>
 
             <button *ngIf="btnConfirmIsActive(pro)" class="action-item" (click)="confirm(pro)">
@@ -158,7 +151,6 @@
             <button class="action-item" (click)="printPurchaseOrderEgp(pro)" [disabled]="pro.purchase_order_status === 'ORDERPOINT' || pro.is_cancel == 'Y'">
               <clr-icon shape="printer"></clr-icon> พิมพ์แบบฟอร์ม e-GP
             </button>
-
             <!-- <a *ngIf="menuIsActive('print-receive')" class="action-item" target="_blank" href="{{url}}/report/purchasingorder/pdf/{{pro.purchase_order_id}}">
                 <clr-icon shape="printer"></clr-icon> พิมพ์ใบตรวจรับ
             </a> -->
@@ -201,12 +193,12 @@
         <div class="card">
           <div class="card-block">
             <div class="col-md-4"> -->
-              <!-- <div class="form-group">
+  <!-- <div class="form-group">
                 <span style="display:inline-block">Trading Code</span>
                 <input placeholder="" class="form-control" (keyup)="fileChangeEvent($event)" type="text" id="start_id" [(ngModel)]="file"
                   name="file" size="16" style="display:inline-block">
               </div> -->
-            <!-- </div>
+  <!-- </div>
           </div>
         </div>
       </div>
@@ -225,11 +217,11 @@
           <clr-dg-cell>{{pro.generic_name}}</clr-dg-cell>
           <clr-dg-cell>
             <div style="float:right"> -->
-              <!-- <clr-button-group class="btn-sm" [clrMenuPosition]="'bottom-right '">
+  <!-- <clr-button-group class="btn-sm" [clrMenuPosition]="'bottom-right '">
                 <clr-button class="btn" (click)="printHistory(pro)">
                   <clr-icon shape="search"></clr-icon> ดูรายละเอียด </clr-button>
               </clr-button-group> -->
-            <!-- </div>
+  <!-- </div>
           </clr-dg-cell>
           <app-product-history *clrIfExpanded ngProjectAs="clr-dg-row-detail" [genericId]="pro.generic_id">
 
@@ -269,8 +261,8 @@
     </div>
     <div class="row" style="margin:1em">
       <div class="card">
-        <div style="margin:0.5em">ใบสั่งซื้อ : 
-          PO-<input placeholder="เลขที่ตั้งต้น" (keydown)="handleKeyDown($event)" class="form-control" type="text" id="start_id" [(ngModel)]="start_id"
+        <div style="margin:0.5em">ใบสั่งซื้อ : PO-
+          <input placeholder="เลขที่ตั้งต้น" (keydown)="handleKeyDown($event)" class="form-control" type="text" id="start_id" [(ngModel)]="start_id"
             name="start_id" size="16"> &nbsp;&nbsp;&nbsp;
           <input placeholder="เลขที่สุดท้าย" (keydown)="handleKeyDown($event)" class="form-control" type="text" id="end_id" [(ngModel)]="end_id"
             name="end_id" size="16"> &nbsp;&nbsp;&nbsp;
@@ -356,18 +348,17 @@
       <section class="form-block">
         <div class="form-group">
           <label for="aForm_1" class="required">User Name</label>
-          <input autocomplete="nope" type="text" id="username" name="username" [(ngModel)]="username" >
+          <input autocomplete="nope" type="text" id="username" name="username" [(ngModel)]="username">
         </div>
         <div class="form-group">
           <label for="aForm_1" class="required"> password</label>
-          <input autocomplete="new-password" type="password" id="password" name="password" [(ngModel)]="password" >
+          <input autocomplete="new-password" type="password" id="password" name="password" [(ngModel)]="password">
         </div>
       </section>
     </form>
   </div>
   <div class="modal-footer" style="padding-top: 0px;">
-    <button type="button" class="btn btn-md btn-primary" [disabled]="!username || !password"
-      (click)="checkApprove(username,password)">บันทึก</button>
+    <button type="button" class="btn btn-md btn-primary" [disabled]="!username || !password" (click)="checkApprove(username,password)">บันทึก</button>
     <button type="button" class="btn btn-md btn-danger-outline" (click)="close()">ปิด</button>
   </div>
 </clr-modal>

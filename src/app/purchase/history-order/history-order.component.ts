@@ -9,6 +9,7 @@ import { State } from '@clr/angular';
 })
 export class HistoryOrderComponent implements OnInit {
 
+  sort: any = {};
   genericOrders: any;
   totalGeneric: any;
   perPage = 15;
@@ -22,15 +23,17 @@ export class HistoryOrderComponent implements OnInit {
     const rs: any = await this.purchasingOrderService.getGeneric();
     this.genericOrders = rs.rows;
   }
+
   async refresh(state: State) {
     const offset = +state.page.from;
     const limit = +state.page.size;
+    this.sort = state.sort;
 
     if (this.query) {
-      const rs: any = await this.purchasingOrderService.getGenericSearch(limit, offset, this.query);
+      const rs: any = await this.purchasingOrderService.getGenericSearch(limit, offset, this.query, this.sort);
       this.genericOrders = rs.rows;
     } else {
-      const rs: any = await this.purchasingOrderService.getGeneric(limit, offset);
+      const rs: any = await this.purchasingOrderService.getGeneric(limit, offset, this.sort);
       this.genericOrders = rs.rows;
       this.totalGeneric = +rs.total;
     }
@@ -42,7 +45,7 @@ export class HistoryOrderComponent implements OnInit {
 
   async doSearch() {
     if (this.query) {
-      const rs: any = await this.purchasingOrderService.getGenericSearch(this.perPage, 0, this.query);
+      const rs: any = await this.purchasingOrderService.getGenericSearch(this.perPage, 0, this.query, this.sort);
       this.genericOrders = rs.rows;
       this.totalGeneric = +rs.total;
     } else {
