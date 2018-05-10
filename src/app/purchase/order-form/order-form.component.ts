@@ -887,309 +887,307 @@ export class OrderFormComponent implements OnInit {
       this.isSaving = false;
       this.alertService.error(rs.error);
     }
-
-  }
-}
-
-async getPurchaseOrderDetail(orderId: string) {
-  this.loading = true;
-  this.modalLoading.show();
-
-  try {
-    const rs: any = await this.purchasingOrderService.detail(orderId);
-    if (rs.ok) {
-      this.purchaseOrder = rs.detail;
-      this.isContract = rs.detail.is_contract === 'T' ? true : false;
-      await this.setOrderDetail(rs.detail);
-      this.searchProductLabeler.setApiUrl(rs.detail.labeler_id);
-      await this.getPurchaseOrderItems(this.purchaseOrder.purchase_order_id);
-
-    } else {
-      this.alertService.error(rs.error);
-    }
-
-    this.modalLoading.hide();
-    this.loading = false;
-
-  } catch (error) {
-    this.modalLoading.hide();
-    this.loading = false;
-    this.alertService.error(JSON.stringify(error));
   }
 
-}
-
-async getPurchaseOrderItems(orderId: string) {
-  try {
+  async getPurchaseOrderDetail(orderId: string) {
+    this.loading = true;
     this.modalLoading.show();
-    const rs: any = await this.purchasingOrderItemService.allByOrderID(orderId);
-    this.modalLoading.hide();
-    if (rs.ok) {
-      const products = rs.rows;
 
-      for (const v of products) {
-        const obj: IProductOrderItems = {
-          product_id: v.product_id,
-          product_name: v.product_name,
-          generic_id: v.generic_id,
-          generic_name: v.generic_name,
-          cost: v.unit_price,
-          qty: v.qty,
-          total_small_qty: v.qty * v.small_qty,
-          unit_generic_id: v.unit_generic_id,
-          total_cost: v.unit_price * v.qty,
-          is_giveaway: v.giveaway || 'N',
-          small_qty: v.small_qty
-        }
-        this.purchaseOrderItems.push(obj);
-      }
-
-      this.calAmount();
-
-    } else {
-      this.alertService.error(rs.error);
-    }
-  } catch (error) {
-    this.modalLoading.hide();
-    this.alertService.error(error.message);
-  }
-}
-
-cancel() {
-  this.router.navigateByUrl('/purchase/orders');
-}
-
-checkIsHoliday(date: string) {
-
-  this.holidayService.isHoliday(date)
-    .then((results: any) => {
-      this.holiday = results.detail;
-      if (this.holiday) {
-        this.holidayText = results.detail.detail;
-        this.alertService.success('วันนี้เป็นวันหยุด', results.detail.detail);
-      }
-    })
-    .catch(error => {
-      this.alertService.serverError(error);
-    });
-}
-
-disableAddBtn() {
-  if (!this.labelerId) {
-    return true;
-  }
-
-  if (this.purchaseOrderStatus === 'COMPLETED') {
-    return true;
-  }
-
-  if (this.isContract === true) {
-    return true;
-  }
-
-  if (this.purchaseOrderStatus === 'APPROVED') {
-    if (this.accessCheck.can('PO_EDIT_AFFTER_APPROVE')) {
-      return false;
-    }
-    return true;
-  }
-  return false;
-}
-
-disableSave() {
-  // if (this.tempPrice) return this.tempPrice;
-
-  if (!this.labelerId) {
-    return true;
-  }
-  if (this.purchaseOrderItems.length === 0) {
-    return true;
-  }
-  if (this.purchaseOrderStatus === 'COMPLETED') {
-    return true;
-  }
-  // if (this.isContract === true)  return true;
-
-  if (this.purchaseOrderStatus === 'APPROVED') {
-    if (this.accessCheck.can('PO_EDIT_AFFTER_APPROVE')) {
-      return false;
-    }
-    return true;
-  }
-
-  if (this.purchaseOrderStatus === 'CONFIRMED') {
-    if (this.accessCheck.can('PO_EDIT_AFFTER_APPROVE')) {
-      return false;
-    }
-    return true;
-  }
-
-  return false;
-}
-
-changeCommittee(event: any) {
-  this.verifyCommitteeId = event ? event.committee_id : null;
-  this.peopleId1 = null;
-  this.peopleId2 = null;
-  this.peopleId3 = null;
-  this.getCommitteePeople(event.committee_id);
-
-}
-
-// แสดงรายชื่อกรรมการ
-async getCommitteePeople(committeeId: any) {
-  this.modalLoading.show();
-  if (this.purchaseOrderId) {
-    if (committeeId !== 0) {
-      const rs: any = await this.committeePeopleService.allByCommitteeId(committeeId);
+    try {
+      const rs: any = await this.purchasingOrderService.detail(orderId);
       if (rs.ok) {
-        this.committeeSelected = rs.rows;
-        if (+rs.rows[0].committee_type === 0) {
-          this.verifyCommitteeId = 0;
-          if (rs.rows[0]) {
-            this.searchPeople1.setSelected(rs.rows[0].fullname);
-            this.peopleId1 = rs.rows[0].people_id;
-          }
-          if (rs.rows[1]) {
-            this.searchPeople2.setSelected(rs.rows[1].fullname);
-            this.peopleId2 = rs.rows[1].people_id;
-          }
-          if (rs.rows[2]) {
-            this.searchPeople3.setSelected(rs.rows[2].fullname);
-            this.peopleId3 = rs.rows[2].people_id;
-          }
-        }
-      }
-      this.modalLoading.hide();
-    } else {
-      this.searchPeople1.setSelected('');
-      this.searchPeople2.setSelected('');
-      this.searchPeople3.setSelected('');
-      this.modalLoading.hide();
-    }
-  } else {
-    if (committeeId !== 0) {
-      const rs: any = await this.committeePeopleService.allByCommitteeId(committeeId);
-      this.modalLoading.hide();
-      if (rs.ok) {
-        if (+rs.rows[0].committee_type === 0) {
-          this.verifyCommitteeId = 0;
-        }
-        this.committeeSelected = rs.rows;
+        this.purchaseOrder = rs.detail;
+        this.isContract = rs.detail.is_contract === 'T' ? true : false;
+        await this.setOrderDetail(rs.detail);
+        this.searchProductLabeler.setApiUrl(rs.detail.labeler_id);
+        await this.getPurchaseOrderItems(this.purchaseOrder.purchase_order_id);
+
       } else {
         this.alertService.error(rs.error);
       }
-    } else {
-      this.searchPeople1.setSelected('');
-      this.searchPeople2.setSelected('');
-      this.searchPeople3.setSelected('');
+
       this.modalLoading.hide();
+      this.loading = false;
+
+    } catch (error) {
+      this.modalLoading.hide();
+      this.loading = false;
+      this.alertService.error(JSON.stringify(error));
+    }
+
+  }
+
+  async getPurchaseOrderItems(orderId: string) {
+    try {
+      this.modalLoading.show();
+      const rs: any = await this.purchasingOrderItemService.allByOrderID(orderId);
+      this.modalLoading.hide();
+      if (rs.ok) {
+        const products = rs.rows;
+
+        for (const v of products) {
+          const obj: IProductOrderItems = {
+            product_id: v.product_id,
+            product_name: v.product_name,
+            generic_id: v.generic_id,
+            generic_name: v.generic_name,
+            cost: v.unit_price,
+            qty: v.qty,
+            total_small_qty: v.qty * v.small_qty,
+            unit_generic_id: v.unit_generic_id,
+            total_cost: v.unit_price * v.qty,
+            is_giveaway: v.giveaway || 'N',
+            small_qty: v.small_qty
+          }
+          this.purchaseOrderItems.push(obj);
+        }
+
+        this.calAmount();
+
+      } else {
+        this.alertService.error(rs.error);
+      }
+    } catch (error) {
+      this.modalLoading.hide();
+      this.alertService.error(error.message);
     }
   }
-}
 
-changeOfficer(event: any) {
-  this.chiefId = event ? event.people_id : null;
-}
+  cancel() {
+    this.router.navigateByUrl('/purchase/orders');
+  }
 
-changeOffice(event: any) {
-  this.buyerId = event ? event.people_id : null;
-}
+  checkIsHoliday(date: string) {
 
-async getProductType() {
-  const token = sessionStorage.getItem('token');
-  const decodedToken = this.jwtHelper.decodeToken(token);
-  try {
-    const productGroup = decodedToken.generic_type_id.split(',');
+    this.holidayService.isHoliday(date)
+      .then((results: any) => {
+        this.holiday = results.detail;
+        if (this.holiday) {
+          this.holidayText = results.detail.detail;
+          this.alertService.success('วันนี้เป็นวันหยุด', results.detail.detail);
+        }
+      })
+      .catch(error => {
+        this.alertService.serverError(error);
+      });
+  }
+
+  disableAddBtn() {
+    if (!this.labelerId) {
+      return true;
+    }
+
+    if (this.purchaseOrderStatus === 'COMPLETED') {
+      return true;
+    }
+
+    if (this.isContract === true) {
+      return true;
+    }
+
+    if (this.purchaseOrderStatus === 'APPROVED') {
+      if (this.accessCheck.can('PO_EDIT_AFFTER_APPROVE')) {
+        return false;
+      }
+      return true;
+    }
+    return false;
+  }
+
+  disableSave() {
+    // if (this.tempPrice) return this.tempPrice;
+
+    if (!this.labelerId) {
+      return true;
+    }
+    if (this.purchaseOrderItems.length === 0) {
+      return true;
+    }
+    if (this.purchaseOrderStatus === 'COMPLETED') {
+      return true;
+    }
+    // if (this.isContract === true)  return true;
+
+    if (this.purchaseOrderStatus === 'APPROVED') {
+      if (this.accessCheck.can('PO_EDIT_AFFTER_APPROVE')) {
+        return false;
+      }
+      return true;
+    }
+
+    if (this.purchaseOrderStatus === 'CONFIRMED') {
+      if (this.accessCheck.can('PO_EDIT_AFFTER_APPROVE')) {
+        return false;
+      }
+      return true;
+    }
+
+    return false;
+  }
+
+  changeCommittee(event: any) {
+    this.verifyCommitteeId = event ? event.committee_id : null;
+    this.peopleId1 = null;
+    this.peopleId2 = null;
+    this.peopleId3 = null;
+    this.getCommitteePeople(event.committee_id);
+
+  }
+
+  // แสดงรายชื่อกรรมการ
+  async getCommitteePeople(committeeId: any) {
     this.modalLoading.show();
-    const rs: any = await this.productService.type(productGroup);
-    this.modalLoading.hide();
-    if (rs.rows) {
-      this.productType = rs.rows;
-      this.genericTypeId = this.productType.length ? this.productType[0].generic_type_id : null;
+    if (this.purchaseOrderId) {
+      if (committeeId !== 0) {
+        const rs: any = await this.committeePeopleService.allByCommitteeId(committeeId);
+        if (rs.ok) {
+          this.committeeSelected = rs.rows;
+          if (+rs.rows[0].committee_type === 0) {
+            this.verifyCommitteeId = 0;
+            if (rs.rows[0]) {
+              this.searchPeople1.setSelected(rs.rows[0].fullname);
+              this.peopleId1 = rs.rows[0].people_id;
+            }
+            if (rs.rows[1]) {
+              this.searchPeople2.setSelected(rs.rows[1].fullname);
+              this.peopleId2 = rs.rows[1].people_id;
+            }
+            if (rs.rows[2]) {
+              this.searchPeople3.setSelected(rs.rows[2].fullname);
+              this.peopleId3 = rs.rows[2].people_id;
+            }
+          }
+        }
+        this.modalLoading.hide();
+      } else {
+        this.searchPeople1.setSelected('');
+        this.searchPeople2.setSelected('');
+        this.searchPeople3.setSelected('');
+        this.modalLoading.hide();
+      }
     } else {
-      this.alertService.error(rs.error);
-    }
-
-  } catch (error) {
-    this.alertService.error(JSON.stringify(error))
-  }
-}
-
-onChangePurchaseMethod(event: any) {
-  this.purchaseMethodId = event ? event.id : null;
-  this.bidAmount = event ? event.f_amount : 0;
-}
-
-reset() {
-  this.newOrder();
-}
-
-// search vendor
-onChangeVendor(event: any) {
-  if (event) {
-    this.labelerId = null;
-  }
-}
-
-onSelectVendor(event: any) {
-  if (event) {
-    if (this.oldLabelerId !== event.labeler_id) {
-      this.purchaseOrderItems = [];
-    }
-    this.labelerId = event.labeler_id;
-    this.oldLabelerId = event.labeler_id;
-
-    this.searchProductLabeler.setApiUrl(this.labelerId);
-  }
-}
-
-onChangePeople(event: any, idx) {
-  if (event) {
-    if (idx === 1) {
-      this.peopleId1 = null;
-    }
-    if (idx === 2) {
-      this.peopleId2 = null;
-    }
-    if (idx === 3) {
-      this.peopleId3 = null;
-    }
-
-  }
-}
-
-onSelectPeople(event: any, idx) {
-  if (event) {
-    if (idx === 1) {
-      this.peopleId1 = event.people_id;
-    }
-    if (idx === 2) {
-      this.peopleId2 = event.people_id;
-    }
-    if (idx === 3) {
-      this.peopleId3 = event.people_id;
+      if (committeeId !== 0) {
+        const rs: any = await this.committeePeopleService.allByCommitteeId(committeeId);
+        this.modalLoading.hide();
+        if (rs.ok) {
+          if (+rs.rows[0].committee_type === 0) {
+            this.verifyCommitteeId = 0;
+          }
+          this.committeeSelected = rs.rows;
+        } else {
+          this.alertService.error(rs.error);
+        }
+      } else {
+        this.searchPeople1.setSelected('');
+        this.searchPeople2.setSelected('');
+        this.searchPeople3.setSelected('');
+        this.modalLoading.hide();
+      }
     }
   }
-}
-async getHoliday() {
-  const holiday: any = await this.holidayService.all();
-  const holidays = [];
-  holiday.rows.forEach(v => {
-    const obj: any = {};
-    if (+v.is_year === 1) {
-      obj.year = moment(new Date()).get('year');
-      obj.month = (moment(v.date).get('month')) + 1
-      obj.day = moment(v.date).get('date')
-      holidays.push(obj);
-    } else {
-      obj.year = moment(v.date).get('year');
-      obj.month = (moment(v.date).get('month')) + 1
-      obj.day = moment(v.date).get('date')
-      holidays.push(obj);
+
+  changeOfficer(event: any) {
+    this.chiefId = event ? event.people_id : null;
+  }
+
+  changeOffice(event: any) {
+    this.buyerId = event ? event.people_id : null;
+  }
+
+  async getProductType() {
+    const token = sessionStorage.getItem('token');
+    const decodedToken = this.jwtHelper.decodeToken(token);
+    try {
+      const productGroup = decodedToken.generic_type_id.split(',');
+      this.modalLoading.show();
+      const rs: any = await this.productService.type(productGroup);
+      this.modalLoading.hide();
+      if (rs.rows) {
+        this.productType = rs.rows;
+        this.genericTypeId = this.productType.length ? this.productType[0].generic_type_id : null;
+      } else {
+        this.alertService.error(rs.error);
+      }
+
+    } catch (error) {
+      this.alertService.error(JSON.stringify(error))
     }
-  });
-  const objDate = { 'dates': holidays, 'color': 'red' };
-  this.holidays.push(objDate);
-}
+  }
+
+  onChangePurchaseMethod(event: any) {
+    this.purchaseMethodId = event ? event.id : null;
+    this.bidAmount = event ? event.f_amount : 0;
+  }
+
+  reset() {
+    this.newOrder();
+  }
+
+  // search vendor
+  onChangeVendor(event: any) {
+    if (event) {
+      this.labelerId = null;
+    }
+  }
+
+  onSelectVendor(event: any) {
+    if (event) {
+      if (this.oldLabelerId !== event.labeler_id) {
+        this.purchaseOrderItems = [];
+      }
+      this.labelerId = event.labeler_id;
+      this.oldLabelerId = event.labeler_id;
+
+      this.searchProductLabeler.setApiUrl(this.labelerId);
+    }
+  }
+
+  onChangePeople(event: any, idx) {
+    if (event) {
+      if (idx === 1) {
+        this.peopleId1 = null;
+      }
+      if (idx === 2) {
+        this.peopleId2 = null;
+      }
+      if (idx === 3) {
+        this.peopleId3 = null;
+      }
+
+    }
+  }
+
+  onSelectPeople(event: any, idx) {
+    if (event) {
+      if (idx === 1) {
+        this.peopleId1 = event.people_id;
+      }
+      if (idx === 2) {
+        this.peopleId2 = event.people_id;
+      }
+      if (idx === 3) {
+        this.peopleId3 = event.people_id;
+      }
+    }
+  }
+  async getHoliday() {
+    const holiday: any = await this.holidayService.all();
+    const holidays = [];
+    holiday.rows.forEach(v => {
+      const obj: any = {};
+      if (+v.is_year === 1) {
+        obj.year = moment(new Date()).get('year');
+        obj.month = (moment(v.date).get('month')) + 1
+        obj.day = moment(v.date).get('date')
+        holidays.push(obj);
+      } else {
+        obj.year = moment(v.date).get('year');
+        obj.month = (moment(v.date).get('month')) + 1
+        obj.day = moment(v.date).get('date')
+        holidays.push(obj);
+      }
+    });
+    const objDate = { 'dates': holidays, 'color': 'red' };
+    this.holidays.push(objDate);
+  }
 }
