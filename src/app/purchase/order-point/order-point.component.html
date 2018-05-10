@@ -29,8 +29,8 @@
       </div>
 
       <clr-datagrid [(clrDgSelected)]="selectedProduct" (clrDgRefresh)="refresh($event)" style="height: 85%;">
-        <clr-dg-column>ชื่อสินค้า (Generic Name)</clr-dg-column>
-        <clr-dg-column>ผู้จำหน่าย</clr-dg-column>
+        <clr-dg-column [clrDgField]="'generic_name'">ชื่อสินค้า (Generic Name)</clr-dg-column>
+        <clr-dg-column [clrDgField]="'labeler_name'">ผู้จำหน่าย</clr-dg-column>
         <clr-dg-column style="width: 120px;">Min</clr-dg-column>
         <clr-dg-column style="width: 120px;">Max</clr-dg-column>
         <clr-dg-column style="width: 120px;">คงเหลือ</clr-dg-column>
@@ -87,8 +87,8 @@
       </div>
 
       <clr-datagrid [(clrDgSelected)]="selectedReserved" (clrDgRefresh)="refreshReserved($event)" style="height: 85%;">
-        <clr-dg-column>ชื่อสินค้า (Generic Name)</clr-dg-column>
-        <clr-dg-column>ผู้จำหน่าย</clr-dg-column>
+        <clr-dg-column [clrDgField]="'generic_name'">ชื่อสินค้า (Generic Name)</clr-dg-column>
+        <clr-dg-column [clrDgField]="'labeler_name'">ผู้จำหน่าย</clr-dg-column>
         <!-- <clr-dg-column style="width: 100px;">Min</clr-dg-column> -->
         <clr-dg-column style="width: 120px;">Min/Max</clr-dg-column>
         <clr-dg-column style="width: 100px;">คงเหลือ</clr-dg-column>
@@ -136,7 +136,7 @@
     </clr-tab-content>
   </clr-tab>
 
-    <clr-tab>
+  <clr-tab>
     <button (click)="clearSelected();getReservedForOrders()" clrTabLink>3. รายการรอออกใบสั่งซื้อ
       <span *ngIf="selectedOrders.length > 0" class="badge badge-danger">{{selectedOrders.length | number}}</span>
     </button>
@@ -158,8 +158,8 @@
       </div>
 
       <clr-datagrid [(clrDgSelected)]="selectedOrdersReserved" style="height: 85%;">
-        <clr-dg-column>ชื่อสินค้า (Generic Name)</clr-dg-column>
-        <clr-dg-column>ผู้จำหน่าย</clr-dg-column>
+        <clr-dg-column [clrDgField]="'generic_name'">ชื่อสินค้า (Generic Name)</clr-dg-column>
+        <clr-dg-column [clrDgField]="'labeler_name'">ผู้จำหน่าย</clr-dg-column>
         <clr-dg-column>ประเภท</clr-dg-column>
         <clr-dg-column style="width: 100px;">เลขที่สัญญา</clr-dg-column>
         <clr-dg-column style="width: 100px;">ราคาต่อ Pack</clr-dg-column>
@@ -169,7 +169,7 @@
         <clr-dg-column style="width: 100px;">#</clr-dg-column>
         <clr-dg-placeholder>ไม่พบข้อมูล</clr-dg-placeholder>
 
-        <clr-dg-row *ngFor="let p of selectedOrders" [clrDgItem]="p">
+        <clr-dg-row *clrDgItems="let p of selectedOrders" [clrDgItem]="p">
           <clr-dg-cell>
             <span class="p4">{{p.working_code}} - {{p.generic_name}}</span>
             <br>

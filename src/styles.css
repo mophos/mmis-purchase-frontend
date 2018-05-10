@@ -304,3 +304,7 @@ app-modal-loading .modal-backdrop {
     display: none;
     visibility: hidden;
   } 
+
+  .datagrid .datagrid-column .datagrid-filter-toggle, .datagrid .datagrid-head .datagrid-row-actions .datagrid-filter-toggle {
+      display: none;
+  }
