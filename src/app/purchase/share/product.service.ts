@@ -18,23 +18,25 @@ export class ProductService {
     return res.json();
   }
 
-  async getReorderPointTrade(genericTypeId: any, limit: number = 20, offset: number = 0, query: any = '', showNotPurchased: any = 'N') {
+  async getReorderPointTrade(genericTypeId: any, limit: number = 20, offset: number = 0, query: any = '', showNotPurchased: any = 'N', sort: any = {}) {
     const res = await this.authHttp.post(`${this.url}/products/reorderpoint/trade`, {
       genericTypeId: genericTypeId,
       limit: limit,
       offset: offset,
       query: query,
-      showNotPurchased: showNotPurchased
+      showNotPurchased: showNotPurchased,
+      sort: sort
     }).toPromise();
     return res.json();
   }
 
-  async getReorderPointTradeReserved(genericTypeId: any, limit: number = 20, offset: number = 0, query: any = '') {
+  async getReorderPointTradeReserved(genericTypeId: any, limit: number = 20, offset: number = 0, query: any = '', sort: any) {
     const res = await this.authHttp.post(`${this.url}/products/reorderpoint/trade/reserved`, {
       genericTypeId: genericTypeId,
       limit: limit,
       offset: offset,
-      query: query
+      query: query,
+      sort: sort
     }).toPromise();
     return res.json();
   }

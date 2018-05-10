@@ -61,13 +61,7 @@
           </div>
         </div>
       </div>
-      <!-- <div class="row">
-  <div class="col-md-12">
-    <div style="float:right; padding-top: 2px; padding-bottom: 2px;">
-      
-    </div>
-  </div>
-</div> -->
+
       <clr-datagrid style="height:80%;" [(clrDgSelected)]="purchaseOrdersSelected" (clrDgRefresh)="refresh($event)">
         <clr-dg-column class="datagrid-fixed-column" [style.width.px]="30">
           #
@@ -75,7 +69,7 @@
         <clr-dg-column [style.width.px]="150">
           สถานะ
         </clr-dg-column>
-        <clr-dg-column [style.width.px]="140">
+        <clr-dg-column [style.width.px]="140" [clrDgField]="'purchase_order_number'">
           เลขที่ใบสั่งซื้อ
         </clr-dg-column>
 
@@ -83,17 +77,17 @@
           มูลค่า
         </clr-dg-column>
 
-        <clr-dg-column [style.width.px]="150">
+        <clr-dg-column [clrDgField]="'order_date'" [style.width.px]="150">
           วันที่
         </clr-dg-column>
 
-        <clr-dg-column>
+        <clr-dg-column [clrDgField]="'labeler_name'">
           ผู้จำหน่าย
         </clr-dg-column>
-        <clr-dg-column [style.width.px]="130">
+        <clr-dg-column [clrDgField]="'bid_process_name'" [style.width.px]="130">
           วิธีการจัดซื้อ
         </clr-dg-column>
-        <clr-dg-column [style.width.px]="130">
+        <clr-dg-column [clrDgField]="'bgtypesub_name'" [style.width.px]="130">
           งบประมาณย่อย
         </clr-dg-column>
         <clr-dg-column [style.width.px]="130">
@@ -157,7 +151,6 @@
             <button class="action-item" (click)="printPurchaseOrderEgp(pro)" [disabled]="pro.purchase_order_status === 'ORDERPOINT' || pro.is_cancel == 'Y'">
               <clr-icon shape="printer"></clr-icon> พิมพ์แบบฟอร์ม e-GP
             </button>
-
             <!-- <a *ngIf="menuIsActive('print-receive')" class="action-item" target="_blank" href="{{url}}/report/purchasingorder/pdf/{{pro.purchase_order_id}}">
                 <clr-icon shape="printer"></clr-icon> พิมพ์ใบตรวจรับ
             </a> -->

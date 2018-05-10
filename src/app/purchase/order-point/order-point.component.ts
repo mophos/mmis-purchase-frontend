@@ -121,17 +121,17 @@ export class OrderPointComponent implements OnInit {
     this.getProductsReserved(this.perPage);
   }
 
-  async getProducts(limit: number = 20, offset: number = 0) {
+  async getProducts(limit: number = 20, offset: number = 0, sort: any = {}) {
     try {
       this.modalLoading.show();
       let rs: any;
       let showNotPurchased = this.showNotPurchased ? 'Y' : 'N';
       if (this.genericTypeId === 'all') {
-        rs = await this.productService.getReorderPointTrade(this.productGroup, limit, offset, this.query, showNotPurchased);
+        rs = await this.productService.getReorderPointTrade(this.productGroup, limit, offset, this.query, showNotPurchased, sort);
       } else {
         const productGroup: any = [];
         productGroup.push(this.genericTypeId);
-        rs = await this.productService.getReorderPointTrade(productGroup, limit, offset, this.query, showNotPurchased);
+        rs = await this.productService.getReorderPointTrade(productGroup, limit, offset, this.query, showNotPurchased, sort);
       }
       this.modalLoading.hide();
       if (rs.ok) {
@@ -159,16 +159,16 @@ export class OrderPointComponent implements OnInit {
     }
   }
 
-  async getProductsReserved(limit: number = 20, offset: number = 0) {
+  async getProductsReserved(limit: number = 20, offset: number = 0, sort: any = {}) {
     try {
       this.modalLoading.show();
       let rs: any;
       if (this.genericTypeIdReserved === 'all') {
-        rs = await this.productService.getReorderPointTradeReserved(this.productGroup, limit, offset, this.queryReserved);
+        rs = await this.productService.getReorderPointTradeReserved(this.productGroup, limit, offset, this.queryReserved, sort);
       } else {
         const productGroup: any = [];
         productGroup.push(this.genericTypeIdReserved);
-        rs = await this.productService.getReorderPointTradeReserved(productGroup, limit, offset, this.queryReserved);
+        rs = await this.productService.getReorderPointTradeReserved(productGroup, limit, offset, this.queryReserved, sort);
       }
       this.modalLoading.hide();
       if (rs.ok) {
@@ -202,15 +202,18 @@ export class OrderPointComponent implements OnInit {
   }
 
   refresh(state: State) {
-    const offset = +state.page.from;
-    const limit = +state.page.size;
-    this.getProducts(limit, offset);
+    let offset = +state.page.from;
+    let limit = +state.page.size;
+    let sort = state.sort;
+    this.getProducts(limit, offset, sort);
   }
 
   refreshReserved(state: State) {
-    const offset = +state.page.from;
-    const limit = +state.page.size;
-    this.getProductsReserved(limit, offset);
+    let offset = +state.page.from;
+    let limit = +state.page.size;
+    let sort = state.sort;
+
+    this.getProductsReserved(limit, offset, sort);
   }
 
   doSearch(event: any) {

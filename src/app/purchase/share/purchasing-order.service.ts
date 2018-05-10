@@ -100,7 +100,7 @@ export class PurchasingOrderService {
   }
 
   byStatus(status: Array<any>, contract = 'ALL', query: string = '', start_date: string = '',
-    end_date: string = '', limit: number = 20, offset: number = 0) {
+    end_date: string = '', limit: number = 20, offset: number = 0, sort: any = {}) {
     return new Promise((resolve, reject) => {
       this.authHttp.post(`${this.url}/${this.apiName}/by-status`, {
         status: status,
@@ -109,7 +109,8 @@ export class PurchasingOrderService {
         start_date: start_date,
         end_date: end_date,
         limit: limit,
-        offset: offset
+        offset: offset,
+        sort: sort
       })
         .map(res => res.json())
         .subscribe(data => {
@@ -257,14 +258,23 @@ export class PurchasingOrderService {
     return res.json();
   }
 
-  async getGeneric(limit = 15, offset = 0) {
-    const res = await this.authHttp.get(`${this.url}/${this.apiName}/getGeneric?limit=${limit}&offset=${offset}`)
+  async getGeneric(limit = 15, offset = 0, sort: any = {}) {
+    const res = await this.authHttp.post(`${this.url}/${this.apiName}/getGeneric`, {
+      limit: limit,
+      offset: offset,
+      sort: sort
+    })
       .toPromise();
     return res.json();
   }
 
-  async getGenericSearch(limit = 15, offset = 0, query: any) {
-    const res = await this.authHttp.get(`${this.url}/${this.apiName}/getGeneric/search?limit=${limit}&offset=${offset}&query=${query}`)
+  async getGenericSearch(limit = 15, offset = 0, query: any, sort: any) {
+    const res = await this.authHttp.post(`${this.url}/${this.apiName}/getGeneric/search`, {
+      limit: limit,
+      offset: offset,
+      query: query,
+      sort: sort
+    })
       .toPromise();
     return res.json();
   }
