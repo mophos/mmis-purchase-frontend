@@ -148,7 +148,7 @@ export class OfficerService {
 
   deletePurchasingOfficer(officerId: any) {
     return new Promise((resolve, reject) => {
-      this.authHttp.delete(`${this.url}/officer/:officerId`)
+      this.authHttp.delete(`${this.url}/officer/${officerId}`)
         .map(res => res.json())
         .subscribe(data => {
           resolve(data);
