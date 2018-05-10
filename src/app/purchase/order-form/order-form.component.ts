@@ -873,20 +873,19 @@ export class OrderFormComponent implements OnInit {
       if (this.purchaseOrderStatus === 'ORDERPOINT') {
         summary.from_status = 'ORDERPOINT';
         summary.purchase_order_status = 'PREPARED';
-        rs = await this.purchasingOrderService.update(this.purchaseOrderId, summary, this.purchaseOrderItems, this.budgetData);
-      } else {
-        rs = await this.purchasingOrderService.save(summary, this.purchaseOrderItems, this.budgetData);
       }
+      rs = await this.purchasingOrderService.update(this.purchaseOrderId, summary, this.purchaseOrderItems, this.budgetData);
+    } else {
+      rs = await this.purchasingOrderService.save(summary, this.purchaseOrderItems, this.budgetData);
+    }
 
-      if (rs.ok) {
-        this.alertService.success();
-        this.router.navigate(['/purchase/orders'])
-      } else {
-        this.modalLoading.hide();
-        this.isSaving = false;
-        this.alertService.error(rs.error);
-      }
-
+    if (rs.ok) {
+      this.alertService.success();
+      this.router.navigate(['/purchase/orders'])
+    } else {
+      this.modalLoading.hide();
+      this.isSaving = false;
+      this.alertService.error(rs.error);
     }
   }
 
