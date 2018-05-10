@@ -53,7 +53,7 @@ export class LoginPageComponent implements OnInit {
       .catch((error) => {
         this.isLogging = false;
         //this.alert.error(JSON.stringify(error));
-        this.alert.error('ชื่อผู้้ใช้งานหรือรหัสผ่านไม่ถูกต้อง');
+        this.alert.error('ชื่อผู้ใช้งานหรือรหัสผ่านไม่ถูกต้อง');
       });
   }
 }
