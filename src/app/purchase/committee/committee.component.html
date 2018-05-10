@@ -1,8 +1,8 @@
 <!-- <h3 style="margin-top:0px;">คณะกรรมการ</h3> -->
 <nav class="breadcrumb">
-        <a class="breadcrumb-item" href="javascript://" routerLink="/">หน้าหลัก</a>
-        <span class="breadcrumb-item active">คณะกรรมการ</span>
-    </nav>
+    <a class="breadcrumb-item" href="javascript://" routerLink="/">หน้าหลัก</a>
+    <span class="breadcrumb-item active">คณะกรรมการ</span>
+</nav>
 <clr-tabs>
     <clr-tab>
         <button clrTabLink>ชุดกรรมการ</button>
@@ -22,10 +22,10 @@
                         <label for="committee_type-2">สอบราคา</label>
                     </div>
                 </div> -->
-                <button style="margin-top:-2px;" type="button" class="btn btn-sm btn-success" (click)="newCommittee()"> 
+                <button style="margin-top:-2px;" type="button" class="btn btn-sm btn-success" (click)="newCommittee()">
                     <clr-icon shape="add" size="12"></clr-icon>
-                    สร้างชุดกรรมการ  
-                  </button>
+                    สร้างชุดกรรมการ
+                </button>
                 <app-committee-form #cmt [(isUpdate)]="committeeIsUpdate" (affterSave)="affterSaveCommittee($event)" (wizardOnCancel)="onCommitteeCancle($event)"></app-committee-form>
             </div>
             <clr-datagrid [(clrDgLoading)]="loading">
@@ -34,13 +34,14 @@
                 <clr-dg-column>วันที่เริ่มต้น</clr-dg-column>
                 <clr-dg-column>วันที่สิ้นสุด</clr-dg-column>
                 <clr-dg-column [style.width.px]="80">สถานะ</clr-dg-column>
+                <clr-dg-column [style.width.px]="120"></clr-dg-column>
 
                 <clr-dg-row style="cursor:pointer;" (dblclick)="cmt.updateCommittee(c)" *clrDgItems="let c of committees" [clrDgItem]="c">
 
-                    <clr-dg-action-overflow>
+                    <!-- <clr-dg-action-overflow>
                         <button class="action-item" (click)="cmt.updateCommittee(c)">แก้ไข</button>
                         <button class="action-item" (click)="deleteComittee(c)">ลบ</button>
-                    </clr-dg-action-overflow>
+                    </clr-dg-action-overflow> -->
 
                     <clr-dg-cell>{{c.committee_name}}</clr-dg-cell>
                     <clr-dg-cell>{{c.datetime_start | toThaiDate}}</clr-dg-cell>
@@ -49,6 +50,16 @@
                     <clr-dg-cell>
                         <clr-icon *ngIf="c.committee_status==='T' " shape="check" class="is-success" size="25"></clr-icon>
                         <clr-icon *ngIf="c.committee_status==='F' " shape="times" class="is-warning" size="25"></clr-icon>
+                    </clr-dg-cell>
+                    <clr-dg-cell>
+                        <div class="btn-group">
+                            <button class="btn btn-sm btn-success wm-small-btn" (click)="cmt.updateCommittee(c)">
+                                <clr-icon shape="note"></clr-icon>
+                            </button>
+                            <button class="btn btn-sm btn-danger wm-small-btn" (click)="deleteComittee(c)">
+                                <clr-icon shape="trash"></clr-icon>
+                            </button>
+                        </div>
                     </clr-dg-cell>
 
                 </clr-dg-row>
