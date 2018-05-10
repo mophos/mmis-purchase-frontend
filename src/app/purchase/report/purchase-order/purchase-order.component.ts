@@ -37,7 +37,7 @@ export class PurchaseOrderComponent implements OnInit {
     dateFormat: 'dd mmm yyyy',
   };
 
-  perPage = 10;
+  perPage = 20;
   totalProduct: any;
   public jwtHelper: JwtHelper = new JwtHelper();
   token: any;

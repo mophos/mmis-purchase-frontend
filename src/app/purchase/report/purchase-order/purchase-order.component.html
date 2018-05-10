@@ -22,7 +22,7 @@
     </div>
   </div>
 </div>
-<clr-datagrid [(clrDgSelected)]="selectedProduct" (clrDgRefresh)="refresh($event)">
+<clr-datagrid style="height: 90%;" [(clrDgSelected)]="selectedProduct" (clrDgRefresh)="refresh($event)">
   <clr-dg-column [clrDgField]="'generic_name'">ชื่อสินค้า (Generic Name)</clr-dg-column>
   <clr-dg-column [clrDgField]="'product_name'">ชื่อสินค้า (Trade Name)</clr-dg-column>
   <clr-dg-column style="width: 120px;">Min</clr-dg-column>
