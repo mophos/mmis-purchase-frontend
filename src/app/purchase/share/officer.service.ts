@@ -146,12 +146,9 @@ export class OfficerService {
     });
   }
 
-  deletePurchasingOfficer(ref) {
+  deletePurchasingOfficer(officerId: any) {
     return new Promise((resolve, reject) => {
-      this.authHttp.post(`${this.url}/officer/deletePurchasingOfficer`, {
-        tokenKey: this.tokenKey,
-        ref: ref
-      })
+      this.authHttp.delete(`${this.url}/officer/:officerId`)
         .map(res => res.json())
         .subscribe(data => {
           resolve(data);

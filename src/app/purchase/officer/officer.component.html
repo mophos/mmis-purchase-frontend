@@ -10,20 +10,31 @@
 <clr-datagrid [style.height.%]="80">
     <clr-dg-column [clrDgField]="'fullname'">ชื่อ - นามสกุล</clr-dg-column>
     <clr-dg-column style="width: 180px;" [clrDgField]="'type_name'">ตำแหน่ง</clr-dg-column>
+    <clr-dg-column [style.width.px]="120"></clr-dg-column>
 
     <clr-dg-row *clrDgItems="let row of officers">
-        <clr-dg-action-overflow>
+        <!-- <clr-dg-action-overflow>
             <button class="action-item" (click)="onClickEdit(row)">
                 <clr-icon shape="note"></clr-icon>
                 แก้ไขข้อมูล
             </button>
-            <!-- <button class="action-item" (click)="onClickDelete(row)">
+            <button class="action-item" (click)="onClickDelete(row)">
                 <clr-icon shape="trash" class="is-error"></clr-icon>
                 ลบ
-            </button> -->
-        </clr-dg-action-overflow>
+            </button>
+        </clr-dg-action-overflow> -->
         <clr-dg-cell>{{row.fullname}}</clr-dg-cell>
         <clr-dg-cell>{{row.type_name}}</clr-dg-cell>
+        <clr-dg-cell>
+            <div class="btn-group">
+                <button class="btn btn-sm btn-success wm-small-btn" (click)="onClickEdit(row)">
+                    <clr-icon shape="note"></clr-icon>
+                </button>
+                <button class="btn btn-sm btn-danger wm-small-btn" (click)="onClickDelete(row)">
+                    <clr-icon shape="trash"></clr-icon>
+                </button>
+            </div>
+        </clr-dg-cell>
     </clr-dg-row>
 
     <clr-dg-footer>
