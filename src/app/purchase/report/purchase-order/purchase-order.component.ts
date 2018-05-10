@@ -19,13 +19,15 @@ import { HtmlPreviewComponent } from 'app/helper/html-preview/html-preview.compo
 export class PurchaseOrderComponent implements OnInit {
 
   isPreview = false;
-
+  sort: any = {};
   products: any = [];
   selectedProduct: any = [];
   printProducts: any = [];
 
   @ViewChild('htmlPreview') public htmlPreview: HtmlPreviewComponent;
   @ViewChild('modalLoading') modalLoading: ModalLoadingComponent
+
+  showNotPurchased = false;
 
   generic_type_id = 'all';
   productGroup: any;
@@ -35,7 +37,7 @@ export class PurchaseOrderComponent implements OnInit {
     dateFormat: 'dd mmm yyyy',
   };
 
-  perPage = 10;
+  perPage = 20;
   totalProduct: any;
   public jwtHelper: JwtHelper = new JwtHelper();
   token: any;
@@ -90,15 +92,17 @@ export class PurchaseOrderComponent implements OnInit {
     this.getProducts();
   }
 
-  async getProducts() {
+  async getProducts(limit: number = 20, offset: number = 0, sort: any = {}) {
     try {
       this.modalLoading.show();
       let rs: any;
+      let showNotPurchased = this.showNotPurchased ? 'Y' : 'N';
+
       if (this.generic_type_id === 'all') {
-        rs = await this.productService.getReorderPointTrade(this.productGroup, this.perPage, 0);
+        rs = await this.productService.getReorderPointTrade(this.productGroup, limit, offset, '', showNotPurchased, sort);
       } else {
         const _generic_type_id = [this.generic_type_id];
-        rs = await this.productService.getReorderPointTrade(_generic_type_id, this.perPage, 0);
+        rs = await this.productService.getReorderPointTrade(_generic_type_id, limit, offset, '', showNotPurchased, sort);
       }
       if (rs.ok) {
         this.products = rs.rows;
@@ -116,26 +120,10 @@ export class PurchaseOrderComponent implements OnInit {
   async refresh(state: State) {
     const offset = +state.page.from;
     const limit = +state.page.size;
-    try {
-      this.modalLoading.show();
-      let rs: any;
-      if (this.generic_type_id === 'all') {
-        rs = await this.productService.getReorderPointTrade(this.productGroup, limit, offset);
-      } else {
-        const _generic_type_id = [this.generic_type_id];
-        rs = await this.productService.getReorderPointTrade(_generic_type_id, limit, offset);
-      }
-      if (rs.ok) {
-        this.products = rs.rows;
-        this.totalProduct = rs.total;
-      } else {
-        this.alertService.error(rs.error);
-      }
-      this.modalLoading.hide();
-    } catch (error) {
-      this.modalLoading.hide();
-      this.alertService.error(error.message);
-    }
+    this.sort = state.sort;
+
+    this.getProducts(limit, offset, this.sort);
+
   }
 
   async getProductType() {
@@ -154,5 +142,10 @@ export class PurchaseOrderComponent implements OnInit {
       this.alertService.error(error.message);
     }
   }
+
+  onChangePurchaseStatus() {
+    this.getProducts();
+  }
+
 }
 
