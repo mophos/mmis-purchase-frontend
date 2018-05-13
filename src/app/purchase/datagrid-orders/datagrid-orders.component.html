@@ -44,12 +44,14 @@
               </button>
 
               <clr-button-group class="btn-primary btn-md" [clrMenuPosition]="'bottom-right'" *ngIf="purchaseOrdersSelected.length">
-                <clr-button (click)="confirmAll('CONFIRMED')">ยืนยัน ({{this.purchaseOrdersSelected.length}})</clr-button>
-                <clr-button (click)="allApprove()">อนุมัติ ({{this.purchaseOrdersSelected.length}})</clr-button>
-                <!-- <clr-button [clrInMenu]="true" (click)="printSelected()">
-                  <clr-icon shape="printer"></clr-icon> พิมพ์ ({{this.purchaseOrdersSelected.length}})</clr-button> -->
-                <clr-button (click)="changePurchaseDate()">
-                  <clr-icon shape="note"></clr-icon> แก้ไขวันออกใบสั่งซื้อ ({{this.purchaseOrdersSelected.length}})</clr-button>
+                <clr-button class="btn-primary btn-md" (click)="confirmAll('CONFIRMED')">ยืนยัน ({{this.purchaseOrdersSelected.length}})</clr-button>
+                <clr-button class="btn-primary btn-md" (click)="allApprove()">อนุมัติ ({{this.purchaseOrdersSelected.length}})</clr-button>
+                <clr-button class="btn-primary btn-md" (click)="changePurchaseDate()">
+                  <clr-icon shape="note"></clr-icon> แก้ไขวันออกใบสั่งซื้อ ({{this.purchaseOrdersSelected.length}})
+                </clr-button>
+                <clr-button class="btn-primary btn-md" (click)="printSelected(1)" [clrInMenu]="true">พิมพ์ใบสั่งซื้อ</clr-button>
+                <clr-button class="btn-primary btn-md" (click)="printSelected(2)" [clrInMenu]="true">พิมพ์แบบฟอร์ม e-GP</clr-button>
+                <!-- <clr-button class="btn-primary btn-md" (click)="printPuchasing10()" [clrInMenu]="true">พิมพ์ใบขออนุมัติซื้อ</clr-button> -->
               </clr-button-group>
 
               <button (click)="printOrder_number()" class="btn btn-md btn-primary" *ngIf="!purchaseOrdersSelected.length">
@@ -131,26 +133,26 @@
             <button class="action-item" [disabled]="pro.recieve_count > 0 || pro.is_cancel ==='Y'" (click)="goEdit(pro.purchase_order_id)">
               <clr-icon shape="note-edit"></clr-icon> แก้ไข</button>
 
-            <button *ngIf="btnConfirmIsActive(pro)" class="action-item" (click)="confirm(pro)">
+            <!-- <button *ngIf="btnConfirmIsActive(pro)" class="action-item" (click)="confirm(pro)">
               <clr-icon shape="tasks"></clr-icon> ยืนยันการสั่งซื้อ</button>
             <button *ngIf="btnApproveIsActive(pro)" class="action-item" (click)="approve(pro)">
-              <clr-icon shape="tasks"></clr-icon> อนุมัติการสั่งซื้อ</button>
+              <clr-icon shape="tasks"></clr-icon> อนุมัติการสั่งซื้อ</button> -->
 
             <button class="action-item" (click)="printPuchasing10(pro)" [disabled]="pro.purchase_order_status === 'ORDERPOINT' || pro.is_cancel == 'Y'">
               <clr-icon shape="printer"></clr-icon> พิมพ์ใบขออนุมัติซื้อ
             </button>
-            <button class="action-item" (click)="printPurchaseOrder(pro)" [disabled]="pro.purchase_order_status === 'ORDERPOINT' || pro.is_cancel == 'Y'">
+            <!-- <button class="action-item" (click)="printPurchaseOrder(pro)" [disabled]="pro.purchase_order_status === 'ORDERPOINT' || pro.is_cancel == 'Y'">
               <clr-icon shape="printer"></clr-icon> พิมพ์ใบสั่งซื้อ
-            </button>
+            </button> -->
             <button class="action-item" (click)="printpPurchasing(pro)" [disabled]="pro.purchase_order_status === 'ORDERPOINT' || pro.is_cancel == 'Y'">
               <clr-icon shape="printer"></clr-icon> พิมพ์ใบสรุปรายการเวชภัณฑ์ที่สั่งซื้อ
             </button>
             <button class="action-item" (click)="printPurchaseOrderAttach(pro)" [disabled]="pro.purchase_order_status === 'ORDERPOINT' || pro.is_cancel == 'Y'">
               <clr-icon shape="printer"></clr-icon> พิมพ์ใบองค์การเภสัชกรรม
             </button>
-            <button class="action-item" (click)="printPurchaseOrderEgp(pro)" [disabled]="pro.purchase_order_status === 'ORDERPOINT' || pro.is_cancel == 'Y'">
+            <!-- <button class="action-item" (click)="printPurchaseOrderEgp(pro)" [disabled]="pro.purchase_order_status === 'ORDERPOINT' || pro.is_cancel == 'Y'">
               <clr-icon shape="printer"></clr-icon> พิมพ์แบบฟอร์ม e-GP
-            </button>
+            </button> -->
             <!-- <a *ngIf="menuIsActive('print-receive')" class="action-item" target="_blank" href="{{url}}/report/purchasingorder/pdf/{{pro.purchase_order_id}}">
                 <clr-icon shape="printer"></clr-icon> พิมพ์ใบตรวจรับ
             </a> -->
