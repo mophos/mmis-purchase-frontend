@@ -28,9 +28,9 @@
         </div>
       </div>
 
-      <clr-datagrid [(clrDgSelected)]="selectedProduct" (clrDgRefresh)="refresh($event)" style="height: 85%;">
-        <clr-dg-column [clrDgField]="'generic_name'">ชื่อสินค้า (Generic Name)</clr-dg-column>
-        <clr-dg-column [clrDgField]="'labeler_name'">ผู้จำหน่าย</clr-dg-column>
+      <clr-datagrid (clrDgRefresh)="refresh($event)" style="height: 80%;">
+        <clr-dg-column [clrDgField]="'generic_name'">ชื่อสามัญ (Generic Name)</clr-dg-column>
+        <!-- <clr-dg-column [clrDgField]="'labeler_name'">ผู้จำหน่าย</clr-dg-column> -->
         <clr-dg-column style="width: 120px;">Min</clr-dg-column>
         <clr-dg-column style="width: 120px;">Max</clr-dg-column>
         <clr-dg-column style="width: 120px;">คงเหลือ</clr-dg-column>
@@ -39,12 +39,13 @@
         <clr-dg-placeholder>ไม่พบข้อมูล</clr-dg-placeholder>
 
         <clr-dg-row *ngFor="let p of products" [clrDgItem]="p">
+          <app-grid-reorder-point-products [productItems]="p.items" [baseUnitName]="p.primary_unit_name" (onSuccess)="onSuccessReorderPoint($event)"
+            [genericId]="p.generic_id" *clrIfExpanded ngProjectAs="clr-dg-row-detail"></app-grid-reorder-point-products>
+
           <clr-dg-cell>
-            <span class="p4">{{p.working_code}} - {{p.generic_name}}</span>
-            <br>
-            <span class="p7">Trade: {{p.product_name}}</span>
+            {{p.working_code}} - {{p.generic_name}}
           </clr-dg-cell>
-          <clr-dg-cell>{{p.labeler_name}}</clr-dg-cell>
+          <!-- <clr-dg-cell>{{p.labeler_name}}</clr-dg-cell> -->
           <clr-dg-cell style="text-align: right;">{{p.min_qty | number}}</clr-dg-cell>
           <clr-dg-cell style="text-align: right;">{{p.max_qty | number}}</clr-dg-cell>
           <clr-dg-cell style="text-align: right; font-weight: bold; color: #F52F22;">{{p.remain_qty || 0 | number}}</clr-dg-cell>

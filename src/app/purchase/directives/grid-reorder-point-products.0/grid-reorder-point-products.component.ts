@@ -8,7 +8,7 @@ import { ProductService } from 'app/purchase/share/product.service';
   styles: []
 })
 export class GridReorderPointProductsComponent implements OnInit {
-  selected: any = [];
+
   _genericId: any;
   _productItems: any = [];
   _baseUnitName: any;
@@ -112,9 +112,4 @@ export class GridReorderPointProductsComponent implements OnInit {
     }
   }
 
-  setSelected(item: any) {
-    if (this.selected) {
-      this.onSuccess.emit(this.selected);
-    }
-  }
 }

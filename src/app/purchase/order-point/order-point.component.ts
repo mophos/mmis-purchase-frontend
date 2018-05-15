@@ -70,7 +70,6 @@ export class OrderPointComponent implements OnInit {
     this.productGroup = decodedToken.generic_type_id.split(',');
   }
 
-
   async ngOnInit() {
     this.getProductType();
     await this.getProductsReserved();
@@ -114,28 +113,45 @@ export class OrderPointComponent implements OnInit {
 
   changeType() {
     this.curentPage = 1;
-    this.getProducts(this.perPage);
+    this.getGenerics(this.perPage);
   }
 
   changeTypeReserved() {
     this.getProductsReserved(this.perPage);
   }
 
-  async getProducts(limit: number = 20, offset: number = 0, sort: any = {}) {
+  async getGenerics(limit: number = 20, offset: number = 0, sort: any = {}) {
     try {
       this.modalLoading.show();
       let rs: any;
       let showNotPurchased = this.showNotPurchased ? 'Y' : 'N';
       if (this.genericTypeId === 'all') {
-        rs = await this.productService.getReorderPointTrade(this.productGroup, limit, offset, this.query, showNotPurchased, sort);
+        rs = await this.productService.getReorderPointGeneric(this.productGroup, limit, offset, this.query, showNotPurchased, sort);
       } else {
         const productGroup: any = [];
         productGroup.push(this.genericTypeId);
-        rs = await this.productService.getReorderPointTrade(productGroup, limit, offset, this.query, showNotPurchased, sort);
+        rs = await this.productService.getReorderPointGeneric(productGroup, limit, offset, this.query, showNotPurchased, sort);
       }
       this.modalLoading.hide();
       if (rs.ok) {
-        this.products = rs.rows;
+        // this.products = rs.rows;
+        rs.rows.forEach(v => {
+          let obj: any = {
+            generic_id: v.generic_id,
+            generic_name: v.generic_name,
+            generic_type_name: v.generic_type_name,
+            max_qty: v.max_qty,
+            min_qty: v.min_qty,
+            remain_qty: v.remain_qty,
+            total_purchased: v.total_purchased,
+            working_code: v.working_code,
+            items: []
+          };
+
+          this.products.push(obj);
+
+        });
+
         this.total = rs.total || 0;
       } else {
         this.alertService.error(rs.error);
@@ -161,7 +177,7 @@ export class OrderPointComponent implements OnInit {
 
   async getProductsReserved(limit: number = 20, offset: number = 0, sort: any = {}) {
     try {
-      this.modalLoading.show();
+      // this.modalLoading.show();
       let rs: any;
       if (this.genericTypeIdReserved === 'all') {
         rs = await this.productService.getReorderPointTradeReserved(this.productGroup, limit, offset, this.queryReserved, sort);
@@ -170,7 +186,7 @@ export class OrderPointComponent implements OnInit {
         productGroup.push(this.genericTypeIdReserved);
         rs = await this.productService.getReorderPointTradeReserved(productGroup, limit, offset, this.queryReserved, sort);
       }
-      this.modalLoading.hide();
+      // this.modalLoading.hide();
       if (rs.ok) {
         this.reservedItems = rs.rows;
         this.totalReserved = rs.total || 0;
@@ -178,7 +194,7 @@ export class OrderPointComponent implements OnInit {
         this.alertService.error(rs.error);
       }
     } catch (error) {
-      this.modalLoading.hide();
+      // this.modalLoading.hide();
       this.alertService.error(error.message);
     }
   }
@@ -189,7 +205,7 @@ export class OrderPointComponent implements OnInit {
       const rs: any = await this.productService.type(this.productGroup);
       if (rs.ok) {
         this.productType = rs.rows;
-        await this.getProducts();
+        await this.getGenerics();
       } else {
         // this.modalLoading.hide();
         this.alertService.error(rs.error);
@@ -205,7 +221,7 @@ export class OrderPointComponent implements OnInit {
     let offset = +state.page.from;
     let limit = +state.page.size;
     let sort = state.sort;
-    this.getProducts(limit, offset, sort);
+    this.getGenerics(limit, offset, sort);
   }
 
   refreshReserved(state: State) {
@@ -218,7 +234,7 @@ export class OrderPointComponent implements OnInit {
 
   doSearch(event: any) {
     if (event.keyCode === 13) {
-      this.getProducts();
+      this.getGenerics();
     }
   }
 
@@ -281,7 +297,7 @@ export class OrderPointComponent implements OnInit {
         const rs: any = await this.productService.saveReservedProducts(items);
         if (rs.ok) {
           this.alertService.success();
-          this.getProducts();
+          this.getGenerics();
           this.getReservedForOrders();
           this.getProductsReserved();
         } else {
@@ -577,6 +593,17 @@ export class OrderPointComponent implements OnInit {
   }
 
   onChangePurchaseStatus() {
-    this.getProducts(this.perPage);
+    this.getGenerics(this.perPage);
   }
+
+  onSuccessReorderPoint(event: any) {
+    const idx = _.findIndex(this.products, { product_id: event.product_id });
+    if (idx > -1) {
+      if (event) {
+        this.products[idx].items.push(event);
+        console.log(this.products[idx]);
+      }
+    }
+  }
+
 }

@@ -18,8 +18,8 @@ export class ProductService {
     return res.json();
   }
 
-  async getReorderPointTrade(genericTypeId: any, limit: number = 20, offset: number = 0, query: any = '', showNotPurchased: any = 'N', sort: any = {}) {
-    const res = await this.authHttp.post(`${this.url}/products/reorderpoint/trade`, {
+  async getReorderPointGeneric(genericTypeId: any, limit: number = 20, offset: number = 0, query: any = '', showNotPurchased: any = 'N', sort: any = {}) {
+    const res = await this.authHttp.post(`${this.url}/products/reorderpoint/generic`, {
       genericTypeId: genericTypeId,
       limit: limit,
       offset: offset,
