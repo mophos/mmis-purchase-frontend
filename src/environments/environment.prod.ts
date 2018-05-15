@@ -4,7 +4,7 @@ export const environment = {
   docUrl: '/api/document',
   loginUrl: '/api/um',
   homeUrl: '/#/',
-  purchasingUrl: '/#/',
+  purchasingUrl: '/',
   planningUrl: '/planning/#/',
   inventoryUrl: '/inventory/#/',
   materialsUrl: '/material/#/',
