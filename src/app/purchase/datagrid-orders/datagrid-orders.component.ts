@@ -169,8 +169,8 @@ export class DatagridOrdersComponent implements OnInit {
     this.getSysReport();
     for (let i = 0; i < 10; i++) {
       this.dataYear.push({
-        yearText: (((this.yearPO + i) + 543).toString()).substring(2, 4),
-        year: this.yearPO + i
+        yearText: (((this.yearPO - i) + 543).toString()).substring(2, 4),
+        year: this.yearPO - i
       })
     }
   }
