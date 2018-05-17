@@ -705,7 +705,7 @@ export class OrderFormComponent implements OnInit {
   async _save() {
     const bookNumber = await this.purchasingOrderService.getPoBookNumber();
     const idx = _.findIndex(bookNumber.rows, { purchase_order_book_number: this.purchaseOrderBookNumber });
-    if ((!this.dupBookNumber && idx === -1) || this.dupBookNumber) {
+    if (((!this.dupBookNumber && idx === -1) || this.dupBookNumber) || this.isUpdate) {
       const isErrorBidAmount: boolean = this.bidAmount < this.totalPrice;
 
       if (isErrorBidAmount) {
