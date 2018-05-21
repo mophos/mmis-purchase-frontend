@@ -150,9 +150,9 @@
             <button class="action-item" (click)="printPurchaseOrderAttach(pro)" [disabled]="pro.purchase_order_status === 'ORDERPOINT' || pro.is_cancel == 'Y'">
               <clr-icon shape="printer"></clr-icon> พิมพ์ใบองค์การเภสัชกรรม
             </button>
-            <!-- <button class="action-item" (click)="printPurchaseOrderEgp(pro)" [disabled]="pro.purchase_order_status === 'ORDERPOINT' || pro.is_cancel == 'Y'">
+            <button class="action-item" (click)="printPurchaseOrderEgp(pro)" [disabled]="pro.purchase_order_status === 'ORDERPOINT' || pro.is_cancel == 'Y'">
               <clr-icon shape="printer"></clr-icon> พิมพ์แบบฟอร์ม e-GP
-            </button> -->
+            </button>
             <!-- <a *ngIf="menuIsActive('print-receive')" class="action-item" target="_blank" href="{{url}}/report/purchasingorder/pdf/{{pro.purchase_order_id}}">
                 <clr-icon shape="printer"></clr-icon> พิมพ์ใบตรวจรับ
             </a> -->
