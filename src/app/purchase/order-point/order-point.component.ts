@@ -122,6 +122,8 @@ export class OrderPointComponent implements OnInit {
 
   async getGenerics(limit: number = 20, offset: number = 0, sort: any = {}) {
     try {
+      this.products = [];
+
       this.modalLoading.show();
       let rs: any;
       let showNotPurchased = this.showNotPurchased ? 'Y' : 'N';
