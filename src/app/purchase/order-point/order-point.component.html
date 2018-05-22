@@ -39,9 +39,7 @@
         <clr-dg-placeholder>ไม่พบข้อมูล</clr-dg-placeholder>
 
         <clr-dg-row *ngFor="let p of products" [clrDgItem]="p">
-          <app-grid-reorder-point-products [productItems]="p.items" [baseUnitName]="p.primary_unit_name" (onSuccess)="onSuccessReorderPoint($event)"
-            [genericId]="p.generic_id" *clrIfExpanded ngProjectAs="clr-dg-row-detail"></app-grid-reorder-point-products>
-
+          <app-grid-reorder-point-products (onSelected)="onSelectedProduct($event)" [genericId]="p.generic_id" *clrIfExpanded ngProjectAs="clr-dg-row-detail"></app-grid-reorder-point-products>
           <clr-dg-cell>
             {{p.working_code}} - {{p.generic_name}}
           </clr-dg-cell>

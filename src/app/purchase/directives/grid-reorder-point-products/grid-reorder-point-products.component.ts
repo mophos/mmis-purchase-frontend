@@ -8,31 +8,17 @@ import { ProductService } from 'app/purchase/share/product.service';
   styles: []
 })
 export class GridReorderPointProductsComponent implements OnInit {
-  selected: any = [];
   _genericId: any;
-  _productItems: any = [];
-  _baseUnitName: any;
 
-  @Output('onSuccess') onSuccess: EventEmitter<any> = new EventEmitter<any>();
-  @Input() genericId: any;
-  @Input('baseUnitName')
-  set setBaseUnitName(value: any) {
-    this._baseUnitName = value;
-  }
+  @Output('onSelected') onSelected: EventEmitter<any> = new EventEmitter<any>();
 
   @Input('genericId')
   set setConfirmId(value: any) {
     this._genericId = value;
   }
 
-  @Input('productItems')
-  set setConfirmItems(value: any) {
-    this._productItems = value;
-  }
-
   loading = false;
   items = [];
-  currentTotalSmallQty = 0;
 
   constructor(private productService: ProductService) { }
 
@@ -71,12 +57,6 @@ export class GridReorderPointProductsComponent implements OnInit {
             contract_id: v.contract_id
           }
 
-          let _idx = _.findIndex(this._productItems, { product_id: v.product_id });
-          if (_idx > -1) {
-            obj.order_qty = this._productItems[_idx].order_qty;
-            obj.purchase_cost = this._productItems[_idx].unit_price;
-          }
-
           this.items.push(obj);
         });
       } else {
@@ -89,32 +69,8 @@ export class GridReorderPointProductsComponent implements OnInit {
     }
   }
 
-  onChangeQty(product: any, qty: any) {
-    let idx = _.findIndex(this.items, { product_id: product.product_id });
-
-    if (idx > -1) {
-      if (qty) {
-        this.items[idx].order_qty = qty;
-      } else {
-        this.items[idx].order_qty = 0;
-      }
-      this.onSuccess.emit(this.items[idx]);
-    }
+  addPurchase(item: any) {
+    this.onSelected.emit(item);
   }
 
-  onChangeUnit(event: any, product: any) {
-    let idx = _.findIndex(this.items, { product_id: product.product_id });
-    if (idx > -1) {
-      this.items[idx].purchase_cost = +event.cost;
-      this.items[idx].purchase_unit_id = event.unit_generic_id;
-      this.items[idx].conversion_qty = event.qty;
-      this.onSuccess.emit(this.items[idx]);
-    }
-  }
-
-  setSelected(item: any) {
-    if (this.selected) {
-      this.onSuccess.emit(this.selected);
-    }
-  }
 }

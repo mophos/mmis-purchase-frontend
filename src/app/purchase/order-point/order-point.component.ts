@@ -596,14 +596,31 @@ export class OrderPointComponent implements OnInit {
     this.getGenerics(this.perPage);
   }
 
-  onSuccessReorderPoint(event: any) {
-    const idx = _.findIndex(this.products, { product_id: event.product_id });
-    if (idx > -1) {
-      if (event) {
-        this.products[idx].items.push(event);
-        console.log(this.products[idx]);
+  async onSelectedProduct(event: any) {
+    this.curentPage = 1;
+    const items: any = [];
+    const item: any = {};
+    item.product_id = event.product_id;
+    item.generic_id = event.generic_id;
+    items.push(item);
+
+    this.modalLoading.show();
+    // save reserved
+    const rs: any = await this.productService.saveReservedProducts(items);
+    if (rs.ok) {
+      this.alertService.success();
+      // remove generic selected
+      let idx = _.findIndex(this.products, { generic_id: event.generic_id });
+      if (idx > -1) {
+        this.products.splice(idx, 1);
       }
+      // get reserved items
+      this.getProductsReserved();
+    } else {
+      this.alertService.error(rs.error);
     }
+    this.modalLoading.hide();
+
   }
 
 }

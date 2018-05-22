@@ -45,7 +45,6 @@ export class GridReorderPointProductsComponent implements OnInit {
       this.loading = true;
       let rs: any = await this.productService.getProductsListByGeneric(this._genericId);
       if (rs.ok) {
-        // this.items = rs.rows;
         rs.rows.forEach(v => {
           let obj: any = {
             conversion_qty: v.conversion_qty,
