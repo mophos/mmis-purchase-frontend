@@ -20,10 +20,10 @@ export class HistoryOrderComponent implements OnInit {
   }
 
   async getOrders() {
-    const rs: any = await this.purchasingOrderService.getGeneric();
+    const rs: any = await this.purchasingOrderService.getGeneric(this.perPage, 0, this.sort);
     this.genericOrders = rs.rows;
   }
-
+  
   async refresh(state: State) {
     const offset = +state.page.from;
     const limit = +state.page.size;

@@ -8,7 +8,7 @@ import { PurchasingOrderService } from './../share/purchasing-order.service';
 import { PurchasingService } from './../share/purchasing.service';
 import { AlertService } from './../../alert.service';
 import { IMyOptions } from 'mydatepicker-th';
-import { Component, OnInit, Inject, ChangeDetectorRef, Input, ViewChild } from '@angular/core';
+import { Component, OnInit, Inject, ChangeDetectorRef, Input, ViewChild, RendererFactory2 } from '@angular/core';
 import * as moment from 'moment';
 import * as _ from 'lodash';
 import { ModalLoadingComponent } from 'app/modal-loading/modal-loading.component';
@@ -169,8 +169,8 @@ export class DatagridOrdersComponent implements OnInit {
     this.getSysReport();
     for (let i = 0; i < 10; i++) {
       this.dataYear.push({
-        yearText: (((this.yearPO + i) + 543).toString()).substring(2, 4),
-        year: this.yearPO + i
+        yearText: (((this.yearPO - i) + 543).toString()).substring(2, 4),
+        year: this.yearPO - i
       })
     }
   }
@@ -617,7 +617,7 @@ export class DatagridOrdersComponent implements OnInit {
   }
 
 
-  printSelected() {
+  printSelected(typ: any) {
     const poItems: Array<any> = [];
     // ดักstatusถ้าเป็น ORDERPOINT อย่างเดียวไม่ให้ปริ้้น
     let f1 = 0;
@@ -625,18 +625,20 @@ export class DatagridOrdersComponent implements OnInit {
     this.purchaseOrdersSelected.forEach((value: any, index: number) => {
       f1++;
       if (value.purchase_order_status !== 'ORDERPOINT') {
-        poItems.push('purchaOrderId=' + value.purchase_order_id);
+        poItems.push('porder=' + value.purchase_order_id);
       } else {
         f2++;
       }
     });
-
     if (f1 !== f2) {
-      this.htmlPrview.showReport(this.url + `/report/po/egp/singburi/?token=${this.token}&` + poItems.join('&'));
+      if (typ === 1) {
+        this.htmlPrview.showReport(this.url + `${this.urlReportPO}/?token=${this.token}&` + poItems.join('&'));
+      } else if (typ === 2) {
+        this.htmlPrview.showReport(this.url + `${this.urlReportEGP}/?token=${this.token}&` + poItems.join('&'));
+      }
     } else {
       this.alertService.error('ข้อมุูลไม่ครบถ้วน');
     }
-
   }
 
   printPuchasing10(row: any) {
