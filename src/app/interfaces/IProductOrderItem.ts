@@ -15,4 +15,5 @@ export interface IProductOrderItems extends IProductOrderItem {
   small_qty?: number;
   contract_id?: any;
   contract_no?: any;
+  end_date?: any;
 }
