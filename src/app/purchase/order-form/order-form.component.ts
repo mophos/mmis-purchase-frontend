@@ -280,7 +280,6 @@ export class OrderFormComponent implements OnInit {
   }
 
   addProductSelected() {
-
     if (this.contractId) {
       if (this.selectedProduct.contract_id !== this.contractId) {
         this.alertService.error('รายการนี้ไม่ได้อยู่ในสัญญา กรุณาตรวจสอบข้อมูล');
@@ -290,20 +289,25 @@ export class OrderFormComponent implements OnInit {
       }
     } else {
       if (this.selectedProduct.contract_id) {
-        this.alertService.confirm('หากเพิ่มรายการนี้รายการอื่นๆที่ไม่มีสัญญาจะถูกยกเลิก แล้วออก PO เป็นแบบมีสัญญาแทน ต้องการสร้าง PO แบบมีสัญญาใช่หรือไม่?', 'รายการนี้มีสัญญา')
-          .then(() => {
-            // ออก PO แบบมีสัญญา
-            this.contractId = this.selectedProduct.contract_id;
-            this.contractNo = this.selectedProduct.contract_no;
-            this.purchaseOrderItems.forEach((v, i) => {
-              if (v.contract_id !== v.contract_id) {
-                this.purchaseOrderItems.splice(i, 1);
-              }
-            });
-            // get contract budget
-            this.budgetRemainRef.getContractDetail(this.contractId, this.purchaseOrderId);
-            this._doAddProduct();
-          }).catch(() => { });
+        const diffday = moment(moment(this.selectedProduct.end_date).format('YYYY-MM-DD')).diff(moment(moment().format('YYYY-MM-DD')), 'days');
+        if (diffday >= 0) {
+          this.alertService.confirm('หากเพิ่มรายการนี้รายการอื่นๆที่ไม่มีสัญญาจะถูกยกเลิก แล้วออก PO เป็นแบบมีสัญญาแทน ต้องการสร้าง PO แบบมีสัญญาใช่หรือไม่?', 'รายการนี้มีสัญญา')
+            .then(() => {
+              // ออก PO แบบมีสัญญา
+              this.contractId = this.selectedProduct.contract_id;
+              this.contractNo = this.selectedProduct.contract_no;
+              this.purchaseOrderItems.forEach((v, i) => {
+                if (v.contract_id !== v.contract_id) {
+                  this.purchaseOrderItems.splice(i, 1);
+                }
+              });
+              // get contract budget
+              this.budgetRemainRef.getContractDetail(this.contractId, this.purchaseOrderId);
+              this._doAddProduct();
+            }).catch(() => { });
+        } else {
+          this._doAddProduct();
+        }
       } else {
         this._doAddProduct();
       }
