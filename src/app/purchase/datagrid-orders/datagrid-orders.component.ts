@@ -84,7 +84,7 @@ export class DatagridOrdersComponent implements OnInit {
   tmpOderApprove: any;
   username: any;
   password: any;
-  action: any = 'PC_ORDERS';
+  action: any = 'PO_APPROVE';
   total = 0;
   perPage = 20;
   page: any;
@@ -292,8 +292,11 @@ export class DatagridOrdersComponent implements OnInit {
   }
 
   async checkApprove(username: any, password: any) {
+    console.log(username);
+    
     const rs: any = await this.purchasingOrderService.checkApprove(username, password, this.action);
-    // console.log(rs);
+    console.log(rs);
+
 
     if (rs.ok) {
       if (this.page === 1) {
