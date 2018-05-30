@@ -89,21 +89,22 @@ export class PurchaseOrderComponent implements OnInit {
   }
 
   changeType() {
-    this.getProducts();
+    this.getGenerics();
   }
 
-  async getProducts(limit: number = 20, offset: number = 0, sort: any = {}) {
+  async getGenerics(limit: number = 20, offset: number = 0, sort: any = {}) {
     try {
       this.modalLoading.show();
       let rs: any;
       let showNotPurchased = this.showNotPurchased ? 'Y' : 'N';
 
       if (this.generic_type_id === 'all') {
-        rs = await this.productService.getReorderPointTrade(this.productGroup, limit, offset, '', showNotPurchased, sort);
+        rs = await this.productService.getReorderPointGeneric(this.productGroup, limit, offset, '', showNotPurchased, sort);
       } else {
         const _generic_type_id = [this.generic_type_id];
-        rs = await this.productService.getReorderPointTrade(_generic_type_id, limit, offset, '', showNotPurchased, sort);
+        rs = await this.productService.getReorderPointGeneric(_generic_type_id, limit, offset, '', showNotPurchased, sort);
       }
+
       if (rs.ok) {
         this.products = rs.rows;
         this.totalProduct = rs.total;
@@ -122,7 +123,7 @@ export class PurchaseOrderComponent implements OnInit {
     const limit = +state.page.size;
     this.sort = state.sort;
 
-    this.getProducts(limit, offset, this.sort);
+    this.getGenerics(limit, offset, this.sort);
 
   }
 
@@ -144,7 +145,7 @@ export class PurchaseOrderComponent implements OnInit {
   }
 
   onChangePurchaseStatus() {
-    this.getProducts();
+    this.getGenerics();
   }
 
 }

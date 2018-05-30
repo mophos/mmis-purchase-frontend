@@ -4,7 +4,6 @@ import { PurchasingofficerComponent } from './officer/officer.component';
 import { MappingCommitteeComponent } from './mapping-committee/mapping-committee.component';
 import { PrintComponent } from './print/print.component';
 import { CommitteeComponent } from './committee/committee.component';
-import { ReorderPointComponent } from './reorder-point/reorder-point.component';
 import { OrdersCancelComponent } from './orders-cancel/orders-cancel.component';
 import { OrdersApproveComponent } from './orders-approve/orders-approve.component';
 import { OrdersWarehouseComponent } from './orders-warehouse/orders-warehouse.component';

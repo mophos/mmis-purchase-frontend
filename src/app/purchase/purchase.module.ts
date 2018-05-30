@@ -43,7 +43,7 @@ import { OrderFormLayoutComponent } from './order-form-layout/order-form-layout.
 
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule, FormControl, FormGroup} from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, FormControl, FormGroup } from '@angular/forms';
 import { ClarityModule } from '@clr/angular';
 import { AuthModule } from './../auth/auth.module';
 import { HelperModule } from '../helper/helper.module';
@@ -55,7 +55,6 @@ import { OrdersApproveComponent } from './orders-approve/orders-approve.componen
 import { OrdersCancelComponent } from './orders-cancel/orders-cancel.component';
 import { SelectProductsComponent } from './directives/select-products/select-products.component';
 import { OrdersHistoryComponent } from './directives/orders-history/orders-history.component';
-import { ReorderPointComponent } from './reorder-point/reorder-point.component';
 import { RemainTotalPipe } from './pipes/remain-total.pipe';
 import { SearchLabelerComponent } from './directives/search-labeler/search-labeler.component';
 import { OrderStatusComponent } from './directives/order-status/order-status.component';
@@ -117,7 +116,6 @@ import { PurchaseBudgetHistoryComponent } from './report/purchase-budget-history
     OrdersCancelComponent,
     SelectProductsComponent,
     OrdersHistoryComponent,
-    ReorderPointComponent,
     RemainTotalPipe,
     SearchLabelerComponent,
     OrderStatusComponent,
