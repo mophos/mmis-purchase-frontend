@@ -54,7 +54,9 @@ export class GridReorderPointProductsComponent implements OnInit {
             v_labeler_name: v.v_labeler_name,
             working_code: v.working_code,
             contract_no: v.contract_no,
-            contract_id: v.contract_id
+            contract_id: v.contract_id,
+            last_purchased_date: v.last_purchased_date,
+            last_purchased_unit_price: v.last_purchased_unit_price
           }
 
           this.items.push(obj);
