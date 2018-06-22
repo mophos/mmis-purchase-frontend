@@ -7,8 +7,6 @@ import { AlertService } from '../../../alert.service';
 import { IMyOptions } from 'mydatepicker-th';
 import * as moment from 'moment';
 
-import { Committee } from '../../share/models/committee.interface';
-import { CommitteePeople } from '../../share/models/committee-people.interface';
 import { People } from '../../share/models/people.interface';
 
 import { Wizard, WizardPage } from '@clr/angular';
@@ -87,7 +85,6 @@ export class CommitteeFormComponent implements OnInit {
   ngOnInit() {
     this.buildForm();
     this.getPeoples();
-    console.log('init');
   }
 
   buildForm() {
@@ -198,7 +195,7 @@ export class CommitteeFormComponent implements OnInit {
       .then((results: any) => {
         this.peoplesSource = results.rows;
         this.peoplesSourceTemp = results.rows;
-        this.ref.detectChanges();
+         this.ref.detectChanges();
       })
       .catch(error => {
         this.alertService.serverError();
@@ -245,7 +242,6 @@ export class CommitteeFormComponent implements OnInit {
         this.alertService.error();
       });
   }
-
 
   saveCommittee(data: any) {
     this.loadingFlag = true;

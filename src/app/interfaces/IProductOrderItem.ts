@@ -16,4 +16,5 @@ export interface IProductOrderItems extends IProductOrderItem {
   contract_id?: any;
   contract_no?: any;
   end_date?: any;
+  contract_status?: any;
 }

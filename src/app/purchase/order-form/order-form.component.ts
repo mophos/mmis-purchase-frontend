@@ -290,7 +290,7 @@ export class OrderFormComponent implements OnInit {
     } else {
       if (this.selectedProduct.contract_id) {
         const diffday = moment(moment(this.selectedProduct.end_date).format('YYYY-MM-DD')).diff(moment(moment().format('YYYY-MM-DD')), 'days');
-        if (diffday >= 0) {
+        if (diffday >= 0 && this.selectedProduct.contract_status !== 'SUCCESS' && this.selectedProduct.contract_status !== 'CANCEL') {
           this.alertService.confirm('หากเพิ่มรายการนี้รายการอื่นๆที่ไม่มีสัญญาจะถูกยกเลิก แล้วออก PO เป็นแบบมีสัญญาแทน ต้องการสร้าง PO แบบมีสัญญาใช่หรือไม่?', 'รายการนี้มีสัญญา')
             .then(() => {
               // ออก PO แบบมีสัญญา
