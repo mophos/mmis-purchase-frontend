@@ -98,8 +98,8 @@ export class BudgetRemainComponent implements OnInit {
           this.contractNo = rs.detail ? rs.detail.contract_no : null;
           this.contractPurchaseAmount = rs.detail ? rs.detail.total_purchase : 0;
 
-          this.contractRemain = this.contractAmount - this.contractPurchaseAmount;
-          this.contractRemainAfterPurchase = this.contractRemain - this.totalPurchaseAmount;
+          this.contractRemain = rs.detail ? this.contractAmount - this.contractPurchaseAmount : 0;
+          this.contractRemainAfterPurchase = rs.detail ? this.contractRemain - this.totalPurchaseAmount : 0;
           this.returnData();
         } else {
           this.alertService.error('เกิดข้อผิดพลาดในการดึงข้อมูลสัญญา');

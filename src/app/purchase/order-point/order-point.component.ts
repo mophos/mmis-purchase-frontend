@@ -596,6 +596,7 @@ export class OrderPointComponent implements OnInit {
   }
 
   onChangePurchaseStatus() {
+    this.curentPage = 1;
     this.getGenerics(this.perPage);
   }
 
