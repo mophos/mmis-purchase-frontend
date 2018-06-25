@@ -290,7 +290,7 @@ export class OrderFormComponent implements OnInit {
     } else {
       if (this.selectedProduct.contract_id) {
         const diffday = moment(moment(this.selectedProduct.end_date).format('YYYY-MM-DD')).diff(moment(moment().format('YYYY-MM-DD')), 'days');
-        if (diffday >= 0) {
+        if (diffday >= 0 && this.selectedProduct.contract_status !== 'SUCCESS' && this.selectedProduct.contract_status !== 'CANCEL') {
           this.alertService.confirm('หากเพิ่มรายการนี้รายการอื่นๆที่ไม่มีสัญญาจะถูกยกเลิก แล้วออก PO เป็นแบบมีสัญญาแทน ต้องการสร้าง PO แบบมีสัญญาใช่หรือไม่?', 'รายการนี้มีสัญญา')
             .then(() => {
               // ออก PO แบบมีสัญญา
@@ -485,7 +485,7 @@ export class OrderFormComponent implements OnInit {
   }
 
   onBudgetCalculated(event: any) {
-    console.log(event);
+    // console.log(event);
     this.budgetData = event;
     this._canSave = true;
   }
@@ -630,8 +630,8 @@ export class OrderFormComponent implements OnInit {
 
     this.addVat = data.include_vat === 'Y' ? true : false;
     this.excludeVat = data.exclude_vat === 'Y' ? true : false;
-    this.chiefId = data.chief_id;
-    this.buyerId = data.buyer_id;
+    this.chiefId = data.chief_id ? data.chief_id : this.chiefId;
+    this.buyerId = data.buyer_id ? data.buyer_id : this.buyerId;
     this.budgetYear = data.budget_year || this.currentBudgetYear;
     this.purchaseDate = {
       date: {
@@ -778,7 +778,7 @@ export class OrderFormComponent implements OnInit {
     // try {
 
     const purchaseDate = `${this.purchaseDate.date.year}-${this.purchaseDate.date.month}-${this.purchaseDate.date.day}`;
-
+    
     if (!this.showChief) {
       this.chiefId = null;
     }
@@ -788,7 +788,7 @@ export class OrderFormComponent implements OnInit {
     const peopleCommittee = [];
     // let committeeId =
     // เช็คกรรมการตรวจรับว่าเป็นแบบอื่นๆหรือไม่
-    console.log(this.verifyCommitteeId);
+    // console.log(this.verifyCommitteeId);
 
     if (this.verifyCommitteeId === 0) {
       const committeeHead = {
@@ -798,7 +798,7 @@ export class OrderFormComponent implements OnInit {
         is_delete: 'Y'
       }
       const committeeHeadIdRs: any = await this.committeeService.save(committeeHead);
-      console.log(committeeHeadIdRs);
+      // console.log(committeeHeadIdRs);
       if (committeeHeadIdRs.ok) {
         this.verifyCommitteeId = committeeHeadIdRs.rows[0];
 

@@ -82,19 +82,23 @@
             <div class="col-md-5">
                 <label>รายชื่อเจ้าหน้าที่</label>
                 <clr-datagrid style="height:280px" [(clrDgSelected)]="peoplesSourceSelected">
-
                     <clr-dg-column [clrDgField]="'fullname'">
                         <ng-container *clrDgHideableColumn="{hidden: false}">
                             ชื่อ-นามสกุล
                         </ng-container>
                     </clr-dg-column>
-
-                    <clr-dg-row *clrDgItems="let people of peoplesSource" [clrDgItem]="people">
+                    <clr-dg-row *ngFor="let pis of peoplesSource" [clrDgItem]="pis">
+                        <clr-dg-cell>
+                            {{pis.fullname}}
+                            <label style="display:block;color:#747474;font-size:10px;">{{pis.position_name}}</label>
+                        </clr-dg-cell>
+                    </clr-dg-row>
+                    <!-- <clr-dg-row *clrDgItems="let people of peoplesSource" [clrDgItem]="people">
                         <clr-dg-cell>
                             {{people.fullname}}
                             <label style="display:block;color:#747474;font-size:10px;">{{people.position_name}}</label>
                         </clr-dg-cell>
-                    </clr-dg-row>
+                    </clr-dg-row> -->
                     <clr-dg-footer>
                         {{pagination1.firstItem + 1}} - {{pagination1.lastItem + 1}} of {{pagination1.totalItems}} users
                         <clr-dg-pagination #pagination1 [clrDgPageSize]="30"></clr-dg-pagination>

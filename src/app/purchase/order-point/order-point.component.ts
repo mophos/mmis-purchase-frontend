@@ -573,7 +573,8 @@ export class OrderPointComponent implements OnInit {
             // console.log(rs);
             if (rs.ok) {
               this.alertService.success();
-              this.router.navigate(['purchase/orders']);
+              // this.router.navigate(['purchase/orders']);
+              this.getReservedForOrders();
             } else {
               this.alertService.error(rs.error);
             }
@@ -595,11 +596,11 @@ export class OrderPointComponent implements OnInit {
   }
 
   onChangePurchaseStatus() {
+    this.curentPage = 1;
     this.getGenerics(this.perPage);
   }
 
   async onSelectedProduct(event: any) {
-    this.curentPage = 1;
     const items: any = [];
     const item: any = {};
     item.product_id = event.product_id;
