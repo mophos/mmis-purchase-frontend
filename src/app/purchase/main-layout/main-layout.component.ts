@@ -48,8 +48,7 @@ export class MainLayoutComponent implements OnInit {
 
   logout() {
     sessionStorage.removeItem('token');
-    sessionStorage.removeItem('fullname');
-    this.router.navigate(['login']);
+    location.href = this.homeUrl;
   }
 
   ngOnInit() {
