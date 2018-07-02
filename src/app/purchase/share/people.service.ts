@@ -1,4 +1,4 @@
-import { Injectable,Inject } from '@angular/core';
+import { Injectable, Inject } from '@angular/core';
 import { AuthHttp } from 'angular2-jwt';
 import 'rxjs/add/operator/map';
 
@@ -6,8 +6,8 @@ import 'rxjs/add/operator/map';
 export class PeopleService {
 
   constructor(
-     @Inject('API_URL') private url: string,
-     private authHttp: AuthHttp
+    @Inject('API_URL') private url: string,
+    private authHttp: AuthHttp
   ) { }
 
   all() {
@@ -22,4 +22,9 @@ export class PeopleService {
     });
   }
 
+  async search(query: any) {
+    const res = await this.authHttp.get(`${this.url}/people/search?query=${query}`)
+      .toPromise();
+    return res.json();
+  }
 }
