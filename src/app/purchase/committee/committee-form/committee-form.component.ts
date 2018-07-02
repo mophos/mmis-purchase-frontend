@@ -43,6 +43,7 @@ export class CommitteeFormComponent implements OnInit {
   committeeNewPosition: any;
   _saveBtn: boolean = false
   leader: string;
+  query: string;
 
   myDatePickerOptions: IMyOptions = {
     dateFormat: 'dd mmm yyyy',
@@ -195,7 +196,7 @@ export class CommitteeFormComponent implements OnInit {
       .then((results: any) => {
         this.peoplesSource = results.rows;
         this.peoplesSourceTemp = results.rows;
-         this.ref.detectChanges();
+        this.ref.detectChanges();
       })
       .catch(error => {
         this.alertService.serverError();
@@ -263,7 +264,7 @@ export class CommitteeFormComponent implements OnInit {
         this.affterSave.emit(results);
         this.alertService.success();
         this.loadingFlag = false;
-        this._saveBtn=false;
+        this._saveBtn = false;
       })
       .catch((results) => {
         this.alertService.error();
@@ -339,6 +340,23 @@ export class CommitteeFormComponent implements OnInit {
         this.peoplesTarget[idx] = this.peoplesTarget[idx - 1];
         this.peoplesTarget[idx - 1] = temp;
       }
+    }
+  }
+  searchPeoples(event: any) {
+    if (event.keyCode === 13) {
+      console.log(this.query);
+      this.peopleService.search(this.query)
+        .then((results: any) => {
+          console.log(results)
+          this.peoplesSource = results.rows;
+          this.peoplesSourceTemp = results.rows;
+          this.ref.detectChanges();
+        })
+        .catch(error => {
+          this.peoplesSource = [];
+          this.peoplesSourceTemp = [];
+          this.ref.detectChanges();
+        });
     }
   }
 }
