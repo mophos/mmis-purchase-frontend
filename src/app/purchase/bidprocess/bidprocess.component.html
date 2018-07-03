@@ -9,7 +9,7 @@
 
 <clr-datagrid [style.height.%]="80">
   <clr-dg-column [clrDgField]="'fullname'">วิธีการจัดซื้อ</clr-dg-column>
-  <clr-dg-column style="width: 180px;" [clrDgField]="'type_name'">จำนวนเงิน</clr-dg-column>
+  <clr-dg-column style="width: 180px;" [clrDgField]="'type_name'">วงเงิน</clr-dg-column>
   <clr-dg-column [style.width.px]="120"></clr-dg-column>
   <clr-dg-row *clrDgItems="let row of bidprocess">
     <clr-dg-cell>{{row.name}}</clr-dg-cell>
@@ -38,19 +38,19 @@
     <form>
       <section class="form-block">
         <label>ระบุบวิธีการจัดซื้อ</label>
-        <div class="row">
-          <div class="form-group">
+        <div class="form-group">
+          <div class="row">
             <div class="col-lg-12 col-md-12">
               <label for="aForm_3">วิธีการจัดซื้อ</label>
               <input type="text" placeholder="วิธีการจัดซื้อ" name="bidname" [(ngModel)]="bidname">
             </div>
           </div>
         </div>
-        <div class="row">
-          <div class="form-group">
+        <div class="form-group">
+          <div class="row">
             <div class="col-lg-12 col-md-12">
-              <label for="inpType">จำนวนเงิน</label>
-              <input type="number" placeholder="จำนวนเงิน" name="f_amount" appNumberOnly [(ngModel)]="f_amount">
+              <label for="inpType">วงเงิน</label>
+              <input type="number" placeholder="วงเงิน" name="f_amount" appNumberOnly [(ngModel)]="f_amount"> บาท
             </div>
           </div>
         </div>
