@@ -18,6 +18,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { PurchaseOrderListComponent } from './report/purchase-order-list/purchase-order-list.component';
 import { OrderPointComponent } from './order-point/order-point.component';
 import { PurchaseBudgetHistoryComponent } from './report/purchase-budget-history/purchase-budget-history.component';
+import { BidprocessComponent } from '../purchase/bidprocess/bidprocess.component';
 
 
 const routes: Routes = [
@@ -39,6 +40,7 @@ const routes: Routes = [
       { path: 'mapping-committee', component: MappingCommitteeComponent },
       { path: 'print', component: PrintComponent },
       { path: 'officer', component: PurchasingofficerComponent },
+      { path: 'bidprocess', component: BidprocessComponent },
       { path: 'report/purchase-order', component: PurchaseOrderComponent },
       { path: 'history-order', component: HistoryOrderComponent },
       { path: 'report/purchase-order-list', component: PurchaseOrderListComponent },

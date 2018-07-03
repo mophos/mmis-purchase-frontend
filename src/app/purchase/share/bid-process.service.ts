@@ -71,6 +71,18 @@ export class BidProcessService {
     });
   }
 
+  isActive(id: string) {
+    return new Promise((resolve, reject) => {
+      this.authHttp.put(`${this.url}/${this.apiName}/is-active/${id}`, {})
+        .map(res => res.json())
+        .subscribe(data => {
+          resolve(data);
+        }, error => {
+          reject(error);
+        });
+    });
+  }
+
   remove(id: string) {
     return new Promise((resolve, reject) => {
       this.authHttp.delete(`${this.url}/${this.apiName}/${id}`)
