@@ -12,9 +12,9 @@ export class BidprocessComponent implements OnInit {
   bidprocess: any = [];
 
   isOpen: any = false;
-  isEdit:any = false;
-  
-  bidId:any;
+  isEdit: any = false;
+
+  bidId: any;
   bidname: any;
   f_amount: number = 0;
 
@@ -62,7 +62,7 @@ export class BidprocessComponent implements OnInit {
   async onClickDelete(row: any) {
     this.alertService.confirm('ยืนยันการลบข้อมูล?')
       .then(() => {
-        this.bidService.remove(row.id)
+        this.bidService.isActive(row.id)
           .then((resolve: any) => {
             this.getBidprocess();
           })

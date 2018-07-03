@@ -11,10 +11,10 @@
   <clr-dg-column [clrDgField]="'fullname'">วิธีการจัดซื้อ</clr-dg-column>
   <clr-dg-column style="width: 180px;" [clrDgField]="'type_name'">วงเงิน</clr-dg-column>
   <clr-dg-column [style.width.px]="120"></clr-dg-column>
-  <clr-dg-row *clrDgItems="let row of bidprocess">
-    <clr-dg-cell>{{row.name}}</clr-dg-cell>
-    <clr-dg-cell>{{row.f_amount | number: '1.2-2'}}</clr-dg-cell>
-    <clr-dg-cell>
+  <clr-dg-row *ngFor="let row of bidprocess">
+    <clr-dg-cell *ngIf="row.is_active == 1">{{row.name}}</clr-dg-cell>
+    <clr-dg-cell *ngIf="row.is_active == 1">{{row.f_amount | number: '1.2-2'}}</clr-dg-cell>
+    <clr-dg-cell *ngIf="row.is_active == 1">
       <div class="btn-group">
         <button title="แก้ไข" class="btn btn-sm btn-success wm-small-btn" (click)="onClickEdit(row)">
           <clr-icon shape="note"></clr-icon>
@@ -25,7 +25,6 @@
       </div>
     </clr-dg-cell>
   </clr-dg-row>
-
   <clr-dg-footer>
     {{pagination.firstItem + 1}} - {{pagination.lastItem + 1}} จาก {{pagination.totalItems}} รายการ
     <clr-dg-pagination #pagination [clrDgPageSize]="15"></clr-dg-pagination>
