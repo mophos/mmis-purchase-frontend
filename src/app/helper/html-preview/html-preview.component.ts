@@ -57,8 +57,8 @@ export class HtmlPreviewComponent implements OnInit {
   }
 
   printpPurchasing(row: any) {
-    const created_date = row.created_date.substring(0, 10);
-    this.showReport(this.url + `/report/purchasing/${created_date}/${created_date}?token=${this.token}`);
+    const created_date = row.order_date;
+    this.showReport(this.url + `/report/purchasing/${created_date}?token=${this.token}`);
   }
 
   printPuchasing10(row: any) {
