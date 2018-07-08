@@ -330,6 +330,7 @@ export class OrderFormComponent implements OnInit {
     product.total_small_qty = this.selectedQty * this.selectedUnit.qty;
     product.contract_no = this.selectedProduct.contract_no;
     product.contract_id = this.selectedProduct.contract_id;
+    product.old_qty = this.selectedProduct.old_qty;
 
     if (this.checkDuplicatedItem(product)) {
       const items = _.filter(this.purchaseOrderItems, { product_id: product.product_id });
@@ -778,7 +779,7 @@ export class OrderFormComponent implements OnInit {
     // try {
 
     const purchaseDate = `${this.purchaseDate.date.year}-${this.purchaseDate.date.month}-${this.purchaseDate.date.day}`;
-    
+
     if (!this.showChief) {
       this.chiefId = null;
     }
@@ -930,7 +931,7 @@ export class OrderFormComponent implements OnInit {
         const products = rs.rows;
 
         for (const v of products) {
-          const obj: IProductOrderItems = {
+          const obj = {
             product_id: v.product_id,
             product_name: v.product_name,
             generic_id: v.generic_id,
@@ -941,7 +942,8 @@ export class OrderFormComponent implements OnInit {
             unit_generic_id: v.unit_generic_id,
             total_cost: v.unit_price * v.qty,
             is_giveaway: v.giveaway || 'N',
-            small_qty: v.small_qty
+            small_qty: v.small_qty,
+            old_qty: v.old_qty
           }
           this.purchaseOrderItems.push(obj);
         }

@@ -10,6 +10,10 @@
     margin-top: 0;
 }
 
+.isError {
+    background-color: #F8B7B6;
+  }
+
 .card {
     margin-top: 10px;
 }

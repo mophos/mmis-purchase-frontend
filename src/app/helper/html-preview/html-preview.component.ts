@@ -2,7 +2,7 @@ import { Component, OnInit, Input, Inject } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { PurchasingOrderService } from '../../purchase/share/purchasing-order.service';
 import * as _ from 'lodash';
-
+import * as moment from 'moment';
 @Component({
   selector: 'app-html-preview',
   templateUrl: './html-preview.component.html',
@@ -57,8 +57,8 @@ export class HtmlPreviewComponent implements OnInit {
   }
 
   printpPurchasing(row: any) {
-    const created_date = row.order_date;
-    this.showReport(this.url + `/report/purchasing/?startdate=${created_date}?token=${this.token}`);
+    const created_date = moment(row.order_date).format('YYYY-MM-DD');
+    this.showReport(this.url + `/report/purchasing/?startdate=${created_date}&token=${this.token}`);
   }
 
   printPuchasing10(row: any) {
