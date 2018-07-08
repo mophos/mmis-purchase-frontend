@@ -28,8 +28,8 @@
   </div>
   <div class="col-md-3">
     <div class="select" style="float: right;">
-      <select name="bgtypesub_id" [(ngModel)]="bgtypesub_id" (change)="changeType()">
-        <option *ngFor="let b of budgetSubType" [value]="b.bgtypesub_id">{{ b.bgtypesub_name }}</option>
+      <select name="genericTypeId" [(ngModel)]="genericTypeId" (change)="changeType()">
+        <option *ngFor="let b of genericTypes" [value]="b.generic_type_id">{{ b.generic_type_name }}</option>
       </select>
     </div>
     <!-- <div class="select" style="float: right;">

@@ -156,7 +156,7 @@
       <clr-dg-column [style.width.px]="120">
         #
       </clr-dg-column>
-      <clr-dg-row *ngFor="let p of purchaseOrderItems; let idx=index;" [clrDgItem]="p">
+      <clr-dg-row *ngFor="let p of purchaseOrderItems; let idx=index;" [clrDgItem]="p" [ngClass]="{'isError': p.qty > p.old_qty}">
         <clr-dg-cell>
           {{idx + 1}}. {{p.product_name}}
         </clr-dg-cell>
@@ -225,6 +225,9 @@
         </clr-dg-cell>
       </clr-dg-row>
       <clr-dg-footer>
+        <div style="float: left;">
+          <div style="margin-top: 5px;width:20px;height:20px;color: red;background-color: red;float: left;"></div> พื้นหลังสีแดง = จำนวนสั่งซื้อมากกว่าครั้งก่อน
+        </div>
         จำนวนทั้งหมด
         <strong>
           <span class="badge"> {{purchaseOrderItems.length}}</span>

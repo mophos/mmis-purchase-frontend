@@ -39,9 +39,9 @@ export class PurchasingOrderService {
     });
   }
 
-  getOrderList(bgSubType: any) {
+  getOrderList(genericTypeId: any) {
     return new Promise((resolve, reject) => {
-      this.authHttp.get(`${this.url}/${this.apiName}/get-list-po/${bgSubType}`)
+      this.authHttp.get(`${this.url}/${this.apiName}/get-list-po?genericTypeId=${genericTypeId}`)
         .map(res => res.json())
         .subscribe(data => {
           resolve(data);
