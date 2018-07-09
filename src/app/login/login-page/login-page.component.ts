@@ -15,6 +15,8 @@ export class LoginPageComponent implements OnInit {
   password: string;
   jwtHelper: JwtHelper = new JwtHelper();
   isLogging = false;
+  warehouses = [];
+  warehouseId;
 
   constructor(
     private loginService: LoginService,
@@ -37,7 +39,7 @@ export class LoginPageComponent implements OnInit {
 
   doLogin() {
     this.isLogging = true;
-    this.loginService.doLogin(this.username, this.password)
+    this.loginService.doLogin(this.username, this.password, this.warehouseId)
       .then((res: any) => {
 
         const decodedToken = this.jwtHelper.decodeToken(res.token);
@@ -56,4 +58,16 @@ export class LoginPageComponent implements OnInit {
         this.alert.error('ชื่อผู้ใช้งานหรือรหัสผ่านไม่ถูกต้อง');
       });
   }
+
+  async selectWarehouse(event) {
+    const rs: any = await this.loginService.searchWarehouse(this.username);
+    if (rs.ok) {
+      this.warehouses = rs.rows;
+      this.warehouseId = rs.rows[0].warehouse_id;
+    } else {
+      this.warehouses = [];
+      this.warehouseId = null;
+    }
+  }
+
 }
