@@ -11,7 +11,7 @@ export const environment = {
   apiUrl: 'http://localhost:4003',
   docUrl: 'http://api.mmis.moph.go.th/document',
   loginUrl: 'http://localhost:4013',
-  homeUrl: 'http://mmis.moph.go.th/mmis',
+  homeUrl: '/',
   purchasingPoPrefix: 'PO',
   purchasingPrPrefix: 'PR'
 };
