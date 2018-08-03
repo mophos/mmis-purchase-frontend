@@ -619,6 +619,7 @@ export class OrderPointComponent implements OnInit {
       }
       // get reserved items
       this.getProductsReserved();
+      this.getReservedForOrders();
     } else {
       this.alertService.error(rs.error);
     }
