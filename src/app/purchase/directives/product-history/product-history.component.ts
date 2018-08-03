@@ -22,9 +22,6 @@ export class ProductHistoryComponent implements OnInit {
   async getOrders() {
     const rs: any = await this.purchasingOrderService.getProductHistory(this.genericId);
     this.productOrders = rs.rows;
-    this.productOrders.forEach(v => {
-      v.order_date = moment(v.order_date).format('D/MM/') + (moment(v.order_date).get('year') + 543);
-    });
     console.log(this.productOrders);
   }
 
