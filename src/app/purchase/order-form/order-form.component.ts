@@ -189,6 +189,7 @@ export class OrderFormComponent implements OnInit {
   selectedProduct: any = {};
   selectedUnit: IGenericUnit = {};
   selectedCost: number;
+  oldCost: number;
   selectedQty: number;
   selectedTotalQty = 0;
   selectedTotalPrice = 0;
@@ -273,6 +274,7 @@ export class OrderFormComponent implements OnInit {
   onChangeUnit(event: any) {
     this.selectedUnit = event;
     this.selectedCost = +event.cost;
+    this.oldCost = +event.old_cost;
   }
 
   onChangeGiveaway(e: any) {
@@ -331,6 +333,7 @@ export class OrderFormComponent implements OnInit {
     product.contract_no = this.selectedProduct.contract_no;
     product.contract_id = this.selectedProduct.contract_id;
     product.old_qty = this.selectedProduct.old_qty;
+    product.old_cost = this.oldCost;
 
     if (this.checkDuplicatedItem(product)) {
       const items = _.filter(this.purchaseOrderItems, { product_id: product.product_id });
@@ -351,6 +354,8 @@ export class OrderFormComponent implements OnInit {
     } else {
       this.purchaseOrderItems.push(product);
     }
+
+    console.log(this.purchaseOrderItems)
     // clear selected product item
     this.clearSelectedProduct();
     this.calAmount();
@@ -727,7 +732,7 @@ export class OrderFormComponent implements OnInit {
         // ตรวจสอบว่ามีรายการใดที่จำนวนจัดซื้อเป็น 0 หรือ ไม่ได้ระบุราคา
         let isError = false;
         this.purchaseOrderItems.forEach((v: IProductOrderItems) => {
-          if (!v.product_id || v.qty <= 0 || !v.unit_generic_id && !v.cost) {
+            if (!v.product_id || v.qty <= 0 || !v.unit_generic_id && !v.cost) {
             isError = true;
           }
         });
