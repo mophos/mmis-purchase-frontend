@@ -123,7 +123,6 @@ export class OrderPointComponent implements OnInit {
   async getGenerics(limit: number = 20, offset: number = 0, sort: any = {}) {
     try {
       this.products = [];
-
       this.modalLoading.show();
       let rs: any;
       let showNotPurchased = this.showNotPurchased ? 'Y' : 'N';
@@ -134,7 +133,6 @@ export class OrderPointComponent implements OnInit {
         productGroup.push(this.genericTypeId);
         rs = await this.productService.getReorderPointGeneric(productGroup, limit, offset, this.query, showNotPurchased, sort);
       }
-      this.modalLoading.hide();
       if (rs.ok) {
         // this.products = rs.rows;
         rs.rows.forEach(v => {
@@ -158,6 +156,7 @@ export class OrderPointComponent implements OnInit {
       } else {
         this.alertService.error(rs.error);
       }
+      this.modalLoading.hide();
     } catch (error) {
       this.modalLoading.hide();
       this.alertService.error(error.message);
@@ -203,7 +202,7 @@ export class OrderPointComponent implements OnInit {
 
   async getProductType() {
     try {
-      // this.modalLoading.show();
+      // this.modalLoading.show();      
       const rs: any = await this.productService.type(this.productGroup);
       if (rs.ok) {
         this.productType = rs.rows;
@@ -617,9 +616,10 @@ export class OrderPointComponent implements OnInit {
       if (idx > -1) {
         this.products.splice(idx, 1);
       }
-      // get reserved items
-      this.getProductsReserved();
-      this.getReservedForOrders();
+      // get reserved items      
+      await this.getGenerics(this.perPage);
+      await this.getProductsReserved();
+      // await this.getReservedForOrders();
     } else {
       this.alertService.error(rs.error);
     }
