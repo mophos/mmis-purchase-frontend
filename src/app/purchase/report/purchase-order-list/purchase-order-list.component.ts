@@ -28,6 +28,8 @@ export class PurchaseOrderListComponent implements OnInit {
 
   genericTypeId: any;
 
+  all = false
+
 
   myDatePickerOptions: IMyOptions = {
     dateFormat: 'dd mmm yyyy',
@@ -98,18 +100,27 @@ export class PurchaseOrderListComponent implements OnInit {
     }
   }
 
-  async printProduct(check: any) {
-    if (check === 1) {
-      const startDate = `${this.startDate.date.year}-${this.startDate.date.month}-${this.startDate.date.day}`;
-      const endDate = `${this.endDate.date.year}-${this.endDate.date.month}-${this.endDate.date.day}`;
-      const url = `${this.apiUrl}/report/purchasing-list?startDate=${startDate}&endDate=${endDate}&genericTypeId=${this.genericTypeId}&token=${this.token}`;
-      this.htmlPreview.showReport(url);
+  async printProduct() {
+    let startDate: any;
+    if (this.all) {
+      startDate = `2017-1-1`;
+    } else {
+      startDate = `${this.startDate.date.year}-${this.startDate.date.month}-${this.startDate.date.day}`;
     }
-    if (check === 2) {
-      const startDate = `2017-1-1`;
-      const endDate = `${this.endDate.date.year}-${this.endDate.date.month}-${this.endDate.date.day}`;
-      const url = `${this.apiUrl}/report/purchasing-list?startDate=${startDate}&endDate=${endDate}&genericTypeId=${this.genericTypeId}&token=${this.token}`;
-      this.htmlPreview.showReport(url);
+    const endDate = `${this.endDate.date.year}-${this.endDate.date.month}-${this.endDate.date.day}`;
+    const url = `${this.apiUrl}/report/purchasing-list?startDate=${startDate}&endDate=${endDate}&genericTypeId=${this.genericTypeId}&token=${this.token}`;
+    this.htmlPreview.showReport(url);
+  }
+
+  async exportExcel() {
+    let startDate: any;
+    if (this.all) {
+      startDate = `2017-1-1`;
+    } else {
+      startDate = `${this.startDate.date.year}-${this.startDate.date.month}-${this.startDate.date.day}`;
     }
+    const endDate = `${this.endDate.date.year}-${this.endDate.date.month}-${this.endDate.date.day}`;
+    const url = `${this.apiUrl}/report/purchasing-list/excel?startDate=${startDate}&endDate=${endDate}&genericTypeId=${this.genericTypeId}&token=${this.token}`;
+    window.open(url, '_blank');
   }
 }
