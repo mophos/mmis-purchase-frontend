@@ -18,15 +18,20 @@
   <div class="col-md-2">
     <my-date-picker-th name="endDate" [(ngModel)]="endDate" [options]="myDatePickerOptions" required></my-date-picker-th>
   </div>
-  <div class="col-md-3">
-    <button class="btn btn-sm btn-success btn-icon" (click)="printProduct(1)">
+  <div class="col-md-4">
+    <div class="checkbox-inline" style="padding-right:1em">
+      <input type="checkbox" id="checkrads_1" [(ngModel)]="all">
+      <label for="checkrads_1">รายการทั้งหมด </label>
+    </div>
+    <button class="btn btn-sm btn-primary btn-icon" (click)="printProduct()">
       <clr-icon shape="printer"></clr-icon> พิมพ์รายการ
     </button>
-    <button class="btn btn-sm btn-success btn-icon" (click)="printProduct(2)">
-      <clr-icon shape="printer"></clr-icon> พิมพ์รายการทั้งหมด
+    <button type="button" class="btn btn-sm btn-success" (click)="exportExcel()">
+      <clr-icon shape="download"></clr-icon>
+      ส่งออก Excel
     </button>
   </div>
-  <div class="col-md-3">
+  <div class="col-md-2">
     <div class="select" style="float: right;">
       <select name="genericTypeId" [(ngModel)]="genericTypeId" (change)="changeType()">
         <option *ngFor="let b of genericTypes" [value]="b.generic_type_id">{{ b.generic_type_name }}</option>
