@@ -50,8 +50,9 @@ export class OrderPointComponent implements OnInit {
   defaultBudgetYear: any;
 
   curentPage = 1;
-
+  
   public jwtHelper: JwtHelper = new JwtHelper();
+  offsetSet: number = 0;
 
   constructor(
     private productService: ProductService,
@@ -219,7 +220,7 @@ export class OrderPointComponent implements OnInit {
   }
 
   refresh(state: State) {
-    let offset = +state.page.from;
+    let offset = this.offsetSet = +state.page.from;
     let limit = +state.page.size;
     let sort = state.sort;
     this.getGenerics(limit, offset, sort);
@@ -617,7 +618,7 @@ export class OrderPointComponent implements OnInit {
         this.products.splice(idx, 1);
       }
       // get reserved items      
-      await this.getGenerics(this.perPage);
+      await this.getGenerics(this.perPage,this.offsetSet);
       await this.getProductsReserved();
       // await this.getReservedForOrders();
     } else {
