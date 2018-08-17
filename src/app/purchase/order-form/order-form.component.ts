@@ -520,19 +520,19 @@ export class OrderFormComponent implements OnInit {
         this.subTotal += +v.total_cost;
       }
     });
-
+    console.log(this.subTotal);
     // this.subTotal = _.sum(_purchaseOrderItems);
     discount = this.calDiscount(this.subTotal);
     afterDiscount = this.subTotal - discount;
     if (this.excludeVat) {
       this.totalPrice = this.subTotal - discount;
-      this.subTotal = (this.totalPrice * 100) / (this.vatRate + 100)
+      this.subTotal = (this.totalPrice * 100) / (+this.vatRate + 100)
       this.vat = (this.subTotal * this.vatRate) / 100
       // this.vat = (this.totalPrice - discount) * (this.vatRate / 100);
       // this.subTotal = (this.totalPrice - discount) - this.vat;
     } else if (this.addVat) {
       this.totalPrice = this.subTotal - discount;
-      this.vat = this.totalPrice * (this.vatRate / 100);
+      this.vat = this.totalPrice * (+this.vatRate / 100);
       this.totalPrice = this.totalPrice + this.vat;
     } else {
       this.vatRate = null;
