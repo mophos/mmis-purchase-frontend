@@ -43,7 +43,9 @@
       ส่วนลด({{purchaseOrder.discount_percent | number:'1.2-2'}}%) 
       {{(purchaseOrder.discount_percent*totalPrice / 100) | number:'1.2-2'}}  บาท
       ส่วนลดเงินสด: {{purchaseOrder.discount_cash | number:'1.2-2'}}  บาท
-      ภาษี ({{purchaseOrder.vat_rate | number }}%):{{totalPrice*purchaseOrder.vat_rate/100 | number:'1.2-2'}}
+      ภาษี ({{purchaseOrder.vat_rate | number }}%):
+      <span *ngIf="purchaseOrder.exclude_vat ==='Y'">{{(purchaseOrder.sub_total*purchaseOrder.vat_rate)/100 | number:'1.2-2'}}</span>
+      <span *ngIf="purchaseOrder.include_vat ==='Y'">{{totalPrice*purchaseOrder.vat_rate/100 | number:'1.2-2'}}</span>
         <!-- <strong *ngIf="purchaseOrder.exclude_vat==='Y'" class="text-success" > ราคารวมสุทธิ: {{totalPrice+(totalPrice*purchaseOrder.vat_rate/100) | number:'1.2-2'}}</strong>
         <strong *ngIf="purchaseOrder.exclude_vat==='N'" class="text-success"  > ราคารวมสุทธิ: {{totalPrice | number:'1.2-2'}}</strong> -->
         <strong class="text-success"  > ราคารวมสุทธิ: {{purchaseOrder.total_price | number:'1.2-2'}}</strong>
