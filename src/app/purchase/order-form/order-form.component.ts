@@ -520,7 +520,6 @@ export class OrderFormComponent implements OnInit {
         this.subTotal += +v.total_cost;
       }
     });
-    console.log(this.subTotal);
     // this.subTotal = _.sum(_purchaseOrderItems);
     discount = this.calDiscount(this.subTotal);
     afterDiscount = this.subTotal - discount;
