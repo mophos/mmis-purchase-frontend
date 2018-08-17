@@ -499,15 +499,15 @@ export class OrderFormComponent implements OnInit {
   checkVat(event: any) {
     if (event === 'excludeVat' && this.excludeVat) {
       this.addVat = false
-      this.vatRate = this.vatRateTmp
+      this.vatRate = +this.vatRateTmp
     } else if (event === 'addVat' && this.addVat) {
       this.excludeVat = false
-      this.vatRate = this.vatRateTmp
+      this.vatRate = +this.vatRateTmp
     }
     this.calAmount()
   }
 
-  calAmount() {
+  async calAmount() {
     let afterDiscount = 0;
     let discount = 0;
     const checkloop = 0;
@@ -515,7 +515,7 @@ export class OrderFormComponent implements OnInit {
     this.totalPrice = 0;
     // let _purchaseOrderItems: any = [];
 
-    this.purchaseOrderItems.forEach(v => {
+    await this.purchaseOrderItems.forEach(v => {
       if (v.is_giveaway === 'N') {
         this.subTotal += +v.total_cost;
       }
@@ -526,8 +526,10 @@ export class OrderFormComponent implements OnInit {
     afterDiscount = this.subTotal - discount;
     if (this.excludeVat) {
       this.totalPrice = this.subTotal - discount;
-      this.vat = (this.totalPrice - discount) * (this.vatRate / 100);
-      this.subTotal = (this.totalPrice - discount) - this.vat;
+      this.subTotal = (this.totalPrice * 100) / (this.vatRate + 100)
+      this.vat = (this.subTotal * this.vatRate) / 100
+      // this.vat = (this.totalPrice - discount) * (this.vatRate / 100);
+      // this.subTotal = (this.totalPrice - discount) - this.vat;
     } else if (this.addVat) {
       this.totalPrice = this.subTotal - discount;
       this.vat = this.totalPrice * (this.vatRate / 100);
@@ -732,7 +734,7 @@ export class OrderFormComponent implements OnInit {
         // ตรวจสอบว่ามีรายการใดที่จำนวนจัดซื้อเป็น 0 หรือ ไม่ได้ระบุราคา
         let isError = false;
         this.purchaseOrderItems.forEach((v: IProductOrderItems) => {
-            if (!v.product_id || v.qty <= 0 || !v.unit_generic_id && !v.cost) {
+          if (!v.product_id || v.qty <= 0 || !v.unit_generic_id && !v.cost) {
             isError = true;
           }
         });
