@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 import { ModalLoadingComponent } from 'app/modal-loading/modal-loading.component';
 import { HtmlPreviewComponent } from 'app/helper/html-preview/html-preview.component';
 import { SelectSubBudgetComponent } from '../../../select-boxes/select-sub-budget/select-sub-budget.component';
+import { tokenNotExpired, JwtHelper } from 'angular2-jwt';
 
 @Component({
   selector: 'app-purchase-budget-history',
@@ -20,12 +21,17 @@ export class PurchaseBudgetHistoryComponent implements OnInit {
   endDate: any;
   budgetYear: any;
   budgetTypeId: any;
+  token: any;
 
   myDatePickerOptions: IMyOptions = {
     dateFormat: 'dd mmm yyyy',
   }
 
-  constructor() { }
+  constructor(
+    @Inject('API_URL') private apiUrl: string
+  ) {
+    this.token = sessionStorage.getItem('token');
+  }
 
   ngOnInit() {
     const date = new Date();
@@ -46,18 +52,28 @@ export class PurchaseBudgetHistoryComponent implements OnInit {
     };
   }
 
-  onChangeBudgetType(budgetType: any) {
+  onChangeBudgetType(event: any) {
     const date = new Date();
     this.budgetYear = date.getFullYear()
-    this.budgetTypeId = budgetType.bgtype_id;
+    this.budgetTypeId = event.bgtype_id;
   }
 
-  onChangeSubBudget(subBudget: any) {
-
+  onChangeSubBudget(event: any) {
+    this.budgetDetailId = event ? event.bgdetail_id : null;
   }
 
-  printProduct() {
+  printreport() {
+    let startDate = `${this.startDate.date.year}-${this.startDate.date.month}-${this.startDate.date.day}`;
+    let endDate = `${this.endDate.date.year}-${this.endDate.date.month}-${this.endDate.date.day}`;
+    const url = `${this.apiUrl}/report/budget-history?startDate=${startDate}&endDate=${endDate}&budgetDetailId=${this.budgetDetailId}&token=${this.token}`;
+    this.htmlPreview.showReport(url);
+  }
 
+  exportExcel() {
+    let startDate = `${this.startDate.date.year}-${this.startDate.date.month}-${this.startDate.date.day}`;
+    let endDate = `${this.endDate.date.year}-${this.endDate.date.month}-${this.endDate.date.day}`;
+    const url = `${this.apiUrl}/report/budget-history/excel?startDate=${startDate}&endDate=${endDate}&budgetDetailId=${this.budgetDetailId}&token=${this.token}`;
+    window.open(url, '_blank');
   }
 
 }
