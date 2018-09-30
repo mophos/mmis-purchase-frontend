@@ -82,6 +82,7 @@ export class SelectSubBudgetComponent implements OnInit {
   setYears(year: any) {
     this._year = year;
     this.getItems();
+
     // this._budgetTypeId = budgetType;
   }
 
