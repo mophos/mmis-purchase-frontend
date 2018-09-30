@@ -32,20 +32,23 @@
       <clr-dg-cell class="text-right">{{p.qty | number}} </clr-dg-cell>
       <clr-dg-cell class="text-left">{{p.from_unit_name}} ({{(p.small_qty) | number}} {{p.to_unit_name}})</clr-dg-cell>
       <clr-dg-cell class="text-right">{{p.total_small_qty | number}} {{p.to_unit_name}}</clr-dg-cell>
-      <clr-dg-cell class="text-right">{{p.unit_price | number:'.2'}} </clr-dg-cell>
+      <clr-dg-cell class="text-right">{{p.unit_price | number: '1.2-2'}} </clr-dg-cell>
       <clr-dg-cell class="text-right">
-        <span class="text-success">{{ p.qty*p.unit_price | number:'.2'}}</span>
+        <span class="text-success">{{ p.qty*p.unit_price | number: '1.2-2'}}</span>
       </clr-dg-cell>
     </clr-dg-row>
 
     <clr-dg-footer>
-      ราคารวม: {{totalPrice | number:'1.2'}} บาท
-      ส่วนลด({{purchaseOrder.discount_percent | number:'1.2'}}%) 
-      {{(purchaseOrder.discount_percent*totalPrice / 100) | number:'1.2'}}  บาท
-      ส่วนลดเงินสด: {{purchaseOrder.discount_cash | number:'1.2'}}  บาท
-      ภาษี ({{purchaseOrder.vat_rate | number }}%):{{totalPrice*purchaseOrder.vat_rate/100 | number:'1.2'}}
-        <strong *ngIf="purchaseOrder.exclude_vat==='Y'" class="text-success" > ราคารวมสุทธิ: {{totalPrice+(totalPrice*purchaseOrder.vat_rate/100) | number:'1.2'}}</strong>
-        <strong *ngIf="purchaseOrder.exclude_vat==='N'" class="text-success"  > ราคารวมสุทธิ: {{totalPrice | number:'1.2'}}</strong>
+      ราคารวม: {{purchaseOrder.sub_total | number: '1.2-2'}} บาท
+      ส่วนลด({{purchaseOrder.discount_percent | number:'1.2-2'}}%) 
+      {{(purchaseOrder.discount_percent*totalPrice / 100) | number:'1.2-2'}}  บาท
+      ส่วนลดเงินสด: {{purchaseOrder.discount_cash | number:'1.2-2'}}  บาท
+      ภาษี ({{purchaseOrder.vat_rate | number }}%):
+      <span *ngIf="purchaseOrder.exclude_vat ==='Y'">{{(purchaseOrder.sub_total*purchaseOrder.vat_rate)/100 | number:'1.2-2'}}</span>
+      <span *ngIf="purchaseOrder.include_vat ==='Y'">{{totalPrice*purchaseOrder.vat_rate/100 | number:'1.2-2'}}</span>
+        <!-- <strong *ngIf="purchaseOrder.exclude_vat==='Y'" class="text-success" > ราคารวมสุทธิ: {{totalPrice+(totalPrice*purchaseOrder.vat_rate/100) | number:'1.2-2'}}</strong>
+        <strong *ngIf="purchaseOrder.exclude_vat==='N'" class="text-success"  > ราคารวมสุทธิ: {{totalPrice | number:'1.2-2'}}</strong> -->
+        <strong class="text-success"  > ราคารวมสุทธิ: {{purchaseOrder.total_price | number:'1.2-2'}}</strong>
        | {{pagination.firstItem + 1}} - {{pagination.lastItem+ 1}} จาก {{pagination.totalItems}} รายการ
       <clr-dg-pagination #pagination [clrDgPageSize]="20"></clr-dg-pagination>
     </clr-dg-footer>

@@ -19,8 +19,11 @@
     <my-date-picker-th name="endDate" [(ngModel)]="endDate" [options]="myDatePickerOptions" required></my-date-picker-th>
   </div>
   <div class="col-md-2">
-    <button class="btn btn-sm btn-success btn-icon" (click)="printProduct()">
+    <button class="btn btn-sm btn-primary btn-icon" (click)="printreport()">
       <clr-icon shape="printer"></clr-icon> พิมพ์รายการ
+    </button>
+    <button class="btn btn-sm btn-success btn-icon" (click)="exportExcel()">
+      <clr-icon shape="download"></clr-icon> ส่งออก Excel
     </button>
   </div>
   <div class="col-md-2">
@@ -37,3 +40,4 @@
     </div>
   </div>
 </div>
+<app-html-preview #htmlPreview></app-html-preview>

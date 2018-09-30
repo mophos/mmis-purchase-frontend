@@ -1,5 +1,7 @@
 import { Component, OnInit, Input, ChangeDetectorRef } from '@angular/core';
 import { PurchasingOrderService } from '../../share/purchasing-order.service';
+import * as moment from 'moment';
+
 
 @Component({
   selector: 'app-product-history',

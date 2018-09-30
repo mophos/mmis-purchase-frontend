@@ -44,7 +44,7 @@ export class BudgetRemainComponent implements OnInit {
 
   @Input('contractId')
   set setContractId(value: any) {
-    console.log(value);
+    // console.log(value);
     this._contractId = value;
     this.getContractDetail(this._contractId);
   }
@@ -70,11 +70,15 @@ export class BudgetRemainComponent implements OnInit {
 
   async getBalance() {
     try {
-      const rs: any = await this.budgetTransactionService.getBudgetTransectionBalance(this._budgetDetailId, this.purchaseOrderId);
-      if (rs.ok) {
-        const totalPurchase = rs.totalPurchase ? +rs.totalPurchase : 0;
-        this.budgetRemain = this.budgetAmount - totalPurchase;
-        this.purchaseAmount = totalPurchase;
+      // console.log('_budgetDetailId', this._budgetDetailId);
+      if (this._budgetDetailId) {
+        const rs: any = await this.budgetTransactionService.getBudgetTransectionBalance(this._budgetDetailId, this.purchaseOrderId);
+        if (rs.ok) {
+          const totalPurchase = rs.totalPurchase ? +rs.totalPurchase : 0;
+          // this.budgetRemain = this.budgetAmount - totalPurchase;
+          this.budgetRemain = rs.rows.incoming_balance;
+          this.purchaseAmount = totalPurchase;
+        }
       }
     } catch (error) {
       console.log(error);

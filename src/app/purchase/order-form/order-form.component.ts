@@ -249,8 +249,15 @@ export class OrderFormComponent implements OnInit {
     this.currentVatRate = decoded.PC_VAT ? decoded.PC_VAT : 7;
 
     this.delivery = decoded.PC_SHIPPING_DATE ? decoded.PC_SHIPPING_DATE : 30;
-    this.budgetYear = decoded.PC_DEFAULT_BUDGET_YEAR;
-    this.currentBudgetYear = decoded.PC_DEFAULT_BUDGET_YEAR;
+    let year = moment().get('year');
+    const month = moment().get('month') + 1;
+    if (month >= 10) {
+      year += 1;
+    }
+
+    this.budgetYear = year.toString();
+    this.currentBudgetYear = year;
+
     this.dupBookNumber = decoded.PC_BOOK_NUMBER_DUPLICATE === 'Y' ? true : false;
   }
 
@@ -466,9 +473,21 @@ export class OrderFormComponent implements OnInit {
     this.clearSelectedProduct();
   }
 
-  onDateChanged(event: IMyDateModel) {
+  async onDateChanged(event: IMyDateModel) {
     // event properties are: event.date, event.jsdate, event.formatted and event.epoc
     const selectDate: string = moment(event.jsdate).format('YYYY-MM-DD');
+
+    let year = moment(selectDate, 'YYYY-MM-DD').get('year');
+    const month = moment(selectDate, 'YYYY-MM-DD').get('month') + 1;
+    if (month >= 10) {
+      year += 1;
+    }
+
+    this.budgetYear = year.toString();
+    this.currentBudgetYear = year;
+    await this.subBudgetList.setYears(this.budgetYear);
+    console.log(this.budgetYear);
+
     if (selectDate !== 'Invalid date') {
       // this.checkIsHoliday(selectDate);
     } else {
@@ -499,15 +518,15 @@ export class OrderFormComponent implements OnInit {
   checkVat(event: any) {
     if (event === 'excludeVat' && this.excludeVat) {
       this.addVat = false
-      this.vatRate = this.vatRateTmp
+      this.vatRate = +this.vatRateTmp
     } else if (event === 'addVat' && this.addVat) {
       this.excludeVat = false
-      this.vatRate = this.vatRateTmp
+      this.vatRate = +this.vatRateTmp
     }
     this.calAmount()
   }
 
-  calAmount() {
+  async calAmount() {
     let afterDiscount = 0;
     let discount = 0;
     const checkloop = 0;
@@ -515,22 +534,23 @@ export class OrderFormComponent implements OnInit {
     this.totalPrice = 0;
     // let _purchaseOrderItems: any = [];
 
-    this.purchaseOrderItems.forEach(v => {
+    await this.purchaseOrderItems.forEach(v => {
       if (v.is_giveaway === 'N') {
         this.subTotal += +v.total_cost;
       }
     });
-
     // this.subTotal = _.sum(_purchaseOrderItems);
     discount = this.calDiscount(this.subTotal);
     afterDiscount = this.subTotal - discount;
     if (this.excludeVat) {
       this.totalPrice = this.subTotal - discount;
-      this.vat = (this.totalPrice - discount) * (this.vatRate / 100);
-      this.subTotal = (this.totalPrice - discount) - this.vat;
+      this.subTotal = (this.totalPrice * 100) / (+this.vatRate + 100)
+      this.vat = (this.subTotal * this.vatRate) / 100
+      // this.vat = (this.totalPrice - discount) * (this.vatRate / 100);
+      // this.subTotal = (this.totalPrice - discount) - this.vat;
     } else if (this.addVat) {
       this.totalPrice = this.subTotal - discount;
-      this.vat = this.totalPrice * (this.vatRate / 100);
+      this.vat = this.totalPrice * (+this.vatRate / 100);
       this.totalPrice = this.totalPrice + this.vat;
     } else {
       this.vatRate = null;
@@ -638,7 +658,7 @@ export class OrderFormComponent implements OnInit {
     this.excludeVat = data.exclude_vat === 'Y' ? true : false;
     this.chiefId = data.chief_id ? data.chief_id : this.chiefId;
     this.buyerId = data.buyer_id ? data.buyer_id : this.buyerId;
-    this.budgetYear = data.budget_year || this.currentBudgetYear;
+    // this.budgetYear = data.budget_year || this.currentBudgetYear;
     this.purchaseDate = {
       date: {
         year: moment(data.order_date).get('year'),
@@ -647,6 +667,15 @@ export class OrderFormComponent implements OnInit {
       }
     };
 
+    let year = moment(data.order_date, 'YYYY-MM-DD').get('year');
+    const month = moment(data.order_date, 'YYYY-MM-DD').get('month') + 1;
+    if (month >= 10) {
+      year += 1;
+    }
+    this.budgetYear = year.toString();
+    this.currentBudgetYear = year;
+
+    await this.subBudgetList.setYears(this.budgetYear);
     if (!data.budgettype_id) {
       await this.subBudgetList.setBudgetType(this.budgetTypeId);
       await this.subBudgetList.getItems();
@@ -732,7 +761,7 @@ export class OrderFormComponent implements OnInit {
         // ตรวจสอบว่ามีรายการใดที่จำนวนจัดซื้อเป็น 0 หรือ ไม่ได้ระบุราคา
         let isError = false;
         this.purchaseOrderItems.forEach((v: IProductOrderItems) => {
-            if (!v.product_id || v.qty <= 0 || !v.unit_generic_id && !v.cost) {
+          if (!v.product_id || v.qty <= 0 || !v.unit_generic_id && !v.cost) {
             isError = true;
           }
         });

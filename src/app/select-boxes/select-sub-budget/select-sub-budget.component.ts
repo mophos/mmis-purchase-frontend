@@ -39,6 +39,8 @@ export class SelectSubBudgetComponent implements OnInit {
   constructor(private stdService: StandardService, private alertService: AlertService) { }
 
   async ngOnInit() {
+    console.log(this._year);
+
     // await this.getItems();
   }
 
@@ -75,6 +77,13 @@ export class SelectSubBudgetComponent implements OnInit {
 
   setBudgetType(budgetType: any) {
     this._budgetTypeId = budgetType;
+  }
+
+  setYears(year: any) {
+    this._year = year;
+    this.getItems();
+
+    // this._budgetTypeId = budgetType;
   }
 
   setSelected(event: any) {
