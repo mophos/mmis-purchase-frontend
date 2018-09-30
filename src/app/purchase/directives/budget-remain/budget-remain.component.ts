@@ -143,7 +143,8 @@ export class BudgetRemainComponent implements OnInit {
       budgetDetailId: this._budgetDetailId,
       contractRemainAfterPurchase: this.contractRemainAfterPurchase
     }
-
+    console.log(data);
+    
     this.onCalculated.emit(data);
   }
 
