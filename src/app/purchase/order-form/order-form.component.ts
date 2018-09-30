@@ -658,7 +658,7 @@ export class OrderFormComponent implements OnInit {
     this.excludeVat = data.exclude_vat === 'Y' ? true : false;
     this.chiefId = data.chief_id ? data.chief_id : this.chiefId;
     this.buyerId = data.buyer_id ? data.buyer_id : this.buyerId;
-    this.budgetYear = data.budget_year || this.currentBudgetYear;
+    // this.budgetYear = data.budget_year || this.currentBudgetYear;
     this.purchaseDate = {
       date: {
         year: moment(data.order_date).get('year'),
@@ -667,6 +667,15 @@ export class OrderFormComponent implements OnInit {
       }
     };
 
+    let year = moment(data.order_date, 'YYYY-MM-DD').get('year');
+    const month = moment(data.order_date, 'YYYY-MM-DD').get('month') + 1;
+    if (month >= 10) {
+      year += 1;
+    }
+    this.budgetYear = year.toString();
+    this.currentBudgetYear = year;
+
+    await this.subBudgetList.setYears(this.budgetYear);
     if (!data.budgettype_id) {
       await this.subBudgetList.setBudgetType(this.budgetTypeId);
       await this.subBudgetList.getItems();
