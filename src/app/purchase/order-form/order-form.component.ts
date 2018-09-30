@@ -249,8 +249,15 @@ export class OrderFormComponent implements OnInit {
     this.currentVatRate = decoded.PC_VAT ? decoded.PC_VAT : 7;
 
     this.delivery = decoded.PC_SHIPPING_DATE ? decoded.PC_SHIPPING_DATE : 30;
-    this.budgetYear = decoded.PC_DEFAULT_BUDGET_YEAR;
-    this.currentBudgetYear = decoded.PC_DEFAULT_BUDGET_YEAR;
+    let year = moment().get('year');
+    const month = moment().get('month') + 1;
+    if (month >= 10) {
+      year += 1;
+    }
+
+    this.budgetYear = year.toString();
+    this.currentBudgetYear = year;
+
     this.dupBookNumber = decoded.PC_BOOK_NUMBER_DUPLICATE === 'Y' ? true : false;
   }
 
@@ -466,9 +473,21 @@ export class OrderFormComponent implements OnInit {
     this.clearSelectedProduct();
   }
 
-  onDateChanged(event: IMyDateModel) {
+  async onDateChanged(event: IMyDateModel) {
     // event properties are: event.date, event.jsdate, event.formatted and event.epoc
     const selectDate: string = moment(event.jsdate).format('YYYY-MM-DD');
+
+    let year = moment(selectDate, 'YYYY-MM-DD').get('year');
+    const month = moment(selectDate, 'YYYY-MM-DD').get('month') + 1;
+    if (month >= 10) {
+      year += 1;
+    }
+
+    this.budgetYear = year.toString();
+    this.currentBudgetYear = year;
+    await this.subBudgetList.setYears(this.budgetYear);
+    console.log(this.budgetYear);
+
     if (selectDate !== 'Invalid date') {
       // this.checkIsHoliday(selectDate);
     } else {
