@@ -2,49 +2,58 @@
   <a class="breadcrumb-item" href="javascript://" routerLink="/">หน้าหลัก</a>
   <span class="breadcrumb-item active">รายงานสรุปรายการเวชภัณฑ์ที่สั่งซื้อ</span>
 </nav>
+<!-- <div class="container"> -->
 
-<div class="row" style="padding-top: 5px;">
-  <div class="col-md-1" style="padding-top: 7px; text-align: right; ">
-    ตั้งแต่วันที่
-  </div>
-  <br>
-  <div class="col-md-2">
-    <my-date-picker-th name="startDate" [(ngModel)]="startDate" [options]="myDatePickerOptions" required></my-date-picker-th>
-  </div>
-  <div class="col-md-1" style="padding-top: 7px; text-align: right; ">
-    ถึง
-  </div>
-  <br>
-  <div class="col-md-2">
-    <my-date-picker-th name="endDate" [(ngModel)]="endDate" [options]="myDatePickerOptions" required></my-date-picker-th>
-  </div>
-  <div class="col-md-4">
-    <div class="checkbox-inline" style="padding-right:1em">
-      <input type="checkbox" id="checkrads_1" [(ngModel)]="all">
-      <label for="checkrads_1">รายการทั้งหมด </label>
-    </div>
-    <button class="btn btn-sm btn-primary btn-icon" (click)="printProduct()">
-      <clr-icon shape="printer"></clr-icon> พิมพ์รายการ
-    </button>
-    <button type="button" class="btn btn-sm btn-success" (click)="exportExcel()">
-      <clr-icon shape="download"></clr-icon>
-      ส่งออก Excel
-    </button>
-  </div>
-  <div class="col-md-2">
-    <div class="select" style="float: right;">
-      <select name="genericTypeId" [(ngModel)]="genericTypeId" (change)="changeType()">
-        <option *ngFor="let b of genericTypes" [value]="b.generic_type_id">{{ b.generic_type_name }}</option>
-      </select>
-    </div>
-    <!-- <div class="select" style="float: right;">
-      <select  name="generic_type_id" [(ngModel)]="generic_type_id" (change)="changeType()">
-        <option value="all">ทั้งหมด</option>
-        <option *ngFor="let p of productType" [value]="p.generic_type_id">{{ p.generic_type_name }}</option>
-      </select>
+<div class="card">
+  <!-- <div class="card-header">
+  </div> -->
+  <div class="card-block">
+    <!-- <div class="card-title">
+      Block
     </div> -->
+    <div class="card-text">
+      <div class="row">
+        <div class="col-md-1">
+          ตั้งแต่วันที่
+        </div>
+        <div class="col-md-2">
+          <my-date-picker-th name="startDate" (dateChanged)="onDateStartChanged($event)" [(ngModel)]="startDate"
+            [options]="myDatePickerOptions" required></my-date-picker-th>
+        </div>
+        <div class="col-md-1">
+          ถึง
+        </div>
+        <div class="col-md-2">
+          <my-date-picker-th name="endDate" (dateChanged)="onDateEndChanged($event)" [(ngModel)]="endDate" [options]="myDatePickerOptions"
+            required></my-date-picker-th>
+        </div>
+        <!-- <div class="col-md-2">
+          <div class="checkbox-inline" style="padding-right:1em">
+            <input type="checkbox" id="checkrads_1" [(ngModel)]="all">
+            <label for="checkrads_1">รายการทั้งหมด(ทุกวัน) </label>
+          </div>
+        </div> -->
+        <div class="col-md-2">
+          <div class="select" style="float: right;">
+            <select name="genericTypeId" [(ngModel)]="genericTypeId" (change)="changeType()">
+              <option *ngFor="let b of genericTypes" [value]="b.generic_type_id">{{ b.generic_type_name }}</option>
+            </select>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <clr-button-group class="btn-primary btn-md" [clrMenuPosition]="'bottom-right'">
+            <clr-button class="btn-primary btn-md" (click)="printProduct()">พิมพ์รายการ</clr-button>
+            <clr-button class="btn-success btn-md" (click)="exportExcel()">ส่งออก Excel</clr-button>
+          </clr-button-group>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
+
+
+
+
 <clr-datagrid>
   <clr-dg-column [clrDgField]="'purchase_order_number'">เลขที่ใบสั่งซื้อ</clr-dg-column>
   <clr-dg-column [clrDgField]="'order_date'" style="width: 300px;">วันที่ออกใบสั่งซื้อ</clr-dg-column>
@@ -67,6 +76,6 @@
 
   <clr-dg-footer>{{purchaseOrder.length}} รายการ</clr-dg-footer>
 </clr-datagrid>
-
+<!-- </div> -->
 <app-modal-loading #modalLoading></app-modal-loading>
 <app-html-preview #htmlPreview></app-html-preview>
