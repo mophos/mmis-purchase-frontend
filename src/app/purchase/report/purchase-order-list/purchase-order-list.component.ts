@@ -87,7 +87,12 @@ export class PurchaseOrderListComponent implements OnInit {
   async getPo(genericTypeId: any) {
     this.modalLoading.show();
     try {
-      const rs: any = await this.purchasingOrderService.getOrderList(genericTypeId);
+      console.log(this.startDate.date);
+      console.log(this.endDate.date);
+
+      const startDate = `${this.startDate.date.year}-${this.startDate.date.month}-${this.startDate.date.day}`;
+      const endDate = `${this.endDate.date.year}-${this.endDate.date.month}-${this.endDate.date.day}`;
+      const rs: any = await this.purchasingOrderService.getOrderList(genericTypeId, startDate, endDate);
       if (rs.ok) {
         this.purchaseOrder = rs.rows;
         this.modalLoading.hide();
@@ -122,5 +127,18 @@ export class PurchaseOrderListComponent implements OnInit {
     const endDate = `${this.endDate.date.year}-${this.endDate.date.month}-${this.endDate.date.day}`;
     const url = `${this.apiUrl}/report/purchasing-list/excel?startDate=${startDate}&endDate=${endDate}&genericTypeId=${this.genericTypeId}&token=${this.token}`;
     window.open(url, '_blank');
+  }
+
+  onDateStartChanged(e) {
+    console.log(e);
+    this.startDate = e;
+    this.getPo(this.genericTypeId);
+
+  }
+
+  onDateEndChanged(e) {
+    console.log(e);
+    this.endDate = e;
+    this.getPo(this.genericTypeId);
   }
 }
