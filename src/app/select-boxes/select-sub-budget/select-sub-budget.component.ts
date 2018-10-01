@@ -39,35 +39,35 @@ export class SelectSubBudgetComponent implements OnInit {
   constructor(private stdService: StandardService, private alertService: AlertService) { }
 
   async ngOnInit() {
-    console.log(this._year);
-
     // await this.getItems();
   }
 
   async getItems() {
-
     try {
-      this.loading = true;
-      let rs: any = await this.stdService.getBudgetSub(this._budgetTypeId, this._year);
-      this.loading = false;
-      if (rs.ok) {
-        this.items = rs.rows;
-        if (this.items.length) {
-          if (this._selectedId) {
-            const idx = _.findIndex(this.items, { bgdetail_id: this._selectedId });
-            if (idx > -1) {
-              this.onChange.emit(this.items[idx]);
+      console.log(this._budgetTypeId, this._year);
+      if (this._year) {
+        this.loading = true;
+
+        let rs: any = await this.stdService.getBudgetSub(this._budgetTypeId, this._year);
+        this.loading = false;
+        if (rs.ok) {
+          this.items = rs.rows;
+          if (this.items.length) {
+            if (this._selectedId) {
+              const idx = _.findIndex(this.items, { bgdetail_id: this._selectedId });
+              if (idx > -1) {
+                this.onChange.emit(this.items[idx]);
+              } else {
+                this.onChange.emit(this.items[0]);
+              }
             } else {
+              this._selectedId = this.items[0].bgdetail_id;
               this.onChange.emit(this.items[0]);
             }
-          } else {
-            this._selectedId = this.items[0].bgdetail_id;
-            this.onChange.emit(this.items[0]);
           }
+        } else {
+          this.alertService.error(rs.error);
         }
-
-      } else {
-        this.alertService.error(rs.error);
       }
     } catch (error) {
       console.log(error);
@@ -82,6 +82,7 @@ export class SelectSubBudgetComponent implements OnInit {
   setYears(year: any) {
     this._year = year;
     this.getItems();
+    console.log(year);
 
     // this._budgetTypeId = budgetType;
   }
