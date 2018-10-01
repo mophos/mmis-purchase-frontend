@@ -20,20 +20,20 @@ export class HistoryOrderComponent implements OnInit {
   }
 
   async getOrders() {
-    const rs: any = await this.purchasingOrderService.getGeneric(this.perPage, 0, this.sort);
+    const rs: any = await this.purchasingOrderService.getGenericHistory(this.perPage, 0, this.sort);
     this.genericOrders = rs.rows;
   }
-  
+
   async refresh(state: State) {
     const offset = +state.page.from;
     const limit = +state.page.size;
     this.sort = state.sort;
 
     if (this.query) {
-      const rs: any = await this.purchasingOrderService.getGenericSearch(limit, offset, this.query, this.sort);
+      const rs: any = await this.purchasingOrderService.getGenericHistorySearch(limit, offset, this.query, this.sort);
       this.genericOrders = rs.rows;
     } else {
-      const rs: any = await this.purchasingOrderService.getGeneric(limit, offset, this.sort);
+      const rs: any = await this.purchasingOrderService.getGenericHistory(limit, offset, this.sort);
       this.genericOrders = rs.rows;
       this.totalGeneric = +rs.total;
     }
@@ -45,11 +45,11 @@ export class HistoryOrderComponent implements OnInit {
 
   async doSearch() {
     if (this.query) {
-      const rs: any = await this.purchasingOrderService.getGenericSearch(this.perPage, 0, this.query, this.sort);
+      const rs: any = await this.purchasingOrderService.getGenericHistorySearch(this.perPage, 0, this.query, this.sort);
       this.genericOrders = rs.rows;
       this.totalGeneric = +rs.total;
     } else {
-      const rs: any = await this.purchasingOrderService.getGeneric(this.perPage, 0);
+      const rs: any = await this.purchasingOrderService.getGenericHistory(this.perPage, 0);
       this.genericOrders = rs.rows;
       this.totalGeneric = +rs.total;
     }
