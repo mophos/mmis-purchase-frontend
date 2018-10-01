@@ -268,8 +268,29 @@ export class PurchasingOrderService {
     return res.json();
   }
 
+  async getGenericHistory(limit = 15, offset = 0, sort: any = {}) {
+    const res = await this.authHttp.post(`${this.url}/${this.apiName}/generic/history`, {
+      limit: limit,
+      offset: offset,
+      sort: sort
+    })
+      .toPromise();
+    return res.json();
+  }
+
   async getGenericSearch(limit = 15, offset = 0, query: any, sort: any) {
     const res = await this.authHttp.post(`${this.url}/${this.apiName}/getGeneric/search`, {
+      limit: limit,
+      offset: offset,
+      query: query,
+      sort: sort
+    })
+      .toPromise();
+    return res.json();
+  }
+
+  async getGenericHistorySearch(limit = 15, offset = 0, query: any, sort: any) {
+    const res = await this.authHttp.post(`${this.url}/${this.apiName}/generic/history/search`, {
       limit: limit,
       offset: offset,
       query: query,
