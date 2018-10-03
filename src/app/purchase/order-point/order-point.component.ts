@@ -302,19 +302,24 @@ export class OrderPointComponent implements OnInit {
       try {
         const rs: any = await this.productService.updateTradeReserved(items);
         if (rs.ok) {
+          this.modalCreatePurchaseOrders = false;
           this.alertService.success();
           this.getProductsReserved();
           this.getReservedForOrders();
           this.selectedReserved = [];
         } else {
+          this.modalCreatePurchaseOrders = false;
           this.alertService.error(rs.error);
         }
       } catch (error) {
+        this.modalCreatePurchaseOrders = false;
         this.alertService.error(JSON.stringify(error));
       }
     } else {
+      this.modalCreatePurchaseOrders = false;
       this.alertService.error('กรุณาระบุจำนวนที่ต้องการสั่งซื้อ');
     }
+    // this.modalCreatePurchaseOrders = false;
   }
 
   async saveReserved() {
