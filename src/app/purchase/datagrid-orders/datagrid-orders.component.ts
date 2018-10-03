@@ -652,7 +652,7 @@ export class DatagridOrdersComponent implements OnInit {
         this.htmlPrview.showReport(this.url + `${this.urlReportEGP}/?token=${this.token}&` + poItems.join('&'));
       }
     } else {
-      this.alertService.error('ข้อมุูลไม่ครบถ้วน');
+      this.alertService.error('ข้อมูลไม่ครบถ้วน');
     }
   }
 
@@ -695,13 +695,13 @@ export class DatagridOrdersComponent implements OnInit {
         }
       });
     } else {
-      this.alertService.error('ข้อมุูลไม่ครบถ้วน');
+      this.alertService.error('ข้อมูลไม่ครบถ้วน');
     }
     if (print_non > 0) {
       this.htmlPrview.showReport(this.url + `${this.urlReportPO}/?token=${this.token}&` + printId.join('&'));
       this.openModal = false;
     } else {
-      this.alertService.error('ข้อมุูลไม่ครบถ้วน');
+      this.alertService.error('ข้อมูลไม่ครบถ้วน');
     }
     this.start_id = '';
     this.end_id = '';
@@ -719,13 +719,13 @@ export class DatagridOrdersComponent implements OnInit {
         }
       });
     } else {
-      this.alertService.error('ข้อมุูลไม่ครบถ้วน');
+      this.alertService.error('ข้อมูลไม่ครบถ้วน');
     }
     if (print_non > 0) {
       this.htmlPrview.showReport(this.url + `${this.urlReportEGP}/?token=${this.token}&` + printId.join('&'));
       this.openModal = false;
     } else {
-      this.alertService.error('ข้อมุูลไม่ครบถ้วน');
+      this.alertService.error('ข้อมูลไม่ครบถ้วน');
     }
     this.start_id = '';
     this.end_id = '';
@@ -751,7 +751,7 @@ export class DatagridOrdersComponent implements OnInit {
       this.htmlPrview.showReport(this.url + `${this.urlReportPO}/?token=${this.token}&` + printId.join('&'));
       this.openModal = false;
     } else {
-      this.alertService.error('ข้อมุูลไม่ครบถ้วน');
+      this.alertService.error('ข้อมูลไม่ครบถ้วน');
     }
   }
 
@@ -775,7 +775,7 @@ export class DatagridOrdersComponent implements OnInit {
       this.htmlPrview.showReport(this.url + `${this.urlReportEGP}/?token=${this.token}&` + printId.join('&'));
       this.openModal = false;
     } else {
-      this.alertService.error('ข้อมุูลไม่ครบถ้วน');
+      this.alertService.error('ข้อมูลไม่ครบถ้วน');
     }
   }
 

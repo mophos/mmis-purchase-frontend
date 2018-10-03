@@ -1,3 +1,6 @@
+import { CommitteeService } from './../share/committee.service';
+
+import { CommitteePeopleService } from './../share/committee-people.service';
 import { Component, OnInit, ViewChild, Inject } from '@angular/core';
 import { IMyDateModel } from 'mydatepicker-th';
 import * as moment from 'moment';
@@ -11,6 +14,8 @@ import { AlertService } from 'app/alert.service';
 import { State } from '@clr/angular';
 import { PurchasingOrderService } from 'app/purchase/share/purchasing-order.service';
 import { Router } from '@angular/router';
+import { SelectSubBudgetComponent } from '../../select-boxes/select-sub-budget/select-sub-budget.component';
+import { SearchPeopleComponent } from '../../autocomplete/search-people/search-people.component';
 @Component({
   selector: 'app-order-point',
   templateUrl: './order-point.component.html',
@@ -20,7 +25,10 @@ export class OrderPointComponent implements OnInit {
 
   @ViewChild('htmlPreview') public htmlPreview: HtmlPreviewComponent;
   @ViewChild('modalLoading') modalLoading: ModalLoadingComponent
-
+  @ViewChild('subBudgetList') subBudgetList: SelectSubBudgetComponent;
+  @ViewChild('searchPeople1') searchPeople1: SearchPeopleComponent;
+  @ViewChild('searchPeople2') searchPeople2: SearchPeopleComponent;
+  @ViewChild('searchPeople3') searchPeople3: SearchPeopleComponent;
   showNotPurchased = false;
   isPreview = false;
   openReservedOrder = false;
@@ -50,15 +58,34 @@ export class OrderPointComponent implements OnInit {
   defaultBudgetYear: any;
 
   curentPage = 1;
-
+  modalCreatePurchaseOrders = false;
   public jwtHelper: JwtHelper = new JwtHelper();
-  offsetSet: number = 0;
+  offsetSet = 0;
 
+  budgetYear: any;
+  budgetTypeId: any;
+  onePO = true;
+  committeeSelected = [];
+  committeeId: any;
+  verifyCommitteeId: any;
+  chiefId: any;
+  buyerId: any;
+  peopleId1: any;
+  peopleId2: any;
+  peopleId3: any;
+  budgetDetailId: any;
+  purchaseTypeId: any;
+  purchaseMethodId: any;
+  bidAmount: any;
+  showChief = true;
+  showBuyer = true;
   constructor(
     private productService: ProductService,
     private alertService: AlertService,
     private purchasingOrderService: PurchasingOrderService,
     private router: Router,
+    private committeePeopleService: CommitteePeopleService,
+    private committeeService: CommitteeService,
     @Inject('API_URL') private apiUrl: any) {
     this.token = sessionStorage.getItem('token');
     const decodedToken = this.jwtHelper.decodeToken(this.token);
@@ -66,14 +93,14 @@ export class OrderPointComponent implements OnInit {
       this.delivery = decodedToken.PC_SHIPPING_DATE || 30;
       this.vatRate = decodedToken.PC_VAT || 7;
       // this.defaultBudgetYear = decodedToken.PC_DEFAULT_BUDGET_YEAR || moment().get('year');
-      let year = moment().get('year');
-      const month = moment().get('month') + 1;
-      if (month >= 10) {
-        year += 1;
-      }
-      this.defaultBudgetYear = year;
     }
-
+    let year = moment().get('year');
+    const month = moment().get('month') + 1;
+    if (month >= 10) {
+      year += 1;
+    }
+    this.defaultBudgetYear = year;
+    this.budgetYear = year;
     this.productGroup = decodedToken.generic_type_id.split(',');
   }
 
@@ -209,7 +236,7 @@ export class OrderPointComponent implements OnInit {
 
   async getProductType() {
     try {
-      // this.modalLoading.show();      
+      // this.modalLoading.show();
       const rs: any = await this.productService.type(this.productGroup);
       if (rs.ok) {
         this.productType = rs.rows;
@@ -253,6 +280,7 @@ export class OrderPointComponent implements OnInit {
   }
 
   async createPreparePurchaseOrder() {
+
     const items: any = [];
 
     this.selectedReserved.forEach(v => {
@@ -376,14 +404,14 @@ export class OrderPointComponent implements OnInit {
     this.openReservedOrder = true;
   }
 
+  // createPurchaseOrders() {
+  //   console.log(this.onePO, this.budgetTypeId, this.budgetDetailId);
+  //   console.log(this.oneCom, this.chiefId, this.buyerId, this.verifyCommitteeId);
+  //   console.log(this.peopleId1, this.peopleId2, this.peopleId3);
+
+  // }
   async createPurchaseOrders() {
-    const totalPrice = 0;
-    const purchaseSummary: any = {};
-    const purchaseOrderItems: Array<any> = [];
-
     const purchaseItems = this.selectedOrdersReserved;
-
-    // console.log(purchaseItems);
 
     // group by contract
     const contractItems = [];
@@ -414,7 +442,6 @@ export class OrderPointComponent implements OnInit {
         const obj: any = {};
         obj.generic_type_id = pItem.generic_type_id;
         obj.contract_id = pItem.contract_id;
-        // obj.contract_no = pItem.contract_no;
         obj.conversion_qty = pItem.conversion_qty;
         obj.generic_id = pItem.generic_id;
         obj.m_labeler_id = pItem.m_labeler_id;
@@ -438,9 +465,6 @@ export class OrderPointComponent implements OnInit {
       }
     });
 
-    // console.log(noContractItems);
-    // console.log(contractItems);
-
     const productItems = [];
     const poItems = [];
 
@@ -461,22 +485,15 @@ export class OrderPointComponent implements OnInit {
               obj.items.push(i);
             }
           }
-
           labelerItems.push(obj);
-
         }
-
-        // console.log(labelerItems)
-
         // สร้าง product items
         for (const v of labelerItems) {
-          // var rnd = new Random(Random.engines.mt19937().seedWithArray([0x12345678, 0x90abcdef]));
           const purchaseOrderId = Math.floor(new Date().valueOf() * Math.random() * new Date().getUTCMilliseconds());
 
           for (const i of v.items) {
             const obj: any = {};
             obj.purchase_order_id = purchaseOrderId;
-            // obj.generic_type_id = i.generic_type_id;
             obj.generic_id = i.generic_id;
             obj.product_id = i.product_id;
             obj.qty = i.order_qty;
@@ -484,12 +501,10 @@ export class OrderPointComponent implements OnInit {
             obj.unit_generic_id = i.unit_generic_id;
             obj.total_small_qty = i.conversion_qty * i.order_qty;
             obj.reserve_id = i.reserve_id;
-            // obj.v_labeler_id = i.v_labeler_id;
-
             productItems.push(obj);
           }
 
-          const objP = {
+          const objP: any = {
             purchase_order_id: purchaseOrderId,
             labeler_id: v.v_labeler_id,
             is_contract: 'N',
@@ -497,13 +512,72 @@ export class OrderPointComponent implements OnInit {
             vat_rate: this.vatRate,
             generic_type_id: v.generic_type_id,
             budget_year: this.defaultBudgetYear,
-            // total_price: totalPrice + vat,
             order_date: moment().format('YYYY-MM-DD')
           }
+          if (!this.showChief) {
+            this.chiefId = null;
+          }
+          if (!this.showBuyer) {
+            this.buyerId = null;
+          }
+          if (!this.onePO) {
+            objP.purchase_order_status = 'PREPARED';
+            objP.budget_detail_id = this.budgetDetailId;
+            objP.budgettype_id = this.budgetTypeId
+            objP.purchase_type_id = this.purchaseTypeId;
+            objP.purchase_method_id = this.purchaseMethodId;
+            objP.buyer_id = this.buyerId;
+            objP.chief_id = this.chiefId;
+          }
 
+
+          // open committee
+          const peopleCommittee = [];
+          if (this.verifyCommitteeId === 0) {
+            const committeeHead = {
+              committee_name: 'อื่นๆ',
+              committee_type: 0,
+              datetime_start: moment(new Date()).format('YYYY-MM-DD'),
+              is_delete: 'Y'
+            }
+            const committeeHeadIdRs: any = await this.committeeService.save(committeeHead);
+            // console.log(committeeHeadIdRs);
+            if (committeeHeadIdRs.ok) {
+              this.verifyCommitteeId = committeeHeadIdRs.rows[0];
+
+              if (this.peopleId1) {
+                const committeeDetail = {
+                  committee_id: this.verifyCommitteeId,
+                  people_id: this.peopleId1,
+                  position_name: 'ประธาน'
+                }
+                peopleCommittee.push(committeeDetail)
+              }
+              if (this.peopleId2) {
+                const committeeDetail = {
+                  committee_id: this.verifyCommitteeId,
+                  people_id: this.peopleId2,
+                  position_name: 'กรรมการ'
+                }
+                peopleCommittee.push(committeeDetail)
+              }
+              if (this.peopleId3) {
+                const committeeDetail = {
+                  committee_id: this.verifyCommitteeId,
+                  people_id: this.peopleId3,
+                  position_name: 'กรรมการ'
+                }
+                peopleCommittee.push(committeeDetail)
+              }
+              await this.committeePeopleService.save(peopleCommittee);
+            } else {
+              console.log('error');
+            }
+          }
+          // close committee
+          objP.verify_committee_id = this.verifyCommitteeId
           poItems.push(objP);
         }
-
       }
 
       // มีสัญญา
@@ -530,13 +604,11 @@ export class OrderPointComponent implements OnInit {
         }
         // สร้าง product items
         for (const v of ctItems) {
-          // var rnd = new Random(Random.engines.mt19937().seedWithArray([0x12345678, 0x90abcdef]));
           const purchaseOrderId = Math.floor(new Date().valueOf() * Math.random() * new Date().getUTCMilliseconds());
 
           for (const i of v.items) {
             const obj: any = {};
             obj.purchase_order_id = purchaseOrderId;
-            // obj.generic_type_id = i.generic_type_id;
             obj.generic_id = i.generic_id;
             obj.product_id = i.product_id;
             obj.qty = i.order_qty;
@@ -544,9 +616,6 @@ export class OrderPointComponent implements OnInit {
             obj.unit_generic_id = i.unit_generic_id;
             obj.total_small_qty = i.conversion_qty * i.order_qty;
             obj.reserve_id = i.reserve_id;
-            // obj.v_labeler_id = i.v_labeler_id;
-            // obj.contract_id = i.contract_id;
-            // obj.contract_no = i.contract_no;
 
             productItems.push(obj);
           }
@@ -560,7 +629,6 @@ export class OrderPointComponent implements OnInit {
             vat_rate: this.vatRate,
             generic_type_id: v.generic_type_id,
             budget_year: this.defaultBudgetYear,
-            // total_price: totalPrice + vat,
             order_date: moment().format('YYYY-MM-DD')
           }
 
@@ -619,11 +687,11 @@ export class OrderPointComponent implements OnInit {
     if (rs.ok) {
       this.alertService.success();
       // remove generic selected
-      let idx = _.findIndex(this.products, { generic_id: event.generic_id });
+      const idx = _.findIndex(this.products, { generic_id: event.generic_id });
       if (idx > -1) {
         this.products.splice(idx, 1);
       }
-      // get reserved items      
+      // get reserved items
       await this.getGenerics(this.perPage, this.offsetSet);
       await this.getProductsReserved();
       // await this.getReservedForOrders();
@@ -632,6 +700,102 @@ export class OrderPointComponent implements OnInit {
     }
     this.modalLoading.hide();
 
+  }
+
+  onChangeBudgetType(e) {
+    console.log(e);
+    this.budgetTypeId = e.bgtype_id;
+
+  }
+
+  onChangeSubBudget(event: any) {
+    this.budgetDetailId = event ? event.bgdetail_id : null;
+  }
+
+  changeRadio() {
+    this.onePO = !this.onePO;
+  }
+
+  onChangePeople(e, i) {
+    console.log(e, i);
+
+  }
+
+  async getCommitteePeople(committeeId: any) {
+    this.modalLoading.show();
+    // if (this.purchaseOrderId) {
+    if (committeeId !== 0) {
+      const rs: any = await this.committeePeopleService.allByCommitteeId(committeeId);
+      if (rs.ok) {
+        this.committeeSelected = rs.rows;
+        if (+rs.rows[0].committee_type === 0) {
+          this.verifyCommitteeId = 0;
+          if (rs.rows[0]) {
+            this.searchPeople1.setSelected(rs.rows[0].fullname);
+            this.peopleId1 = rs.rows[0].people_id;
+          }
+          if (rs.rows[1]) {
+            this.searchPeople2.setSelected(rs.rows[1].fullname);
+            this.peopleId2 = rs.rows[1].people_id;
+          }
+          if (rs.rows[2]) {
+            this.searchPeople3.setSelected(rs.rows[2].fullname);
+            this.peopleId3 = rs.rows[2].people_id;
+          }
+        }
+      }
+      this.modalLoading.hide();
+    } else {
+      this.searchPeople1.setSelected('');
+      this.searchPeople2.setSelected('');
+      this.searchPeople3.setSelected('');
+      this.modalLoading.hide();
+    }
+  }
+
+
+  changeOfficer(event: any) {
+    this.chiefId = event ? event.people_id : null;
+  }
+
+  changeOffice(event: any) {
+    this.buyerId = event ? event.people_id : null;
+  }
+
+  changeCommittee(event: any) {
+    this.verifyCommitteeId = event ? event.committee_id : null;
+    this.peopleId1 = null;
+    this.peopleId2 = null;
+    this.peopleId3 = null;
+    this.getCommitteePeople(event.committee_id);
+  }
+
+  onSelectPeople(event: any, idx) {
+    if (event) {
+      if (idx === 1) {
+        this.peopleId1 = event.people_id;
+      }
+      if (idx === 2) {
+        this.peopleId2 = event.people_id;
+      }
+      if (idx === 3) {
+        this.peopleId3 = event.people_id;
+      }
+    }
+  }
+
+  onChangePurchaseType(event: any) {
+    this.purchaseTypeId = event.bid_id;
+  }
+
+  onChangePurchaseMethod(event: any) {
+    this.purchaseMethodId = event ? event.id : null;
+    this.bidAmount = event ? event.f_amount : 0;
+  }
+
+  onChangeGenericType(genericTypeId: string) {
+    // this.tempPrice = false;
+    this.genericTypeId = genericTypeId;
   }
 
 }

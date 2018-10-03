@@ -860,10 +860,6 @@ export class OrderFormComponent implements OnInit {
       this.buyerId = null;
     }
     const peopleCommittee = [];
-    // let committeeId =
-    // เช็คกรรมการตรวจรับว่าเป็นแบบอื่นๆหรือไม่
-    // console.log(this.verifyCommitteeId);
-
     if (this.verifyCommitteeId === 0) {
       const committeeHead = {
         committee_name: 'อื่นๆ',
