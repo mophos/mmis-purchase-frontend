@@ -64,7 +64,7 @@ export class PurchaseOrderComponent implements OnInit {
       productIds += `product_id=${v}&`;
     });
 
-    const url = `${this.apiUrl}/report/list/purchase-trade-select/?token=${this.token}&${productIds}`;
+    const url = `${this.apiUrl}/report/list/all/purchase-trade-select/?token=${this.token}&${productIds}`;
     this.htmlPreview.showReport(url);
 
     this.printProducts = [];
