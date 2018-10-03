@@ -112,12 +112,16 @@ export class OrderPointComponent implements OnInit {
 
   printProduct() {
     this.selectedReserved.forEach(v => {
-      this.printProducts.push(v.product_id);
+      const obj = {
+        product_id: v.product_id,
+        unit_generic_id: v.unit_generic_id
+      }
+      this.printProducts.push(obj);
     });
 
     let productIds = '';
     this.printProducts.forEach((v: any) => {
-      productIds += `product_id=${v}&`;
+      productIds += `product_id=${v.product_id}&unit_generic_id=${v.unit_generic_id}&`;
     });
 
     const url = `${this.apiUrl}/report/list/purchase-trade-select/?token=${this.token}&${productIds}`;
