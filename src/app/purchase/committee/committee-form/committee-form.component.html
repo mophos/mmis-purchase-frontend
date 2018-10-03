@@ -34,7 +34,8 @@
                         <label for="rdoCommittee_type_1">สอบราคา</label>
                     </div>
                     <div class="radio-inline">
-                        <input formControlName="committee_type" type="radio" value="2" name="committee_type" id="rdoCommittee_type_2" checked>
+                        <input formControlName="committee_type" type="radio" value="2" name="committee_type" id="rdoCommittee_type_2"
+                            checked>
                         <label for="rdoCommittee_type_2">ตรวจรับ</label>
                     </div>
                 </div>
@@ -44,18 +45,20 @@
                     <label for="gForm_1">ระบุเวลา</label>
                 </div>
                 <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
-                    <label for="txtCommitteeName" aria-haspopup="true" role="tooltip" [class.invalid]="committee.get('datetime_start').invalid
-                    && (committee.get('datetime_start').dirty || committee.get('datetime_start').touched)" class="tooltip tooltip-validation tooltip-md tooltip-bottom-right">
-                        <my-date-picker-th formControlName="datetime_start" [options]="myDatePickerOptions" required></my-date-picker-th>
+                    <!-- <label for="txtCommitteeName" aria-haspopup="true" role="tooltip" [class.invalid]="committee.get('datetime_start').invalid
+                    && (committee.get('datetime_start').dirty || committee.get('datetime_start').touched)"
+                        class="tooltip tooltip-validation tooltip-md tooltip-bottom-right">
                         <span class="tooltip-content">This field cannot be empty!</span>
-                    </label>
+                    </label> -->
+                    <my-date-picker-th formControlName="datetime_start" [options]="myDatePickerOptions" required></my-date-picker-th>
                 </div>
                 <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
-                    <label for="txtCommitteeName" aria-haspopup="true" role="tooltip" [class.invalid]="committee.get('datetime_end').invalid
-                    && (committee.get('datetime_end').dirty || committee.get('datetime_end').touched)" class="tooltip tooltip-validation tooltip-md tooltip-bottom-right">
-                        <my-date-picker-th formControlName="datetime_end" [options]="myDatePickerOptions" required></my-date-picker-th>
+                    <!-- <label for="txtCommitteeName" aria-haspopup="true" role="tooltip" [class.invalid]="committee.get('datetime_end').invalid
+                    && (committee.get('datetime_end').dirty || committee.get('datetime_end').touched)"
+                        class="tooltip tooltip-validation tooltip-md tooltip-bottom-right">
                         <span class="tooltip-content">This field cannot be empty!</span>
-                    </label>
+                    </label> -->
+                    <my-date-picker-th formControlName="datetime_end" [options]="myDatePickerOptions" required></my-date-picker-th>
                 </div>
             </div>
             <div class="form-group row">
@@ -68,7 +71,8 @@
                         <label for="rdoCommittee_status_1">เปิด</label>
                     </div>
                     <div class="radio-inline">
-                        <input formControlName="committee_status" type="radio" value="F" name="committee_status" id="rdoCommittee_status_2" checked>
+                        <input formControlName="committee_status" type="radio" value="F" name="committee_status" id="rdoCommittee_status_2"
+                            checked>
                         <label for="rdoCommittee_status_2">ปิด</label>
                     </div>
                 </div>
@@ -81,7 +85,8 @@
         <div class="row">
             <div class="col-md-5">
                 <label>รายชื่อเจ้าหน้าที่</label>
-                <input (keyup)="searchPeoples($event)" class="form-control" type="text" placeholder="ค้นหาชื่อ.." [(ngModel)]="query">
+                <input (keyup)="searchPeoples($event)" class="form-control" type="text" placeholder="ค้นหาชื่อ.."
+                    [(ngModel)]="query">
                 <clr-datagrid style="height:280px" [(clrDgSelected)]="peoplesSourceSelected">
                     <clr-dg-column [clrDgField]="'fullname'">
                         <ng-container *clrDgHideableColumn="{hidden: false}">
@@ -101,15 +106,16 @@
                         </clr-dg-cell>
                     </clr-dg-row> -->
                     <clr-dg-footer>
-                        {{pagination1.firstItem + 1}} - {{pagination1.lastItem + 1}} of {{pagination1.totalItems}} users
+                        {{pagination1.firstItem + 1}} - {{pagination1.lastItem + 1}} of {{pagination1.totalItems}}
+                        users
                         <clr-dg-pagination #pagination1 [clrDgPageSize]="30"></clr-dg-pagination>
                     </clr-dg-footer>
                 </clr-datagrid>
             </div>
 
             <div class="col-md-2">
-                <button (click)="selectedPeople()" [disabled]="!(peoplesSourceSelected.length >= 1)" type="submit" class="btn btn-block btn-sm"
-                    style="margin-top:70px;">เลือก
+                <button (click)="selectedPeople()" [disabled]="!(peoplesSourceSelected.length >= 1)" type="submit"
+                    class="btn btn-block btn-sm" style="margin-top:70px;">เลือก
                     <clr-icon shape="caret right"></clr-icon>
                 </button>
                 <button (click)="selectedPeopleAll()" [disabled]="peoplesSource.length == 0" type="submit" class="btn btn-block btn-sm">เลือกทั้งหมด
@@ -118,10 +124,12 @@
                 </button>
                 <br>
                 <button (click)="revokePeople()" [disabled]="!(peoplesTargetSelected.length >= 1)" type="submit" class="btn btn-block btn-sm">
-                    <clr-icon shape="caret left"></clr-icon>ยกเลิก </button>
+                    <clr-icon shape="caret left"></clr-icon>ยกเลิก
+                </button>
                 <button (click)="revokePeopleAll()" [disabled]="peoplesTarget.length == 0" type="submit" class="btn btn-block btn-sm">
                     <clr-icon shape="caret left"></clr-icon>
-                    <clr-icon shape="caret left"></clr-icon>ยกเลิกทังหมด </button>
+                    <clr-icon shape="caret left"></clr-icon>ยกเลิกทังหมด
+                </button>
             </div>
 
             <div class="col-md-5">
@@ -139,7 +147,8 @@
                         </clr-dg-cell>
                     </clr-dg-row>
                     <clr-dg-footer>
-                        {{pagination2.firstItem + 1}} - {{pagination2.lastItem + 1}} of {{pagination2.totalItems}} users
+                        {{pagination2.firstItem + 1}} - {{pagination2.lastItem + 1}} of {{pagination2.totalItems}}
+                        users
                         <clr-dg-pagination #pagination2 [clrDgPageSize]="30"></clr-dg-pagination>
                     </clr-dg-footer>
                 </clr-datagrid>

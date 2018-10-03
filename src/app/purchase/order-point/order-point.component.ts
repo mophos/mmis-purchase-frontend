@@ -50,7 +50,7 @@ export class OrderPointComponent implements OnInit {
   defaultBudgetYear: any;
 
   curentPage = 1;
-  
+
   public jwtHelper: JwtHelper = new JwtHelper();
   offsetSet: number = 0;
 
@@ -65,7 +65,13 @@ export class OrderPointComponent implements OnInit {
     if (decodedToken) {
       this.delivery = decodedToken.PC_SHIPPING_DATE || 30;
       this.vatRate = decodedToken.PC_VAT || 7;
-      this.defaultBudgetYear = decodedToken.PC_DEFAULT_BUDGET_YEAR || moment().get('year');
+      // this.defaultBudgetYear = decodedToken.PC_DEFAULT_BUDGET_YEAR || moment().get('year');
+      let year = moment().get('year');
+      const month = moment().get('month') + 1;
+      if (month >= 10) {
+        year += 1;
+      }
+      this.defaultBudgetYear = year;
     }
 
     this.productGroup = decodedToken.generic_type_id.split(',');
@@ -622,7 +628,7 @@ export class OrderPointComponent implements OnInit {
         this.products.splice(idx, 1);
       }
       // get reserved items      
-      await this.getGenerics(this.perPage,this.offsetSet);
+      await this.getGenerics(this.perPage, this.offsetSet);
       await this.getProductsReserved();
       // await this.getReservedForOrders();
     } else {

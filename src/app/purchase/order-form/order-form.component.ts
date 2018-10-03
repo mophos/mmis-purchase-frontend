@@ -255,8 +255,8 @@ export class OrderFormComponent implements OnInit {
       year += 1;
     }
 
-    this.budgetYear = year.toString();
-    this.currentBudgetYear = year;
+    // this.budgetYear = year.toString();
+    // this.currentBudgetYear = year;
 
     this.dupBookNumber = decoded.PC_BOOK_NUMBER_DUPLICATE === 'Y' ? true : false;
   }
@@ -590,7 +590,7 @@ export class OrderFormComponent implements OnInit {
     this.purchaseTypeId = event.bid_id;
   }
 
-  newOrder() {
+  async newOrder() {
 
     this.isUpdate = false;
 
@@ -610,6 +610,15 @@ export class OrderFormComponent implements OnInit {
     };
 
     this.budgetType = 'spend';
+
+    let year = moment().get('year');
+    const month = moment().get('month') + 1;
+    if (month >= 10) {
+      year += 1;
+    }
+    this.budgetYear = year.toString();
+    this.currentBudgetYear = year;
+    await this.subBudgetList.setYears(year);
   }
 
   async setOrderDetail(data: any) {
@@ -672,16 +681,46 @@ export class OrderFormComponent implements OnInit {
     if (month >= 10) {
       year += 1;
     }
-    this.budgetYear = year.toString();
-    this.currentBudgetYear = year;
 
-    await this.subBudgetList.setYears(this.budgetYear);
-    if (!data.budgettype_id) {
-      await this.subBudgetList.setBudgetType(this.budgetTypeId);
-      await this.subBudgetList.getItems();
-    } else {
-      this.budgetTypeId = data.budgettype_id;
+    if (data.budget_detail_id) {
+      this.budgetDetailId = data.budget_detail_id;
     }
+    // if (data.budgettype_id) {
+    //   this.budgetTypeId = data.budgettype_id;
+    // }
+    if (data.budget_year && data.budgettype_id && data.budget_detail_id) {
+      this.budgetYear = data.budget_year;
+      this.currentBudgetYear = data.budget_year;
+      this.budgetTypeId = data.budgettype_id
+      await this.subBudgetList.setBudgetType(this.budgetTypeId);
+      await this.subBudgetList.setYears(data.budget_year);
+      // await this.subBudgetList.getItems();
+    } else if (data.budget_year && !data.budget_detail_id) {
+      this.budgetYear = data.budget_year
+      this.currentBudgetYear = data.budget_year;
+      await this.subBudgetList.setYears(data.budget_year);
+    } else {
+      this.budgetYear = year.toString();
+      this.currentBudgetYear = year;
+      await this.subBudgetList.setYears(year);
+    }
+    // } else {
+
+    //   if (!data.budgettype_id) {
+    //     console.log('test');
+    //     console.log(this.budgetYear);
+
+    //     await this.subBudgetList.setYears(this.budgetYear);
+
+    //     // await this.subBudgetList.setBudgetType(this.budgetTypeId);
+    //     // await this.subBudgetList.getItems();
+    //   } else {
+    //     console.log('test2', data.budgettype_id);
+    //     this.budgetTypeId = data.budgettype_id;
+    //     await this.subBudgetList.setBudgetType(this.budgetDetailId);
+    //   }
+    // }
+
 
     if (this.purchaseOrder.verify_committee_id) {
       this.verifyCommitteeId = this.purchaseOrder.verify_committee_id;

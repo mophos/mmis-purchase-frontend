@@ -88,7 +88,7 @@ export class DatagridOrdersComponent implements OnInit {
   total = 0;
   perPage = 20;
   page: any;
-  yearPO = moment().get('year');
+  yearPO: any;
   dataYear = [];
 
   urlReportPO: any;
@@ -167,12 +167,24 @@ export class DatagridOrdersComponent implements OnInit {
     this.getOrders();
 
     this.getSysReport();
-    for (let i = 0; i < 10; i++) {
+
+    const year = moment().get('year');
+    const month = moment().get('month') + 1;
+    if (month >= 10) {
+      this.yearPO = year + 1;
+    } else {
+      this.yearPO = year;
+    }
+
+    for (let i = -1; i < 5; i++) {
       this.dataYear.push({
-        yearText: (((this.yearPO - i) + 543).toString()).substring(2, 4),
-        year: this.yearPO - i
+        yearText: (((year - i) + 543).toString()).substring(2, 4),
+        year: year - i
       })
     }
+    console.log(this.dataYear);
+
+
   }
 
   async getSysReport() {
@@ -293,7 +305,7 @@ export class DatagridOrdersComponent implements OnInit {
 
   async checkApprove(username: any, password: any) {
     console.log(username);
-    
+
     const rs: any = await this.purchasingOrderService.checkApprove(username, password, this.action);
     console.log(rs);
 
