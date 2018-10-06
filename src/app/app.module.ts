@@ -4,7 +4,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { ClarityModule, ClrFormsNextModule } from '@clr/angular';
+import { ClarityModule } from '@clr/angular';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { environment } from '../environments/environment';
@@ -37,8 +37,7 @@ import { BidprocessComponent } from './purchase/bidprocess/bidprocess.component'
     LoginModule,
     PurchaseModule,
     AppRoutingModule,
-    AgxTypeaheadModule,
-    ClrFormsNextModule
+    AgxTypeaheadModule
   ],
   providers: [
     AuthGuard,
