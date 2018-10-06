@@ -10,11 +10,13 @@
       <div class="row wid99">
         <div class="col-md-9">
           <label for="">ค้นหา</label>
-          <input (keyup)="doSearch($event)" type="text" placeholder="ชื่อ, working code, keyword" [(ngModel)]="query" style="width: 350px;">
+          <input (keyup)="doSearch($event)" type="text" placeholder="ชื่อ, working code, keyword" [(ngModel)]="query"
+            style="width: 350px;">
           <!-- <button [disabled]="!selectedProduct.length" class="btn btn-sm btn-success btn-icon" (click)="saveReserved()">
             <clr-icon shape="plus"></clr-icon> เตรียมจัดสั่งซื้อ ({{selectedProduct.length | number}} รายการ)
           </button> -->
-          <clr-checkbox (change)="onChangePurchaseStatus()" [clrInline]="true" name="showNotPurchased" id="showNotPurchased" [(ngModel)]="showNotPurchased">
+          <clr-checkbox (change)="onChangePurchaseStatus()" [clrInline]="true" name="showNotPurchased" id="showNotPurchased"
+            [(ngModel)]="showNotPurchased">
             แสดงรายการที่ไม่เคยสั่งซื้อ
           </clr-checkbox>
         </div>
@@ -39,7 +41,8 @@
         <clr-dg-placeholder>ไม่พบข้อมูล</clr-dg-placeholder>
 
         <clr-dg-row *ngFor="let p of products" [clrDgItem]="p">
-          <app-grid-reorder-point-products (onSelected)="onSelectedProduct($event)" [genericId]="p.generic_id" *clrIfExpanded ngProjectAs="clr-dg-row-detail"></app-grid-reorder-point-products>
+          <app-grid-reorder-point-products (onSelected)="onSelectedProduct($event)" [genericId]="p.generic_id"
+            *clrIfExpanded ngProjectAs="clr-dg-row-detail"></app-grid-reorder-point-products>
           <clr-dg-cell>
             {{p.working_code}} - {{p.generic_name}}
           </clr-dg-cell>
@@ -47,12 +50,14 @@
           <clr-dg-cell style="text-align: right;">{{p.min_qty | number}}</clr-dg-cell>
           <clr-dg-cell style="text-align: right;">{{p.max_qty | number}}</clr-dg-cell>
           <clr-dg-cell style="text-align: right; font-weight: bold; color: #F52F22;">{{p.remain_qty || 0 | number}}</clr-dg-cell>
-          <clr-dg-cell style="text-align: right; font-weight: bold; color: #0065AB;">{{p.total_purchased || 0 | number}}</clr-dg-cell>
+          <clr-dg-cell style="text-align: right; font-weight: bold; color: #0065AB;">{{p.total_purchased || 0 |
+            number}}</clr-dg-cell>
           <clr-dg-cell>{{p.generic_type_name}}</clr-dg-cell>
         </clr-dg-row>
 
         <clr-dg-footer>
-          {{pagination.firstItem + 1 | number}} - {{pagination.lastItem + 1 | number}} จาก {{pagination.totalItems | number}} รายการ
+          {{pagination.firstItem + 1 | number}} - {{pagination.lastItem + 1 | number}} จาก {{pagination.totalItems |
+          number}} รายการ
           <clr-dg-pagination #pagination [clrDgPageSize]="perPage" [(clrDgPage)]="curentPage" [clrDgTotalItems]="total"></clr-dg-pagination>
         </clr-dg-footer>
       </clr-datagrid>
@@ -127,7 +132,8 @@
         </clr-dg-row>
 
         <clr-dg-footer>
-          {{paginationReserved.firstItem + 1 | number}} - {{paginationReserved.lastItem + 1 | number}} จาก {{paginationReserved.totalItems
+          {{paginationReserved.firstItem + 1 | number}} - {{paginationReserved.lastItem + 1 | number}} จาก
+          {{paginationReserved.totalItems
           | number}} รายการ
           <clr-dg-pagination #paginationReserved [clrDgPageSize]="perPageReserved" [clrDgTotalItems]="totalReserved"></clr-dg-pagination>
         </clr-dg-footer>
@@ -142,8 +148,9 @@
     <clr-tab-content *clrIfActive>
       <div class="row">
         <div class="col-md-8">
-          <button [disabled]="!selectedOrdersReserved.length" (click)="createPurchaseOrders()" class="btn btn-sm btn-success btn-icon">
-            <clr-icon shape="shopping-cart"></clr-icon> ออกใบสั่งซื้อ ({{selectedOrdersReserved.length || 0 | number}} รายการ)
+          <button [disabled]="!selectedOrdersReserved.length" (click)="modalCreatePurchaseOrders = true" class="btn btn-sm btn-success btn-icon">
+            <clr-icon shape="shopping-cart"></clr-icon> ออกใบสั่งซื้อ ({{selectedOrdersReserved.length || 0 | number}}
+            รายการ)
           </button>
         </div>
         <!-- <div class="col-md-4">
@@ -196,6 +203,164 @@
   </clr-tab>
 
 </clr-tabs>
+
+
+<clr-modal [(clrModalOpen)]="modalCreatePurchaseOrders" [clrModalClosable]="false">
+  <h3 class="modal-title">รายละเอียดการออกใบสั่งซื้อ</h3>
+  <div class="modal-body">
+    <div class="card">
+      <!-- <div class="card-title">งบประมาณ</div> -->
+      <div class="card-block">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="radio-inline">
+              <input type="radio" value="true" name="onePO" (change)="changeRadio()" id="rdoCommittee_status_1" checked>
+              <label for="rdoCommittee_status_1">แก้ไขข้อมูลทีละรายการ</label>
+            </div>
+            <div class="radio-inline">
+              <input type="radio" value="false" name="onePO" (change)="changeRadio()" id="rdoCommittee_status_2">
+              <label for="rdoCommittee_status_2">แก้ไขข้อมูลทุกรายการ</label>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+
+
+    <div class="card" style="min-height:255px;padding: 5px;" *ngIf="!onePO">
+      <!-- <div class="card-title">เจ้าหน้าที่และชุดกรรมการ</div> -->
+      <div class="card-block">
+        <!-- <div class="form-group"> -->
+        <div class="row">
+          <!-- <div class="col-md-4">
+            <label class="required" for="generic_type_id">ประเภท</label>
+          </div>
+          <div class="col-md-8">
+            <div class="form-group">
+              <div class="select" style="width:100%">
+                <select [disabled]="contractId" #selectGenericTypeId id="genericTypeId" name="genericTypeId"
+                  [(ngModel)]="genericTypeId" (change)="onChangeGenericType(selectGenericTypeId.value)">
+                  <option *ngFor="let p of productType" [value]="p.generic_type_id">{{ p.generic_type_name }}</option>
+                </select>
+              </div>
+            </div>
+          </div> -->
+
+          <div class="col-md-4">
+            <div class="form-group">
+              <label class="required" for="purchaseTypeId">รูปแบบการจัดซื้อ</label>
+            </div>
+          </div>
+          <div class="col-md-8">
+            <po-select-bid (onChange)="onChangePurchaseType($event)" style="width:100%"></po-select-bid>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label class="required" for="purchaseMethodId">วิธีการจัดซื้อ</label>
+            </div>
+          </div>
+          <div class="col-md-8">
+            <po-select-bid-process (onChange)="onChangePurchaseMethod($event)" style="width: 100%;"></po-select-bid-process>
+
+          </div>
+
+          <div class="col-md-4">
+            <!-- ประเภทงบประมาณ -->
+            <label class="required" for="budgetTypeId">ประเภทงบประมาณ</label>
+          </div>
+          <div class="col-md-8">
+            <div class="form-group">
+              <po-select-budget style="width: 100%;" (onChange)="onChangeBudgetType($event)"></po-select-budget>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <!-- งบประมาณย่อย -->
+            <label class="required" for="budget_detail_id">งบประมาณย่อย (ปีงบ {{budgetYear+543}})</label>
+          </div>
+          <div class="col-md-8">
+            <po-select-sub-budget (onChange)="onChangeSubBudget($event)" [budgetTypeId]="budgetTypeId" style="width: 100%;"
+              #subBudgetList [year]="budgetYear"></po-select-sub-budget>
+          </div>
+        </div>
+
+        <label for="chief_fullname"> ชื่อหัวหน้าเจ้าหน้าที่</label>
+        <div class="row">
+          <div class="col-md-11">
+            <po-select-officer [selectedId]="office" officerTypeCode="CHIEF" (onChange)="changeOfficer($event)" style="width: 100%;"></po-select-officer>
+          </div>
+          <div class="col-md-1">
+            <div class="checkbox">
+              <clr-checkbox name="showChief" [(ngModel)]="showChief" [clrChecked]="showChief"></clr-checkbox>
+            </div>
+          </div>
+        </div>
+        <!-- </div> -->
+
+        <div class="form-group">
+          <label for="buyer_fullname"> ชื่อเจ้าหน้าที่</label>
+          <div class="row">
+            <div class="col-md-11">
+              <po-select-officer officerTypeCode="BUYYER" [selectedId]="office1" (onChange)="changeOffice($event)"
+                style="width: 100%;"></po-select-officer>
+            </div>
+            <div class="col-md-1">
+              <div class="checkbox">
+                <clr-checkbox name="showBuyer" [(ngModel)]="showBuyer" [clrChecked]="showBuyer"></clr-checkbox>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="required" for="verify_committee_id">กรรมการตรวจรับ
+            <span class="text-danger">*</span>
+          </label>
+          <po-select-committee [selectedId]="verifyCommitteeId" style="width: 100%;" (onChange)="changeCommittee($event)"></po-select-committee>
+        </div>
+        <div [ngClass]="{'hidden':verifyCommitteeId!=0}">
+          <ol>
+            <li> ประธาน
+              <app-search-people [disabled]="verifyCommitteeId != 0" #searchPeople1 (onChange)="onChangePeople($event,1)"
+                (onSelect)="onSelectPeople($event,1)" style="width: 100%;"></app-search-people>
+            </li>
+            <li> กรรมการ
+              <app-search-people [disabled]="verifyCommitteeId != 0" #searchPeople2 (onChange)="onChangePeople($event,2)"
+                (onSelect)="onSelectPeople($event,2)" style="width: 100%;"></app-search-people>
+            </li>
+            <li> กรรมการ
+              <app-search-people [disabled]="verifyCommitteeId != 0" #searchPeople3 (onChange)="onChangePeople($event,3)"
+                (onSelect)="onSelectPeople($event,3)" style="width: 100%;"></app-search-people>
+            </li>
+          </ol>
+        </div>
+        <div *ngIf="verifyCommitteeId != 0">
+          <ol>
+            <li *ngFor="let p of committeeSelected">
+              <span>
+                {{p.fullname}} ( {{p.cp_position_name}} )
+              </span>
+              <small style="display:block;">
+                <i> {{p.position_name}}</i>
+              </small>
+            </li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-success" (click)="createPurchaseOrders()">
+      ออกใบสั่งซื้อ
+    </button>
+    <button type="button" class="btn btn-danger" (click)="modalCreatePurchaseOrders = false">
+      ปิด
+    </button>
+  </div>
+</clr-modal>
 
 <app-modal-loading #modalLoading></app-modal-loading>
 <app-html-preview #htmlPreview></app-html-preview>

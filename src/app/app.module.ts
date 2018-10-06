@@ -1,4 +1,4 @@
-import { BrowserModule,  } from '@angular/platform-browser';
+import { BrowserModule, } from '@angular/platform-browser';
 import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -37,7 +37,7 @@ import { BidprocessComponent } from './purchase/bidprocess/bidprocess.component'
     LoginModule,
     PurchaseModule,
     AppRoutingModule,
-    AgxTypeaheadModule,
+    AgxTypeaheadModule
   ],
   providers: [
     AuthGuard,

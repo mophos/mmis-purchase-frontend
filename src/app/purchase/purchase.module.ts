@@ -94,8 +94,7 @@ import { PurchaseBudgetHistoryComponent } from './report/purchase-budget-history
     AuthModule,
     AutocompleteModule,
     SelectBoxesModule,
-    PurchaseRoutingModule,
-    SelectBoxesModule
+    PurchaseRoutingModule
   ],
   declarations: [
     PurchaseCancelComponent,

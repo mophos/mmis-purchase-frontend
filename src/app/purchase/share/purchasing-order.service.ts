@@ -132,6 +132,7 @@ export class PurchasingOrderService {
         });
     });
   }
+
   getPrintDate(start_date: any, end_date: any, genericTypeId: any, statusFilter: any) {
     return new Promise((resolve, reject) => {
       this.authHttp.get(`${this.url}/${this.apiName}/getPrintDate/${start_date}/${end_date}/${genericTypeId}/${statusFilter}`)
@@ -143,6 +144,7 @@ export class PurchasingOrderService {
         });
     });
   }
+
   getGenericTypes() {
     return new Promise((resolve, reject) => {
       this.authHttp.get(`${this.url}/${this.apiName}/getgenerictypes`)
