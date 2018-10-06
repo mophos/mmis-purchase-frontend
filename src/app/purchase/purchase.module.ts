@@ -44,7 +44,7 @@ import { OrderFormLayoutComponent } from './order-form-layout/order-form-layout.
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormControl, FormGroup } from '@angular/forms';
-import { ClarityModule } from '@clr/angular';
+import { ClarityModule, ClrFormsNextModule } from '@clr/angular';
 import { AuthModule } from './../auth/auth.module';
 import { HelperModule } from '../helper/helper.module';
 import { MyDatePickerTHModule } from 'mydatepicker-th';
@@ -95,7 +95,7 @@ import { PurchaseBudgetHistoryComponent } from './report/purchase-budget-history
     AutocompleteModule,
     SelectBoxesModule,
     PurchaseRoutingModule,
-    SelectBoxesModule
+    ClrFormsNextModule
   ],
   declarations: [
     PurchaseCancelComponent,
