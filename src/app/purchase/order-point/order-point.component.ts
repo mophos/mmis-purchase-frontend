@@ -647,6 +647,7 @@ export class OrderPointComponent implements OnInit {
 
       this.alertService.confirm('ต้องการสร้างใบสั่งซื้อใหม่ตามรายการที่กำหนด ใช่หรือไม่?')
         .then(async () => {
+          this.modalCreatePurchaseOrders = false;
           this.modalLoading.show();
           // console.log(poItems);
           // console.log(productItems);
