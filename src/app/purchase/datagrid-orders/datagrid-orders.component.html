@@ -3,15 +3,15 @@
   <clr-tab>
     <button clrTabLink id="link1">
       <clr-icon shape="file"></clr-icon>
-      รายการใบสั่งซื้อ
+      รายการสั่งซื้อ
     </button>
     <clr-tab-content id="content1" *clrIfActive>
       <div class="card">
         <div class="card-block">
           <div class="row">
             <div class="col-lg-12">
-              <input placeholder="ค้นเลขที่.." (keydown)="handleKeyDown($event)" class="form-control" type="text" id="query" [(ngModel)]="query"
-                name="query" size="10">
+              <input placeholder="ค้น เลขที่ใบสั่งซื้อ,Generic Name,Generic Code.." (keydown)="handleKeyDown($event)" class="form-control" type="text" id="query" [(ngModel)]="query"
+                name="query" size="35">
               <label>สถานะ</label>
               <div class="select" style="width:100px;display:inline-block">
                 <select name="contract" [(ngModel)]="statusFilter">
