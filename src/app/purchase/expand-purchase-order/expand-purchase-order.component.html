@@ -25,8 +25,8 @@
 
     <clr-dg-row *clrDgItems="let p of purchaseOrderItems" [clrDgItem]="p">
       <clr-dg-cell>
-        <span *ngIf="p.total_price==0" class="text-warning">{{p.generic_id}}*</span>
-        <span *ngIf="p.total_price>0">{{p.generic_id}}</span>
+        <span *ngIf="+p.total_price==0" class="text-warning">{{p.generic_code}}*</span>
+        <span *ngIf="p.total_price>0">{{p.generic_code}}</span>
       </clr-dg-cell>
       <clr-dg-cell>{{p.fullname}} </clr-dg-cell>
       <clr-dg-cell class="text-right">{{p.qty | number}} </clr-dg-cell>
