@@ -25,10 +25,13 @@ export class PurchaseOrderListComponent implements OnInit {
   startDate: any;
   endDate: any;
   token: any;
-
+  start_id: any;
+  end_id: any;
   genericTypeId: any;
-
+  dataYear = [];
+  yearPO: any;
   all = false
+  status_po = 'ALL';
 
 
   myDatePickerOptions: IMyOptions = {
@@ -61,7 +64,22 @@ export class PurchaseOrderListComponent implements OnInit {
         day: date.getDate()
       }
     };
+
+    const year = moment().get('year');
+    const month = moment().get('month') + 1;
+    if (month >= 10) {
+      this.yearPO = year + 1;
+    } else {
+      this.yearPO = year;
+    }
     this.getGenericTypes();
+    for (let i = -1; i < 5; i++) {
+      this.dataYear.push({
+        yearText: (((year - i) + 543).toString()).substring(2, 4),
+        year: year - i
+      })
+    }
+    console.log(this.dataYear);
   }
 
   async getGenericTypes() {
@@ -140,5 +158,42 @@ export class PurchaseOrderListComponent implements OnInit {
     console.log(e);
     this.endDate = e;
     this.getPo(this.genericTypeId);
+  }
+
+  async printProductPo() {
+    if (this.start_id && this.end_id) {
+      try {
+        const rs: any = await this.purchasingOrderService.getPOid(this.start_id, this.end_id, this.genericTypeId, this.status_po, this.yearPO);
+        if (rs.ok) {
+          const Sid = rs.rows[0].po_id
+          const Eid = rs.rows[rs.rows.length - 1].po_id
+          const url = `${this.apiUrl}/report/purchasing-list/byPO?Sid=${Sid}&Eid=${Eid}&genericTypeId=${this.genericTypeId}&token=${this.token}`;
+          this.htmlPreview.showReport(url);
+        } else {
+          this.alertService.error(rs.error);
+        }
+
+      } catch (error) {
+        this.alertService.error('ไม่พบเลขที่ใบสั่งซื้อ');
+      }
+    }
+  }
+  async exportExcelPo() {
+    if (this.start_id && this.end_id) {
+      try {
+        const rs: any = await this.purchasingOrderService.getPOid(this.start_id, this.end_id, this.genericTypeId, this.status_po, this.yearPO);
+        if (rs.ok) {
+          const Sid = rs.rows[0].po_id
+          const Eid = rs.rows[rs.rows.length - 1].po_id
+          const url = `${this.apiUrl}/report/purchasing-list/byPO/excel?Sid=${Sid}&Eid=${Eid}&genericTypeId=${this.genericTypeId}&token=${this.token}`;
+          window.open(url, '_blank');
+        } else {
+          this.alertService.error(rs.error);
+        }
+
+      } catch (error) {
+        this.alertService.error('ไม่พบเลขที่ใบสั่งซื้อ');
+      }
+    }
   }
 }
