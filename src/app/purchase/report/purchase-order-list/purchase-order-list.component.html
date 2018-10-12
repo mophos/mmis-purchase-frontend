@@ -5,16 +5,21 @@
 <!-- <div class="container"> -->
 
 <div class="card">
-  <!-- <div class="card-header">
-  </div> -->
   <div class="card-block">
-    <!-- <div class="card-title">
-      Block
-    </div> -->
     <div class="card-text">
       <div class="row">
+        <div class="col-md-2" style="display: inline-block;">
+          <div style="display:inline">
+            ประเภท :
+            <div class="select" style="display: inline-block;">
+              <select name="genericTypeId" [(ngModel)]="genericTypeId" (change)="changeType()">
+                <option *ngFor="let b of genericTypes" [value]="b.generic_type_id">{{ b.generic_type_name }}</option>
+              </select>
+            </div>
+          </div>
+        </div>
         <div class="col-md-1">
-          ตั้งแต่วันที่
+          ตั้งแต่วันที่ :
         </div>
         <div class="col-md-2">
           <my-date-picker-th name="startDate" (dateChanged)="onDateStartChanged($event)" [(ngModel)]="startDate"
@@ -27,23 +32,40 @@
           <my-date-picker-th name="endDate" (dateChanged)="onDateEndChanged($event)" [(ngModel)]="endDate" [options]="myDatePickerOptions"
             required></my-date-picker-th>
         </div>
-        <!-- <div class="col-md-2">
-          <div class="checkbox-inline" style="padding-right:1em">
-            <input type="checkbox" id="checkrads_1" [(ngModel)]="all">
-            <label for="checkrads_1">รายการทั้งหมด(ทุกวัน) </label>
-          </div>
-        </div> -->
         <div class="col-md-2">
-          <div class="select" style="float: right;">
-            <select name="genericTypeId" [(ngModel)]="genericTypeId" (change)="changeType()">
-              <option *ngFor="let b of genericTypes" [value]="b.generic_type_id">{{ b.generic_type_name }}</option>
+          <clr-button-group class="btn-primary btn-sm" [clrMenuPosition]="'bottom-right'">
+            <clr-button class="btn-primary" (click)="printProduct()">พิมพ์รายการ</clr-button>
+            <clr-button class="btn-success" (click)="exportExcel()">ส่งออก Excel</clr-button>
+          </clr-button-group>
+        </div>
+      </div>
+
+
+      <div class="row" style="margin-top:1.5em">
+        <div class="col-md-2">
+          <div style="display:inline">
+            ปีงบประมาณ :
+            <select name="yearPO" id="yearPO" [(ngModel)]="yearPO">
+              <option *ngFor="let w of dataYear" [value]="w.year">{{(w.yearText)}}</option>
             </select>
           </div>
         </div>
-        <div class="col-md-4">
-          <clr-button-group class="btn-primary btn-md" [clrMenuPosition]="'bottom-right'">
-            <clr-button class="btn-primary btn-md" (click)="printProduct()">พิมพ์รายการ</clr-button>
-            <clr-button class="btn-success btn-md" (click)="exportExcel()">ส่งออก Excel</clr-button>
+        <div class="col-md-1">
+          เลขที่ใบสั่งซื้อ :
+        </div>
+        <div class="col-md-2">
+          <input placeholder="เลขที่ตั้งต้น" class="form-control" type="text" id="start_id" [(ngModel)]="start_id" name="start_id">
+        </div>
+        <div class="col-md-1">
+          ถึง
+        </div>
+        <div class="col-md-2">
+          <input placeholder="เลขที่สุดท้าย" class="form-control" type="text" id="end_id" [(ngModel)]="end_id" name="end_id">
+        </div>
+        <div class="col-md-2">
+          <clr-button-group class="btn-primary btn-sm" [clrMenuPosition]="'bottom-right'">
+            <clr-button class="btn-primary" (click)="printProductPo()">พิมพ์รายการ</clr-button>
+            <clr-button class="btn-success" (click)="exportExcelPo()">ส่งออก Excel</clr-button>
           </clr-button-group>
         </div>
       </div>
