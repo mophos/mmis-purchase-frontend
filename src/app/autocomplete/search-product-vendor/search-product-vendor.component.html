@@ -1,10 +1,12 @@
-<input type="text" [disabled]="_disabled" [(ngModel)]="query" (keyup)="clearSelected($event)" style="width: 100%;" placeholder="ค้นหาสินค้า..." 
-agxTypeahead [taUrl]="url" 
-taApi="http" 
-[taItemTpl]="itemTpl" 
-(taSelected)="handleResultSelected($event)">
+<input type="text" [disabled]="_disabled" [(ngModel)]="query" (keyup)="clearSelected($event)" style="width: 100%;"
+  placeholder="ค้นหาสินค้า..." agxTypeahead [taUrl]="url" taApi="http" [taItemTpl]="itemTpl" (taSelected)="handleResultSelected($event)">
 
-<ng-template #itemTpl let-result>
+<!-- <ng-template #itemTpl let-result>
  {{ result.result.product_name }}
+</ng-template> -->
+
+<ng-template #itemTpl let-result style="width: 100%">
+  <strong>{{ result.result.product_name }}</strong>
+  <br>
+  <span style="margin-left:5px;">{{ result.result.generic_name }}</span>
 </ng-template>
- 
