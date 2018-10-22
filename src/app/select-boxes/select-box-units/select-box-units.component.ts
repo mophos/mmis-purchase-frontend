@@ -13,6 +13,7 @@ export class SelectBoxUnitsComponent implements OnInit {
   @Input() public genericId: any;
   @Input() public selectedId: any;
   @Input() public disabled: any;
+  @Input() public setUnitGenericId: any;
   @Output('onChange') onChange: EventEmitter<any> = new EventEmitter<any>();
 
   units = [];
@@ -28,8 +29,13 @@ export class SelectBoxUnitsComponent implements OnInit {
     if (this.genericId) {
       this.getUnits(this.genericId);
     }
+    if (this.setUnitGenericId) {
+      this.setSelectUnit()
+    }
   }
-
+  setSelectUnit() {
+    this.selectedId = +this.setUnitGenericId 
+  }
   setSelect(event: any) {
     const idx = _.findIndex(this.units, { unit_generic_id: +event.target.value });
     if (idx > -1) {

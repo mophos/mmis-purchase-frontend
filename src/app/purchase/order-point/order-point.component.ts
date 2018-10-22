@@ -227,6 +227,8 @@ export class OrderPointComponent implements OnInit {
       }
       // this.modalLoading.hide();
       if (rs.ok) {
+        console.log(rs.rows);
+        
         this.reservedItems = rs.rows;
         this.totalReserved = rs.total || 0;
       } else {
