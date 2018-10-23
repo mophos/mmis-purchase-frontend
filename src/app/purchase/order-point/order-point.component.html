@@ -122,7 +122,7 @@
               placeholder="0" appNumberWithoutDot [value]="p.order_qty || null">
           </clr-dg-cell>
           <clr-dg-cell>
-            <app-select-box-units (onChange)="onChangeUnit($event, p)" [genericId]="p.generic_id"></app-select-box-units>
+            <app-select-box-units (onChange)="onChangeUnit($event, p)" [genericId]="p.generic_id" [setUnitGenericId]="p.planning_unit_generic_id"></app-select-box-units>
           </clr-dg-cell>
           <clr-dg-cell style="text-align: center;">
             <button class="btn btn-sm btn-danger wm-small-btn" (click)="removeWaiting(p)">
