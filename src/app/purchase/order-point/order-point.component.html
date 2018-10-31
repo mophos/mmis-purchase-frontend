@@ -120,7 +120,7 @@
           <clr-dg-cell>
             <input type="text" #qty (keyup)="onChangeQty(qty.value, p)" style="width: 100%; text-align: right; background-color:#FFF9C4"
               placeholder="0" appNumberWithoutDot [value]="p.order_qty || null">
-          </clr-dg-cell>
+          </clr-dg-cell> 
           <clr-dg-cell>
             <app-select-box-units (onChange)="onChangeUnit($event, p)" [genericId]="p.generic_id" [setUnitGenericId]="p.purchase_unit_id"></app-select-box-units>
           </clr-dg-cell>
