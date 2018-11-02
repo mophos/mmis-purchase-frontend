@@ -1,0 +1,79 @@
+<nav class="breadcrumb">
+  <a class="breadcrumb-item" href="javascript://" routerLink="/admin">หน้าหลัก</a>
+  <span class="breadcrumb-item active">ตั้งค่าชื่อตำแหน่ง</span>
+</nav>
+<!-- 
+<button class="btn btn-success btn-sm" (click)="onClickAdd()">
+  <clr-icon shape="plus"></clr-icon> เพิ่มรายการ
+</button> -->
+
+<clr-datagrid [style.height.%]="80">
+  <clr-dg-column [clrDgField]="'fullname'">ชื่อตำแหน่ง</clr-dg-column>
+  <clr-dg-column style="width: 300px;" [clrDgField]="'type_name'">หมายเหตุ</clr-dg-column>
+  <clr-dg-column [style.width.px]="120"></clr-dg-column>
+
+  <clr-dg-row *clrDgItems="let row of officerTypes">
+      <clr-dg-cell>{{row.type_name}}</clr-dg-cell>
+      <clr-dg-cell>{{row.comment}}</clr-dg-cell>
+      <clr-dg-cell>
+          <div class="btn-group">
+              <button title="แก้ไข" class="btn btn-sm btn-success wm-small-btn" (click)="onClickEdit(row)">
+                  <clr-icon shape="note"></clr-icon>
+              </button>
+              <!-- <button title="ลบ" class="btn btn-sm btn-danger wm-small-btn" (click)="onClickDelete(row)">
+                  <clr-icon shape="trash"></clr-icon>
+              </button> -->
+          </div>
+      </clr-dg-cell>
+  </clr-dg-row>
+
+  <clr-dg-footer>
+      {{pagination.firstItem + 1}} - {{pagination.lastItem + 1}} จาก {{pagination.totalItems}} รายการ
+      <clr-dg-pagination #pagination [clrDgPageSize]="15"></clr-dg-pagination>
+  </clr-dg-footer>
+</clr-datagrid>
+
+<clr-modal [(clrModalOpen)]="modalInput" [clrModalClosable]="true" [clrModalSize]="'md'">
+  <h3 class="modal-title">แก้ไขข้อมูลตำแหน่งเจ้าหน้าที่พัสดุ</h3>
+  <div class="modal-body">
+      <form>
+          <section class="form-block">
+
+             <div class="form-group">
+                  <label for="aForm_3">ชื่อตำแหน่ง</label>
+                      <input class="form-control"  type="text" name="typeName" [(ngModel)]="typeName" placeholder="ชื่อตำแหน่ง">
+              </div>
+              <div class="form-group">
+                  <label for="aForm_3">หมายเหตุ</label>
+                  {{comment}}
+              </div>
+ <!-- 
+              <div class="form-group">
+                  <label for="inpType">ประเภท</label>
+                  <div class="select">
+                      <select name="type" id="inpType" [(ngModel)]="type">
+                          <option *ngFor="let type of officerTypes" value="{{type.type_id}}">{{type.type_name}}</option>
+                      </select>
+                  </div>
+              </div>
+              <div class="form-group">
+                  <label for="isActive">ใช้งาน</label>
+                  <div class="select">
+                      <select name="isActive" id="isActive" [(ngModel)]="isActive">
+                          <option value="1">ใช้งาน</option>
+                          <option value="0">ปิดการใช้งาน</option>
+                      </select>
+                  </div>
+              </div> -->
+          </section>
+      </form>
+  </div>
+  <div class="modal-footer">
+      <button class="btn btn-md btn-info" [disabled]="!typeName" (click)="onClickSave()">
+          บันทึก
+      </button>
+      <button type="button" class="btn btn-md btn-danger-outline" (click)="modalInput = false">
+          ปิดหน้าต่าง
+      </button>
+  </div>
+</clr-modal>

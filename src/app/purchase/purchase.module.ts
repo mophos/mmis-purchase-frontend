@@ -81,6 +81,7 @@ import { HistoryOrderComponent } from './history-order/history-order.component';
 import { PurchaseOrderListComponent } from './report/purchase-order-list/purchase-order-list.component';
 import { OrderPointComponent } from './order-point/order-point.component';
 import { PurchaseBudgetHistoryComponent } from './report/purchase-budget-history/purchase-budget-history.component';
+import { OfficerTypeComponent } from './officer-type/officer-type.component';
 
 @NgModule({
   imports: [
@@ -135,7 +136,8 @@ import { PurchaseBudgetHistoryComponent } from './report/purchase-budget-history
     HistoryOrderComponent,
     PurchaseOrderListComponent,
     OrderPointComponent,
-    PurchaseBudgetHistoryComponent
+    PurchaseBudgetHistoryComponent,
+    OfficerTypeComponent
   ],
   providers: [
     BudgetTransectionService,

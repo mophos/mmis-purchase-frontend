@@ -172,6 +172,7 @@ export class OrderFormComponent implements OnInit {
   chiefFullname: string;
   chiefPosition: string;
   buyerId: number;
+  supplyId: number;
   chiefId: number;
   // percent_amount: number;
   count = 0;
@@ -667,6 +668,8 @@ export class OrderFormComponent implements OnInit {
     this.excludeVat = data.exclude_vat === 'Y' ? true : false;
     this.chiefId = data.chief_id ? data.chief_id : this.chiefId;
     this.buyerId = data.buyer_id ? data.buyer_id : this.buyerId;
+    this.supplyId = data.supply_id ? data.supply_id : this.supplyId;
+    
     // this.budgetYear = data.budget_year || this.currentBudgetYear;
     this.purchaseDate = {
       date: {
@@ -937,6 +940,7 @@ export class OrderFormComponent implements OnInit {
       note_to_vender: this.noteToVender,
       chief_id: this.chiefId,
       buyer_id: this.buyerId,
+      supply_id: this.supplyId,
       budget_year: this.budgetYear,
       // is_reorder: this.isReorder === 'Y' ? 2 : this.isReorder
     };
@@ -1168,7 +1172,9 @@ export class OrderFormComponent implements OnInit {
   changeOffice(event: any) {
     this.buyerId = event ? event.people_id : null;
   }
-
+  changeOffices(event: any) {
+    this.supplyId = event ? event.people_id : null;
+  }
   async getProductType() {
     const token = sessionStorage.getItem('token');
     const decodedToken = this.jwtHelper.decodeToken(token);
