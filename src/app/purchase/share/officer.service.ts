@@ -130,7 +130,20 @@ export class OfficerService {
         });
     });
   }
-
+  updatePurchasingOfficerType(typeId, data) {
+    return new Promise((resolve, reject) => {
+      this.authHttp.put(`${this.url}/officer/updatePurchasingOfficerType`, {
+        data: data,
+        typeId: typeId
+      })
+        .map(res => res.json())
+        .subscribe(datas => {
+          resolve(datas);
+        }, error => {
+          reject(error);
+        });
+    });
+  }
   updatePurchasingOfficer(officerId, data) {
     return new Promise((resolve, reject) => {
       this.authHttp.put(`${this.url}/officer/updatePurchasingOfficer`, {
