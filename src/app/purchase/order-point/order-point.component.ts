@@ -70,6 +70,7 @@ export class OrderPointComponent implements OnInit {
   verifyCommitteeId: any;
   chiefId: any;
   buyerId: any;
+  supplyId: number;
   peopleId1: any;
   peopleId2: any;
   peopleId3: any;
@@ -537,6 +538,7 @@ export class OrderPointComponent implements OnInit {
             objP.purchase_method_id = this.purchaseMethodId;
             objP.buyer_id = this.buyerId;
             objP.chief_id = this.chiefId;
+            objP.supply_id = this.supplyId;
           }
 
 
@@ -771,7 +773,10 @@ export class OrderPointComponent implements OnInit {
   changeOffice(event: any) {
     this.buyerId = event ? event.people_id : null;
   }
-
+  
+  changeOffices(event: any) {
+    this.supplyId = event ? event.people_id : null;
+  }
   changeCommittee(event: any) {
     this.verifyCommitteeId = event ? event.committee_id : null;
     this.peopleId1 = null;
