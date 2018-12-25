@@ -205,6 +205,7 @@ export class OrderFormComponent implements OnInit {
 
   _canSave = false;
   dupBookNumber = false; // false = ห้ามซ้ำ
+  edi = false;
   constructor(
     private accessCheck: AccessCheck,
     private router: Router,
@@ -669,7 +670,7 @@ export class OrderFormComponent implements OnInit {
     this.chiefId = data.chief_id ? data.chief_id : this.chiefId;
     this.buyerId = data.buyer_id ? data.buyer_id : this.buyerId;
     this.supplyId = data.supply_id ? data.supply_id : this.supplyId;
-    
+
     // this.budgetYear = data.budget_year || this.currentBudgetYear;
     this.purchaseDate = {
       date: {
@@ -827,7 +828,8 @@ export class OrderFormComponent implements OnInit {
 
             if (this._canSave) {
               this.modalLoading.hide();
-              this.alertService.confirm('กรุณาตรวจสอบรายการให้ถูกต้องการทำการบันทึก ต้องการบันทึก ใช่หรือไม่?')
+              const text = this.edi ? 'กรุณาตรวจสอบรายการให้ถูกต้อง ต้องการบันทึกสั่งซื้อสินค้าออนไลน์ (EDI) ใช่หรือไม่?' : 'กรุณาตรวจสอบรายการให้ถูกต้อง ต้องการบันทึก ใช่หรือไม่?';
+              this.alertService.confirm(text)
                 .then(async () => {
                   this.doSavePurchase();
                 }).catch(() => {
@@ -942,6 +944,7 @@ export class OrderFormComponent implements OnInit {
       buyer_id: this.buyerId,
       supply_id: this.supplyId,
       budget_year: this.budgetYear,
+      edi: this.edi ? 'Y' : 'N'
       // is_reorder: this.isReorder === 'Y' ? 2 : this.isReorder
     };
 
@@ -1208,6 +1211,7 @@ export class OrderFormComponent implements OnInit {
   onChangeVendor(event: any) {
     if (event) {
       this.labelerId = null;
+      this.edi = false;
     }
   }
 
@@ -1218,6 +1222,7 @@ export class OrderFormComponent implements OnInit {
       }
       this.labelerId = event.labeler_id;
       this.oldLabelerId = event.labeler_id;
+      this.edi = (event.edi == 'Y');
 
       this.searchProductLabeler.setApiUrl(this.labelerId);
     }

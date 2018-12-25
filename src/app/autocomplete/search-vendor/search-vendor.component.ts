@@ -10,7 +10,7 @@ export class SearchVendorComponent implements OnInit {
   @Output('onSelect') onSelect: EventEmitter<any> = new EventEmitter<any>();
   @Output('onChange') onChange: EventEmitter<any> = new EventEmitter<any>();
 
-  _disabled: boolean = false;
+  _disabled = false;
 
   @Input('disabled')
   set setDisabled(value: boolean) {

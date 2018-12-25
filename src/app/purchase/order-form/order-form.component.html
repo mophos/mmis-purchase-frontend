@@ -4,10 +4,15 @@
     <a class="breadcrumb-item" href="javascript://" routerLink="/purchase/orders">รายการใบสั่งซื้อ</a>
     <span class="breadcrumb-item active">ใบสั่งซื้อ</span>
     <span style="margin-left: 2%; font-size:20px; font-weight:bold;">{{purchaseOrderNumber}}</span>
-    <!-- <span *ngIf="contractId" style="color: red; margin-left: 2%; font-size:20px; font-weight:bold;">เลขที่สัญญา {{contractNo}}</span> -->
     <span style="margin-left:35px">
       <app-order-status [status]="purchaseOrderStatus"></app-order-status>
     </span>
+    <span style="margin-left:35px" *ngIf="edi">
+      <label class="label label-danger  clickable">
+        สั่งซื้อสินค้าออนไลน์ (EDI)
+      </label>
+    </span>
+    <!-- <span *ngIf="edi" style="margin-left: 2%; font-size:30px; font-weight:bold;color:red;">สั่งซื้อสินค้าออนไลน์ (EDI)</span> -->
     <span style="float:right;">
       <span *ngIf="contractId" class="label label-danger">เลขที่สัญญา:
         <strong>{{contractNo}}</strong>
@@ -293,7 +298,7 @@
                   <label class="required" for="staff_receive_fullname"> เจ้าหน้าที่พัสดุ<span class="text-danger">*</span></label>
                   <div class="row">
                     <div class="col-md-11">
-                      <po-select-officer  officerTypeCode="STAFF_RECEIVE" [selectedId]="supplyId" (onChange)="changeOffices($event)"
+                      <po-select-officer officerTypeCode="STAFF_RECEIVE" [selectedId]="supplyId" (onChange)="changeOffices($event)"
                         style="width: 100%;"></po-select-officer>
                     </div>
                   </div>

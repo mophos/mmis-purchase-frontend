@@ -1,242 +1,200 @@
 <h3 style="margin-top:0;margin-bottom:10px;">{{title}}</h3>
 <clr-tabs>
   <clr-tab>
-    <button clrTabLink id="link1">
+    <button clrTabLink id="link1" (click)="changeEDI(false)">
       <clr-icon shape="file"></clr-icon>
       รายการสั่งซื้อ
     </button>
-    <clr-tab-content id="content1" *clrIfActive>
-      <div class="card">
-        <div class="card-block">
-          <div class="row">
-            <div class="col-lg-12">
-              <input placeholder="ค้น เลขที่ใบสั่งซื้อ,Generic Name,Generic Code.." (keydown)="handleKeyDown($event)" class="form-control" type="text" id="query" [(ngModel)]="query"
-                name="query" size="35">
-              <label>สถานะ</label>
-              <div class="select" style="width:100px;display:inline-block">
-                <select name="contract" [(ngModel)]="statusFilter">
-                  <option value="ALL"> ทั้งหมด </option>
-                  <option value="ORDERPOINT"> ก่อนเตรียม </option>
-                  <option value="PREPARED"> เตรียม </option>
-                  <option value="CONFIRMED"> ยืนยัน </option>
-                  <option value="APPROVED"> อนุมัติ </option>
-                  <option value="SUCCESS"> รับเข้าคลัง </option>
-                </select>
-              </div>
-              <label>สัญญา</label>
-              <div class="select" style="width:100px;display:inline-block">
-                <select name="contract" [(ngModel)]="contractFilter">
-                  <option value="ALL"> ทั้งหมด </option>
-                  <option value="T"> มีสัญญา </option>
-                  <option value="F"> ไม่มีสัญญา </option>
-                </select>
-              </div>
-              <label for="start_date">วันที่</label>
-              <div style="width:170px; display:inline-block;vertical-align: middle;">
-                <my-date-picker-th name="start_date" [(ngModel)]="start_date" [options]="myDatePickerOptions"></my-date-picker-th>
-              </div>
-              <span>&nbsp;</span>
-              <div style="width:170px; display:inline-block;vertical-align: middle;">
-                <my-date-picker-th name="end_date" [(ngModel)]="end_date" [options]="myDatePickerOptions"></my-date-picker-th>
-              </div>
-              <button type="button" (click)="search()" class="btn btn-primary btn-md">
-                <clr-icon shape="search"></clr-icon> ค้นหา
-              </button>
-
-              <clr-button-group class="btn-primary btn-md" [clrMenuPosition]="'bottom-right'" *ngIf="purchaseOrdersSelected.length">
-                <clr-button class="btn-primary btn-md" (click)="confirmAll('CONFIRMED')">ยืนยัน ({{this.purchaseOrdersSelected.length}})</clr-button>
-                <clr-button class="btn-primary btn-md" (click)="allApprove()">อนุมัติ ({{this.purchaseOrdersSelected.length}})</clr-button>
-                <clr-button class="btn-primary btn-md" (click)="changePurchaseDate()">
-                  <clr-icon shape="note"></clr-icon> แก้ไขวันออกใบสั่งซื้อ ({{this.purchaseOrdersSelected.length}})
-                </clr-button>
-                <clr-button class="btn-primary btn-md" (click)="printSelected(1)" [clrInMenu]="true">พิมพ์ใบสั่งซื้อ</clr-button>
-                <clr-button class="btn-primary btn-md" (click)="printSelected(2)" [clrInMenu]="true">พิมพ์แบบฟอร์ม e-GP</clr-button>
-                <!-- <clr-button class="btn-primary btn-md" (click)="printPuchasing10()" [clrInMenu]="true">พิมพ์ใบขออนุมัติซื้อ</clr-button> -->
-              </clr-button-group>
-
-              <button (click)="printOrder_number()" class="btn btn-md btn-primary" *ngIf="!purchaseOrdersSelected.length">
-                <clr-icon shape="printer"></clr-icon> พิมพ์ใบสั่งซื้อ (เงื่อนไข)
-              </button>
-
-            </div>
-
-          </div>
-        </div>
-      </div>
-
-      <clr-datagrid style="height:80%;" [(clrDgSelected)]="purchaseOrdersSelected" (clrDgRefresh)="refresh($event)">
-        <clr-dg-column class="datagrid-fixed-column" [style.width.px]="30">
-          #
-        </clr-dg-column>
-        <clr-dg-column [style.width.px]="150">
-          สถานะ
-        </clr-dg-column>
-        <clr-dg-column [style.width.px]="140" [clrDgField]="'purchase_order_number'">
-          เลขที่ใบสั่งซื้อ
-        </clr-dg-column>
-
-        <clr-dg-column [style.width.px]="110">
-          มูลค่า
-        </clr-dg-column>
-
-        <clr-dg-column [clrDgField]="'order_date'" [style.width.px]="150">
-          วันที่
-        </clr-dg-column>
-
-        <clr-dg-column [clrDgField]="'labeler_name'">
-          ผู้จำหน่าย
-        </clr-dg-column>
-        <clr-dg-column [clrDgField]="'bid_process_name'" [style.width.px]="130">
-          วิธีการจัดซื้อ
-        </clr-dg-column>
-        <clr-dg-column [clrDgField]="'bgtypesub_name'" [style.width.px]="130">
-          งบประมาณย่อย
-        </clr-dg-column>
-        <clr-dg-column [style.width.px]="130">
-          เลขที่สัญญา
-        </clr-dg-column>
-
-        <clr-dg-row *ngFor="let pro of purchaseOrders" [clrDgItem]="pro">
-          <clr-dg-cell class="datagrid-fixed-column">
-            <span role="tooltip" aria-haspopup="true" class="tooltip tooltip-sm tooltip-right">
-              <clr-icon *ngIf="pro.recieve_count > 0" shape="lock" class="{{getStatusLabel(pro,'color')}}"></clr-icon>
-              <clr-icon *ngIf="pro.recieve_count==0" shape="circle" class="{{getStatusLabel(pro,'color')}}"></clr-icon>
-              <span class="tooltip-content">{{getStatusLabel(pro)}}</span>
-            </span>
-          </clr-dg-cell>
-          <clr-dg-cell>
-            <del *ngIf="pro.is_cancel === 'Y'" class="{{getStatusLabel(pro,'color')}}">{{getStatusLabel(pro)}}</del>
-            <span *ngIf="pro.is_cancel !== 'Y'" class="{{getStatusLabel(pro,'color')}}">{{getStatusLabel(pro)}}</span>
-            <span *ngIf="pro.contract_id" role="tooltip" aria-haspopup="true" class="tooltip tooltip-md tooltip-right">
-              <clr-icon class="text-success" shape="certificate"></clr-icon>
-              <span class="tooltip-content">เลขที่สัญญา {{pro.contract_no}}</span>
-            </span>
-            <span *ngIf="pro.is_cancel==='Y'" class="badge badge-warning">ยกเลิก</span>
-          </clr-dg-cell>
-          <clr-dg-cell>
-            <del *ngIf="pro.is_cancel==='Y'&&!pro.purchase_order_book_number">{{pro.purchase_order_number}}</del>
-            <span *ngIf="pro.is_cancel !=='Y'&&!pro.purchase_order_book_number">{{pro.purchase_order_number}}</span>
-            <del *ngIf="pro.is_cancel==='Y'&&pro.purchase_order_book_number">{{pro.purchase_order_book_number}}</del>
-            <span *ngIf="pro.is_cancel !=='Y'&&pro.purchase_order_book_number">{{pro.purchase_order_book_number}}</span>
-          </clr-dg-cell>
-          <clr-dg-cell class="text-right text-success">
-            <del *ngIf="pro.is_cancel==='Y'"> {{pro.puchase_money_total | number: '1.2'}}</del>
-            <span *ngIf="pro.is_cancel !=='Y' "> {{pro.puchase_money_total | number: '1.2'}}</span>
-          </clr-dg-cell>
-          <clr-dg-cell class="text-right">{{pro.order_date | toThaiDate}} </clr-dg-cell>
-          <clr-dg-cell>{{pro.labeler_name}}</clr-dg-cell>
-          <clr-dg-cell>{{pro.bid_process_name}}</clr-dg-cell>
-          <clr-dg-cell>{{pro.bgtypesub_name}}</clr-dg-cell>
-          <clr-dg-cell>{{pro.contract_no}}</clr-dg-cell>
-
-          <clr-dg-action-overflow>
-            <button class="action-item" [disabled]="pro.recieve_count > 0 || pro.is_cancel ==='Y'" (click)="goEdit(pro.purchase_order_id)">
-              <clr-icon shape="note-edit"></clr-icon> แก้ไข</button>
-
-            <!-- <button *ngIf="btnConfirmIsActive(pro)" class="action-item" (click)="confirm(pro)">
-              <clr-icon shape="tasks"></clr-icon> ยืนยันการสั่งซื้อ</button>
-            <button *ngIf="btnApproveIsActive(pro)" class="action-item" (click)="approve(pro)">
-              <clr-icon shape="tasks"></clr-icon> อนุมัติการสั่งซื้อ</button> -->
-
-            <button class="action-item" (click)="printPuchasing10(pro)" [disabled]="pro.purchase_order_status === 'ORDERPOINT' || pro.is_cancel == 'Y'">
-              <clr-icon shape="printer"></clr-icon> พิมพ์ใบขออนุมัติซื้อ
-            </button>
-            <!-- <button class="action-item" (click)="printPurchaseOrder(pro)" [disabled]="pro.purchase_order_status === 'ORDERPOINT' || pro.is_cancel == 'Y'">
-              <clr-icon shape="printer"></clr-icon> พิมพ์ใบสั่งซื้อ
-            </button> -->
-            <button class="action-item" (click)="printpPurchasing(pro)" [disabled]="pro.purchase_order_status === 'ORDERPOINT' || pro.is_cancel == 'Y'">
-              <clr-icon shape="printer"></clr-icon> พิมพ์ใบสรุปรายการเวชภัณฑ์ที่สั่งซื้อ
-            </button>
-            <button class="action-item" (click)="printPurchaseOrderAttach(pro)" [disabled]="pro.purchase_order_status === 'ORDERPOINT' || pro.is_cancel == 'Y'">
-              <clr-icon shape="printer"></clr-icon> พิมพ์ใบองค์การเภสัชกรรม
-            </button>
-            <button class="action-item" (click)="printPurchaseOrderEgp(pro)" [disabled]="pro.purchase_order_status === 'ORDERPOINT' || pro.is_cancel == 'Y'">
-              <clr-icon shape="printer"></clr-icon> พิมพ์แบบฟอร์ม e-GP
-            </button>
-            <!-- <a *ngIf="menuIsActive('print-receive')" class="action-item" target="_blank" href="{{url}}/report/purchasingorder/pdf/{{pro.purchase_order_id}}">
-                <clr-icon shape="printer"></clr-icon> พิมพ์ใบตรวจรับ
-            </a> -->
-            <!-- <button *ngIf="menuIsActive('copy')" class="action-item"><clr-icon shape="copy" ></clr-icon> คัดลอกรายการ</button>
-            <button *ngIf="menuIsActive('cancel')" (click)="cancle(pro)" class="action-item"><clr-icon shape="cancel" ></clr-icon> ยกเลิก</button> -->
-            <button *ngIf="pro.recieve_count > 0" (click)="getReceiveInfo(pro)" class="action-item">
-              <clr-icon shape="search"></clr-icon> ดูรายละเอียดการรับ
-            </button>
-            <button [disabled]="pro.purchase_order_status === 'COMPLETED' || pro.is_cancel === 'Y' || pro.recieve_count > 0" (click)="cancle(pro)"
-              class="action-item">
-              <clr-icon shape="cancel"></clr-icon> ยกเลิก
-            </button>
-            <!-- <button *ngIf="pro.purchase_order_status==='APPROVED' || pro.is_cancel === 'Y'" (click)="changeToPrepare(pro)" class="action-item">
-        <clr-icon shape="cancel"></clr-icon> เปลี่ยนสถานะเป็น เตรียมใบสั่งซื้อ
-      </button> -->
-          </clr-dg-action-overflow>
-
-          <app-expand-purchase-order *clrIfExpanded [purchaseOrderId]="pro.purchase_order_id" ngProjectAs="clr-dg-row-detail"></app-expand-purchase-order>
-
-        </clr-dg-row>
-
-        <clr-dg-footer>
-          {{paginationPo.firstItem + 1}} - {{paginationPo.lastItem + 1}} จาก {{paginationPo.totalItems}} รายการ
-          <clr-dg-pagination [(clrDgPage)]="currentPage" #paginationPo [clrDgPageSize]="perPage" [clrDgTotalItems]="total"></clr-dg-pagination>
-        </clr-dg-footer>
-      </clr-datagrid>
-      <p>
-        สถานะ:
-        <clr-icon shape="license"></clr-icon> มีสัญญา
-      </p>
-    </clr-tab-content>
+    <clr-tab-content id="content1" *clrIfActive> </clr-tab-content>
   </clr-tab>
-  <!-- <clr-tab>
-    <button clrTabLink id="link2">
-      <clr-icon shape="history"></clr-icon>
-      ประวัติการสั่งซื้อ
+  <clr-tab>
+    <button clrTabLink id="link2" (click)="changeEDI(true)">
+      <clr-icon shape="file"></clr-icon>
+      รายการสั่งซื้อออนไลน์ (EDI)
     </button>
-    <clr-tab-content id="content2">
-      <div class="rows" style="margin:1em 0em 1em 0em">
-        <div class="card">
-          <div class="card-block">
-            <div class="col-md-4"> -->
-  <!-- <div class="form-group">
-                <span style="display:inline-block">Trading Code</span>
-                <input placeholder="" class="form-control" (keyup)="fileChangeEvent($event)" type="text" id="start_id" [(ngModel)]="file"
-                  name="file" size="16" style="display:inline-block">
-              </div> -->
-  <!-- </div>
-          </div>
-        </div>
-      </div>
-      <clr-datagrid>
-        <clr-dg-column [style.width.px]="150">
-          Generic Code
-        </clr-dg-column>
-        <clr-dg-column>
-          ชื่อสามัญ
-        </clr-dg-column>
-        <clr-dg-column>
-
-        </clr-dg-column>
-        <clr-dg-row *clrDgItems="let pro of genericOrders" [clrDgItem]="pro">
-          <clr-dg-cell>{{pro.generic_code}}</clr-dg-cell>
-          <clr-dg-cell>{{pro.generic_name}}</clr-dg-cell>
-          <clr-dg-cell>
-            <div style="float:right"> -->
-  <!-- <clr-button-group class="btn-sm" [clrMenuPosition]="'bottom-right '">
-                <clr-button class="btn" (click)="printHistory(pro)">
-                  <clr-icon shape="search"></clr-icon> ดูรายละเอียด </clr-button>
-              </clr-button-group> -->
-  <!-- </div>
-          </clr-dg-cell>
-          <app-product-history *clrIfExpanded ngProjectAs="clr-dg-row-detail" [genericId]="pro.generic_id">
-
-          </app-product-history>
-        </clr-dg-row>
-        <clr-dg-footer>
-          {{pagination.firstItem + 1}} - {{pagination.lastItem + 1}} จาก {{pagination.totalItems}} รายการ
-          <clr-dg-pagination #pagination [clrDgPageSize]="30"></clr-dg-pagination>
-        </clr-dg-footer>
-      </clr-datagrid>
-    </clr-tab-content> -->
-  <!-- </clr-tab> -->
+    <clr-tab-content id="content2" *clrIfActive> </clr-tab-content>
+  </clr-tab>
 </clr-tabs>
+<div class="card">
+  <div class="card-block">
+    <div class="row">
+      <div class="col-lg-12">
+        <input placeholder="ค้น เลขที่ใบสั่งซื้อ,Generic Name,Generic Code.." (keydown)="handleKeyDown($event)" class="form-control"
+          type="text" id="query" [(ngModel)]="query" name="query" size="35">
+        <label>สถานะ</label>
+        <div class="select" style="width:100px;display:inline-block">
+          <select name="contract" [(ngModel)]="statusFilter">
+            <option value="ALL"> ทั้งหมด </option>
+            <option value="ORDERPOINT"> ก่อนเตรียม </option>
+            <option value="PREPARED"> เตรียม </option>
+            <option value="CONFIRMED"> ยืนยัน </option>
+            <option value="APPROVED"> อนุมัติ </option>
+            <option value="SUCCESS"> รับเข้าคลัง </option>
+          </select>
+        </div>
+        <label>สัญญา</label>
+        <div class="select" style="width:100px;display:inline-block">
+          <select name="contract" [(ngModel)]="contractFilter">
+            <option value="ALL"> ทั้งหมด </option>
+            <option value="T"> มีสัญญา </option>
+            <option value="F"> ไม่มีสัญญา </option>
+          </select>
+        </div>
+        <label for="start_date">วันที่</label>
+        <div style="width:170px; display:inline-block;vertical-align: middle;">
+          <my-date-picker-th name="start_date" [(ngModel)]="start_date" [options]="myDatePickerOptions"></my-date-picker-th>
+        </div>
+        <span>&nbsp;</span>
+        <div style="width:170px; display:inline-block;vertical-align: middle;">
+          <my-date-picker-th name="end_date" [(ngModel)]="end_date" [options]="myDatePickerOptions"></my-date-picker-th>
+        </div>
+        <button type="button" (click)="search()" class="btn btn-primary btn-md">
+          <clr-icon shape="search"></clr-icon> ค้นหา
+        </button>
+
+        <clr-button-group class="btn-primary btn-md" [clrMenuPosition]="'bottom-right'" *ngIf="purchaseOrdersSelected.length">
+          <clr-button class="btn-primary btn-md" (click)="confirmAll('CONFIRMED')">ยืนยัน
+            ({{this.purchaseOrdersSelected.length}})</clr-button>
+          <clr-button class="btn-primary btn-md" (click)="allApprove()">อนุมัติ
+            ({{this.purchaseOrdersSelected.length}})</clr-button>
+          <clr-button class="btn-primary btn-md" (click)="changePurchaseDate()">
+            <clr-icon shape="note"></clr-icon> แก้ไขวันออกใบสั่งซื้อ ({{this.purchaseOrdersSelected.length}})
+          </clr-button>
+          <clr-button class="btn-primary btn-md" (click)="printSelected(1)" [clrInMenu]="true">พิมพ์ใบสั่งซื้อ</clr-button>
+          <clr-button class="btn-primary btn-md" (click)="printSelected(2)" [clrInMenu]="true">พิมพ์แบบฟอร์ม e-GP</clr-button>
+          <!-- <clr-button class="btn-primary btn-md" (click)="printPuchasing10()" [clrInMenu]="true">พิมพ์ใบขออนุมัติซื้อ</clr-button> -->
+        </clr-button-group>
+
+        <button (click)="printOrder_number()" class="btn btn-md btn-primary" *ngIf="!purchaseOrdersSelected.length">
+          <clr-icon shape="printer"></clr-icon> พิมพ์ใบสั่งซื้อ (เงื่อนไข)
+        </button>
+
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<clr-datagrid style="height:80%;" [(clrDgSelected)]="purchaseOrdersSelected" (clrDgRefresh)="refresh($event)">
+  <clr-dg-column class="datagrid-fixed-column" [style.width.px]="30">
+    #
+  </clr-dg-column>
+  <clr-dg-column [style.width.px]="150">
+    สถานะ
+  </clr-dg-column>
+  <clr-dg-column [style.width.px]="140" [clrDgField]="'purchase_order_number'">
+    เลขที่ใบสั่งซื้อ
+  </clr-dg-column>
+
+  <clr-dg-column [style.width.px]="110">
+    มูลค่า
+  </clr-dg-column>
+
+  <clr-dg-column [clrDgField]="'order_date'" [style.width.px]="150">
+    วันที่
+  </clr-dg-column>
+
+  <clr-dg-column [clrDgField]="'labeler_name'">
+    ผู้จำหน่าย
+  </clr-dg-column>
+  <clr-dg-column [clrDgField]="'bid_process_name'" [style.width.px]="130">
+    วิธีการจัดซื้อ
+  </clr-dg-column>
+  <clr-dg-column [clrDgField]="'bgtypesub_name'" [style.width.px]="130">
+    งบประมาณย่อย
+  </clr-dg-column>
+  <clr-dg-column [style.width.px]="130">
+    เลขที่สัญญา
+  </clr-dg-column>
+
+  <clr-dg-row *ngFor="let pro of purchaseOrders" [clrDgItem]="pro">
+    <clr-dg-cell class="datagrid-fixed-column">
+      <span role="tooltip" aria-haspopup="true" class="tooltip tooltip-sm tooltip-right">
+        <clr-icon *ngIf="pro.recieve_count > 0" shape="lock" class="{{getStatusLabel(pro,'color')}}"></clr-icon>
+        <clr-icon *ngIf="pro.recieve_count==0" shape="circle" class="{{getStatusLabel(pro,'color')}}"></clr-icon>
+        <span class="tooltip-content">{{getStatusLabel(pro)}}</span>
+      </span>
+    </clr-dg-cell>
+    <clr-dg-cell>
+      <del *ngIf="pro.is_cancel === 'Y'" class="{{getStatusLabel(pro,'color')}}">{{getStatusLabel(pro)}}</del>
+      <span *ngIf="pro.is_cancel !== 'Y'" class="{{getStatusLabel(pro,'color')}}">{{getStatusLabel(pro)}}</span>
+      <span *ngIf="pro.contract_id" role="tooltip" aria-haspopup="true" class="tooltip tooltip-md tooltip-right">
+        <clr-icon class="text-success" shape="certificate"></clr-icon>
+        <span class="tooltip-content">เลขที่สัญญา {{pro.contract_no}}</span>
+      </span>
+      <span *ngIf="pro.is_cancel==='Y'" class="badge badge-warning">ยกเลิก</span>
+    </clr-dg-cell>
+    <clr-dg-cell>
+      <del *ngIf="pro.is_cancel==='Y'&&!pro.purchase_order_book_number">{{pro.purchase_order_number}}</del>
+      <span *ngIf="pro.is_cancel !=='Y'&&!pro.purchase_order_book_number">{{pro.purchase_order_number}}</span>
+      <del *ngIf="pro.is_cancel==='Y'&&pro.purchase_order_book_number">{{pro.purchase_order_book_number}}</del>
+      <span *ngIf="pro.is_cancel !=='Y'&&pro.purchase_order_book_number">{{pro.purchase_order_book_number}}</span>
+    </clr-dg-cell>
+    <clr-dg-cell class="text-right text-success">
+      <del *ngIf="pro.is_cancel==='Y'"> {{pro.puchase_money_total | number: '1.2'}}</del>
+      <span *ngIf="pro.is_cancel !=='Y' "> {{pro.puchase_money_total | number: '1.2'}}</span>
+    </clr-dg-cell>
+    <clr-dg-cell class="text-right">{{pro.order_date | toThaiDate}} </clr-dg-cell>
+    <clr-dg-cell>{{pro.labeler_name}}</clr-dg-cell>
+    <clr-dg-cell>{{pro.bid_process_name}}</clr-dg-cell>
+    <clr-dg-cell>{{pro.bgtypesub_name}}</clr-dg-cell>
+    <clr-dg-cell>{{pro.contract_no}}</clr-dg-cell>
+
+    <clr-dg-action-overflow>
+      <button class="action-item" [disabled]="pro.recieve_count > 0 || pro.is_cancel ==='Y'" (click)="goEdit(pro.purchase_order_id)">
+        <clr-icon shape="note-edit"></clr-icon> แก้ไข
+      </button>
+
+      <!-- <button *ngIf="btnConfirmIsActive(pro)" class="action-item" (click)="confirm(pro)">
+        <clr-icon shape="tasks"></clr-icon> ยืนยันการสั่งซื้อ</button>
+      <button *ngIf="btnApproveIsActive(pro)" class="action-item" (click)="approve(pro)">
+        <clr-icon shape="tasks"></clr-icon> อนุมัติการสั่งซื้อ</button> -->
+
+      <button class="action-item" (click)="printPuchasing10(pro)" [disabled]="pro.purchase_order_status === 'ORDERPOINT' || pro.is_cancel == 'Y'">
+        <clr-icon shape="printer"></clr-icon> พิมพ์ใบขออนุมัติซื้อ
+      </button>
+      <!-- <button class="action-item" (click)="printPurchaseOrder(pro)" [disabled]="pro.purchase_order_status === 'ORDERPOINT' || pro.is_cancel == 'Y'">
+        <clr-icon shape="printer"></clr-icon> พิมพ์ใบสั่งซื้อ
+      </button> -->
+      <button class="action-item" (click)="printpPurchasing(pro)" [disabled]="pro.purchase_order_status === 'ORDERPOINT' || pro.is_cancel == 'Y'">
+        <clr-icon shape="printer"></clr-icon> พิมพ์ใบสรุปรายการเวชภัณฑ์ที่สั่งซื้อ
+      </button>
+      <button class="action-item" (click)="printPurchaseOrderAttach(pro)" [disabled]="pro.purchase_order_status === 'ORDERPOINT' || pro.is_cancel == 'Y'">
+        <clr-icon shape="printer"></clr-icon> พิมพ์ใบองค์การเภสัชกรรม
+      </button>
+      <button class="action-item" (click)="printPurchaseOrderEgp(pro)" [disabled]="pro.purchase_order_status === 'ORDERPOINT' || pro.is_cancel == 'Y'">
+        <clr-icon shape="printer"></clr-icon> พิมพ์แบบฟอร์ม e-GP
+      </button>
+      <!-- <a *ngIf="menuIsActive('print-receive')" class="action-item" target="_blank" href="{{url}}/report/purchasingorder/pdf/{{pro.purchase_order_id}}">
+          <clr-icon shape="printer"></clr-icon> พิมพ์ใบตรวจรับ
+      </a> -->
+      <!-- <button *ngIf="menuIsActive('copy')" class="action-item"><clr-icon shape="copy" ></clr-icon> คัดลอกรายการ</button>
+      <button *ngIf="menuIsActive('cancel')" (click)="cancle(pro)" class="action-item"><clr-icon shape="cancel" ></clr-icon> ยกเลิก</button> -->
+      <button *ngIf="pro.recieve_count > 0" (click)="getReceiveInfo(pro)" class="action-item">
+        <clr-icon shape="search"></clr-icon> ดูรายละเอียดการรับ
+      </button>
+      <button [disabled]="pro.purchase_order_status === 'COMPLETED' || pro.is_cancel === 'Y' || pro.recieve_count > 0"
+        (click)="cancle(pro)" class="action-item">
+        <clr-icon shape="cancel"></clr-icon> ยกเลิก
+      </button>
+      <!-- <button *ngIf="pro.purchase_order_status==='APPROVED' || pro.is_cancel === 'Y'" (click)="changeToPrepare(pro)" class="action-item">
+  <clr-icon shape="cancel"></clr-icon> เปลี่ยนสถานะเป็น เตรียมใบสั่งซื้อ
+</button> -->
+    </clr-dg-action-overflow>
+
+    <app-expand-purchase-order *clrIfExpanded [purchaseOrderId]="pro.purchase_order_id" ngProjectAs="clr-dg-row-detail"></app-expand-purchase-order>
+
+  </clr-dg-row>
+
+  <clr-dg-footer>
+    {{paginationPo.firstItem + 1}} - {{paginationPo.lastItem + 1}} จาก {{paginationPo.totalItems}} รายการ
+    <clr-dg-pagination [(clrDgPage)]="currentPage" #paginationPo [clrDgPageSize]="perPage" [clrDgTotalItems]="total"></clr-dg-pagination>
+  </clr-dg-footer>
+</clr-datagrid>
+<p>
+  สถานะ:
+  <clr-icon shape="license"></clr-icon> มีสัญญา
+</p>
 
 <clr-modal [(clrModalOpen)]="openModal" [clrModalClosable]="false" [clrModalSize]="'lg'">
   <h3 class="modal-title">เลือกเลขที่ใบสั่งซื้อ</h3>
@@ -267,17 +225,19 @@
           <select name="yearPO" id="yearPO" [(ngModel)]="yearPO">
             <option *ngFor="let w of dataYear" [value]="w.year">{{(w.yearText)}}</option>
           </select>
-          <input placeholder="เลขที่ตั้งต้น" (keydown)="handleKeyDown($event)" class="form-control" type="text" id="start_id" [(ngModel)]="start_id"
-            name="start_id" size="8"> &nbsp;&nbsp;&nbsp;
-          <input placeholder="เลขที่สุดท้าย" (keydown)="handleKeyDown($event)" class="form-control" type="text" id="end_id" [(ngModel)]="end_id"
-            name="end_id" size="8"> &nbsp;&nbsp;&nbsp;
+          <input placeholder="เลขที่ตั้งต้น" (keydown)="handleKeyDown($event)" class="form-control" type="text" id="start_id"
+            [(ngModel)]="start_id" name="start_id" size="8"> &nbsp;&nbsp;&nbsp;
+          <input placeholder="เลขที่สุดท้าย" (keydown)="handleKeyDown($event)" class="form-control" type="text" id="end_id"
+            [(ngModel)]="end_id" name="end_id" size="8"> &nbsp;&nbsp;&nbsp;
           <clr-button-group class="btn-sm" [clrMenuPosition]="'bottom-right '" style="display:inline-block;float:right;">
             <clr-button class="btn" (click)="printPo()">
-              <clr-icon shape="printer"></clr-icon> พิมพ์ใบสั่งซื้อ</clr-button>
+              <clr-icon shape="printer"></clr-icon> พิมพ์ใบสั่งซื้อ
+            </clr-button>
           </clr-button-group>
           <clr-button-group class="btn-sm" [clrMenuPosition]="'bottom-right '" style="display:inline-block;float:right;">
             <clr-button class="btn" (click)="printEgp()">
-              <clr-icon shape="printer"></clr-icon> พิมพ์แบบฟอร์ม e-GP </clr-button>
+              <clr-icon shape="printer"></clr-icon> พิมพ์แบบฟอร์ม e-GP
+            </clr-button>
           </clr-button-group>
         </div>
       </div>
@@ -295,11 +255,13 @@
           </div>
           <clr-button-group class="btn-sm" [clrMenuPosition]="'bottom-right '" style="display:inline-block;float:right;vertical-align: middle;">
             <clr-button class="btn" (click)="printDatePO()">
-              <clr-icon shape="printer"></clr-icon> พิมพ์ใบสั่งซื้อ </clr-button>
+              <clr-icon shape="printer"></clr-icon> พิมพ์ใบสั่งซื้อ
+            </clr-button>
           </clr-button-group>
           <clr-button-group class="btn-sm" [clrMenuPosition]="'bottom-right '" style="display:inline-block;float:right;vertical-align: middle;">
             <clr-button class="btn" (click)="printDateEGP()">
-              <clr-icon shape="printer"></clr-icon> พิมพ์แบบฟอร์ม e-GP </clr-button>
+              <clr-icon shape="printer"></clr-icon> พิมพ์แบบฟอร์ม e-GP
+            </clr-button>
           </clr-button-group>
         </div>
       </div>

@@ -99,7 +99,7 @@ export class DatagridOrdersComponent implements OnInit {
   token: any;
   offset: any = 0;
   currentPage: any = 1;
-
+  isEDI = false;
   constructor(
     private model: PurchasingOrderService,
     private ref: ChangeDetectorRef,
@@ -239,7 +239,9 @@ export class DatagridOrdersComponent implements OnInit {
         end_date,
         this.perPage,
         this.offset,
-        this.sort
+        this.sort,
+        this.isEDI
+
       );
 
       this.modalLoading.hide();
@@ -295,11 +297,11 @@ export class DatagridOrdersComponent implements OnInit {
     this.page = 1
     const checked = await this.accessCheck.can('PO_APPROVE')
     if (checked) {
-      this.confirmApprove = true
-      this.approveConfirm(order)
+      this.confirmApprove = true;
+      this.approveConfirm(order);
     } else {
-      this.openModalConfirm = true
-      this.tmpOderApprove = order
+      this.openModalConfirm = true;
+      this.tmpOderApprove = order;
     }
   }
 
@@ -942,7 +944,8 @@ export class DatagridOrdersComponent implements OnInit {
         end_date,
         limit,
         this.offset,
-        this.sort);
+        this.sort,
+        this.isEDI);
 
       this.modalLoading.hide();
       this.purchaseOrders = rs.rows;
@@ -959,5 +962,11 @@ export class DatagridOrdersComponent implements OnInit {
     this.endPO += this.end_id;
     this.start_id = this.start_id.substring(0, 2)
     console.log(this.startPO, ',', this.endPO, this.start_id);
+  }
+
+  changeEDI(edi) {
+    console.log(edi);
+    this.isEDI = edi;
+    this.getPurchaseOrders();
   }
 }

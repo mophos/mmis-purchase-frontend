@@ -100,7 +100,7 @@ export class PurchasingOrderService {
   }
 
   byStatus(status: Array<any>, contract = 'ALL', query: string = '', start_date: string = '',
-    end_date: string = '', limit: number = 20, offset: number = 0, sort: any = {}) {
+    end_date: string = '', limit: number = 20, offset: number = 0, sort: any = {}, edi) {
     return new Promise((resolve, reject) => {
       this.authHttp.post(`${this.url}/${this.apiName}/by-status`, {
         status: status,
@@ -110,7 +110,8 @@ export class PurchasingOrderService {
         end_date: end_date,
         limit: limit,
         offset: offset,
-        sort: sort
+        sort: sort,
+        edi: edi
       })
         .map(res => res.json())
         .subscribe(data => {
