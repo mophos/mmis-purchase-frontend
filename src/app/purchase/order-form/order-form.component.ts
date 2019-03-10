@@ -263,6 +263,10 @@ export class OrderFormComponent implements OnInit {
   }
 
   async ngOnInit() {
+    this.budgetTypeId = +sessionStorage.getItem('budgetTypeId');
+    this.buyerId = +sessionStorage.getItem('buyerId');
+    this.supplyId = +sessionStorage.getItem('supplyId');
+    this.chiefId = +sessionStorage.getItem('chiefId');
     await this.getProductType();
     await this.getHoliday();
 
@@ -784,6 +788,10 @@ export class OrderFormComponent implements OnInit {
   }
 
   async _save() {
+    sessionStorage.setItem('budgetTypeId', this.budgetTypeId.toString());
+    sessionStorage.setItem('buyerId', this.buyerId.toString());
+    sessionStorage.setItem('supplyId', this.supplyId.toString());
+    sessionStorage.setItem('chiefId', this.chiefId.toString());
     const bookNumber = await this.purchasingOrderService.getPoBookNumber();
     const idx = _.findIndex(bookNumber.rows, { purchase_order_book_number: this.purchaseOrderBookNumber });
     if (((!this.dupBookNumber && idx === -1) || this.dupBookNumber) || this.isUpdate) {
