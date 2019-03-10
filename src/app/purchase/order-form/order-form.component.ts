@@ -263,6 +263,7 @@ export class OrderFormComponent implements OnInit {
   }
 
   async ngOnInit() {
+    this.budgetDetailId = +sessionStorage.getItem('budgetDetailId');
     this.budgetTypeId = +sessionStorage.getItem('budgetTypeId');
     this.buyerId = +sessionStorage.getItem('buyerId');
     this.supplyId = +sessionStorage.getItem('supplyId');
@@ -788,6 +789,7 @@ export class OrderFormComponent implements OnInit {
   }
 
   async _save() {
+    sessionStorage.setItem('budgetDetailId', this.budgetDetailId.toString());
     sessionStorage.setItem('budgetTypeId', this.budgetTypeId.toString());
     sessionStorage.setItem('buyerId', this.buyerId.toString());
     sessionStorage.setItem('supplyId', this.supplyId.toString());
