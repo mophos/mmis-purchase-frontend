@@ -327,7 +327,6 @@ export class OrderFormComponent implements OnInit {
 
   _doAddProduct() {
     const product: any = {};
-    // console.log(this.selectedCost);
     product.cost = +this.selectedCost;
     product.product_id = this.selectedProduct.product_id;
     product.generic_id = this.selectedProduct.generic_id;
@@ -346,7 +345,6 @@ export class OrderFormComponent implements OnInit {
 
     if (this.checkDuplicatedItem(product)) {
       const items = _.filter(this.purchaseOrderItems, { product_id: product.product_id });
-      // console.log(items.length);
       if (items.length > 1) {
         this.alertService.error('ไม่สามารถเพิ่มรายการเดียวกันได้เกิน 2 รายการ');
       } else {
@@ -363,8 +361,6 @@ export class OrderFormComponent implements OnInit {
     } else {
       this.purchaseOrderItems.push(product);
     }
-
-    console.log(this.purchaseOrderItems)
     // clear selected product item
     this.clearSelectedProduct();
     this.calAmount();
@@ -488,7 +484,6 @@ export class OrderFormComponent implements OnInit {
     this.budgetYear = year.toString();
     this.currentBudgetYear = year;
     await this.subBudgetList.setYears(this.budgetYear);
-    console.log(this.budgetYear);
 
     if (selectDate !== 'Invalid date') {
       // this.checkIsHoliday(selectDate);
@@ -512,7 +507,6 @@ export class OrderFormComponent implements OnInit {
   }
 
   onBudgetCalculated(event: any) {
-    // console.log(event);
     this.budgetData = event;
     this._canSave = true;
   }
@@ -711,15 +705,12 @@ export class OrderFormComponent implements OnInit {
     // } else {
 
     //   if (!data.budgettype_id) {
-    //     console.log('test');
-    //     console.log(this.budgetYear);
 
     //     await this.subBudgetList.setYears(this.budgetYear);
 
     //     // await this.subBudgetList.setBudgetType(this.budgetTypeId);
     //     // await this.subBudgetList.getItems();
     //   } else {
-    //     console.log('test2', data.budgettype_id);
     //     this.budgetTypeId = data.budgettype_id;
     //     await this.subBudgetList.setBudgetType(this.budgetDetailId);
     //   }
@@ -873,7 +864,6 @@ export class OrderFormComponent implements OnInit {
         is_delete: 'Y'
       }
       const committeeHeadIdRs: any = await this.committeeService.save(committeeHead);
-      // console.log(committeeHeadIdRs);
       if (committeeHeadIdRs.ok) {
         this.verifyCommitteeId = committeeHeadIdRs.rows[0];
 
@@ -944,7 +934,7 @@ export class OrderFormComponent implements OnInit {
       buyer_id: this.buyerId,
       supply_id: this.supplyId,
       budget_year: this.budgetYear,
-      edi: this.edi ? 'Y' : 'N'
+      is_edi: this.edi ? 'Y' : 'N'
       // is_reorder: this.isReorder === 'Y' ? 2 : this.isReorder
     };
 

@@ -24,7 +24,6 @@ export class MappingCommitteeComponent implements OnInit {
     const bid_id = e.target.value;
     this.commiteeService.removecommitteebid(bid_id)
       .then((results: any) => {
-        console.log(id, bid_id)
         this.commiteeService.updatecommitteebid(id, bid_id)
           .then((res: any) => {
             this.alertService.success();
@@ -44,7 +43,6 @@ export class MappingCommitteeComponent implements OnInit {
     this.commiteeService.allbid()
       .then((results: any) => {
         this.committees = results.rows;
-        console.log(this.committees);
         this.loading = false;
       })
       .catch(error => {
@@ -58,7 +56,6 @@ export class MappingCommitteeComponent implements OnInit {
     this.commiteeService.listbidtype()
       .then((results: any) => {
         this.listbidtypes = results.rows;
-        console.log(this.listbidtypes);
       })
       .catch(error => {
         console.log(error);

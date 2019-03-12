@@ -344,10 +344,8 @@ export class CommitteeFormComponent implements OnInit {
   }
   searchPeoples(event: any) {
     if (event.keyCode === 13) {
-      console.log(this.query);
       this.peopleService.search(this.query)
         .then((results: any) => {
-          console.log(results)
           this.peoplesSource = results.rows;
           this.peoplesSourceTemp = results.rows;
           this.ref.detectChanges();

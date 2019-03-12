@@ -82,6 +82,8 @@ import { PurchaseOrderListComponent } from './report/purchase-order-list/purchas
 import { OrderPointComponent } from './order-point/order-point.component';
 import { PurchaseBudgetHistoryComponent } from './report/purchase-budget-history/purchase-budget-history.component';
 import { OfficerTypeComponent } from './officer-type/officer-type.component';
+import { SettingEdiComponent } from './setting-edi/setting-edi.component';
+import { SettingEdiService } from './share/setting-edi.service';
 
 @NgModule({
   imports: [
@@ -137,7 +139,8 @@ import { OfficerTypeComponent } from './officer-type/officer-type.component';
     PurchaseOrderListComponent,
     OrderPointComponent,
     PurchaseBudgetHistoryComponent,
-    OfficerTypeComponent
+    OfficerTypeComponent,
+    SettingEdiComponent
   ],
   providers: [
     BudgetTransectionService,
@@ -173,7 +176,8 @@ import { OfficerTypeComponent } from './officer-type/officer-type.component';
     CompleterService,
     HolidayService,
     UnitsService,
-    ReceiveService
+    ReceiveService,
+    SettingEdiService
   ]
 })
 export class PurchaseModule { }

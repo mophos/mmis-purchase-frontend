@@ -81,8 +81,7 @@ export class BidprocessComponent implements OnInit {
       if (!this.isEdit) {
         await this.bidService.save(formInput)
       } else {
-        let rs = await this.bidService.update(this.bidId, formInput)
-        console.log(rs);
+        await this.bidService.update(this.bidId, formInput)
       }
       this.getBidprocess();
       this.isOpen = false;

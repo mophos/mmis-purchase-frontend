@@ -18,17 +18,16 @@ export class TransactionPoComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    if(this.purchaseOrderId){
+    if (this.purchaseOrderId) {
       this.getTransactionPo(this.purchaseOrderId);
     }
-   }
+  }
 
   getTransactionPo(pid: any) {
     this.loading = true;
     this.budgetTransectionService.getPoTransection(pid)
       .then((results: any) => {
         this.transactionPo = results.rows;
-        console.log(this.transactionPo);
         this.loading = false;
       })
       .catch(error => {

@@ -122,7 +122,6 @@ export class DatagridOrdersComponent implements OnInit {
     }
 
     this.currentPage = +sessionStorage.getItem('poOrderCurrentPage') ? +sessionStorage.getItem('poOrderCurrentPage') : 1;
-    console.log('=', this.currentPage)
 
   }
 
@@ -182,7 +181,6 @@ export class DatagridOrdersComponent implements OnInit {
         year: year - i
       })
     }
-    console.log(this.dataYear);
 
 
   }
@@ -306,12 +304,7 @@ export class DatagridOrdersComponent implements OnInit {
   }
 
   async checkApprove(username: any, password: any) {
-    console.log(username);
-
     const rs: any = await this.purchasingOrderService.checkApprove(username, password, this.action);
-    console.log(rs);
-
-
     if (rs.ok) {
       if (this.page === 1) {
         this.confirmApprove = true
@@ -341,6 +334,7 @@ export class DatagridOrdersComponent implements OnInit {
         this.modalLoading.show();
         try {
           const rs: any = await this.purchasingOrderService.updateStatus(purchases);
+          const rsEDI: any = await this.purchasingOrderService.sendEDI(purchases);
           this.purchaseOrdersSelected = [];
           this.modalLoading.hide();
           if (rs.ok) {
@@ -405,6 +399,10 @@ export class DatagridOrdersComponent implements OnInit {
         if (dataConfirm.length) {
           try {
             const rs: any = await this.purchasingOrderService.updateStatus(dataConfirm);
+            if (type === 'APPROVED') {
+              console.log(dataConfirm);
+              await this.purchasingOrderService.sendEDI(dataConfirm);
+            }
             this.purchaseOrdersSelected = [];
             if (rs.ok) {
               this.alertService.success();
@@ -434,12 +432,10 @@ export class DatagridOrdersComponent implements OnInit {
   canUpdateStatus(currentStatus: string, updateStatus: string) {
     if (currentStatus === 'PREPARED') {
       if (_.indexOf(['CONFIRMED', 'APPROVED'], updateStatus) > -1) {
-        // console.log(updateStatus)
         return true;
       }
     } else if (currentStatus === 'CONFIRMED') {
       if (_.indexOf(['APPROVED'], updateStatus) > -1) {
-        // console.log(updateStatus)
         return true;
       }
     }
@@ -679,7 +675,6 @@ export class DatagridOrdersComponent implements OnInit {
     const token = sessionStorage.getItem('token');
     const decodedToken = this.jwtHelper.decodeToken(token);
     const productGroup = decodedToken.generic_type_id.split(',');
-    // console.log(productGroup);
     const rs: any = await this.productService.type(productGroup);
     this.productType = rs.rows;
     this.generic_type_id = this.productType[0].generic_type_id;
@@ -823,13 +818,11 @@ export class DatagridOrdersComponent implements OnInit {
   async getOrders() {
     const rs: any = await this.purchasingOrderService.getGeneric();
     this.genericOrders = rs.rows;
-    // console.log(this.genericOrders);
   }
 
   printHistory(generic_name: any) {
     this.generic_name = generic_name;
     this.htmlPrview.showReport(this.url + `/report/getProductHistory/${generic_name.generic_code}?token=${this.token}`);
-    console.log(generic_name.generic_code);
   }
 
   async fileChangeEvent(e: any) {
@@ -840,7 +833,6 @@ export class DatagridOrdersComponent implements OnInit {
       const rs: any = await this.purchasingOrderService.getGeneric();
       this.genericOrders = rs.rows;
     }
-    // console.log(e.target.value);
   }
 
   // change puchase date
@@ -960,12 +952,10 @@ export class DatagridOrdersComponent implements OnInit {
   setString() {
     this.startPO += this.start_id;
     this.endPO += this.end_id;
-    this.start_id = this.start_id.substring(0, 2)
-    console.log(this.startPO, ',', this.endPO, this.start_id);
+    this.start_id = this.start_id.substring(0, 2);
   }
 
   changeEDI(edi) {
-    console.log(edi);
     this.isEDI = edi;
     this.getPurchaseOrders();
   }

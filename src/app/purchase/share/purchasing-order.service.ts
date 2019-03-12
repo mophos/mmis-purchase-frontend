@@ -351,4 +351,11 @@ export class PurchasingOrderService {
       .toPromise();
     return res.json();
   }
+  async sendEDI(purchasingOrderId: any) {
+    const res = await this.authHttp.post(`${this.url}/edi/create`, {
+      purchasingOrderId: purchasingOrderId
+    })
+      .toPromise();
+    return res.json();
+  }
 }

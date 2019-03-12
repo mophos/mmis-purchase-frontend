@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, ViewChild,Inject } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ViewChild, Inject } from '@angular/core';
 import { IMyOptions, IMyDateModel } from 'mydatepicker-th';
 import * as _ from 'lodash';
 import * as moment from 'moment';
@@ -21,7 +21,7 @@ export class PrintFormComponent implements OnInit {
     dateFormat: 'dd mmm yyyy',
   };
 
-  constructor() { 
+  constructor() {
     this.token = sessionStorage.getItem('token');
   }
 
@@ -42,8 +42,6 @@ export class PrintFormComponent implements OnInit {
         day: date.getDate()
       }
     };
-
-    // console.log(this.start_date,this.end_date);
 
   }
 
@@ -87,18 +85,15 @@ export class PrintFormComponent implements OnInit {
     //   }
     // };
 
-    // console.log(this.startDate, this.endDate);
     const that = this;
 
     const startDate = this.startDate ? moment(this.startDate.jsdate).format('YYYY-MM-DD') : null;
     const endDate = this.endDate ? moment(this.endDate.jsdate).format('YYYY-MM-DD') : null;
-    console.log(startDate, endDate);
     // setTimeout(() => {
     //   that.isPreview = false;
     // }, 5000);
 
     const url = `${this.apiUrl}/report/list/purchase/${startDate}/${endDate}?token=${this.token}`;
-    console.log(url);
-     this.htmlPreview.showReport(url);
+    this.htmlPreview.showReport(url);
   }
 }

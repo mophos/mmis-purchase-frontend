@@ -79,7 +79,6 @@ export class PurchaseOrderListComponent implements OnInit {
         year: year - i
       })
     }
-    console.log(this.dataYear);
   }
 
   async getGenericTypes() {
@@ -105,9 +104,6 @@ export class PurchaseOrderListComponent implements OnInit {
   async getPo(genericTypeId: any) {
     this.modalLoading.show();
     try {
-      console.log(this.startDate.date);
-      console.log(this.endDate.date);
-
       const startDate = `${this.startDate.date.year}-${this.startDate.date.month}-${this.startDate.date.day}`;
       const endDate = `${this.endDate.date.year}-${this.endDate.date.month}-${this.endDate.date.day}`;
       const rs: any = await this.purchasingOrderService.getOrderList(genericTypeId, startDate, endDate);
