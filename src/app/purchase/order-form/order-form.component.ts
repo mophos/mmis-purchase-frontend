@@ -1212,7 +1212,7 @@ export class OrderFormComponent implements OnInit {
       }
       this.labelerId = event.labeler_id;
       this.oldLabelerId = event.labeler_id;
-      this.edi = (event.edi == 'Y');
+      this.edi = (event.is_edi === 'Y');
 
       this.searchProductLabeler.setApiUrl(this.labelerId);
     }
