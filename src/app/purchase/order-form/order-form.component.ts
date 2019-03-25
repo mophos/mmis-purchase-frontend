@@ -264,6 +264,11 @@ export class OrderFormComponent implements OnInit {
   }
 
   async ngOnInit() {
+    this.budgetDetailId = +localStorage.getItem('budgetDetailId');
+    this.budgetTypeId = +localStorage.getItem('budgetTypeId');
+    this.buyerId = +localStorage.getItem('buyerId');
+    this.supplyId = +localStorage.getItem('supplyId');
+    this.chiefId = +localStorage.getItem('chiefId');
     await this.getProductType();
     await this.getHoliday();
 
@@ -776,6 +781,12 @@ export class OrderFormComponent implements OnInit {
   }
 
   async _save() {
+
+    localStorage.setItem('budgetDetailId', this.budgetDetailId.toString());
+    localStorage.setItem('budgetTypeId', this.budgetTypeId.toString());
+    localStorage.setItem('buyerId', this.buyerId.toString());
+    localStorage.setItem('supplyId', this.supplyId.toString());
+    localStorage.setItem('chiefId', this.chiefId.toString());
     const bookNumber = await this.purchasingOrderService.getPoBookNumber();
     const idx = _.findIndex(bookNumber.rows, { purchase_order_book_number: this.purchaseOrderBookNumber });
     if (((!this.dupBookNumber && idx === -1) || this.dupBookNumber) || this.isUpdate) {
