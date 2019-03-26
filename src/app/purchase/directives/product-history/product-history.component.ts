@@ -22,7 +22,7 @@ export class ProductHistoryComponent implements OnInit {
   async getOrders() {
     const rs: any = await this.purchasingOrderService.getProductHistory(this.genericId);
     this.productOrders = rs.rows;
-    console.log(this.productOrders);
+    // console.log(this.productOrders);
   }
 
 }

@@ -59,7 +59,7 @@ export class SelectOfficerComponent implements OnInit {
           })
         }
       });
-      console.log(this.officers)
+      // console.log(this.officers)
       if(this.officers.length>0 && this.isUpdate===false || this.isReorder === 1){
         this.officer_id = this.officers[0].people_id;
         const row = _.find(this.officers, { 'people_id': +this.officer_id });

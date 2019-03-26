@@ -11,8 +11,8 @@
 }
 
 .isError {
-    background-color: #F8B7B6;
-  }
+    background-color: rgb(247, 222, 222);
+}
 
 .card {
     margin-top: 10px;

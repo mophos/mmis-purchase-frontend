@@ -144,7 +144,6 @@
           รวม (Base Unit)
         </ng-container>
       </clr-dg-column>
-
       <clr-dg-column class="header-right" [style.width.px]="120">
         <ng-container *clrDgHideableColumn="{hidden: false}">
           ราคาต่อขนาดบรรจุ
@@ -226,13 +225,19 @@
         </clr-dg-cell>
         <clr-dg-cell>
           <div class="btn-group">
-            <button [disabled]="!selectedProduct.product_id || !selectedQty || !selectedCost || !selectedUnit.unit_generic_id"
-              class="btn btn-sm btn-success wm-small-btn" (click)="addProductSelected()">
-              <clr-icon shape="plus"></clr-icon>
-            </button>
-            <button [disabled]="!selectedProduct.product_id" class="btn btn-sm btn-danger wm-small-btn" (click)="removeSelected()">
-              <clr-icon shape="trash"></clr-icon>
-            </button>
+            <span role="tooltip" aria-haspopup="true" class="tooltip tooltip-md tooltip-left">
+              <button [disabled]="!selectedProduct.product_id || !selectedQty || !selectedCost || !selectedUnit.unit_generic_id"
+                class="btn btn-sm btn-success wm-small-btn" (click)="addProductSelected()">
+                <clr-icon shape="plus"></clr-icon>
+              </button>
+              <span *ngIf="selectedProduct.product_id && selectedCost > selectedProduct.standard_pack_cost" class="tooltip-content">ราคาสั่งซื้อเกินราคากลาง
+                !</span>
+            </span>
+            <span>
+              <button [disabled]="!selectedProduct.product_id" class="btn btn-sm btn-danger wm-small-btn" (click)="removeSelected()">
+                <clr-icon shape="trash"></clr-icon>
+              </button>
+            </span>
           </div>
         </clr-dg-cell>
       </clr-dg-row>
@@ -293,7 +298,7 @@
                   <label class="required" for="staff_receive_fullname"> เจ้าหน้าที่พัสดุ<span class="text-danger">*</span></label>
                   <div class="row">
                     <div class="col-md-11">
-                      <po-select-officer  officerTypeCode="STAFF_RECEIVE" [selectedId]="supplyId" (onChange)="changeOffices($event)"
+                      <po-select-officer officerTypeCode="STAFF_RECEIVE" [selectedId]="supplyId" (onChange)="changeOffices($event)"
                         style="width: 100%;"></po-select-officer>
                     </div>
                   </div>
