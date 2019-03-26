@@ -230,7 +230,7 @@
                 class="btn btn-sm btn-success wm-small-btn" (click)="addProductSelected()">
                 <clr-icon shape="plus"></clr-icon>
               </button>
-              <span *ngIf="selectedProduct.product_id && selectedCost > selectedUnit.standard_cost" class="tooltip-content">ราคาสั่งซื้อเกินราคากลาง
+              <span *ngIf="selectedProduct.product_id && selectedCost > selectedUnit.standard_cost" class="tooltip-content" style="background-color: rgb(233, 74, 74)">ราคาสั่งซื้อเกินราคากลาง
                 !</span>
             </span>
             <span>
