@@ -1,6 +1,7 @@
 import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import * as _ from 'lodash';
 import { ProductService } from 'app/purchase/share/product.service';
+import { AlertService } from '../../../alert.service';
 
 @Component({
   selector: 'app-grid-reorder-point-products',
@@ -20,7 +21,10 @@ export class GridReorderPointProductsComponent implements OnInit {
   loading = false;
   items = [];
 
-  constructor(private productService: ProductService) { }
+  constructor(
+    private alertService: AlertService,
+    private productService: ProductService
+  ) { }
 
   ngOnInit() {
     this.getProductItems();
@@ -72,7 +76,10 @@ export class GridReorderPointProductsComponent implements OnInit {
   }
 
   addPurchase(item: any) {
-    this.onSelected.emit(item);
+    if (item.unit_generic_id === null) {
+      this.alertService.error('กรุณาระบุ UOM จัดซื้อ');
+    } else {
+      this.onSelected.emit(item);
+    }
   }
-
 }

@@ -92,13 +92,13 @@ export class PrintFormComponent implements OnInit {
 
     const startDate = this.startDate ? moment(this.startDate.jsdate).format('YYYY-MM-DD') : null;
     const endDate = this.endDate ? moment(this.endDate.jsdate).format('YYYY-MM-DD') : null;
-    console.log(startDate, endDate);
+    // console.log(startDate, endDate);
     // setTimeout(() => {
     //   that.isPreview = false;
     // }, 5000);
 
     const url = `${this.apiUrl}/report/list/purchase/${startDate}/${endDate}?token=${this.token}`;
-    console.log(url);
+    // console.log(url);
      this.htmlPreview.showReport(url);
   }
 }

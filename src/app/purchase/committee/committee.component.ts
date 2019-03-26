@@ -38,7 +38,6 @@ export class CommitteeComponent implements OnInit {
   }
 
   deleteComittee(row: any) {
-    console.log(row);
     this.alertService.confirm('คุณต้องการที่จะลบคณะกรรมการใช่หรือไม่?').then(() => {
       this.commiteeService.updateIsdelete(row.committee_id)
         .then((results: any) => {

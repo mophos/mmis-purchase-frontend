@@ -122,8 +122,7 @@ export class DatagridOrdersComponent implements OnInit {
     }
 
     this.currentPage = +sessionStorage.getItem('poOrderCurrentPage') ? +sessionStorage.getItem('poOrderCurrentPage') : 1;
-    console.log('=', this.currentPage)
-
+    
   }
 
   ngOnInit() {
@@ -182,9 +181,6 @@ export class DatagridOrdersComponent implements OnInit {
         year: year - i
       })
     }
-    console.log(this.dataYear);
-
-
   }
 
   async getSysReport() {
@@ -304,12 +300,7 @@ export class DatagridOrdersComponent implements OnInit {
   }
 
   async checkApprove(username: any, password: any) {
-    console.log(username);
-
     const rs: any = await this.purchasingOrderService.checkApprove(username, password, this.action);
-    console.log(rs);
-
-
     if (rs.ok) {
       if (this.page === 1) {
         this.confirmApprove = true
@@ -827,7 +818,7 @@ export class DatagridOrdersComponent implements OnInit {
   printHistory(generic_name: any) {
     this.generic_name = generic_name;
     this.htmlPrview.showReport(this.url + `/report/getProductHistory/${generic_name.generic_code}?token=${this.token}`);
-    console.log(generic_name.generic_code);
+    //console.log(generic_name.generic_code);
   }
 
   async fileChangeEvent(e: any) {
@@ -958,6 +949,5 @@ export class DatagridOrdersComponent implements OnInit {
     this.startPO += this.start_id;
     this.endPO += this.end_id;
     this.start_id = this.start_id.substring(0, 2)
-    console.log(this.startPO, ',', this.endPO, this.start_id);
   }
 }

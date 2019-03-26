@@ -347,6 +347,8 @@ export class OrderFormComponent implements OnInit {
     product.contract_id = this.selectedProduct.contract_id;
     product.old_qty = this.selectedProduct.old_qty;
     product.old_cost = this.oldCost;
+    product.standard_cost = this.selectedProduct.standard_cost;
+    product.standard_pack_cost = this.selectedProduct.standard_pack_cost;
 
     if (this.checkDuplicatedItem(product)) {
       const items = _.filter(this.purchaseOrderItems, { product_id: product.product_id });
@@ -492,7 +494,6 @@ export class OrderFormComponent implements OnInit {
     this.budgetYear = year.toString();
     this.currentBudgetYear = year;
     await this.subBudgetList.setYears(this.budgetYear);
-    console.log(this.budgetYear);
 
     if (selectDate !== 'Invalid date') {
       // this.checkIsHoliday(selectDate);
