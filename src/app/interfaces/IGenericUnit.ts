@@ -5,5 +5,6 @@ export interface IGenericUnit {
   qty?: number;
   to_unit_id?: number;
   to_unit_name?: string;
-  unit_generic_id?: number
+  unit_generic_id?: number;
+  standard_cost?: number;
 }
