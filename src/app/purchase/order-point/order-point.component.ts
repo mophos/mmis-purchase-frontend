@@ -42,6 +42,7 @@ export class OrderPointComponent implements OnInit {
   printProducts: any = [];
   genericTypeId = 'all';
   genericTypeIdReserved = 'all';
+  genericTypeIdOrderReserved = 'all';
   productGroup: any;
   productType: Array<any> = [];
 
@@ -204,7 +205,15 @@ export class OrderPointComponent implements OnInit {
 
   async getReservedForOrders() {
     try {
-      const rs: any = await this.productService.getReorderPointTradeReservedForOrdered();
+      let rs: any;
+      if (this.genericTypeIdOrderReserved === 'all') {
+        rs = await this.productService.getReorderPointTradeReservedForOrdered(this.productGroup);
+      } else {
+        const productGroup: any = [];
+        productGroup.push(this.genericTypeIdOrderReserved);
+        rs = await this.productService.getReorderPointTradeReservedForOrdered(productGroup);
+      }
+
       if (rs.ok) {
         this.selectedOrders = rs.rows;
       } else {
@@ -773,7 +782,7 @@ export class OrderPointComponent implements OnInit {
   changeOffice(event: any) {
     this.buyerId = event ? event.people_id : null;
   }
-  
+
   changeOffices(event: any) {
     this.supplyId = event ? event.people_id : null;
   }
