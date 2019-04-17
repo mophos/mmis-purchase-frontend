@@ -122,7 +122,6 @@ export class DatagridOrdersComponent implements OnInit {
     }
 
     this.currentPage = +sessionStorage.getItem('poOrderCurrentPage') ? +sessionStorage.getItem('poOrderCurrentPage') : 1;
-
   }
 
   ngOnInit() {
@@ -181,8 +180,6 @@ export class DatagridOrdersComponent implements OnInit {
         year: year - i
       })
     }
-
-
   }
 
   async getSysReport() {
