@@ -44,11 +44,10 @@ export class SelectSubBudgetComponent implements OnInit {
 
   async getItems() {
     try {
-      console.log(this._budgetTypeId, this._year);
       if (this._year) {
         this.loading = true;
 
-        let rs: any = await this.stdService.getBudgetSub(this._budgetTypeId, this._year);
+        const rs: any = await this.stdService.getBudgetSub(this._budgetTypeId, this._year);
         this.loading = false;
         if (rs.ok) {
           this.items = rs.rows;
