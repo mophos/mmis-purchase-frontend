@@ -36,7 +36,6 @@ export class SelectUnitsComponent implements AfterViewInit, OnInit {
     if (this.productId) {
       this.getUnitsByGeneric(this.productId, this.unitId);
     }
-    // console.log(this._isNewRecord);
   }
 
   setSelected(unitId: any) {
@@ -44,7 +43,6 @@ export class SelectUnitsComponent implements AfterViewInit, OnInit {
   }
 
   ngAfterViewInit() {
-    //console.log('componentInit..',this.unitId,this.productId);
   }
 
   onChangeUnit(unit_generic_id: string) {
@@ -95,7 +93,6 @@ export class SelectUnitsComponent implements AfterViewInit, OnInit {
           }
         } else {
           if (this.units.length > 0) {
-            // console.log('selected unit index[0]');
             this.unitId = this.units[0].unit_generic_id;
             if (this._isNewRecord) {
               this.onChangeUnit(this.unitId);

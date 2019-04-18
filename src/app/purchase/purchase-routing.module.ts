@@ -20,6 +20,7 @@ import { OrderPointComponent } from './order-point/order-point.component';
 import { PurchaseBudgetHistoryComponent } from './report/purchase-budget-history/purchase-budget-history.component';
 import { BidprocessComponent } from '../purchase/bidprocess/bidprocess.component';
 import { OfficerTypeComponent } from './officer-type/officer-type.component';
+import { SettingEdiComponent } from './setting-edi/setting-edi.component';
 
 
 const routes: Routes = [
@@ -46,7 +47,8 @@ const routes: Routes = [
       { path: 'history-order', component: HistoryOrderComponent },
       { path: 'report/purchase-order-list', component: PurchaseOrderListComponent },
       { path: 'report/purchase-budget-history', component: PurchaseBudgetHistoryComponent },
-      { path: 'officer-type', component: OfficerTypeComponent},
+      { path: 'officer-type', component: OfficerTypeComponent },
+      { path: 'setting/edi', component: SettingEdiComponent },
       { path: '**', component: PageNotFoundComponent },
     ]
   }

@@ -205,6 +205,7 @@ export class OrderFormComponent implements OnInit {
 
   _canSave = false;
   dupBookNumber = false; // false = ห้ามซ้ำ
+  edi = false;
   constructor(
     private accessCheck: AccessCheck,
     private router: Router,
@@ -331,7 +332,6 @@ export class OrderFormComponent implements OnInit {
 
   _doAddProduct() {
     const product: any = {};
-    // console.log(this.selectedCost);
     product.cost = +this.selectedCost;
     product.product_id = this.selectedProduct.product_id;
     product.generic_id = this.selectedProduct.generic_id;
@@ -352,7 +352,6 @@ export class OrderFormComponent implements OnInit {
 
     if (this.checkDuplicatedItem(product)) {
       const items = _.filter(this.purchaseOrderItems, { product_id: product.product_id });
-      // console.log(items.length);
       if (items.length > 1) {
         this.alertService.error('ไม่สามารถเพิ่มรายการเดียวกันได้เกิน 2 รายการ');
       } else {
@@ -369,8 +368,6 @@ export class OrderFormComponent implements OnInit {
     } else {
       this.purchaseOrderItems.push(product);
     }
-
-    console.log(this.purchaseOrderItems)
     // clear selected product item
     this.clearSelectedProduct();
     this.calAmount();
@@ -517,7 +514,6 @@ export class OrderFormComponent implements OnInit {
   }
 
   onBudgetCalculated(event: any) {
-    // console.log(event);
     this.budgetData = event;
     this._canSave = true;
   }
@@ -675,7 +671,7 @@ export class OrderFormComponent implements OnInit {
     this.chiefId = data.chief_id ? data.chief_id : this.chiefId;
     this.buyerId = data.buyer_id ? data.buyer_id : this.buyerId;
     this.supplyId = data.supply_id ? data.supply_id : this.supplyId;
-    
+
     // this.budgetYear = data.budget_year || this.currentBudgetYear;
     this.purchaseDate = {
       date: {
@@ -716,15 +712,12 @@ export class OrderFormComponent implements OnInit {
     // } else {
 
     //   if (!data.budgettype_id) {
-    //     console.log('test');
-    //     console.log(this.budgetYear);
 
     //     await this.subBudgetList.setYears(this.budgetYear);
 
     //     // await this.subBudgetList.setBudgetType(this.budgetTypeId);
     //     // await this.subBudgetList.getItems();
     //   } else {
-    //     console.log('test2', data.budgettype_id);
     //     this.budgetTypeId = data.budgettype_id;
     //     await this.subBudgetList.setBudgetType(this.budgetDetailId);
     //   }
@@ -839,7 +832,8 @@ export class OrderFormComponent implements OnInit {
 
             if (this._canSave) {
               this.modalLoading.hide();
-              this.alertService.confirm('กรุณาตรวจสอบรายการให้ถูกต้องการทำการบันทึก ต้องการบันทึก ใช่หรือไม่?')
+              const text = this.edi ? 'กรุณาตรวจสอบรายการให้ถูกต้อง ต้องการบันทึกสั่งซื้อสินค้าออนไลน์ (EDI) ใช่หรือไม่?' : 'กรุณาตรวจสอบรายการให้ถูกต้อง ต้องการบันทึก ใช่หรือไม่?';
+              this.alertService.confirm(text)
                 .then(async () => {
                   this.doSavePurchase();
                 }).catch(() => {
@@ -883,7 +877,6 @@ export class OrderFormComponent implements OnInit {
         is_delete: 'Y'
       }
       const committeeHeadIdRs: any = await this.committeeService.save(committeeHead);
-      // console.log(committeeHeadIdRs);
       if (committeeHeadIdRs.ok) {
         this.verifyCommitteeId = committeeHeadIdRs.rows[0];
 
@@ -954,6 +947,7 @@ export class OrderFormComponent implements OnInit {
       buyer_id: this.buyerId,
       supply_id: this.supplyId,
       budget_year: this.budgetYear,
+      is_edi: this.edi ? 'Y' : 'N'
       // is_reorder: this.isReorder === 'Y' ? 2 : this.isReorder
     };
 
@@ -1220,6 +1214,7 @@ export class OrderFormComponent implements OnInit {
   onChangeVendor(event: any) {
     if (event) {
       this.labelerId = null;
+      this.edi = false;
     }
   }
 
@@ -1230,6 +1225,7 @@ export class OrderFormComponent implements OnInit {
       }
       this.labelerId = event.labeler_id;
       this.oldLabelerId = event.labeler_id;
+      this.edi = (event.is_edi === 'Y');
 
       this.searchProductLabeler.setApiUrl(this.labelerId);
     }

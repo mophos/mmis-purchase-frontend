@@ -1,0 +1,30 @@
+<nav class="breadcrumb">
+  <a class="breadcrumb-item" href="javascript://" routerLink="/admin">หน้าหลัก</a>
+  <span class="breadcrumb-item active">ตั้งค่าการสั่งซื้อออนไลน์</span>
+</nav>
+
+<div class="card">
+  <div class="card-header">
+    ข้อมูลการสั่งซื้อออนไลน์ (EDI)
+  </div>
+  <div class="card-block">
+    <div class="card-text">
+      <form>
+        <section class="form-block">
+          <!-- <div class="form-group">
+            <label for="tokenEDI">เปิดใช้งานการสั่งซื้อ</label>
+            <input type="text" id="tokenEDI" name="tokenEDI" [(ngModel)]="tokenEDI" size="45">
+          </div> -->
+          <div class="form-group">
+            <label for="tokenEDI">Token (EDI)</label>
+            <input type="text" class="form-control" id="tokenEDI" name="tokenEDI" [(ngModel)]="tokenEDI">
+          </div>
+        </section>
+      </form>
+    </div>
+  </div>
+  <div class="card-footer">
+    <button class="btn btn-sm btn-success" (click)="saveSetting()">บันทึก</button>
+  </div>
+
+</div>

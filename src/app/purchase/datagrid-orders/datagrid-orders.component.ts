@@ -99,7 +99,7 @@ export class DatagridOrdersComponent implements OnInit {
   token: any;
   offset: any = 0;
   currentPage: any = 1;
-
+  isEDI = false;
   constructor(
     private model: PurchasingOrderService,
     private ref: ChangeDetectorRef,
@@ -122,7 +122,6 @@ export class DatagridOrdersComponent implements OnInit {
     }
 
     this.currentPage = +sessionStorage.getItem('poOrderCurrentPage') ? +sessionStorage.getItem('poOrderCurrentPage') : 1;
-    
   }
 
   ngOnInit() {
@@ -235,7 +234,9 @@ export class DatagridOrdersComponent implements OnInit {
         end_date,
         this.perPage,
         this.offset,
-        this.sort
+        this.sort,
+        this.isEDI
+
       );
 
       this.modalLoading.hide();
@@ -291,11 +292,11 @@ export class DatagridOrdersComponent implements OnInit {
     this.page = 1
     const checked = await this.accessCheck.can('PO_APPROVE')
     if (checked) {
-      this.confirmApprove = true
-      this.approveConfirm(order)
+      this.confirmApprove = true;
+      this.approveConfirm(order);
     } else {
-      this.openModalConfirm = true
-      this.tmpOderApprove = order
+      this.openModalConfirm = true;
+      this.tmpOderApprove = order;
     }
   }
 
@@ -330,6 +331,7 @@ export class DatagridOrdersComponent implements OnInit {
         this.modalLoading.show();
         try {
           const rs: any = await this.purchasingOrderService.updateStatus(purchases);
+          const rsEDI: any = await this.purchasingOrderService.sendEDI(purchases);
           this.purchaseOrdersSelected = [];
           this.modalLoading.hide();
           if (rs.ok) {
@@ -394,6 +396,10 @@ export class DatagridOrdersComponent implements OnInit {
         if (dataConfirm.length) {
           try {
             const rs: any = await this.purchasingOrderService.updateStatus(dataConfirm);
+            if (type === 'APPROVED') {
+              console.log(dataConfirm);
+              await this.purchasingOrderService.sendEDI(dataConfirm);
+            }
             this.purchaseOrdersSelected = [];
             if (rs.ok) {
               this.alertService.success();
@@ -423,12 +429,10 @@ export class DatagridOrdersComponent implements OnInit {
   canUpdateStatus(currentStatus: string, updateStatus: string) {
     if (currentStatus === 'PREPARED') {
       if (_.indexOf(['CONFIRMED', 'APPROVED'], updateStatus) > -1) {
-        // console.log(updateStatus)
         return true;
       }
     } else if (currentStatus === 'CONFIRMED') {
       if (_.indexOf(['APPROVED'], updateStatus) > -1) {
-        // console.log(updateStatus)
         return true;
       }
     }
@@ -668,7 +672,6 @@ export class DatagridOrdersComponent implements OnInit {
     const token = sessionStorage.getItem('token');
     const decodedToken = this.jwtHelper.decodeToken(token);
     const productGroup = decodedToken.generic_type_id.split(',');
-    // console.log(productGroup);
     const rs: any = await this.productService.type(productGroup);
     this.productType = rs.rows;
     this.generic_type_id = this.productType[0].generic_type_id;
@@ -812,13 +815,11 @@ export class DatagridOrdersComponent implements OnInit {
   async getOrders() {
     const rs: any = await this.purchasingOrderService.getGeneric();
     this.genericOrders = rs.rows;
-    // console.log(this.genericOrders);
   }
 
   printHistory(generic_name: any) {
     this.generic_name = generic_name;
     this.htmlPrview.showReport(this.url + `/report/getProductHistory/${generic_name.generic_code}?token=${this.token}`);
-    //console.log(generic_name.generic_code);
   }
 
   async fileChangeEvent(e: any) {
@@ -829,7 +830,6 @@ export class DatagridOrdersComponent implements OnInit {
       const rs: any = await this.purchasingOrderService.getGeneric();
       this.genericOrders = rs.rows;
     }
-    // console.log(e.target.value);
   }
 
   // change puchase date
@@ -933,7 +933,8 @@ export class DatagridOrdersComponent implements OnInit {
         end_date,
         limit,
         this.offset,
-        this.sort);
+        this.sort,
+        this.isEDI);
 
       this.modalLoading.hide();
       this.purchaseOrders = rs.rows;
@@ -948,6 +949,11 @@ export class DatagridOrdersComponent implements OnInit {
   setString() {
     this.startPO += this.start_id;
     this.endPO += this.end_id;
-    this.start_id = this.start_id.substring(0, 2)
+    this.start_id = this.start_id.substring(0, 2);
+  }
+
+  changeEDI(edi) {
+    this.isEDI = edi;
+    this.getPurchaseOrders();
   }
 }
