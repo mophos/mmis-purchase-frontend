@@ -182,16 +182,17 @@ export class OrderPointComponent implements OnInit {
             generic_type_name: v.generic_type_name,
             max_qty: v.max_qty,
             min_qty: v.min_qty,
+            safety_max_day: v.safety_max_day,
+            safety_min_day: v.safety_min_day,
+            issue_qty: v.issue_qty,
             remain_qty: v.remain_qty,
             total_purchased: v.total_purchased,
             working_code: v.working_code,
             items: []
           };
-
           this.products.push(obj);
-
         });
-
+        console.log(this.products);
         this.total = rs.total || 0;
       } else {
         this.alertService.error(rs.error);
