@@ -99,7 +99,6 @@ export class DatagridOrdersComponent implements OnInit {
   token: any;
   offset: any = 0;
   currentPage: any = 1;
-  isEDI = false;
   constructor(
     private model: PurchasingOrderService,
     private ref: ChangeDetectorRef,
@@ -234,8 +233,7 @@ export class DatagridOrdersComponent implements OnInit {
         end_date,
         this.perPage,
         this.offset,
-        this.sort,
-        this.isEDI
+        this.sort
 
       );
 
@@ -933,8 +931,7 @@ export class DatagridOrdersComponent implements OnInit {
         end_date,
         limit,
         this.offset,
-        this.sort,
-        this.isEDI);
+        this.sort);
 
       this.modalLoading.hide();
       this.purchaseOrders = rs.rows;
@@ -950,10 +947,5 @@ export class DatagridOrdersComponent implements OnInit {
     this.startPO += this.start_id;
     this.endPO += this.end_id;
     this.start_id = this.start_id.substring(0, 2);
-  }
-
-  changeEDI(edi) {
-    this.isEDI = edi;
-    this.getPurchaseOrders();
   }
 }

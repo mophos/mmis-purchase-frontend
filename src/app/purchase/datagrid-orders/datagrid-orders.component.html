@@ -1,26 +1,19 @@
 <h3 style="margin-top:0;margin-bottom:10px;">{{title}}</h3>
 <clr-tabs>
   <clr-tab>
-    <button clrTabLink id="link1" (click)="changeEDI(false)">
+    <button clrTabLink id="link1">
       <clr-icon shape="file"></clr-icon>
       รายการสั่งซื้อ
     </button>
     <clr-tab-content id="content1" *clrIfActive> </clr-tab-content>
-  </clr-tab>
-  <clr-tab>
-    <button clrTabLink id="link2" (click)="changeEDI(true)">
-      <clr-icon shape="file"></clr-icon>
-      รายการสั่งซื้อออนไลน์ (EDI)
-    </button>
-    <clr-tab-content id="content2" *clrIfActive> </clr-tab-content>
   </clr-tab>
 </clr-tabs>
 <div class="card">
   <div class="card-block">
     <div class="row">
       <div class="col-lg-12">
-        <input placeholder="ค้น เลขที่ใบสั่งซื้อ,Generic Name,Generic Code.." (keydown)="handleKeyDown($event)" class="form-control"
-          type="text" id="query" [(ngModel)]="query" name="query" size="35">
+        <input placeholder="ค้น เลขที่ใบสั่งซื้อ,Generic Name,Generic Code.." (keydown)="handleKeyDown($event)"
+          class="form-control" type="text" id="query" [(ngModel)]="query" name="query" size="35">
         <label>สถานะ</label>
         <div class="select" style="width:100px;display:inline-block">
           <select name="contract" [(ngModel)]="statusFilter">
@@ -42,7 +35,8 @@
         </div>
         <label for="start_date">วันที่</label>
         <div style="width:170px; display:inline-block;vertical-align: middle;">
-          <my-date-picker-th name="start_date" [(ngModel)]="start_date" [options]="myDatePickerOptions"></my-date-picker-th>
+          <my-date-picker-th name="start_date" [(ngModel)]="start_date" [options]="myDatePickerOptions">
+          </my-date-picker-th>
         </div>
         <span>&nbsp;</span>
         <div style="width:170px; display:inline-block;vertical-align: middle;">
@@ -52,7 +46,8 @@
           <clr-icon shape="search"></clr-icon> ค้นหา
         </button>
 
-        <clr-button-group class="btn-primary btn-md" [clrMenuPosition]="'bottom-right'" *ngIf="purchaseOrdersSelected.length">
+        <clr-button-group class="btn-primary btn-md" [clrMenuPosition]="'bottom-right'"
+          *ngIf="purchaseOrdersSelected.length">
           <clr-button class="btn-primary btn-md" (click)="confirmAll('CONFIRMED')">ยืนยัน
             ({{this.purchaseOrdersSelected.length}})</clr-button>
           <clr-button class="btn-primary btn-md" (click)="allApprove()">อนุมัติ
@@ -60,8 +55,10 @@
           <clr-button class="btn-primary btn-md" (click)="changePurchaseDate()">
             <clr-icon shape="note"></clr-icon> แก้ไขวันออกใบสั่งซื้อ ({{this.purchaseOrdersSelected.length}})
           </clr-button>
-          <clr-button class="btn-primary btn-md" (click)="printSelected(1)" [clrInMenu]="true">พิมพ์ใบสั่งซื้อ</clr-button>
-          <clr-button class="btn-primary btn-md" (click)="printSelected(2)" [clrInMenu]="true">พิมพ์แบบฟอร์ม e-GP</clr-button>
+          <clr-button class="btn-primary btn-md" (click)="printSelected(1)" [clrInMenu]="true">พิมพ์ใบสั่งซื้อ
+          </clr-button>
+          <clr-button class="btn-primary btn-md" (click)="printSelected(2)" [clrInMenu]="true">พิมพ์แบบฟอร์ม e-GP
+          </clr-button>
           <!-- <clr-button class="btn-primary btn-md" (click)="printPuchasing10()" [clrInMenu]="true">พิมพ์ใบขออนุมัติซื้อ</clr-button> -->
         </clr-button-group>
 
@@ -106,6 +103,9 @@
   <clr-dg-column [style.width.px]="130">
     เลขที่สัญญา
   </clr-dg-column>
+  <clr-dg-column>
+    EDI
+  </clr-dg-column>
 
   <clr-dg-row *ngFor="let pro of purchaseOrders" [clrDgItem]="pro">
     <clr-dg-cell class="datagrid-fixed-column">
@@ -139,9 +139,14 @@
     <clr-dg-cell>{{pro.bid_process_name}}</clr-dg-cell>
     <clr-dg-cell>{{pro.bgtypesub_name}}</clr-dg-cell>
     <clr-dg-cell>{{pro.contract_no}}</clr-dg-cell>
+    <clr-dg-cell class="text-center">
+      <clr-icon shape="check" *ngIf="pro.is_edi == 'Y'"></clr-icon>
+      <clr-icon shape="times" *ngIf="pro.is_edi == 'N'"></clr-icon>
+    </clr-dg-cell>
 
     <clr-dg-action-overflow>
-      <button class="action-item" [disabled]="pro.recieve_count > 0 || pro.is_cancel ==='Y'" (click)="goEdit(pro.purchase_order_id)">
+      <button class="action-item" [disabled]="pro.recieve_count > 0 || pro.is_cancel ==='Y'"
+        (click)="goEdit(pro.purchase_order_id)">
         <clr-icon shape="note-edit"></clr-icon> แก้ไข
       </button>
 
@@ -150,19 +155,23 @@
       <button *ngIf="btnApproveIsActive(pro)" class="action-item" (click)="approve(pro)">
         <clr-icon shape="tasks"></clr-icon> อนุมัติการสั่งซื้อ</button> -->
 
-      <button class="action-item" (click)="printPuchasing10(pro)" [disabled]="pro.purchase_order_status === 'ORDERPOINT' || pro.is_cancel == 'Y'">
+      <button class="action-item" (click)="printPuchasing10(pro)"
+        [disabled]="pro.purchase_order_status === 'ORDERPOINT' || pro.is_cancel == 'Y'">
         <clr-icon shape="printer"></clr-icon> พิมพ์ใบขออนุมัติซื้อ
       </button>
       <!-- <button class="action-item" (click)="printPurchaseOrder(pro)" [disabled]="pro.purchase_order_status === 'ORDERPOINT' || pro.is_cancel == 'Y'">
         <clr-icon shape="printer"></clr-icon> พิมพ์ใบสั่งซื้อ
       </button> -->
-      <button class="action-item" (click)="printpPurchasing(pro)" [disabled]="pro.purchase_order_status === 'ORDERPOINT' || pro.is_cancel == 'Y'">
+      <button class="action-item" (click)="printpPurchasing(pro)"
+        [disabled]="pro.purchase_order_status === 'ORDERPOINT' || pro.is_cancel == 'Y'">
         <clr-icon shape="printer"></clr-icon> พิมพ์ใบสรุปรายการเวชภัณฑ์ที่สั่งซื้อ
       </button>
-      <button class="action-item" (click)="printPurchaseOrderAttach(pro)" [disabled]="pro.purchase_order_status === 'ORDERPOINT' || pro.is_cancel == 'Y'">
+      <button class="action-item" (click)="printPurchaseOrderAttach(pro)"
+        [disabled]="pro.purchase_order_status === 'ORDERPOINT' || pro.is_cancel == 'Y'">
         <clr-icon shape="printer"></clr-icon> พิมพ์ใบองค์การเภสัชกรรม
       </button>
-      <button class="action-item" (click)="printPurchaseOrderEgp(pro)" [disabled]="pro.purchase_order_status === 'ORDERPOINT' || pro.is_cancel == 'Y'">
+      <button class="action-item" (click)="printPurchaseOrderEgp(pro)"
+        [disabled]="pro.purchase_order_status === 'ORDERPOINT' || pro.is_cancel == 'Y'">
         <clr-icon shape="printer"></clr-icon> พิมพ์แบบฟอร์ม e-GP
       </button>
       <!-- <a *ngIf="menuIsActive('print-receive')" class="action-item" target="_blank" href="{{url}}/report/purchasingorder/pdf/{{pro.purchase_order_id}}">
@@ -182,13 +191,15 @@
 </button> -->
     </clr-dg-action-overflow>
 
-    <app-expand-purchase-order *clrIfExpanded [purchaseOrderId]="pro.purchase_order_id" ngProjectAs="clr-dg-row-detail"></app-expand-purchase-order>
+    <app-expand-purchase-order *clrIfExpanded [purchaseOrderId]="pro.purchase_order_id" ngProjectAs="clr-dg-row-detail">
+    </app-expand-purchase-order>
 
   </clr-dg-row>
 
   <clr-dg-footer>
     {{paginationPo.firstItem + 1}} - {{paginationPo.lastItem + 1}} จาก {{paginationPo.totalItems}} รายการ
-    <clr-dg-pagination [(clrDgPage)]="currentPage" #paginationPo [clrDgPageSize]="perPage" [clrDgTotalItems]="total"></clr-dg-pagination>
+    <clr-dg-pagination [(clrDgPage)]="currentPage" #paginationPo [clrDgPageSize]="perPage" [clrDgTotalItems]="total">
+    </clr-dg-pagination>
   </clr-dg-footer>
 </clr-datagrid>
 <p>
@@ -225,16 +236,18 @@
           <select name="yearPO" id="yearPO" [(ngModel)]="yearPO">
             <option *ngFor="let w of dataYear" [value]="w.year">{{(w.yearText)}}</option>
           </select>
-          <input placeholder="เลขที่ตั้งต้น" (keydown)="handleKeyDown($event)" class="form-control" type="text" id="start_id"
-            [(ngModel)]="start_id" name="start_id" size="8"> &nbsp;&nbsp;&nbsp;
-          <input placeholder="เลขที่สุดท้าย" (keydown)="handleKeyDown($event)" class="form-control" type="text" id="end_id"
-            [(ngModel)]="end_id" name="end_id" size="8"> &nbsp;&nbsp;&nbsp;
-          <clr-button-group class="btn-sm" [clrMenuPosition]="'bottom-right '" style="display:inline-block;float:right;">
+          <input placeholder="เลขที่ตั้งต้น" (keydown)="handleKeyDown($event)" class="form-control" type="text"
+            id="start_id" [(ngModel)]="start_id" name="start_id" size="8"> &nbsp;&nbsp;&nbsp;
+          <input placeholder="เลขที่สุดท้าย" (keydown)="handleKeyDown($event)" class="form-control" type="text"
+            id="end_id" [(ngModel)]="end_id" name="end_id" size="8"> &nbsp;&nbsp;&nbsp;
+          <clr-button-group class="btn-sm" [clrMenuPosition]="'bottom-right '"
+            style="display:inline-block;float:right;">
             <clr-button class="btn" (click)="printPo()">
               <clr-icon shape="printer"></clr-icon> พิมพ์ใบสั่งซื้อ
             </clr-button>
           </clr-button-group>
-          <clr-button-group class="btn-sm" [clrMenuPosition]="'bottom-right '" style="display:inline-block;float:right;">
+          <clr-button-group class="btn-sm" [clrMenuPosition]="'bottom-right '"
+            style="display:inline-block;float:right;">
             <clr-button class="btn" (click)="printEgp()">
               <clr-icon shape="printer"></clr-icon> พิมพ์แบบฟอร์ม e-GP
             </clr-button>
@@ -247,18 +260,22 @@
         <div style="padding: 1em">
           <label for="start_date">วันที่ตามใบสั่งซื้อ :</label>
           <div style="width:160px; display:inline-block;vertical-align: middle;">
-            <my-date-picker-th name="start_date" [(ngModel)]="start_date" [options]="myDatePickerOptions"></my-date-picker-th>
+            <my-date-picker-th name="start_date" [(ngModel)]="start_date" [options]="myDatePickerOptions">
+            </my-date-picker-th>
           </div>
           <span>&nbsp;</span>
           <div style="width:160px; display:inline-block;vertical-align: middle;">
-            <my-date-picker-th name="end_date" [(ngModel)]="end_date" [options]="myDatePickerOptions"></my-date-picker-th>
+            <my-date-picker-th name="end_date" [(ngModel)]="end_date" [options]="myDatePickerOptions">
+            </my-date-picker-th>
           </div>
-          <clr-button-group class="btn-sm" [clrMenuPosition]="'bottom-right '" style="display:inline-block;float:right;vertical-align: middle;">
+          <clr-button-group class="btn-sm" [clrMenuPosition]="'bottom-right '"
+            style="display:inline-block;float:right;vertical-align: middle;">
             <clr-button class="btn" (click)="printDatePO()">
               <clr-icon shape="printer"></clr-icon> พิมพ์ใบสั่งซื้อ
             </clr-button>
           </clr-button-group>
-          <clr-button-group class="btn-sm" [clrMenuPosition]="'bottom-right '" style="display:inline-block;float:right;vertical-align: middle;">
+          <clr-button-group class="btn-sm" [clrMenuPosition]="'bottom-right '"
+            style="display:inline-block;float:right;vertical-align: middle;">
             <clr-button class="btn" (click)="printDateEGP()">
               <clr-icon shape="printer"></clr-icon> พิมพ์แบบฟอร์ม e-GP
             </clr-button>
@@ -280,7 +297,8 @@
     <div style="text-align: center;">
       <label for="start_date">วันที่สั่งซื้อ</label>
       <div style="width:170px; display:inline-block;vertical-align: middle;">
-        <my-date-picker-th name="start_date" [(ngModel)]="editPurchaseDate" [options]="myDatePickerOptions"></my-date-picker-th>
+        <my-date-picker-th name="start_date" [(ngModel)]="editPurchaseDate" [options]="myDatePickerOptions">
+        </my-date-picker-th>
       </div>
     </div>
     <span class="p4">รายการที่จะถูกเปลี่ยนวันที่สั่งซื้อ</span>
@@ -304,14 +322,16 @@
 
   </div>
   <div class="modal-footer">
-    <button type="button" class="btn btn-primary btn-md" [disabled]="!itemsChangeDate.length" (click)="doChangePurchaseDate()">ตกลง</button>
+    <button type="button" class="btn btn-primary btn-md" [disabled]="!itemsChangeDate.length"
+      (click)="doChangePurchaseDate()">ตกลง</button>
     <button type="button" class="btn btn-danger btn-md" (click)="openChangeDate = false">ยกเลิก</button>
   </div>
 </clr-modal>
 
 <app-modal-loading #modalLoading></app-modal-loading>
 
-<clr-modal [(clrModalOpen)]="openModalConfirm" [clrModalStaticBackdrop]="true" [clrModalSize]="'md'" [clrModalClosable]="false">
+<clr-modal [(clrModalOpen)]="openModalConfirm" [clrModalStaticBackdrop]="true" [clrModalSize]="'md'"
+  [clrModalClosable]="false">
   <h3 class="modal-title">{{title}}สิทธิ์การอนุมัติ</h3>
   <div class="modal-body" style="height:150px">
 
@@ -329,7 +349,8 @@
     </form>
   </div>
   <div class="modal-footer" style="padding-top: 0px;">
-    <button type="button" class="btn btn-md btn-primary" [disabled]="!username || !password" (click)="checkApprove(username,password)">บันทึก</button>
+    <button type="button" class="btn btn-md btn-primary" [disabled]="!username || !password"
+      (click)="checkApprove(username,password)">บันทึก</button>
     <button type="button" class="btn btn-md btn-danger-outline" (click)="close()">ปิด</button>
   </div>
 </clr-modal>
