@@ -174,7 +174,7 @@ export class OrderPointComponent implements OnInit {
         rs = await this.productService.getReorderPointGeneric(productGroup, limit, offset, this.query, showNotPurchased, sort);
       }
       if (rs.ok) {
-        // this.products = rs.rows;
+        this.products = [];
         rs.rows.forEach(v => {
           let obj: any = {
             generic_id: v.generic_id,
@@ -192,7 +192,6 @@ export class OrderPointComponent implements OnInit {
           };
           this.products.push(obj);
         });
-        console.log(this.products);
         this.total = rs.total || 0;
       } else {
         this.alertService.error(rs.error);
