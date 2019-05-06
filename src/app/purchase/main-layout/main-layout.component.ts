@@ -16,6 +16,9 @@ export class MainLayoutComponent implements OnInit {
   collapsible = true;
   collapsed = true;
   fullname: string;
+  warehouseId: any;
+  warehouseCode: any;
+  warehouseName: any;
   rights: any;
   Purchasing = false;
   Planning = false;
@@ -44,6 +47,10 @@ export class MainLayoutComponent implements OnInit {
     const decodedToken = this.jwtHelper.decodeToken(token);
     const accessRight = decodedToken.accessRight;
     this.rights = accessRight.split(',');
+
+    this.warehouseId = decodedToken.warehouseId;
+    this.warehouseCode = decodedToken.warehouseCode;
+    this.warehouseName = decodedToken.warehouseName;
   }
 
   logout() {
