@@ -381,26 +381,14 @@ export class DatagridOrdersComponent implements OnInit {
       this.alertService.confirm(message).then(async () => {
         this.purchaseOrdersSelected.forEach(element => {
           if (element.purchase_order_status !== 'ORDERPOINT' && element.is_cancel !== 'Y') {
-            if (type === 'PO_CONFIRM') {
-              if (element.purchase_order_status === 'PREPARED') {
-                if (this.canUpdateStatus(element.purchase_order_status, type)) {
-                  if (this.getConfirmData(type, element) !== false) {
-                    const data: any = this.getConfirmData(type, element);
-                    dataConfirm.push(data);
-                  }
-                }
-              }
-            } else if (type === 'PO_APPROVE') {
-              if (element.purchase_order_status === 'PREPARED' || element.purchase_order_status === 'CONFIRMED') {
-                if (this.canUpdateStatus(element.purchase_order_status, type)) {
-                  if (this.getConfirmData(type, element) !== false) {
-                    const data: any = this.getConfirmData(type, element);
-                    dataConfirm.push(data);
-                  }
-                }
+            if (this.canUpdateStatus(element.purchase_order_status, type)) {
+              if (this.getConfirmData(type, element) !== false) {
+                const data: any = this.getConfirmData(type, element);
+                dataConfirm.push(data);
               }
             }
           }
+
         });
 
         if (dataConfirm.length) {
