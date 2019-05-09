@@ -206,22 +206,15 @@ export class OrderFormComponent implements OnInit {
   _canSave = false;
   dupBookNumber = false; // false = ห้ามซ้ำ
   edi = false;
+  editAfterApprove = false;
   constructor(
     private accessCheck: AccessCheck,
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private alertService: AlertService,
-    private ref: ChangeDetectorRef,
-    private bidProcessService: BidProcessService,
-    private bidtypeService: BidtypeService,
-    private settingService: SettingService,
     private productService: ProductService,
-    private labelerService: LabelerService,
     private holidayService: HolidayService,
-    private budgetTypeService: BudgetTypeService,
-    private budgetTransectionService: BudgetTransectionService,
     private committeeService: CommitteeService,
-    private purchasingService: PurchasingService,
     private purchasingOrderService: PurchasingOrderService,
     private purchasingOrderItemService: PurchasingOrderItemService,
     private committeePeopleService: CommitteePeopleService,
@@ -245,6 +238,10 @@ export class OrderFormComponent implements OnInit {
 
     const token = sessionStorage.getItem('token');
     const decoded = this.jwtHelper.decodeToken(token);
+    const accessRight = decoded.accessRight.split(',');
+    this.editAfterApprove = _.indexOf(accessRight, 'PC_EDIT_AFTER_APPROVE') === -1 ? false : true;
+
+
 
     this.vatRateTmp = decoded.PC_VAT ? decoded.PC_VAT : 7;
     this.vatRate = this.vatRateTmp;
@@ -744,42 +741,63 @@ export class OrderFormComponent implements OnInit {
 
   async save() {
     this.isSaving = true;
-    if (this.purchaseDate && this.labelerId && this.purchaseMethodId &&
-      this.budgetTypeId && this.genericTypeId && this.purchaseOrderItems.length &&
-      this.totalPrice > 0 && this.budgetDetailId && this.verifyCommitteeId != null) {
 
-      const purchaseDate = this.purchaseDate ?
-        `${this.purchaseDate.date.year}-${this.purchaseDate.date.month}-${this.purchaseDate.date.day}` :
-        `${moment().get('year')}-${moment().get('month') + 1}-${moment().get('date')}`;
-
-      let isSaveHoliday = false;
-
-      // check วันหยุด
-      const rs: any = await this.purchasingOrderService.getPurchaseCheckHoliday(purchaseDate);
-
-      if (!rs.ok) {
-        await this.alertService.confirm(rs.error).then(() => {
-          // บันทึกแม้เป็นวันหยุด
-          isSaveHoliday = true;
-        }).catch(() => {
-          isSaveHoliday = false;
-        });
-      } else {
-        isSaveHoliday = true;
+    if (!this.editAfterApprove && this.isUpdate && this.purchaseOrderStatus === 'APPROVED') {
+      // save แถบอื่นๆ
+      const other: any = {
+        egp_id: this.egpId,
+        vendor_contact_name: this.vendorContactName,
+        ship_to: this.shipTo,
+        note_to_vender: this.noteToVender,
+        comment: this.comment
       }
-
-      if (isSaveHoliday) {
-        // save purchase
-        this._save();
+      const rs: any = await this.purchasingOrderService.updateOther(this.purchaseOrderId, other);
+      if (rs.ok) {
+        this.alertService.success();
+        this.router.navigate(['/purchase/orders'])
       } else {
-        // cancel save purchase
+        this.modalLoading.hide();
         this.isSaving = false;
+        this.alertService.error(rs.error);
       }
-    } else {
-      this.isSaving = false;
-      this.alertService.error('กรุณาระบุข้อมูลให้ครบถ้วน');
-    }
 
+    } else {
+      if (this.purchaseDate && this.labelerId && this.purchaseMethodId &&
+        this.budgetTypeId && this.genericTypeId && this.purchaseOrderItems.length &&
+        this.totalPrice > 0 && this.budgetDetailId && this.verifyCommitteeId != null) {
+
+        const purchaseDate = this.purchaseDate ?
+          `${this.purchaseDate.date.year}-${this.purchaseDate.date.month}-${this.purchaseDate.date.day}` :
+          `${moment().get('year')}-${moment().get('month') + 1}-${moment().get('date')}`;
+
+        let isSaveHoliday = false;
+
+        // check วันหยุด
+        const rs: any = await this.purchasingOrderService.getPurchaseCheckHoliday(purchaseDate);
+
+        if (!rs.ok) {
+          await this.alertService.confirm(rs.error).then(() => {
+            // บันทึกแม้เป็นวันหยุด
+            isSaveHoliday = true;
+          }).catch(() => {
+            isSaveHoliday = false;
+          });
+        } else {
+          isSaveHoliday = true;
+        }
+
+        if (isSaveHoliday) {
+          // save purchase
+          this._save();
+        } else {
+          // cancel save purchase
+          this.isSaving = false;
+        }
+      } else {
+        this.isSaving = false;
+        this.alertService.error('กรุณาระบุข้อมูลให้ครบถ้วน');
+      }
+    }
   }
 
   async _save() {
@@ -1093,12 +1111,12 @@ export class OrderFormComponent implements OnInit {
     }
     // if (this.isContract === true)  return true;
 
-    if (this.purchaseOrderStatus === 'APPROVED') {
-      if (this.accessCheck.can('PO_EDIT_AFFTER_APPROVE')) {
-        return false;
-      }
-      return true;
-    }
+    // if (this.purchaseOrderStatus === 'APPROVED') {
+    //   if (this.accessCheck.can('PO_EDIT_AFFTER_APPROVE')) {
+    //     return false;
+    //   }
+    //   return true;
+    // }
 
     if (this.purchaseOrderStatus === 'CONFIRMED') {
       if (this.accessCheck.can('PO_EDIT_AFFTER_APPROVE')) {

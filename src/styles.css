@@ -312,3 +312,7 @@ app-modal-loading .modal-backdrop {
   .datagrid .datagrid-column .datagrid-filter-toggle, .datagrid .datagrid-head .datagrid-row-actions .datagrid-filter-toggle {
       display: none;
   }
+  .lock-div{
+    pointer-events: none;
+    opacity: 0.4;
+  }
