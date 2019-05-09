@@ -199,6 +199,14 @@ export class PurchasingOrderService {
     return rs.json();
   }
 
+  async updateOther(purchaseOrderId: any, data: any) {
+    const rs: any = await this.authHttp.put(`${this.url}/${this.apiName}/other`, {
+      data: data,
+      purchaseOrderId: purchaseOrderId
+    }).toPromise();
+    return rs.json();
+  }
+
   async updateStatus(items: any) {
     const rs: any = await this.authHttp.put(`${this.url}/${this.apiName}/update-purchase/status`, { items: items }).toPromise();
     return rs.json();
