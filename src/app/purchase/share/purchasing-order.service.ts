@@ -365,4 +365,10 @@ export class PurchasingOrderService {
       .toPromise();
     return res.json();
   }
+
+  async getGenericIssue(genericId: any, day: any) {
+    const rs = await this.authHttp.get(`${this.url}/${this.apiName}/generic-issue?genericId=${genericId}&day=${day}`)
+    .toPromise();
+    return rs.json();
+  }
 }
