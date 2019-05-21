@@ -123,10 +123,11 @@ export class OrderPointComponent implements OnInit {
 
     let productIds = '';
     this.printProducts.forEach((v: any) => {
-      productIds += `product_id=${v.product_id}&unit_generic_id=${v.unit_generic_id}&`;
+      productIds += `p=${v.product_id}&u=${v.unit_generic_id}&`;
     });
 
     const url = `${this.apiUrl}/report/list/purchase-trade-select/?token=${this.token}&${productIds}`;
+    console.log(url)
     this.htmlPreview.showReport(url);
 
     this.printProducts = [];
