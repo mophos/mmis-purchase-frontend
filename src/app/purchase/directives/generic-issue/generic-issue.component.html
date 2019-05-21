@@ -1,0 +1,9 @@
+<span class="spinner spinner-inline" *ngIf="loading">
+  Loading...
+</span>
+<div *ngIf="!loading" style="width: 100%">
+  <!-- <clr-dg-cell style="text-align: right;"> -->
+    {{amount.out_qty || 0 | number}}
+  <!-- </clr-dg-cell> -->
+</div>
+
