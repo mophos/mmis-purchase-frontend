@@ -648,7 +648,13 @@ export class DatagridOrdersComponent implements OnInit {
       this.alertService.error('ข้อมูลไม่ครบถ้วน');
     }
   }
-
+  printAccountPayable() {
+    const purchaseOrderId = [];
+    this.purchaseOrdersSelected.forEach((value: any, index: number) => {
+      purchaseOrderId.push('purchaseOrderId=' + value.purchase_order_id);
+    });
+    this.htmlPrview.showReport(this.url + `/account/payable/?token=${this.token}&` + purchaseOrderId.join('&'));
+  }
   printPuchasing10(row: any) {
     this.htmlPrview.printPuchasing10(row);
   }
