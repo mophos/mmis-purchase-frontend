@@ -239,10 +239,9 @@ export class OrderFormComponent implements OnInit {
     const token = sessionStorage.getItem('token');
     const decoded = this.jwtHelper.decodeToken(token);
     const accessRight = decoded.accessRight.split(',');
-    this.editAfterApprove = _.indexOf(accessRight, 'PC_EDIT_AFTER_APPROVE') === -1 ? false : true;
+    this.editAfterApprove = _.indexOf(accessRight, 'PO_EDIT_AFFTER_APPROVE') === -1 ? false : true;
 
-
-
+    console.log(this.editAfterApprove)
     this.vatRateTmp = decoded.PC_VAT ? decoded.PC_VAT : 7;
     this.vatRate = this.vatRateTmp;
     this.currentVatRate = decoded.PC_VAT ? decoded.PC_VAT : 7;
