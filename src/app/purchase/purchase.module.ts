@@ -84,6 +84,7 @@ import { PurchaseBudgetHistoryComponent } from './report/purchase-budget-history
 import { OfficerTypeComponent } from './officer-type/officer-type.component';
 import { SettingEdiComponent } from './setting-edi/setting-edi.component';
 import { SettingEdiService } from './share/setting-edi.service';
+import { GenericIssueComponent } from './directives/generic-issue/generic-issue.component';
 
 @NgModule({
   imports: [
@@ -140,7 +141,8 @@ import { SettingEdiService } from './share/setting-edi.service';
     OrderPointComponent,
     PurchaseBudgetHistoryComponent,
     OfficerTypeComponent,
-    SettingEdiComponent
+    SettingEdiComponent,
+    GenericIssueComponent
   ],
   providers: [
     BudgetTransectionService,
