@@ -29,7 +29,7 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     component: MainLayoutComponent,
     children: [
-      { path: '', redirectTo: 'order-point', pathMatch: 'full' },
+      { path: '', redirectTo: 'orders', pathMatch: 'full' },
       // { path: 'reorder-point', component: ReorderPointComponent },
       { path: 'order-point', component: OrderPointComponent },
       { path: 'orders', component: OrdersComponent },
