@@ -20,6 +20,7 @@ import { OrderPointComponent } from './order-point/order-point.component';
 import { PurchaseBudgetHistoryComponent } from './report/purchase-budget-history/purchase-budget-history.component';
 import { BidprocessComponent } from '../purchase/bidprocess/bidprocess.component';
 import { OfficerTypeComponent } from './officer-type/officer-type.component';
+import { SettingEdiComponent } from './setting-edi/setting-edi.component';
 
 
 const routes: Routes = [
@@ -28,7 +29,7 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     component: MainLayoutComponent,
     children: [
-      { path: '', redirectTo: 'order-point', pathMatch: 'full' },
+      { path: '', redirectTo: 'orders', pathMatch: 'full' },
       // { path: 'reorder-point', component: ReorderPointComponent },
       { path: 'order-point', component: OrderPointComponent },
       { path: 'orders', component: OrdersComponent },
@@ -46,7 +47,8 @@ const routes: Routes = [
       { path: 'history-order', component: HistoryOrderComponent },
       { path: 'report/purchase-order-list', component: PurchaseOrderListComponent },
       { path: 'report/purchase-budget-history', component: PurchaseBudgetHistoryComponent },
-      { path: 'officer-type', component: OfficerTypeComponent},
+      { path: 'officer-type', component: OfficerTypeComponent },
+      { path: 'setting/edi', component: SettingEdiComponent },
       { path: '**', component: PageNotFoundComponent },
     ]
   }

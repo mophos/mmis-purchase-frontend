@@ -4,10 +4,15 @@
     <a class="breadcrumb-item" href="javascript://" routerLink="/purchase/orders">รายการใบสั่งซื้อ</a>
     <span class="breadcrumb-item active">ใบสั่งซื้อ</span>
     <span style="margin-left: 2%; font-size:20px; font-weight:bold;">{{purchaseOrderNumber}}</span>
-    <!-- <span *ngIf="contractId" style="color: red; margin-left: 2%; font-size:20px; font-weight:bold;">เลขที่สัญญา {{contractNo}}</span> -->
     <span style="margin-left:35px">
       <app-order-status [status]="purchaseOrderStatus"></app-order-status>
     </span>
+    <span style="margin-left:35px" *ngIf="edi">
+      <label class="label label-danger  clickable">
+        สั่งซื้อสินค้าออนไลน์ (EDI)
+      </label>
+    </span>
+    <!-- <span *ngIf="edi" style="margin-left: 2%; font-size:30px; font-weight:bold;color:red;">สั่งซื้อสินค้าออนไลน์ (EDI)</span> -->
     <span style="float:right;">
       <span *ngIf="contractId" class="label label-danger">เลขที่สัญญา:
         <strong>{{contractNo}}</strong>
@@ -24,7 +29,7 @@
   </small>
 
   <form>
-    <div class="card">
+    <div class="card" [ngClass]="{'lock-div': !editAfterApprove && isUpdate && purchaseOrderStatus === 'APPROVED'}">
       <div class="card-block form-fid">
         <div class="row">
           <div class="col-md-4">
@@ -67,8 +72,8 @@
             <div class="form-group">
               <label style="width: 120px;" class="required" for="labeler_id">ผู้จำหน่าย</label>
               <!-- <app-search-labeler style="width:100%" (onSelected)="onLabelerSelected($event)" [labelerName]="labelerName"></app-search-labeler> -->
-              <po-search-vendor [disabled]="contractId" #searchVendor (onChange)="onChangeVendor($event)" (onSelect)="onSelectVendor($event)"
-                style="width: 100%;"></po-search-vendor>
+              <po-search-vendor [disabled]="contractId" #searchVendor (onChange)="onChangeVendor($event)"
+                (onSelect)="onSelectVendor($event)" style="width: 100%;"></po-search-vendor>
             </div>
           </div>
 
@@ -76,15 +81,17 @@
           <div class="col-md-4">
             <div class="form-group">
               <label class="required" for="budgetTypeId">ประเภทงบประมาณ</label>
-              <po-select-budget [selectedId]="budgetTypeId" style="width: 100%;" (onChange)="onChangeBudgetType($event)"></po-select-budget>
+              <po-select-budget [selectedId]="budgetTypeId" style="width: 100%;"
+                (onChange)="onChangeBudgetType($event)"></po-select-budget>
             </div>
           </div>
 
           <div class="col-md-4">
             <div class="form-group">
               <label class="required" for="budget_detail_id">งบประมาณย่อย</label>
-              <po-select-sub-budget [selectedId]="budgetDetailId" (onChange)="onChangeSubBudget($event)" style="width: 100%;"
-                #subBudgetList [year]="budgetYear" [budgetTypeId]="budgetTypeId"></po-select-sub-budget>
+              <po-select-sub-budget [selectedId]="budgetDetailId" (onChange)="onChangeSubBudget($event)"
+                style="width: 100%;" #subBudgetList [year]="budgetYear" [budgetTypeId]="budgetTypeId">
+              </po-select-sub-budget>
             </div>
           </div>
         </div>
@@ -94,14 +101,16 @@
           <div class="col-md-4">
             <div class="form-group">
               <label class="required" for="purchaseTypeId">รูปแบบการจัดซื้อ</label>
-              <po-select-bid [selectedId]="purchaseTypeId" (onChange)="onChangePurchaseType($event)" style="width:100%"></po-select-bid>
+              <po-select-bid [selectedId]="purchaseTypeId" (onChange)="onChangePurchaseType($event)" style="width:100%">
+              </po-select-bid>
             </div>
           </div>
 
           <div class="col-md-4">
             <div class="form-group">
               <label class="required" for="purchaseMethodId">วิธีการจัดซื้อ</label>
-              <po-select-bid-process [selectedId]="purchaseMethodId" (onChange)="onChangePurchaseMethod($event)" style="width: 100%;"></po-select-bid-process>
+              <po-select-bid-process [selectedId]="purchaseMethodId" (onChange)="onChangePurchaseMethod($event)"
+                style="width: 100%;"></po-select-bid-process>
             </div>
           </div>
 
@@ -120,7 +129,8 @@
       </div>
     </div>
 
-    <clr-datagrid class="grid-order" style="padding-top:15px;">
+    <clr-datagrid class="grid-order" style="padding-top:15px;"
+      [ngClass]="{'lock-div': !editAfterApprove && isUpdate && purchaseOrderStatus === 'APPROVED'}">
       <clr-dg-column>
         <ng-container *clrDgHideableColumn="{hidden: false}">
           รายละเอียด
@@ -163,7 +173,8 @@
       <clr-dg-column [style.width.px]="120">
         #
       </clr-dg-column>
-      <clr-dg-row *ngFor="let p of purchaseOrderItems; let idx=index;" [clrDgItem]="p" [ngClass]="{'isError': p.cost > p.old_cost}">
+      <clr-dg-row *ngFor="let p of purchaseOrderItems; let idx=index;" [clrDgItem]="p"
+        [ngClass]="{'isError': p.cost > p.old_cost}">
         <clr-dg-cell>
           <!-- {{idx + 1}}. {{p.product_name}} -->
           <strong>{{idx + 1}}. {{ p.product_name }}</strong>
@@ -175,20 +186,21 @@
             #qty (keyup)="onChangeEditQty(qty.value, idx)" appNumberWithoutDot>
         </clr-dg-cell>
         <clr-dg-cell>
-          <app-select-box-units [selectedId]="p.unit_generic_id" [genericId]="p.generic_id" (onChange)="onSelectedEditUnits($event, idx)"></app-select-box-units>
+          <app-select-box-units [selectedId]="p.unit_generic_id" [genericId]="p.generic_id"
+            (onChange)="onSelectedEditUnits($event, idx)"></app-select-box-units>
         </clr-dg-cell>
         <clr-dg-cell style="text-align: right;">{{p.qty * p.small_qty | number}}</clr-dg-cell>
         <clr-dg-cell>
-          <input autocomplete="off" type="text" [value]="p.cost" name="cost" #cost class="wm-edit-box-number" style="background-color: #FFF9C4"
-            appNumberOnly (keyup)="onChangeEditCost(cost.value, idx)">
+          <input autocomplete="off" type="text" [value]="p.cost" name="cost" #cost class="wm-edit-box-number"
+            style="background-color: #FFF9C4" appNumberOnly (keyup)="onChangeEditCost(cost.value, idx)">
         </clr-dg-cell>
         <clr-dg-cell style="text-align: right;">
           {{p.total_cost | number: '1.2-2'}}
         </clr-dg-cell>
         <clr-dg-cell style="text-align: center;">
           <div class="toggle-switch">
-            <input autocomplete="off" type="checkbox" #giveaway id="giveaway-{{idx}}" name="giveaway" [checked]="p.is_giveaway === 'Y'"
-              (change)="onChangeEditGiveaway(giveaway, idx)">
+            <input autocomplete="off" type="checkbox" #giveaway id="giveaway-{{idx}}" name="giveaway"
+              [checked]="p.is_giveaway === 'Y'" (change)="onChangeEditGiveaway(giveaway, idx)">
             <label for="giveaway-{{idx}}"></label>
           </div>
         </clr-dg-cell>
@@ -201,8 +213,8 @@
 
       <clr-dg-row class="wm-add-row">
         <clr-dg-cell>
-          <app-search-product-vendor [disabled]="!labelerId" #searchProductLabeler (onSelect)="productSearchSelected($event)"
-            [labelerId]="labelerId"></app-search-product-vendor>
+          <app-search-product-vendor [disabled]="!labelerId" #searchProductLabeler
+            (onSelect)="productSearchSelected($event)" [labelerId]="labelerId"></app-search-product-vendor>
         </clr-dg-cell>
         <clr-dg-cell>
           <input type="text" autocomplete="off" name="qty" class="wm-edit-box-number" style="background-color: #FFF9C4"
@@ -219,23 +231,26 @@
         <clr-dg-cell style="text-align: right;">{{selectedCost * selectedQty | number: '1.2-2'}}</clr-dg-cell>
         <clr-dg-cell style="text-align: center;">
           <div class="toggle-switch">
-            <input autocomplete="off" type="checkbox" id="giveaway" name="giveaway" [(ngModel)]="isGiveaway" (change)="onChangeGiveaway($event)">
+            <input autocomplete="off" type="checkbox" id="giveaway" name="giveaway" [(ngModel)]="isGiveaway"
+              (change)="onChangeGiveaway($event)">
             <label for="giveaway"></label>
           </div>
         </clr-dg-cell>
         <clr-dg-cell>
           <div class="btn-group">
             <span role="tooltip" aria-haspopup="true" class="tooltip tooltip-md tooltip-left">
-              <button [disabled]="!selectedProduct.product_id || !selectedQty || !selectedCost || !selectedUnit.unit_generic_id"
+              <button
+                [disabled]="!selectedProduct.product_id || !selectedQty || !selectedCost || !selectedUnit.unit_generic_id"
                 class="btn btn-sm btn-success wm-small-btn" (click)="addProductSelected()">
                 <clr-icon shape="plus"></clr-icon>
               </button>
-              <span *ngIf="selectedProduct.product_id && selectedCost > selectedUnit.standard_cost" class="tooltip-content"
-                style="background-color: rgb(233, 74, 74)">ราคาสั่งซื้อเกินราคากลาง
+              <span *ngIf="selectedProduct.product_id && selectedCost > selectedUnit.standard_cost"
+                class="tooltip-content" style="background-color: rgb(233, 74, 74)">ราคาสั่งซื้อเกินราคากลาง
                 !</span>
             </span>
             <span>
-              <button [disabled]="!selectedProduct.product_id" class="btn btn-sm btn-danger wm-small-btn" (click)="removeSelected()">
+              <button [disabled]="!selectedProduct.product_id" class="btn btn-sm btn-danger wm-small-btn"
+                (click)="removeSelected()">
                 <clr-icon shape="trash"></clr-icon>
               </button>
             </span>
@@ -263,15 +278,16 @@
         <clr-tab>
           <button clrTabLink>เจ้าหน้าที่/กรรมการตรวจรับ</button>
           <clr-tab-content *clrIfActive="true">
-            <div class="card" style="min-height:255px;">
+            <div class="card" style="min-height:255px;"
+              [ngClass]="{'lock-div': !editAfterApprove && isUpdate && purchaseOrderStatus === 'APPROVED'}">
               <div class="card-block">
 
                 <div class="form-group">
                   <label for="chief_fullname"> ชื่อหัวหน้าเจ้าหน้าที่</label>
                   <div class="row">
                     <div class="col-md-11">
-                      <po-select-officer [selectedId]="chiefId" officerTypeCode="CHIEF" (onChange)="changeOfficer($event)"
-                        style="width: 100%;"></po-select-officer>
+                      <po-select-officer [selectedId]="chiefId" officerTypeCode="CHIEF"
+                        (onChange)="changeOfficer($event)" style="width: 100%;"></po-select-officer>
                     </div>
                     <div class="col-md-1">
                       <div class="checkbox">
@@ -285,8 +301,8 @@
                   <label for="buyer_fullname"> ชื่อเจ้าหน้าที่</label>
                   <div class="row">
                     <div class="col-md-11">
-                      <po-select-officer officerTypeCode="BUYYER" [selectedId]="buyerId" (onChange)="changeOffice($event)"
-                        style="width: 100%;"></po-select-officer>
+                      <po-select-officer officerTypeCode="BUYYER" [selectedId]="buyerId"
+                        (onChange)="changeOffice($event)" style="width: 100%;"></po-select-officer>
                     </div>
                     <div class="col-md-1">
                       <div class="checkbox">
@@ -296,11 +312,12 @@
                   </div>
                 </div>
                 <div class="form-group">
-                  <label class="required" for="staff_receive_fullname"> เจ้าหน้าที่พัสดุ<span class="text-danger">*</span></label>
+                  <label class="required" for="staff_receive_fullname"> เจ้าหน้าที่พัสดุ<span
+                      class="text-danger">*</span></label>
                   <div class="row">
                     <div class="col-md-11">
-                      <po-select-officer officerTypeCode="STAFF_RECEIVE" [selectedId]="supplyId" (onChange)="changeOffices($event)"
-                        style="width: 100%;"></po-select-officer>
+                      <po-select-officer officerTypeCode="STAFF_RECEIVE" [selectedId]="supplyId"
+                        (onChange)="changeOffices($event)" style="width: 100%;"></po-select-officer>
                     </div>
                   </div>
                 </div>
@@ -308,21 +325,25 @@
                   <label class="required" for="verify_committee_id">กรรมการตรวจรับ
                     <span class="text-danger">*</span>
                   </label>
-                  <po-select-committee [selectedId]="verifyCommitteeId" style="width: 100%;" (onChange)="changeCommittee($event)"></po-select-committee>
+                  <po-select-committee [selectedId]="verifyCommitteeId" style="width: 100%;"
+                    (onChange)="changeCommittee($event)"></po-select-committee>
                 </div>
                 <div [ngClass]="{'hidden':verifyCommitteeId!=0}">
                   <ol>
                     <li> ประธาน
-                      <app-search-people [disabled]="verifyCommitteeId != 0" #searchPeople1 (onChange)="onChangePeople($event,1)"
-                        (onSelect)="onSelectPeople($event,1)" style="width: 100%;"></app-search-people>
+                      <app-search-people [disabled]="verifyCommitteeId != 0" #searchPeople1
+                        (onChange)="onChangePeople($event,1)" (onSelect)="onSelectPeople($event,1)"
+                        style="width: 100%;"></app-search-people>
                     </li>
                     <li> กรรมการ
-                      <app-search-people [disabled]="verifyCommitteeId != 0" #searchPeople2 (onChange)="onChangePeople($event,2)"
-                        (onSelect)="onSelectPeople($event,2)" style="width: 100%;"></app-search-people>
+                      <app-search-people [disabled]="verifyCommitteeId != 0" #searchPeople2
+                        (onChange)="onChangePeople($event,2)" (onSelect)="onSelectPeople($event,2)"
+                        style="width: 100%;"></app-search-people>
                     </li>
                     <li> กรรมการ
-                      <app-search-people [disabled]="verifyCommitteeId != 0" #searchPeople3 (onChange)="onChangePeople($event,3)"
-                        (onSelect)="onSelectPeople($event,3)" style="width: 100%;"></app-search-people>
+                      <app-search-people [disabled]="verifyCommitteeId != 0" #searchPeople3
+                        (onChange)="onChangePeople($event,3)" (onSelect)="onSelectPeople($event,3)"
+                        style="width: 100%;"></app-search-people>
                     </li>
                   </ol>
                 </div>
@@ -354,26 +375,27 @@
                     <section class="form-block">
                       <div class="form-group row">
                         <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-                          <label for="gForm_1">เลขที่ eGP</label>
+                          <label for="gForm_1">เลขที่โครงการ</label>
                         </div>
                         <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                          <input class="form-control" type="text" id="egpId" name="egpId" pattern="[0-9]+" [(ngModel)]="egpId"
-                            placeholder="">
+                          <input class="form-control" type="text" id="egpId" name="egpId" pattern="[0-9]+"
+                            [(ngModel)]="egpId" placeholder="">
                         </div>
                       </div>
                       <div class="form-group row">
                         <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-                          <label for="gForm_1">ผู้ติดต่อ</label>
+                          <label for="gForm_1">เลขที่คุมสัญญา</label>
                         </div>
                         <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                           <input type="text" class="form-control" id="vendorContactName" name="vendorContactName"
                             [(ngModel)]="vendorContactName">
                         </div>
                       </div>
-                      <div class="form-group row">
+                      <!-- <div class="form-group row">
                         <label for="gForm_1">ที่อยู่สำหรับจัดส่ง</label>
-                        <textarea rows="1" class="form-control" id="shipTo" name="shipTo" [(ngModel)]="shipTo"></textarea>
-                      </div>
+                        <textarea rows="1" class="form-control" id="shipTo" name="shipTo"
+                          [(ngModel)]="shipTo"></textarea>
+                      </div> -->
                     </section>
                   </div>
                 </div>
@@ -383,9 +405,11 @@
                 <div class="card">
                   <div class="card-block">
                     <label for="noteToVender">หมายเหตุถึงผู้จำหน่าย</label>
-                    <textarea rows="1" class="form-control" id="noteToVender" name="noteToVender" [(ngModel)]="noteToVender"></textarea>
+                    <textarea rows="1" class="form-control" id="noteToVender" name="noteToVender"
+                      [(ngModel)]="noteToVender"></textarea>
                     <label for="comment">หมายเหตุถึงคลังสินค้า</label>
-                    <textarea rows="1" class="form-control" id="comment" name="comment" [(ngModel)]="comment"></textarea>
+                    <textarea rows="1" class="form-control" id="comment" name="comment"
+                      [(ngModel)]="comment"></textarea>
                   </div>
                 </div>
               </div>
@@ -410,35 +434,39 @@
             <div class="row">
               <div class="col-md-6">
                 <po-budget-remain #budgetRemainRef [contractId]="contractId" [purchaseOrderId]="purchaseOrderId"
-                  (onCalculated)="onBudgetCalculated($event)" [purchaseAmount]="totalPrice" [budgetDetailId]="budgetDetailId"
-                  [budgetYear]="budgetYear"></po-budget-remain>
+                  (onCalculated)="onBudgetCalculated($event)" [purchaseAmount]="totalPrice"
+                  [budgetDetailId]="budgetDetailId" [budgetYear]="budgetYear"></po-budget-remain>
               </div>
               <div class="col-md-6">
                 <div class="card" style="height:299px;">
-                  <div class="card-block">
+                  <div class="card-block"
+                    [ngClass]="{'lock-div': !editAfterApprove && isUpdate && purchaseOrderStatus === 'APPROVED'}">
                     <form class="compact box-pricing" style="margin-top:0px;padding-top:0;">
                       <section class="form-block" style="margin-top:0px;">
                         <div class="form-control" style="height:24px; line-height:24px; margin-top:5px;">
                           <label for="excludeVat">
-                            <input type="checkbox" id="isBeforeVat" name="excludeVat" [(ngModel)]="excludeVat" (change)="checkVat('excludeVat')">
+                            <input type="checkbox" id="isBeforeVat" name="excludeVat" [(ngModel)]="excludeVat"
+                              (change)="checkVat('excludeVat')">
                             ถอดภาษี</label>
                           <label for="addVat" style="margin-left:20px;">
-                            <input type="checkbox" id="isAddVat" name="addVat" [(ngModel)]="addVat" (change)="checkVat('addVat')">
+                            <input type="checkbox" id="isAddVat" name="addVat" [(ngModel)]="addVat"
+                              (change)="checkVat('addVat')">
                             เพิ่มภาษี</label>
                           <!-- <div class="form-control" style="height:24px; line-height:24px; margin-top:5px;"></div> -->
                         </div>
 
                         <div class="form-group">
                           <label for="subTotal">ราคารวม</label>
-                          <input type="text" class="form-control text-primary" id="subTotal" name="subTotal" value="{{subTotal | number:'1.2-2'}}"
-                            disabled>
+                          <input type="text" class="form-control text-primary" id="subTotal" name="subTotal"
+                            value="{{subTotal | number:'1.2-2'}}" disabled>
                         </div>
 
                         <div class="form-group">
                           <label for="discountPercent" style="width: 90px;">ส่วนลด ( % )</label>
                           <div class="inline-box">
-                            <input type="number" min="0" max="100" style="width:30%" id="discountPercent" name="discountPercent"
-                              [(ngModel)]="discountPercent" (keyup)="calAmount()" (change)="calAmount()">
+                            <input type="number" min="0" max="100" style="width:30%" id="discountPercent"
+                              name="discountPercent" [(ngModel)]="discountPercent" (keyup)="calAmount()"
+                              (change)="calAmount()">
                             <input type="text" id="discountPercentAmount" style="width:70%" name="discountPercentAmount"
                               value="{{discountPercentAmount | number:'1.2-2'}}" disabled>
                           </div>
@@ -451,15 +479,17 @@
                         <div class="form-group">
                           <label for="vatRate">ภาษี ( % )</label>
                           <div class="inline-box">
-                            <input type="number" [disabled]="!excludeVat&&!this.addVat" min="0" max="100" style="width:30%"
-                              id="vatRate" name="vatRate" [(ngModel)]="vatRate" (keyup)="calAmount()" (change)="calAmount()">
-                            <input type="text" class="" id="vat" name="vat" style="width:70%" value="{{vat | number:'1.2-2'}}"
-                              disabled>
+                            <input type="number" [disabled]="!excludeVat&&!this.addVat" min="0" max="100"
+                              style="width:30%" id="vatRate" name="vatRate" [(ngModel)]="vatRate" (keyup)="calAmount()"
+                              (change)="calAmount()">
+                            <input type="text" class="" id="vat" name="vat" style="width:70%"
+                              value="{{vat | number:'1.2-2'}}" disabled>
                           </div>
                         </div>
                         <div class="form-group">
                           <label for="totalPrice">ราคารวมสุทธิ</label>
-                          <input type="text" class="form-control text-primary" id="totalPrice" name="totalPrice" value="{{totalPrice | number:'1.2-2'}}">
+                          <input type="text" class="form-control text-primary" id="totalPrice" name="totalPrice"
+                            value="{{totalPrice | number:'1.2-2'}}">
                         </div>
                       </section>
                     </form>

@@ -205,22 +205,16 @@ export class OrderFormComponent implements OnInit {
 
   _canSave = false;
   dupBookNumber = false; // false = ห้ามซ้ำ
+  edi = false;
+  editAfterApprove = false;
   constructor(
     private accessCheck: AccessCheck,
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private alertService: AlertService,
-    private ref: ChangeDetectorRef,
-    private bidProcessService: BidProcessService,
-    private bidtypeService: BidtypeService,
-    private settingService: SettingService,
     private productService: ProductService,
-    private labelerService: LabelerService,
     private holidayService: HolidayService,
-    private budgetTypeService: BudgetTypeService,
-    private budgetTransectionService: BudgetTransectionService,
     private committeeService: CommitteeService,
-    private purchasingService: PurchasingService,
     private purchasingOrderService: PurchasingOrderService,
     private purchasingOrderItemService: PurchasingOrderItemService,
     private committeePeopleService: CommitteePeopleService,
@@ -244,7 +238,10 @@ export class OrderFormComponent implements OnInit {
 
     const token = sessionStorage.getItem('token');
     const decoded = this.jwtHelper.decodeToken(token);
+    const accessRight = decoded.accessRight.split(',');
+    this.editAfterApprove = _.indexOf(accessRight, 'PO_EDIT_AFFTER_APPROVE') === -1 ? false : true;
 
+    console.log(this.editAfterApprove)
     this.vatRateTmp = decoded.PC_VAT ? decoded.PC_VAT : 7;
     this.vatRate = this.vatRateTmp;
     this.currentVatRate = decoded.PC_VAT ? decoded.PC_VAT : 7;
@@ -331,7 +328,6 @@ export class OrderFormComponent implements OnInit {
 
   _doAddProduct() {
     const product: any = {};
-    // console.log(this.selectedCost);
     product.cost = +this.selectedCost;
     product.product_id = this.selectedProduct.product_id;
     product.generic_id = this.selectedProduct.generic_id;
@@ -352,7 +348,6 @@ export class OrderFormComponent implements OnInit {
 
     if (this.checkDuplicatedItem(product)) {
       const items = _.filter(this.purchaseOrderItems, { product_id: product.product_id });
-      // console.log(items.length);
       if (items.length > 1) {
         this.alertService.error('ไม่สามารถเพิ่มรายการเดียวกันได้เกิน 2 รายการ');
       } else {
@@ -369,8 +364,6 @@ export class OrderFormComponent implements OnInit {
     } else {
       this.purchaseOrderItems.push(product);
     }
-
-    console.log(this.purchaseOrderItems)
     // clear selected product item
     this.clearSelectedProduct();
     this.calAmount();
@@ -517,7 +510,6 @@ export class OrderFormComponent implements OnInit {
   }
 
   onBudgetCalculated(event: any) {
-    // console.log(event);
     this.budgetData = event;
     this._canSave = true;
   }
@@ -675,7 +667,7 @@ export class OrderFormComponent implements OnInit {
     this.chiefId = data.chief_id ? data.chief_id : this.chiefId;
     this.buyerId = data.buyer_id ? data.buyer_id : this.buyerId;
     this.supplyId = data.supply_id ? data.supply_id : this.supplyId;
-    
+
     // this.budgetYear = data.budget_year || this.currentBudgetYear;
     this.purchaseDate = {
       date: {
@@ -716,15 +708,12 @@ export class OrderFormComponent implements OnInit {
     // } else {
 
     //   if (!data.budgettype_id) {
-    //     console.log('test');
-    //     console.log(this.budgetYear);
 
     //     await this.subBudgetList.setYears(this.budgetYear);
 
     //     // await this.subBudgetList.setBudgetType(this.budgetTypeId);
     //     // await this.subBudgetList.getItems();
     //   } else {
-    //     console.log('test2', data.budgettype_id);
     //     this.budgetTypeId = data.budgettype_id;
     //     await this.subBudgetList.setBudgetType(this.budgetDetailId);
     //   }
@@ -751,42 +740,63 @@ export class OrderFormComponent implements OnInit {
 
   async save() {
     this.isSaving = true;
-    if (this.purchaseDate && this.labelerId && this.purchaseMethodId &&
-      this.budgetTypeId && this.genericTypeId && this.purchaseOrderItems.length &&
-      this.totalPrice > 0 && this.budgetDetailId && this.verifyCommitteeId != null) {
 
-      const purchaseDate = this.purchaseDate ?
-        `${this.purchaseDate.date.year}-${this.purchaseDate.date.month}-${this.purchaseDate.date.day}` :
-        `${moment().get('year')}-${moment().get('month') + 1}-${moment().get('date')}`;
-
-      let isSaveHoliday = false;
-
-      // check วันหยุด
-      const rs: any = await this.purchasingOrderService.getPurchaseCheckHoliday(purchaseDate);
-
-      if (!rs.ok) {
-        await this.alertService.confirm(rs.error).then(() => {
-          // บันทึกแม้เป็นวันหยุด
-          isSaveHoliday = true;
-        }).catch(() => {
-          isSaveHoliday = false;
-        });
-      } else {
-        isSaveHoliday = true;
+    if (!this.editAfterApprove && this.isUpdate && this.purchaseOrderStatus === 'APPROVED') {
+      // save แถบอื่นๆ
+      const other: any = {
+        egp_id: this.egpId,
+        vendor_contact_name: this.vendorContactName,
+        ship_to: this.shipTo,
+        note_to_vender: this.noteToVender,
+        comment: this.comment
       }
-
-      if (isSaveHoliday) {
-        // save purchase
-        this._save();
+      const rs: any = await this.purchasingOrderService.updateOther(this.purchaseOrderId, other);
+      if (rs.ok) {
+        this.alertService.success();
+        this.router.navigate(['/purchase/orders'])
       } else {
-        // cancel save purchase
+        this.modalLoading.hide();
         this.isSaving = false;
+        this.alertService.error(rs.error);
       }
-    } else {
-      this.isSaving = false;
-      this.alertService.error('กรุณาระบุข้อมูลให้ครบถ้วน');
-    }
 
+    } else {
+      if (this.purchaseDate && this.labelerId && this.purchaseMethodId &&
+        this.budgetTypeId && this.genericTypeId && this.purchaseOrderItems.length &&
+        this.totalPrice > 0 && this.budgetDetailId && this.verifyCommitteeId != null) {
+
+        const purchaseDate = this.purchaseDate ?
+          `${this.purchaseDate.date.year}-${this.purchaseDate.date.month}-${this.purchaseDate.date.day}` :
+          `${moment().get('year')}-${moment().get('month') + 1}-${moment().get('date')}`;
+
+        let isSaveHoliday = false;
+
+        // check วันหยุด
+        const rs: any = await this.purchasingOrderService.getPurchaseCheckHoliday(purchaseDate);
+
+        if (!rs.ok) {
+          await this.alertService.confirm(rs.error).then(() => {
+            // บันทึกแม้เป็นวันหยุด
+            isSaveHoliday = true;
+          }).catch(() => {
+            isSaveHoliday = false;
+          });
+        } else {
+          isSaveHoliday = true;
+        }
+
+        if (isSaveHoliday) {
+          // save purchase
+          this._save();
+        } else {
+          // cancel save purchase
+          this.isSaving = false;
+        }
+      } else {
+        this.isSaving = false;
+        this.alertService.error('กรุณาระบุข้อมูลให้ครบถ้วน');
+      }
+    }
   }
 
   async _save() {
@@ -839,7 +849,8 @@ export class OrderFormComponent implements OnInit {
 
             if (this._canSave) {
               this.modalLoading.hide();
-              this.alertService.confirm('กรุณาตรวจสอบรายการให้ถูกต้องการทำการบันทึก ต้องการบันทึก ใช่หรือไม่?')
+              const text = this.edi ? 'กรุณาตรวจสอบรายการให้ถูกต้อง ต้องการบันทึกสั่งซื้อสินค้าออนไลน์ (EDI) ใช่หรือไม่?' : 'กรุณาตรวจสอบรายการให้ถูกต้อง ต้องการบันทึก ใช่หรือไม่?';
+              this.alertService.confirm(text)
                 .then(async () => {
                   this.doSavePurchase();
                 }).catch(() => {
@@ -883,7 +894,6 @@ export class OrderFormComponent implements OnInit {
         is_delete: 'Y'
       }
       const committeeHeadIdRs: any = await this.committeeService.save(committeeHead);
-      // console.log(committeeHeadIdRs);
       if (committeeHeadIdRs.ok) {
         this.verifyCommitteeId = committeeHeadIdRs.rows[0];
 
@@ -954,6 +964,7 @@ export class OrderFormComponent implements OnInit {
       buyer_id: this.buyerId,
       supply_id: this.supplyId,
       budget_year: this.budgetYear,
+      is_edi: this.edi ? 'Y' : 'N'
       // is_reorder: this.isReorder === 'Y' ? 2 : this.isReorder
     };
 
@@ -1099,12 +1110,12 @@ export class OrderFormComponent implements OnInit {
     }
     // if (this.isContract === true)  return true;
 
-    if (this.purchaseOrderStatus === 'APPROVED') {
-      if (this.accessCheck.can('PO_EDIT_AFFTER_APPROVE')) {
-        return false;
-      }
-      return true;
-    }
+    // if (this.purchaseOrderStatus === 'APPROVED') {
+    //   if (this.accessCheck.can('PO_EDIT_AFFTER_APPROVE')) {
+    //     return false;
+    //   }
+    //   return true;
+    // }
 
     if (this.purchaseOrderStatus === 'CONFIRMED') {
       if (this.accessCheck.can('PO_EDIT_AFFTER_APPROVE')) {
@@ -1220,6 +1231,7 @@ export class OrderFormComponent implements OnInit {
   onChangeVendor(event: any) {
     if (event) {
       this.labelerId = null;
+      this.edi = false;
     }
   }
 
@@ -1230,6 +1242,7 @@ export class OrderFormComponent implements OnInit {
       }
       this.labelerId = event.labeler_id;
       this.oldLabelerId = event.labeler_id;
+      this.edi = (event.is_edi === 'Y');
 
       this.searchProductLabeler.setApiUrl(this.labelerId);
     }

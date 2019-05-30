@@ -123,10 +123,11 @@ export class OrderPointComponent implements OnInit {
 
     let productIds = '';
     this.printProducts.forEach((v: any) => {
-      productIds += `product_id=${v.product_id}&unit_generic_id=${v.unit_generic_id}&`;
+      productIds += `p=${v.product_id}&u=${v.unit_generic_id}&`;
     });
 
     const url = `${this.apiUrl}/report/list/purchase-trade-select/?token=${this.token}&${productIds}`;
+    console.log(url)
     this.htmlPreview.showReport(url);
 
     this.printProducts = [];
@@ -174,7 +175,7 @@ export class OrderPointComponent implements OnInit {
         rs = await this.productService.getReorderPointGeneric(productGroup, limit, offset, this.query, showNotPurchased, sort);
       }
       if (rs.ok) {
-        // this.products = rs.rows;
+        this.products = [];
         rs.rows.forEach(v => {
           let obj: any = {
             generic_id: v.generic_id,
@@ -182,16 +183,16 @@ export class OrderPointComponent implements OnInit {
             generic_type_name: v.generic_type_name,
             max_qty: v.max_qty,
             min_qty: v.min_qty,
+            safety_max_day: v.safety_max_day,
+            safety_min_day: v.safety_min_day,
+            issue_qty: v.issue_qty,
             remain_qty: v.remain_qty,
             total_purchased: v.total_purchased,
             working_code: v.working_code,
             items: []
           };
-
           this.products.push(obj);
-
         });
-
         this.total = rs.total || 0;
       } else {
         this.alertService.error(rs.error);

@@ -199,6 +199,14 @@ export class PurchasingOrderService {
     return rs.json();
   }
 
+  async updateOther(purchaseOrderId: any, data: any) {
+    const rs: any = await this.authHttp.put(`${this.url}/${this.apiName}/other`, {
+      data: data,
+      purchaseOrderId: purchaseOrderId
+    }).toPromise();
+    return rs.json();
+  }
+
   async updateStatus(items: any) {
     const rs: any = await this.authHttp.put(`${this.url}/${this.apiName}/update-purchase/status`, { items: items }).toPromise();
     return rs.json();
@@ -349,5 +357,18 @@ export class PurchasingOrderService {
     const res = await this.authHttp.get(`${this.url}/${this.apiName}/view-contract?productId=${productId}`)
       .toPromise();
     return res.json();
+  }
+  async sendEDI(purchasingOrderId: any) {
+    const res = await this.authHttp.post(`${this.url}/edi/create`, {
+      purchasingOrderId: purchasingOrderId
+    })
+      .toPromise();
+    return res.json();
+  }
+
+  async getGenericIssue(genericId: any, day: any) {
+    const rs = await this.authHttp.get(`${this.url}/${this.apiName}/generic-issue?genericId=${genericId}&day=${day}`)
+    .toPromise();
+    return rs.json();
   }
 }

@@ -7,37 +7,38 @@
             </a>
         </div>
         <div class="header-nav">
-            <a href="{{homeUrl}}" class=" nav-link nav-icon tooltip tooltip-md tooltip-bottom-right" role="tooltip" aria-haspopup="true">
+            <a href="{{homeUrl}}" class=" nav-link nav-icon tooltip tooltip-md tooltip-bottom-right" role="tooltip"
+                aria-haspopup="true">
                 <clr-icon shape="home"></clr-icon>
                 <span class="tooltip-content">Home</span>
             </a>
-            <a class=" nav-link nav-icon tooltip tooltip-md tooltip-bottom-right" routerLink="{{env.purchasingUrl}}" routerLinkActive="active"
-                role="tooltip" aria-haspopup="true">
+            <a class=" nav-link nav-icon tooltip tooltip-md tooltip-bottom-right" routerLink="{{env.purchasingUrl}}"
+                routerLinkActive="active" role="tooltip" aria-haspopup="true">
                 <clr-icon shape="shopping-cart"></clr-icon>
                 <span class="tooltip-content">Purchasing</span>
             </a>
-            <a href="{{env.planningUrl}}" *ngIf="Planning" class=" nav-link nav-icon tooltip tooltip-md tooltip-bottom-right" role="tooltip"
-                aria-haspopup="true">
+            <a href="{{env.planningUrl}}" *ngIf="Planning"
+                class=" nav-link nav-icon tooltip tooltip-md tooltip-bottom-right" role="tooltip" aria-haspopup="true">
                 <clr-icon shape="event"></clr-icon>
                 <span class="tooltip-content">Planning</span>
             </a>
-            <a href="{{env.inventoryUrl}}" *ngIf="Inventory || InventoryWarehouse" class=" nav-link nav-icon tooltip tooltip-md tooltip-bottom-right"
-                role="tooltip" aria-haspopup="true">
+            <a href="{{env.inventoryUrl}}" *ngIf="Inventory || InventoryWarehouse"
+                class=" nav-link nav-icon tooltip tooltip-md tooltip-bottom-right" role="tooltip" aria-haspopup="true">
                 <clr-icon shape="data-cluster"></clr-icon>
                 <span class="tooltip-content">Inventory</span>
             </a>
-            <a href="{{env.materialsUrl}}" *ngIf="Materials" class=" nav-link nav-icon tooltip tooltip-md tooltip-bottom-right" role="tooltip"
-                aria-haspopup="true">
+            <a href="{{env.materialsUrl}}" *ngIf="Materials"
+                class=" nav-link nav-icon tooltip tooltip-md tooltip-bottom-right" role="tooltip" aria-haspopup="true">
                 <clr-icon shape="storage"></clr-icon>
                 <span class="tooltip-content">Materials</span>
             </a>
-            <a href="{{env.contractsUrl}}" *ngIf="Contracts" class=" nav-link nav-icon tooltip tooltip-md tooltip-bottom-right" role="tooltip"
-                aria-haspopup="true">
+            <a href="{{env.contractsUrl}}" *ngIf="Contracts"
+                class=" nav-link nav-icon tooltip tooltip-md tooltip-bottom-right" role="tooltip" aria-haspopup="true">
                 <clr-icon shape="scroll"></clr-icon>
                 <span class="tooltip-content">Contracts</span>
             </a>
-            <a href="{{env.umUrl}}" *ngIf="Administrator" class=" nav-link nav-icon tooltip tooltip-md tooltip-bottom-right" role="tooltip"
-                aria-haspopup="true">
+            <a href="{{env.umUrl}}" *ngIf="Administrator"
+                class=" nav-link nav-icon tooltip tooltip-md tooltip-bottom-right" role="tooltip" aria-haspopup="true">
                 <clr-icon shape="cog"></clr-icon>
                 <span class="tooltip-content">Administrator</span>
             </a>
@@ -49,7 +50,7 @@
         <div class="header-actions">
             <clr-dropdown>
                 <button class="nav-text" clrDropdownTrigger>
-                    {{ fullname }}
+                    {{fullname}} ({{warehouseCode}} - {{ warehouseName }})
                     <clr-icon shape="caret down"></clr-icon>
                 </button>
                 <clr-dropdown-menu *clrIfOpen clrPosition="bottom-right">
@@ -120,19 +121,22 @@
                     รายงาน
                 </a>
                 <clr-vertical-nav-group-children *clrIfExpanded="false">
-                    <a clrVerticalNavLink routerLink="/purchase/report/purchase-order" [queryParams]="{id: '01'}" routerLinkActive="active">
+                    <a clrVerticalNavLink routerLink="/purchase/report/purchase-order" [queryParams]="{id: '01'}"
+                        routerLinkActive="active">
                         รายงานสั่งซื้อเวชภัณฑ์
                     </a>
 
                 </clr-vertical-nav-group-children>
                 <clr-vertical-nav-group-children *clrIfExpanded="false">
-                    <a clrVerticalNavLink routerLink="/purchase/report/purchase-order-list" [queryParams]="{id: '01'}" routerLinkActive="active">
+                    <a clrVerticalNavLink routerLink="/purchase/report/purchase-order-list" [queryParams]="{id: '01'}"
+                        routerLinkActive="active">
                         รายงานสรุปรายการเวชภัณฑ์ที่สั่งซื้อ
                     </a>
 
                 </clr-vertical-nav-group-children>
                 <clr-vertical-nav-group-children *clrIfExpanded="false">
-                    <a clrVerticalNavLink routerLink="/purchase/report/purchase-budget-history" [queryParams]="{id: '01'}" routerLinkActive="active">
+                    <a clrVerticalNavLink routerLink="/purchase/report/purchase-budget-history"
+                        [queryParams]="{id: '01'}" routerLinkActive="active">
                         รายงานประวัติการใช้งบประมาณ
                     </a>
                 </clr-vertical-nav-group-children>
@@ -158,6 +162,9 @@
                     </a>
                     <a clrVerticalNavLink routerLink="/purchase/officer-type" routerLinkActive="active">
                         ตั้งค่าชื่อตำแหน่ง
+                    </a>
+                    <a clrVerticalNavLink routerLink="/purchase/setting/edi" routerLinkActive="active">
+                        ตั้งค่าการสั่งซื้อออนไลน์
                     </a>
                     <!-- <a clrVerticalNavLink routerLink="./normal/snorlax" routerLinkActive="active">
                     ตั้งค่าพื้นฐาน
@@ -198,7 +205,8 @@
 
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-success btn-sm" (click)="chanagePassword()" [disabled]="!password || password.length <= 3 || isSaving || password!=password2">
+        <button type="button" class="btn btn-success btn-sm" (click)="chanagePassword()"
+            [disabled]="!password || password.length <= 3 || isSaving || password!=password2">
             เปลี่ยนรหัสผ่าน
         </button>
         <button type="button" class="btn btn-danger btn-sm" (click)="closeModal()">

@@ -30,6 +30,9 @@
       <clr-datagrid (clrDgRefresh)="refresh($event)" style="height: 80%;">
         <clr-dg-column [clrDgField]="'generic_name'">ชื่อสามัญ (Generic Name)</clr-dg-column>
         <!-- <clr-dg-column [clrDgField]="'labeler_name'">ผู้จำหน่าย</clr-dg-column> -->
+        <clr-dg-column style="width: 120px;">อัตราการใช้(30วัน)</clr-dg-column>
+        <clr-dg-column style="width: 120px;">Safety Min</clr-dg-column>
+        <clr-dg-column style="width: 120px;">Safety Max</clr-dg-column>
         <clr-dg-column style="width: 120px;">Min</clr-dg-column>
         <clr-dg-column style="width: 120px;">Max</clr-dg-column>
         <clr-dg-column style="width: 120px;">คงเหลือ</clr-dg-column>
@@ -44,6 +47,11 @@
             {{p.working_code}} - {{p.generic_name}}
           </clr-dg-cell>
           <!-- <clr-dg-cell>{{p.labeler_name}}</clr-dg-cell> -->
+          <clr-dg-cell style="text-align: right;">
+              <po-generic-issue [genericId]="p.generic_id" [day]="30"></po-generic-issue>
+          </clr-dg-cell>
+          <clr-dg-cell style="text-align: right;">{{p.safety_min_day }}</clr-dg-cell>
+          <clr-dg-cell style="text-align: right;">{{p.safety_max_day }}</clr-dg-cell>
           <clr-dg-cell style="text-align: right;">{{p.min_qty | number}}</clr-dg-cell>
           <clr-dg-cell style="text-align: right;">{{p.max_qty | number}}</clr-dg-cell>
           <clr-dg-cell style="text-align: right; font-weight: bold; color: #F52F22;">{{p.remain_qty || 0 | number}}

@@ -27,7 +27,7 @@ export class LoginPageComponent implements OnInit {
 
   ngOnInit() {
     if (sessionStorage.getItem('token')) {
-      this.router.navigate(['purchase/order-point']);
+      this.router.navigate(['purchase/orders']);
     }
   }
 
