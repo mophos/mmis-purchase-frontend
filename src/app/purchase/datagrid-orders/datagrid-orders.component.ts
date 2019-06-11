@@ -613,10 +613,6 @@ export class DatagridOrdersComponent implements OnInit {
     this.htmlPrview.printpPurchasing(row);
   }
 
-  printRequistion(row: any) {
-    this.htmlPrview.printRequistion(row);
-  }
-
   printPurchaseOrderAttach(row: any) {
     this.htmlPrview.printPurchaseOrderAttach(row);
   }
