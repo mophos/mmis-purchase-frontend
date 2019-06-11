@@ -15,11 +15,17 @@ export class PurchasingofficerComponent implements OnInit {
   peoples: any[];
   modalInput = false;
   officerId: any;
-  peopleId: any;
   type: any;
-  isActive = 1;
+  isActive = 'Y';
   isEdit = false;
 
+  peopleId: any;
+  fullname: any;
+  typeName: any;
+  typeShow: any;
+  typeCode: any;
+  modalEdit = false;
+  modalChange = false;
   constructor(
     @Inject('API_URL') private apiUrl: string,
     private officerService: OfficerService,
@@ -72,23 +78,15 @@ export class PurchasingofficerComponent implements OnInit {
   }
 
   onClickAdd() {
-    this.isEdit = false;
-    this.modalInput = true;
-  }
-
-  onClickEdit(row) {
-    this.isEdit = true;
-    this.officerId = row.p_id;
-    this.peopleId = row.people_id;
-    this.type = row.type_id;
-    this.isActive = row.isactive;
+    this.typeShow = '';
+    this.peopleId = '';
     this.modalInput = true;
   }
 
   onClickDelete(row) {
     this.alertService.confirm('ยืนยันการลบข้อมูล?')
       .then(() => {
-        this.officerService.deletePurchasingOfficer(row.p_id)
+        this.officerService.deletePurchasingOfficer(row.officer_id)
           .then((resolve: any) => {
             this.getOfficer();
           })
@@ -102,19 +100,68 @@ export class PurchasingofficerComponent implements OnInit {
     try {
       const formInput = {
         people_id: this.peopleId,
-        type_id: this.type,
-        isactive: this.isActive
+        type_code: this.typeCode,
+        type_name: this.typeShow,
+        is_actived: this.isActive
       };
-      if (!this.isEdit) {
-        await this.officerService.savePurchasingOfficer(formInput)
-      } else {
-        await this.officerService.updatePurchasingOfficer(this.officerId, formInput)
-      }
+      await this.officerService.savePurchasingOfficer(formInput)
+
       this.getOfficer();
       this.modalInput = false;
       this.alertService.success('บันทึกเรียบร้อย');
     } catch (error) {
       this.alertService.error(JSON.stringify(error))
+    }
+  }
+
+  editTypeName(row) {
+    this.isEdit = true;
+    this.fullname = row.fullname
+    this.officerId = row.officer_id;
+    this.typeShow = row.type_show;
+    this.typeName = row.type_name;
+    this.isActive = row.is_actived;
+    this.modalEdit = true;
+  }
+
+  async saveEdit() {
+    try {
+      const data = {
+        type_name: this.typeShow,
+        is_actived: this.isActive
+      };
+      await this.officerService.editTypeShow(this.officerId, data)
+      await this.getOfficer();
+      this.modalEdit = false;
+    } catch (error) {
+      this.alertService.error(error);
+    }
+  }
+  changeTypeName(row) {
+    // this.isEdit = true;
+    this.peopleId = row.people_id;
+    this.typeCode = row.type_code;
+    this.fullname = row.fullname
+    this.officerId = row.officer_id;
+    this.typeShow = row.type_show;
+    this.typeName = row.type_name;
+    this.isActive = row.is_actived;
+    this.modalChange = true;
+  }
+
+  async saveChange() {
+    try {
+      const data = {
+        people_id: this.peopleId,
+        type_code: this.typeCode,
+        type_name: this.typeShow,
+        is_actived: this.isActive
+      };
+      await this.officerService.changeTypeShow(data)
+      await this.getOfficer();
+      this.modalChange = false;
+    } catch (error) {
+      this.alertService.error(error);
     }
   }
 }

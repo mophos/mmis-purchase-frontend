@@ -207,6 +207,8 @@ export class OrderFormComponent implements OnInit {
   dupBookNumber = false; // false = ห้ามซ้ำ
   edi = false;
   editAfterApprove = false;
+  managerId: any;
+
   constructor(
     private accessCheck: AccessCheck,
     private router: Router,
@@ -265,6 +267,7 @@ export class OrderFormComponent implements OnInit {
     this.buyerId = +localStorage.getItem('buyerId');
     this.supplyId = +localStorage.getItem('supplyId');
     this.chiefId = +localStorage.getItem('chiefId');
+    this.managerId = +localStorage.getItem('managerId');
     await this.getProductType();
     await this.getHoliday();
 
@@ -667,6 +670,7 @@ export class OrderFormComponent implements OnInit {
     this.chiefId = data.chief_id ? data.chief_id : this.chiefId;
     this.buyerId = data.buyer_id ? data.buyer_id : this.buyerId;
     this.supplyId = data.supply_id ? data.supply_id : this.supplyId;
+    this.managerId = data.manager_id ? data.manager_id : this.managerId;
 
     // this.budgetYear = data.budget_year || this.currentBudgetYear;
     this.purchaseDate = {
@@ -805,6 +809,7 @@ export class OrderFormComponent implements OnInit {
     localStorage.setItem('budgetTypeId', this.budgetTypeId.toString());
     localStorage.setItem('buyerId', this.buyerId.toString());
     localStorage.setItem('supplyId', this.supplyId.toString());
+    localStorage.setItem('managerId', this.managerId.toString());
     localStorage.setItem('chiefId', this.chiefId.toString());
     const bookNumber = await this.purchasingOrderService.getPoBookNumber();
     const idx = _.findIndex(bookNumber.rows, { purchase_order_book_number: this.purchaseOrderBookNumber });
@@ -963,6 +968,7 @@ export class OrderFormComponent implements OnInit {
       chief_id: this.chiefId,
       buyer_id: this.buyerId,
       supply_id: this.supplyId,
+      manager_id: this.managerId,
       budget_year: this.budgetYear,
       is_edi: this.edi ? 'Y' : 'N'
       // is_reorder: this.isReorder === 'Y' ? 2 : this.isReorder
@@ -1189,15 +1195,20 @@ export class OrderFormComponent implements OnInit {
   }
 
   changeOfficer(event: any) {
-    this.chiefId = event ? event.people_id : null;
+    this.chiefId = event ? event.officer_id : null;
   }
 
   changeOffice(event: any) {
-    this.buyerId = event ? event.people_id : null;
+    this.buyerId = event ? event.officer_id : null;
   }
   changeOffices(event: any) {
-    this.supplyId = event ? event.people_id : null;
+    this.supplyId = event ? event.officer_id : null;
   }
+
+  changeManager(event: any) {
+    this.managerId = event ? event.officer_id : null;
+  }
+
   async getProductType() {
     const token = sessionStorage.getItem('token');
     const decodedToken = this.jwtHelper.decodeToken(token);

@@ -322,6 +322,16 @@
                   </div>
                 </div>
                 <div class="form-group">
+                  <label class="required" for="staff_receive_fullname">ผู้อำนวยการ<span
+                      class="text-danger">*</span></label>
+                  <div class="row">
+                    <div class="col-md-11">
+                      <po-select-officer officerTypeCode="MANAGER" [selectedId]="managerId"
+                        (onChange)="changeManager($event)" style="width: 100%;"></po-select-officer>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group">
                   <label class="required" for="verify_committee_id">กรรมการตรวจรับ
                     <span class="text-danger">*</span>
                   </label>
