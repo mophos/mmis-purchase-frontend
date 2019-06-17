@@ -3,6 +3,7 @@
 </span>
 <div class="select" *ngIf="!loading" style="width: 100%">
   <select name="officerId" id="officerId" [disabled]="disabled" [(ngModel)]="selectedId" (change)="setSelected($event)">
+    <option [value]="null">-</option>
     <option *ngFor="let item of items" [value]="item.officer_id">
       {{ item.fullname }} - {{ item.type_show }}
     </option>
