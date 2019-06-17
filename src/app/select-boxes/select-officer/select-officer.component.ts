@@ -43,8 +43,9 @@ export class SelectOfficerComponent implements OnInit {
               this.onChange.emit(this.items[0]);
             }
           } else {
-            this.selectedId = this.items[0].officer_id;
-            this.onChange.emit(this.items[0]);
+            // this.selectedId = this.items[0].officer_id;
+            this.selectedId = null;
+            this.onChange.emit(null);
           }
         }
 

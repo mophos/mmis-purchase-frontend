@@ -651,6 +651,7 @@ export class DatagridOrdersComponent implements OnInit {
     });
     this.htmlPrview.showReport(this.url + `/account/payable/?token=${this.token}&` + purchaseOrderId.join('&'));
   }
+
   printPuchasing10(row: any) {
     this.htmlPrview.printPuchasing10(row);
   }
