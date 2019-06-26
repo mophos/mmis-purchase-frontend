@@ -243,7 +243,6 @@ export class OrderFormComponent implements OnInit {
     const accessRight = decoded.accessRight.split(',');
     this.editAfterApprove = _.indexOf(accessRight, 'PO_EDIT_AFFTER_APPROVE') === -1 ? false : true;
 
-    console.log(this.editAfterApprove)
     this.vatRateTmp = decoded.PC_VAT ? decoded.PC_VAT : 7;
     this.vatRate = this.vatRateTmp;
     this.currentVatRate = decoded.PC_VAT ? decoded.PC_VAT : 7;
@@ -907,12 +906,12 @@ export class OrderFormComponent implements OnInit {
 
     const purchaseDate = `${this.purchaseDate.date.year}-${this.purchaseDate.date.month}-${this.purchaseDate.date.day}`;
 
-    if (!this.showChief) {
-      this.chiefId = null;
-    }
-    if (!this.showBuyer) {
-      this.buyerId = null;
-    }
+    // if (!this.showChief) {
+    //   this.chiefId = null;
+    // }
+    // if (!this.showBuyer) {
+    //   this.buyerId = null;
+    // }
     const peopleCommittee = [];
     if (this.verifyCommitteeId === 0) {
       const committeeHead = {
