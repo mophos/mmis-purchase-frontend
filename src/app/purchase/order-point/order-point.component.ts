@@ -552,6 +552,7 @@ export class OrderPointComponent implements OnInit {
             objP.chief_id = this.chiefId;
             objP.supply_id = this.supplyId;
             objP.manager_id = this.managerId;
+            objP.head_id = this.headId;
           }
 
 
@@ -784,8 +785,6 @@ export class OrderPointComponent implements OnInit {
   }
 
   changeOffice(event: any) {
-    console.log(event);
-
     this.buyerId = event ? event.officer_id : null;
   }
 

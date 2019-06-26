@@ -283,48 +283,48 @@
               <div class="card-block">
 
                 <div class="form-group">
-                  <label for="chief_fullname"> ชื่อหัวหน้าเจ้าหน้าที่</label>
+                  <label for="chief_fullname"> ชื่อหัวหน้าเจ้าหน้าที่<span class="text-danger">*</span></label>
                   <div class="row">
-                    <div class="col-md-11">
+                    <div class="col-md-12">
                       <po-select-officer [selectedId]="chiefId" officerTypeCode="CHIEF"
                         (onChange)="changeOfficer($event)" style="width: 100%;"></po-select-officer>
                     </div>
-                    <div class="col-md-1">
+                    <!-- <div class="col-md-1">
                       <div class="checkbox">
                         <clr-checkbox name="showChief" [(ngModel)]="showChief" [clrChecked]="showChief"></clr-checkbox>
                       </div>
-                    </div>
+                    </div> -->
                   </div>
                 </div>
 
                 <div class="form-group">
-                  <label for="buyer_fullname"> ชื่อเจ้าหน้าที่</label>
+                  <label for="buyer_fullname"> ชื่อเจ้าหน้าที่<span class="text-danger">*</span></label>
                   <div class="row">
-                    <div class="col-md-11">
+                    <div class="col-md-12">
                       <po-select-officer officerTypeCode="BUYYER" [selectedId]="buyerId"
                         (onChange)="changeOffice($event)" style="width: 100%;"></po-select-officer>
                     </div>
-                    <div class="col-md-1">
+                    <!-- <div class="col-md-1">
                       <div class="checkbox">
                         <clr-checkbox name="showBuyer" [(ngModel)]="showBuyer" [clrChecked]="showBuyer"></clr-checkbox>
                       </div>
-                    </div>
+                    </div> -->
                   </div>
                 </div>
                 <div class="form-group">
                   <label class="required" for="staff_receive_fullname"> เจ้าหน้าที่พัสดุ<span
-                      class="text-danger"></span></label>
+                      class="text-danger">*</span></label>
                   <div class="row">
-                    <div class="col-md-11">
+                    <div class="col-md-12">
                       <po-select-officer officerTypeCode="STAFF_RECEIVE" [selectedId]="supplyId"
                         (onChange)="changeOffices($event)" style="width: 100%;"></po-select-officer>
                     </div>
                   </div>
                 </div>
                 <div class="form-group">
-                  <label class="required"> หัวหน้ากลุ่มงาน<span class="text-danger"></span></label>
+                  <label class="required"> หัวหน้ากลุ่มงาน<span class="text-danger">*</span></label>
                   <div class="row">
-                    <div class="col-md-11">
+                    <div class="col-md-12">
                       <po-select-officer officerTypeCode="HEAD" [selectedId]="headId"
                         (onChange)="changeOfficeHeadId($event)" style="width: 100%;"></po-select-officer>
                     </div>
@@ -334,7 +334,7 @@
                   <label class="required" for="staff_receive_fullname">ผู้อำนวยการ<span
                       class="text-danger">*</span></label>
                   <div class="row">
-                    <div class="col-md-11">
+                    <div class="col-md-12">
                       <po-select-officer officerTypeCode="MANAGER" [selectedId]="managerId"
                         (onChange)="changeManager($event)" style="width: 100%;"></po-select-officer>
                     </div>

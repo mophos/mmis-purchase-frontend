@@ -32,8 +32,6 @@ export class SelectOfficerComponent implements OnInit {
       this.loading = false;
       if (rs.ok) {
         this.items = _.filter(rs.rows, { 'type_code': this.officerTypeCode });
-        console.log(this.items, this.selectedId);
-
         if (this.items.length) {
           if (this.selectedId) {
             const idx = _.findIndex(this.items, { officer_id: +this.selectedId });
@@ -62,6 +60,8 @@ export class SelectOfficerComponent implements OnInit {
     const idx = _.findIndex(this.items, { officer_id: +event.target.value });
     if (idx > -1) {
       this.onChange.emit(this.items[idx]);
+    } else {
+      this.onChange.emit(null);
     }
   }
 }
