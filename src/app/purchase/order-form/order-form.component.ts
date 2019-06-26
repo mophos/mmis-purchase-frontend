@@ -174,7 +174,7 @@ export class OrderFormComponent implements OnInit {
   buyerId: number;
   supplyId: number;
   chiefId: number;
-  // percent_amount: number;
+  headId: number;
   count = 0;
 
   isSaving = false;
@@ -207,6 +207,8 @@ export class OrderFormComponent implements OnInit {
   dupBookNumber = false; // false = ห้ามซ้ำ
   edi = false;
   editAfterApprove = false;
+  managerId: any;
+
   constructor(
     private accessCheck: AccessCheck,
     private router: Router,
@@ -241,7 +243,6 @@ export class OrderFormComponent implements OnInit {
     const accessRight = decoded.accessRight.split(',');
     this.editAfterApprove = _.indexOf(accessRight, 'PO_EDIT_AFFTER_APPROVE') === -1 ? false : true;
 
-    console.log(this.editAfterApprove)
     this.vatRateTmp = decoded.PC_VAT ? decoded.PC_VAT : 7;
     this.vatRate = this.vatRateTmp;
     this.currentVatRate = decoded.PC_VAT ? decoded.PC_VAT : 7;
@@ -265,6 +266,8 @@ export class OrderFormComponent implements OnInit {
     this.buyerId = +localStorage.getItem('buyerId');
     this.supplyId = +localStorage.getItem('supplyId');
     this.chiefId = +localStorage.getItem('chiefId');
+    this.headId = +localStorage.getItem('headId');
+    this.managerId = +localStorage.getItem('managerId');
     await this.getProductType();
     await this.getHoliday();
 
@@ -667,6 +670,8 @@ export class OrderFormComponent implements OnInit {
     this.chiefId = data.chief_id ? data.chief_id : this.chiefId;
     this.buyerId = data.buyer_id ? data.buyer_id : this.buyerId;
     this.supplyId = data.supply_id ? data.supply_id : this.supplyId;
+    this.headId = data.head_id ? data.head_id : this.headId;
+    this.managerId = data.manager_id ? data.manager_id : this.managerId;
 
     // this.budgetYear = data.budget_year || this.currentBudgetYear;
     this.purchaseDate = {
@@ -803,9 +808,31 @@ export class OrderFormComponent implements OnInit {
 
     localStorage.setItem('budgetDetailId', this.budgetDetailId.toString());
     localStorage.setItem('budgetTypeId', this.budgetTypeId.toString());
-    localStorage.setItem('buyerId', this.buyerId.toString());
-    localStorage.setItem('supplyId', this.supplyId.toString());
-    localStorage.setItem('chiefId', this.chiefId.toString());
+    if (this.buyerId) {
+      localStorage.setItem('buyerId', this.buyerId.toString());
+    } else {
+      localStorage.removeItem('buyerId');
+    }
+    if (this.supplyId) {
+      localStorage.setItem('supplyId', this.supplyId.toString());
+    } else {
+      localStorage.removeItem('supplyId');
+    }
+    if (this.headId) {
+      localStorage.setItem('headId', this.headId.toString());
+    } else {
+      localStorage.removeItem('headId');
+    }
+    if (this.managerId) {
+      localStorage.setItem('managerId', this.managerId.toString());
+    } else {
+      localStorage.removeItem('managerId');
+    }
+    if (this.chiefId) {
+      localStorage.setItem('chiefId', this.chiefId.toString());
+    } else {
+      localStorage.removeItem('chiefId');
+    }
     const bookNumber = await this.purchasingOrderService.getPoBookNumber();
     const idx = _.findIndex(bookNumber.rows, { purchase_order_book_number: this.purchaseOrderBookNumber });
     if (((!this.dupBookNumber && idx === -1) || this.dupBookNumber) || this.isUpdate) {
@@ -879,12 +906,12 @@ export class OrderFormComponent implements OnInit {
 
     const purchaseDate = `${this.purchaseDate.date.year}-${this.purchaseDate.date.month}-${this.purchaseDate.date.day}`;
 
-    if (!this.showChief) {
-      this.chiefId = null;
-    }
-    if (!this.showBuyer) {
-      this.buyerId = null;
-    }
+    // if (!this.showChief) {
+    //   this.chiefId = null;
+    // }
+    // if (!this.showBuyer) {
+    //   this.buyerId = null;
+    // }
     const peopleCommittee = [];
     if (this.verifyCommitteeId === 0) {
       const committeeHead = {
@@ -963,6 +990,8 @@ export class OrderFormComponent implements OnInit {
       chief_id: this.chiefId,
       buyer_id: this.buyerId,
       supply_id: this.supplyId,
+      head_id: this.headId,
+      manager_id: this.managerId,
       budget_year: this.budgetYear,
       is_edi: this.edi ? 'Y' : 'N'
       // is_reorder: this.isReorder === 'Y' ? 2 : this.isReorder
@@ -1189,15 +1218,23 @@ export class OrderFormComponent implements OnInit {
   }
 
   changeOfficer(event: any) {
-    this.chiefId = event ? event.people_id : null;
+    this.chiefId = event ? event.officer_id : null;
   }
 
   changeOffice(event: any) {
-    this.buyerId = event ? event.people_id : null;
+    this.buyerId = event ? event.officer_id : null;
   }
   changeOffices(event: any) {
-    this.supplyId = event ? event.people_id : null;
+    this.supplyId = event ? event.officer_id : null;
   }
+  changeOfficeHeadId(event: any) {
+    this.headId = event ? event.officer_id : null;
+  }
+
+  changeManager(event: any) {
+    this.managerId = event ? event.officer_id : null;
+  }
+
   async getProductType() {
     const token = sessionStorage.getItem('token');
     const decodedToken = this.jwtHelper.decodeToken(token);

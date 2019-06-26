@@ -613,10 +613,6 @@ export class DatagridOrdersComponent implements OnInit {
     this.htmlPrview.printpPurchasing(row);
   }
 
-  printRequistion(row: any) {
-    this.htmlPrview.printRequistion(row);
-  }
-
   printPurchaseOrderAttach(row: any) {
     this.htmlPrview.printPurchaseOrderAttach(row);
   }
@@ -655,6 +651,7 @@ export class DatagridOrdersComponent implements OnInit {
     });
     this.htmlPrview.showReport(this.url + `/account/payable/?token=${this.token}&` + purchaseOrderId.join('&'));
   }
+
   printPuchasing10(row: any) {
     this.htmlPrview.printPuchasing10(row);
   }

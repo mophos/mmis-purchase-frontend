@@ -30,7 +30,7 @@
       <clr-datagrid (clrDgRefresh)="refresh($event)" style="height: 80%;">
         <clr-dg-column [clrDgField]="'generic_name'">ชื่อสามัญ (Generic Name)</clr-dg-column>
         <!-- <clr-dg-column [clrDgField]="'labeler_name'">ผู้จำหน่าย</clr-dg-column> -->
-        <clr-dg-column style="width: 120px;">อัตราการใช้(30วัน)</clr-dg-column>
+        <!-- <clr-dg-column style="width: 120px;">อัตราการใช้(30วัน)</clr-dg-column> -->
         <clr-dg-column style="width: 120px;">Safety Min</clr-dg-column>
         <clr-dg-column style="width: 120px;">Safety Max</clr-dg-column>
         <clr-dg-column style="width: 120px;">Min</clr-dg-column>
@@ -47,9 +47,9 @@
             {{p.working_code}} - {{p.generic_name}}
           </clr-dg-cell>
           <!-- <clr-dg-cell>{{p.labeler_name}}</clr-dg-cell> -->
-          <clr-dg-cell style="text-align: right;">
+          <!-- <clr-dg-cell style="text-align: right;">
               <po-generic-issue [genericId]="p.generic_id" [day]="30"></po-generic-issue>
-          </clr-dg-cell>
+          </clr-dg-cell> -->
           <clr-dg-cell style="text-align: right;">{{p.safety_min_day }}</clr-dg-cell>
           <clr-dg-cell style="text-align: right;">{{p.safety_max_day }}</clr-dg-cell>
           <clr-dg-cell style="text-align: right;">{{p.min_qty | number}}</clr-dg-cell>
@@ -299,21 +299,18 @@
               style="width: 100%;" #subBudgetList [year]="budgetYear"></po-select-sub-budget>
           </div>
         </div>
-
         <label for="chief_fullname"> ชื่อหัวหน้าเจ้าหน้าที่</label>
         <div class="row">
           <div class="col-md-11">
             <po-select-officer [selectedId]="office" officerTypeCode="CHIEF" (onChange)="changeOfficer($event)"
               style="width: 100%;"></po-select-officer>
           </div>
-          <div class="col-md-1">
+          <!-- <div class="col-md-1">
             <div class="checkbox">
               <clr-checkbox name="showChief" [(ngModel)]="showChief" [clrChecked]="showChief"></clr-checkbox>
             </div>
-          </div>
+          </div> -->
         </div>
-        <!-- </div> -->
-
         <div class="form-group">
           <label for="buyer_fullname"> ชื่อเจ้าหน้าที่</label>
           <div class="row">
@@ -321,22 +318,48 @@
               <po-select-officer officerTypeCode="BUYYER" [selectedId]="office1" (onChange)="changeOffice($event)"
                 style="width: 100%;"></po-select-officer>
             </div>
-            <div class="col-md-1">
+            <!-- <div class="col-md-1">
               <div class="checkbox">
                 <clr-checkbox name="showBuyer" [(ngModel)]="showBuyer" [clrChecked]="showBuyer"></clr-checkbox>
               </div>
-            </div>
+            </div> -->
           </div>
         </div>
-
         <div class="form-group">
-          <label class="required" for="staff_receive_fullname"> เจ้าหน้าที่พัสดุ<span
-              class="text-danger">*</span></label>
+          <label for="buyer_fullname"> ชื่อเจ้าหน้าที่พัสดุ</label>
           <div class="row">
             <div class="col-md-11">
               <po-select-officer officerTypeCode="STAFF_RECEIVE" [selectedId]="supplyId"
-                (onChange)="changeOffices($event)" style="width: 100%;"></po-select-officer>
+                (onChange)="changeOfficeSupply($event)" style="width: 100%;"></po-select-officer>
             </div>
+            <!-- <div class="col-md-1">
+              <div class="checkbox">
+                <clr-checkbox name="showBuyer" [(ngModel)]="showBuyer" [clrChecked]="showBuyer"></clr-checkbox>
+              </div>
+            </div> -->
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="required"> หัวหน้ากลุ่มงาน<span class="text-danger"></span></label>
+          <div class="row">
+            <div class="col-md-11">
+              <po-select-officer officerTypeCode="HEAD" [selectedId]="headId" (onChange)="changeOfficeHeadId($event)"
+                style="width: 100%;"></po-select-officer>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="buyer_fullname"> ชื่อผู้อำนวยการ</label>
+          <div class="row">
+            <div class="col-md-11">
+              <po-select-officer officerTypeCode="MANAGER" [selectedId]="managerId"
+                (onChange)="changeOfficeManager($event)" style="width: 100%;"></po-select-officer>
+            </div>
+            <!-- <div class="col-md-1">
+              <div class="checkbox">
+                <clr-checkbox name="showBuyer" [(ngModel)]="showBuyer" [clrChecked]="showBuyer"></clr-checkbox>
+              </div>
+            </div> -->
           </div>
         </div>
 

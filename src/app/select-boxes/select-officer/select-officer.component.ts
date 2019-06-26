@@ -34,15 +34,16 @@ export class SelectOfficerComponent implements OnInit {
         this.items = _.filter(rs.rows, { 'type_code': this.officerTypeCode });
         if (this.items.length) {
           if (this.selectedId) {
-            const idx = _.findIndex(this.items, { people_id: +this.selectedId });
+            const idx = _.findIndex(this.items, { officer_id: +this.selectedId });
             if (idx > -1) {
               this.onChange.emit(this.items[idx]);
             } else {
               this.onChange.emit(this.items[0]);
             }
           } else {
-            this.selectedId = this.items[0].people_id;
-            this.onChange.emit(this.items[0]);
+            // this.selectedId = this.items[0].officer_id;
+            this.selectedId = null;
+            this.onChange.emit(null);
           }
         }
 
@@ -56,9 +57,11 @@ export class SelectOfficerComponent implements OnInit {
   }
 
   setSelected(event: any) {
-    const idx = _.findIndex(this.items, { people_id: +event.target.value });
+    const idx = _.findIndex(this.items, { officer_id: +event.target.value });
     if (idx > -1) {
       this.onChange.emit(this.items[idx]);
+    } else {
+      this.onChange.emit(null);
     }
   }
 }
