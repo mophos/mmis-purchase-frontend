@@ -73,6 +73,7 @@ export class OrderPointComponent implements OnInit {
   buyerId: any;
   supplyId: number;
   managerId: any;
+  headId: any;
   peopleId1: any;
   peopleId2: any;
   peopleId3: any;
@@ -535,12 +536,12 @@ export class OrderPointComponent implements OnInit {
             budget_year: this.defaultBudgetYear,
             order_date: moment().format('YYYY-MM-DD')
           }
-          if (!this.showChief) {
-            this.chiefId = null;
-          }
-          if (!this.showBuyer) {
-            this.buyerId = null;
-          }
+          // if (!this.showChief) {
+          //   this.chiefId = null;
+          // }
+          // if (!this.showBuyer) {
+          //   this.buyerId = null;
+          // }
           if (!this.onePO) {
             objP.purchase_order_status = 'PREPARED';
             objP.budget_detail_id = this.budgetDetailId;
@@ -779,20 +780,27 @@ export class OrderPointComponent implements OnInit {
 
 
   changeOfficer(event: any) {
-    this.chiefId = event ? event.people_id : null;
+    this.chiefId = event ? event.officer_id : null;
   }
 
   changeOffice(event: any) {
-    this.buyerId = event ? event.people_id : null;
+    console.log(event);
+
+    this.buyerId = event ? event.officer_id : null;
   }
 
   changeOfficeSupply(event: any) {
-    this.supplyId = event ? event.people_id : null;
+    this.supplyId = event ? event.officer_id : null;
   }
 
   changeOfficeManager(event: any) {
-    this.managerId = event ? event.people_id : null;
+    this.managerId = event ? event.officer_id : null;
   }
+
+  changeOfficeHeadId(event: any) {
+    this.headId = event ? event.officer_id : null;
+  }
+
   changeCommittee(event: any) {
     this.verifyCommitteeId = event ? event.committee_id : null;
     this.peopleId1 = null;
