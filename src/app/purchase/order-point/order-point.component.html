@@ -299,7 +299,6 @@
               style="width: 100%;" #subBudgetList [year]="budgetYear"></po-select-sub-budget>
           </div>
         </div>
-
         <label for="chief_fullname"> ชื่อหัวหน้าเจ้าหน้าที่</label>
         <div class="row">
           <div class="col-md-11">
@@ -312,8 +311,6 @@
             </div>
           </div>
         </div>
-        <!-- </div> -->
-
         <div class="form-group">
           <label for="buyer_fullname"> ชื่อเจ้าหน้าที่</label>
           <div class="row">
@@ -328,15 +325,32 @@
             </div>
           </div>
         </div>
-
         <div class="form-group">
-          <label class="required" for="staff_receive_fullname"> เจ้าหน้าที่พัสดุ<span
-              class="text-danger">*</span></label>
+          <label for="buyer_fullname"> ชื่อเจ้าหน้าที่พัสดุ</label>
           <div class="row">
             <div class="col-md-11">
               <po-select-officer officerTypeCode="STAFF_RECEIVE" [selectedId]="supplyId"
-                (onChange)="changeOffices($event)" style="width: 100%;"></po-select-officer>
+                (onChange)="changeOfficeSupply($event)" style="width: 100%;"></po-select-officer>
             </div>
+            <!-- <div class="col-md-1">
+              <div class="checkbox">
+                <clr-checkbox name="showBuyer" [(ngModel)]="showBuyer" [clrChecked]="showBuyer"></clr-checkbox>
+              </div>
+            </div> -->
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="buyer_fullname"> ชื่อผู้อำนวยการ</label>
+          <div class="row">
+            <div class="col-md-11">
+              <po-select-officer officerTypeCode="MANAGER" [selectedId]="managerId"
+                (onChange)="changeOfficeManager($event)" style="width: 100%;"></po-select-officer>
+            </div>
+            <!-- <div class="col-md-1">
+              <div class="checkbox">
+                <clr-checkbox name="showBuyer" [(ngModel)]="showBuyer" [clrChecked]="showBuyer"></clr-checkbox>
+              </div>
+            </div> -->
           </div>
         </div>
 
