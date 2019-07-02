@@ -165,6 +165,11 @@
             <clr-icon shape="shopping-cart"></clr-icon> ออกใบสั่งซื้อ ({{selectedOrdersReserved.length || 0 | number}}
             รายการ)
           </button>
+          <button class="btn btn-sm btn-primary btn-icon" [disabled]="!selectedOrdersReserved.length"
+            (click)="printOrdersReserved()">
+            <clr-icon shape="printer"></clr-icon> พิมพ์รายการรอออกใบสั่งซื้อ
+          </button>
+          
         </div>
         <div class="col-md-4">
           <div class="select" style="float: right;">
