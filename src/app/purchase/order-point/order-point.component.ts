@@ -133,7 +133,28 @@ export class OrderPointComponent implements OnInit {
     this.htmlPreview.showReport(url);
 
     this.printProducts = [];
-    this.selectedReserved = [];
+    // this.selectedReserved = [];
+  }
+
+  printOrdersReserved() {
+    this.selectedOrdersReserved.forEach(v => {
+      const obj = {
+        reserve_id: v.reserve_id
+      }
+      this.printProducts.push(obj);
+    });
+
+    let reserve_id = '';
+    this.printProducts.forEach((v: any) => {
+      reserve_id += `r=${v.reserve_id}&`;
+    });
+
+    const url = `${this.apiUrl}/report/list/purchase-orders-reserved/?token=${this.token}&${reserve_id}`;
+    console.log(url)
+    this.htmlPreview.showReport(url);
+
+    this.printProducts = [];
+    // this.selectedOrdersReserved = [];
   }
 
   onDateStartChanged(event: IMyDateModel) {
