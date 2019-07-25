@@ -157,6 +157,27 @@ export class OrderPointComponent implements OnInit {
     // this.selectedOrdersReserved = [];
   }
 
+  printOrdersReservedExcel() {
+    this.selectedOrdersReserved.forEach(v => {
+      const obj = {
+        reserve_id: v.reserve_id
+      }
+      this.printProducts.push(obj);
+    });
+
+    let reserve_id = '';
+    this.printProducts.forEach((v: any) => {
+      reserve_id += `r=${v.reserve_id}&`;
+    });
+
+    const url = `${this.apiUrl}/report/list/purchase-orders-reserved/excel/?token=${this.token}&${reserve_id}`;
+    console.log(url)
+    // this.htmlPreview.showReport(url);
+    window.open(url, '_blank');
+    this.printProducts = [];
+    // this.selectedOrdersReserved = [];
+  }
+
   onDateStartChanged(event: IMyDateModel) {
     const selectDate: any = moment(event.jsdate).format('YYYY-MM-DD');
     if (selectDate !== 'Invalid date') {
