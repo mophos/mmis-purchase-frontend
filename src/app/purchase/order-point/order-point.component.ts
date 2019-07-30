@@ -170,7 +170,7 @@ export class OrderPointComponent implements OnInit {
       reserve_id += `r=${v.reserve_id}&`;
     });
 
-    const url = `${this.apiUrl}/report/list/purchase-orders-reserved/excel/?token=${this.token}&${reserve_id}`;
+    const url = `${this.apiUrl}/report/list/purchase-orders-reserved/excel?token=${this.token}&${reserve_id}`;
     console.log(url)
     // this.htmlPreview.showReport(url);
     window.open(url, '_blank');
