@@ -72,8 +72,6 @@ export class BudgetRemainComponent implements OnInit {
     try {
       if (this._budgetDetailId) {
         const rs: any = await this.budgetTransactionService.getBudgetTransectionBalance(this.purchaseOrderId, this._budgetDetailId);
-        console.log(rs, 'x2');
-
         if (rs.ok) {
           const totalPurchase = rs.totalPurchase ? +rs.totalPurchase : 0;
           // this.budgetRemain = this.budgetAmount - totalPurchase;
