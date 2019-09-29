@@ -267,11 +267,10 @@ export class OrderFormComponent implements OnInit {
     if (this.purchaseOrderId) {
       await this.getPurchaseOrderDetail(this.purchaseOrderId);
     } else {
-      this.viewBudgetDetailId = +localStorage.getItem('budgetDetailId');
+      // this.viewBudgetDetailId = +localStorage.getItem('budgetDetailId');
       this.newOrder();
       await this.checkIsHoliday(moment().format('YYYY-MM-DD'));
     }
-
   }
 
   productSearchSelected(product: IProductOrderItem) {
