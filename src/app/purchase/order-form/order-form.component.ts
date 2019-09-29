@@ -1,20 +1,12 @@
 
-import { BudgetTransectionService } from '../share/budget-transection.service';
-import { SettingService } from './../share/setting.service';
 import { AccessCheck } from '../share/access-check';
 import { HolidayService } from '../share/holiday.service';
 import { HtmlPreviewComponent } from './../../helper/html-preview/html-preview.component';
 import { OrdersHistoryComponent } from './../directives/orders-history/orders-history.component';
-import { SelectUnitsComponent } from './../directives/select-units/select-units.component';
-import { UnitService } from './../share/unit.service';
-import { ProductsSelectComponent } from './../directives/products-select/products-select.component';
-import { IMyOptions, IMyDateModel, IMyMarkedDates } from 'mydatepicker-th';
-import { Component, OnInit, Inject, ChangeDetectorRef, ViewChild } from '@angular/core';
+import { IMyOptions, IMyDateModel } from 'mydatepicker-th';
+import { Component, OnInit, Inject, ViewChild } from '@angular/core';
 import { Router, ActivatedRoute, Params } from '@angular/router';
-import { AuthHttp } from 'angular2-jwt';
-import { Http, Response, Headers } from '@angular/http';
 import { AlertService } from './../../alert.service';
-import { OfficerService } from 'app/purchase/share/officer.service';
 
 import { Product } from './../share/models/product.interface';
 import { PeopleService } from '../share/people.service';
@@ -147,7 +139,7 @@ export class OrderFormComponent implements OnInit {
   addVat = false;
   vat = 0;
   totalPrice = 0;
-  budgetDetailId: number;
+  viewBudgetDetailId: number;
   amount = 0;
   balance = 0;
   total = 0;
@@ -261,7 +253,7 @@ export class OrderFormComponent implements OnInit {
   }
 
   async ngOnInit() {
-    this.budgetDetailId = +localStorage.getItem('budgetDetailId');
+    this.viewBudgetDetailId = +localStorage.getItem('budgetDetailId');
     this.budgetTypeId = +localStorage.getItem('budgetTypeId');
     this.buyerId = +localStorage.getItem('buyerId');
     this.supplyId = +localStorage.getItem('supplyId');
@@ -504,7 +496,7 @@ export class OrderFormComponent implements OnInit {
 
   onChangeSubBudget(event: any) {
     // คำนวณการใช้งบประมาณใหม่
-    this.budgetDetailId = event ? event.bgdetail_id : null;
+    this.viewBudgetDetailId = event ? event.view_bgdetail_id : null;
   }
 
   onChangeGenericType(genericTypeId: string) {
@@ -689,7 +681,7 @@ export class OrderFormComponent implements OnInit {
     }
 
     if (data.budget_detail_id) {
-      this.budgetDetailId = data.budget_detail_id;
+      this.viewBudgetDetailId = data.budget_detail_id;
     }
     // if (data.budgettype_id) {
     //   this.budgetTypeId = data.budgettype_id;
@@ -731,7 +723,7 @@ export class OrderFormComponent implements OnInit {
     }
 
     if (data.budget_detail_id) {
-      this.budgetDetailId = data.budget_detail_id;
+      this.viewBudgetDetailId = data.budget_detail_id;
     }
 
     this.searchVendor.setSelected(data.labeler_name);
@@ -768,7 +760,7 @@ export class OrderFormComponent implements OnInit {
     } else {
       if (this.purchaseDate && this.labelerId && this.purchaseMethodId &&
         this.budgetTypeId && this.genericTypeId && this.purchaseOrderItems.length &&
-        this.totalPrice > 0 && this.budgetDetailId && this.verifyCommitteeId != null) {
+        this.totalPrice > 0 && this.viewBudgetDetailId && this.verifyCommitteeId != null) {
 
         const purchaseDate = this.purchaseDate ?
           `${this.purchaseDate.date.year}-${this.purchaseDate.date.month}-${this.purchaseDate.date.day}` :
@@ -806,7 +798,7 @@ export class OrderFormComponent implements OnInit {
 
   async _save() {
 
-    localStorage.setItem('budgetDetailId', this.budgetDetailId.toString());
+    localStorage.setItem('budgetDetailId', this.viewBudgetDetailId.toString());
     localStorage.setItem('budgetTypeId', this.budgetTypeId.toString());
     if (this.buyerId) {
       localStorage.setItem('buyerId', this.buyerId.toString());
@@ -969,7 +961,7 @@ export class OrderFormComponent implements OnInit {
       contract_id: this.contractId,
       purchase_method_id: this.purchaseMethodId,
       budgettype_id: this.budgetTypeId,
-      budget_detail_id: this.budgetDetailId,
+      budget_detail_id: this.viewBudgetDetailId,
       generic_type_id: this.genericTypeId,
       purchase_type_id: this.purchaseTypeId,
       sub_total: this.subTotal,
