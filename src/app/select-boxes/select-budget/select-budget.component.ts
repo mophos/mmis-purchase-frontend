@@ -27,7 +27,7 @@ export class SelectBudgetComponent implements OnInit {
   async getItems() {
     try {
       this.loading = true;
-      let rs: any = await this.stdService.getBudgetType();
+      const rs: any = await this.stdService.getBudgetType();
       this.loading = false;
       if (rs.ok) {
         this.items = rs.rows;

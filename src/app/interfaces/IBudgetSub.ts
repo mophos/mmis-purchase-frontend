@@ -1,4 +1,5 @@
 export interface IBudgetSub {
+  view_bgdetail_id?: number;
   bgdetail_id?: number;
   bg_year?: string;
   bgtype_id?: number;

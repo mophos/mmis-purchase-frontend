@@ -53,14 +53,14 @@ export class SelectSubBudgetComponent implements OnInit {
           this.items = rs.rows;
           if (this.items.length) {
             if (this._selectedId) {
-              const idx = _.findIndex(this.items, { bgdetail_id: this._selectedId });
+              const idx = _.findIndex(this.items, { view_bgdetail_id: this._selectedId });
               if (idx > -1) {
                 this.onChange.emit(this.items[idx]);
               } else {
                 this.onChange.emit(this.items[0]);
               }
             } else {
-              this._selectedId = this.items[0].bgdetail_id;
+              this._selectedId = this.items[0].view_bgdetail_id;
               this.onChange.emit(this.items[0]);
             }
           }
@@ -86,7 +86,7 @@ export class SelectSubBudgetComponent implements OnInit {
   }
 
   setSelected(event: any) {
-    const idx = _.findIndex(this.items, { bgdetail_id: +event.target.value });
+    const idx = _.findIndex(this.items, { view_bgdetail_id: +event.target.value });
     if (idx > -1) {
       this.onChange.emit(this.items[idx]);
     }
