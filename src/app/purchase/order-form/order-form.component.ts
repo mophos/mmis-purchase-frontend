@@ -202,7 +202,7 @@ export class OrderFormComponent implements OnInit {
   edi = false;
   editAfterApprove = false;
   managerId: any;
-
+  isCancel = false;
   constructor(
     private accessCheck: AccessCheck,
     private router: Router,
@@ -255,7 +255,6 @@ export class OrderFormComponent implements OnInit {
   }
 
   async ngOnInit() {
-    this.viewBudgetDetailId = +localStorage.getItem('budgetDetailId');
     this.budgetTypeId = +localStorage.getItem('budgetTypeId');
     this.buyerId = +localStorage.getItem('buyerId');
     this.supplyId = +localStorage.getItem('supplyId');
@@ -268,6 +267,7 @@ export class OrderFormComponent implements OnInit {
     if (this.purchaseOrderId) {
       await this.getPurchaseOrderDetail(this.purchaseOrderId);
     } else {
+      this.viewBudgetDetailId = +localStorage.getItem('budgetDetailId');
       this.newOrder();
       await this.checkIsHoliday(moment().format('YYYY-MM-DD'));
     }
@@ -617,6 +617,9 @@ export class OrderFormComponent implements OnInit {
 
   async setOrderDetail(data: any) {
     this.isUpdate = true;
+    if (data.budget_detail_id) {
+      this.viewBudgetDetailId = data.budget_detail_id;
+    }
     this.purchasingId = data.purchasing_id;
     this.purchaseOrderBookNumber = data.purchase_order_book_number;
     this.purchaseOrderNumber = data.purchase_order_number;
@@ -680,12 +683,6 @@ export class OrderFormComponent implements OnInit {
       year += 1;
     }
 
-    if (data.budget_detail_id) {
-      this.viewBudgetDetailId = data.budget_detail_id;
-    }
-    // if (data.budgettype_id) {
-    //   this.budgetTypeId = data.budgettype_id;
-    // }
     if (data.budget_year && data.budgettype_id && data.budget_detail_id) {
       this.budgetYear = data.budget_year;
       this.currentBudgetYear = data.budget_year;
@@ -720,10 +717,6 @@ export class OrderFormComponent implements OnInit {
     if (this.purchaseOrder.verify_committee_id) {
       this.verifyCommitteeId = this.purchaseOrder.verify_committee_id;
       await this.getCommitteePeople(this.purchaseOrder.verify_committee_id);
-    }
-
-    if (data.budget_detail_id) {
-      this.viewBudgetDetailId = data.budget_detail_id;
     }
 
     this.searchVendor.setSelected(data.labeler_name);
@@ -1020,6 +1013,7 @@ export class OrderFormComponent implements OnInit {
       if (rs.ok) {
         this.purchaseOrder = rs.detail;
         this.isContract = rs.detail.is_contract === 'T' ? true : false;
+        this.isCancel = rs.detail.is_cancel === 'Y' ? true : false;
         await this.setOrderDetail(rs.detail);
         this.searchProductLabeler.setApiUrl(rs.detail.labeler_id);
         await this.getPurchaseOrderItems(this.purchaseOrder.purchase_order_id);
@@ -1124,6 +1118,9 @@ export class OrderFormComponent implements OnInit {
       return true;
     }
     if (this.purchaseOrderItems.length === 0) {
+      return true;
+    }
+    if (this.isCancel) {
       return true;
     }
     if (this.purchaseOrderStatus === 'COMPLETED') {

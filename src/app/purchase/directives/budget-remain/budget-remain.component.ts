@@ -71,7 +71,9 @@ export class BudgetRemainComponent implements OnInit {
   async getBalance() {
     try {
       if (this._budgetDetailId) {
-        const rs: any = await this.budgetTransactionService.getBudgetTransectionBalance(this._budgetDetailId, this.purchaseOrderId);
+        const rs: any = await this.budgetTransactionService.getBudgetTransectionBalance(this.purchaseOrderId, this._budgetDetailId);
+        console.log(rs, 'x2');
+
         if (rs.ok) {
           const totalPurchase = rs.totalPurchase ? +rs.totalPurchase : 0;
           // this.budgetRemain = this.budgetAmount - totalPurchase;
@@ -116,20 +118,21 @@ export class BudgetRemainComponent implements OnInit {
   async getBudget() {
     this.clearData();
     try {
-      console.log(this._budgetDetailId);
+      if (this._budgetDetailId) {
+        const rs: any = await this.budgetTransactionService.getBudgetTransectionBalance(this.purchaseOrderId, this._budgetDetailId);
 
-      const rs: any = await this.budgetTransactionService.getBudgetTransection(this._budgetDetailId);
-      if (rs.ok) {
-        this.bgdetailId = rs.detail ? rs.detail.xxxbgdetail_id : null;
-        this.viewBgdetailId = rs.detail ? rs.detail.view_bgdetail_id : null;
-        this.budgetAmount = rs.detail ? rs.detail.amount : 0;
-        this.budgetName = rs.detail ? `${rs.detail.bgtype_name} (${rs.detail.bgtypesub_name})` : '-';
+        if (rs.ok) {
+          this.bgdetailId = rs.rows ? rs.rows.xxxbgdetail_id : null;
+          this.viewBgdetailId = rs.rows ? rs.rows.view_bgdetail_id : null;
+          this.budgetAmount = rs.rows ? rs.rows.appropriation_budget : 0;
+          this.budgetName = rs.rows ? `${rs.rows.bgtype_name} (${rs.rows.bgtypesub_name})` : '-';
 
-        await this.getBalance();
+          await this.getBalance();
 
-        this.returnData();
-      } else {
-        this.alertService.error(rs.error);
+          this.returnData();
+        } else {
+          this.alertService.error(rs.error);
+        }
       }
     } catch (error) {
       this.alertService.error(JSON.stringify(error))

@@ -56,15 +56,15 @@ export class PurchaseOrderComponent implements OnInit {
 
   printProduct() {
     this.selectedProduct.forEach(v => {
-      this.printProducts.push(v.product_id);
+      this.printProducts.push(v.generic_id);
     });
 
-    let productIds = '';
+    let genericId = '';
     this.printProducts.forEach((v: any) => {
-      productIds += `product_id=${v}&`;
+      genericId += `generic_id=${v}&`;
     });
 
-    const url = `${this.apiUrl}/report/list/all/purchase-trade-select/?token=${this.token}&${productIds}`;
+    const url = `${this.apiUrl}/report/list/all/purchase-trade-select/?token=${this.token}&${genericId}`;
     this.htmlPreview.showReport(url);
 
     this.printProducts = [];

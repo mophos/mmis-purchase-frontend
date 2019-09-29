@@ -62,7 +62,7 @@ export class BudgetTransectionService {
     return res.json();
   }
 
-  async getBudgetTransectionBalance(budgetDetailId: any, purchaseOrderId: any) {
+  async getBudgetTransectionBalance(purchaseOrderId: any, budgetDetailId: any) {
     const res = await this.authHttp.post(`${this.url}/budget-transection/transaction/balance`, {
       purchaseOrderId: purchaseOrderId,
       budgetDetailId: budgetDetailId
