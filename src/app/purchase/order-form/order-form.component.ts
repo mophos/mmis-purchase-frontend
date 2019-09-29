@@ -63,6 +63,8 @@ export class OrderFormComponent implements OnInit {
   @ViewChild('searchPeople3') searchPeople3: SearchPeopleComponent;
 
   detailActive = true;
+  modalBudgetYear = false;
+  listBudgetYear = [];
   otherActive: boolean;
   productHistoryActive: boolean;
   bgTransectionActive: boolean;
@@ -269,6 +271,7 @@ export class OrderFormComponent implements OnInit {
       this.newOrder();
       await this.checkIsHoliday(moment().format('YYYY-MM-DD'));
     }
+
   }
 
   productSearchSelected(product: IProductOrderItem) {
@@ -479,10 +482,6 @@ export class OrderFormComponent implements OnInit {
       year += 1;
     }
 
-    this.budgetYear = year.toString();
-    this.currentBudgetYear = year;
-    await this.subBudgetList.setYears(this.budgetYear);
-
     if (selectDate !== 'Invalid date') {
       // this.checkIsHoliday(selectDate);
     } else {
@@ -611,6 +610,7 @@ export class OrderFormComponent implements OnInit {
       year += 1;
     }
     this.budgetYear = year.toString();
+    await this.getlistBudgetYear();
     this.currentBudgetYear = year;
     await this.subBudgetList.setYears(year);
   }
@@ -1321,5 +1321,26 @@ export class OrderFormComponent implements OnInit {
     });
     const objDate = { 'dates': holidays, 'color': 'red' };
     this.holidays.push(objDate);
+  }
+
+  openModalBudgetYear() {
+    this.modalBudgetYear = true;
+  }
+
+  getlistBudgetYear() {
+    for (let i = +this.budgetYear - 2; i < +this.budgetYear + 2; i++) {
+      this.listBudgetYear.push(
+        {
+          year: i,
+          yearText: i + 543
+        }
+      )
+    }
+  }
+
+  async onYearchange() {
+    this.currentBudgetYear = this.budgetYear;
+    await this.subBudgetList.setYears(this.budgetYear);
+    this.modalBudgetYear = false;
   }
 }
