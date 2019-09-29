@@ -117,8 +117,8 @@ export class BudgetRemainComponent implements OnInit {
     try {
       const rs: any = await this.budgetTransactionService.getBudgetTransection(this._budgetDetailId);
       if (rs.ok) {
-        this.budgetAmount = rs.detail ? rs.detail.amount : 0;
-        this.budgetName = rs.detail ? `${rs.detail.bgtype_name} (${rs.detail.bgtypesub_name})` : '-';
+        this.budgetAmount = rs ? rs.appropriation_budget : 0;
+        this.budgetName = rs ? `${rs.bgtype_name} (${rs.bgtypesub_name})` : '-';
 
         await this.getBalance();
 
