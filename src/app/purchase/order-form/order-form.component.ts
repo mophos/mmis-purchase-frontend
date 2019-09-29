@@ -200,7 +200,7 @@ export class OrderFormComponent implements OnInit {
   edi = false;
   editAfterApprove = false;
   managerId: any;
-
+  isCancel = false;
   constructor(
     private accessCheck: AccessCheck,
     private router: Router,
@@ -1020,6 +1020,7 @@ export class OrderFormComponent implements OnInit {
       if (rs.ok) {
         this.purchaseOrder = rs.detail;
         this.isContract = rs.detail.is_contract === 'T' ? true : false;
+        this.isCancel = rs.detail.is_cancel === 'Y' ? true : false;
         await this.setOrderDetail(rs.detail);
         this.searchProductLabeler.setApiUrl(rs.detail.labeler_id);
         await this.getPurchaseOrderItems(this.purchaseOrder.purchase_order_id);
@@ -1124,6 +1125,9 @@ export class OrderFormComponent implements OnInit {
       return true;
     }
     if (this.purchaseOrderItems.length === 0) {
+      return true;
+    }
+    if (this.isCancel) {
       return true;
     }
     if (this.purchaseOrderStatus === 'COMPLETED') {

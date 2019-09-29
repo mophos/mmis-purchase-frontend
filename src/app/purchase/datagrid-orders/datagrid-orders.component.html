@@ -149,8 +149,7 @@
     </clr-dg-cell>
 
     <clr-dg-action-overflow>
-      <button class="action-item" [disabled]="pro.recieve_count > 0 || pro.is_cancel ==='Y'"
-        (click)="goEdit(pro.purchase_order_id)">
+      <button class="action-item" [disabled]="pro.recieve_count > 0" (click)="goEdit(pro.purchase_order_id)">
         <clr-icon shape="note-edit"></clr-icon> แก้ไข
       </button>
 
