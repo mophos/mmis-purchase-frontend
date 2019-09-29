@@ -59,7 +59,7 @@ export class PurchaseBudgetHistoryComponent implements OnInit {
   }
 
   onChangeSubBudget(event: any) {
-    this.budgetDetailId = event ? event.bgdetail_id : null;
+    this.budgetDetailId = event ? event.view_bgdetail_id : null;
   }
 
   printreport() {

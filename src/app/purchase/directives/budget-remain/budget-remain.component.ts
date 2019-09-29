@@ -25,7 +25,8 @@ export class BudgetRemainComponent implements OnInit {
   contractRemainAfterPurchase = 0;
 
   _contractId: any = null;
-
+  bgdetailId: any
+  viewBgdetailId: any
   @Input('purchaseAmount')
   set setPurchaseAmount(value: any) {
     this.changePurchaseAmount(value);
@@ -115,10 +116,14 @@ export class BudgetRemainComponent implements OnInit {
   async getBudget() {
     this.clearData();
     try {
+      console.log(this._budgetDetailId);
+
       const rs: any = await this.budgetTransactionService.getBudgetTransection(this._budgetDetailId);
       if (rs.ok) {
-        this.budgetAmount = rs ? rs.appropriation_budget : 0;
-        this.budgetName = rs ? `${rs.bgtype_name} (${rs.bgtypesub_name})` : '-';
+        this.bgdetailId = rs.detail ? rs.detail.xxxbgdetail_id : null;
+        this.viewBgdetailId = rs.detail ? rs.detail.view_bgdetail_id : null;
+        this.budgetAmount = rs.detail ? rs.detail.appropriation_budget : 0;
+        this.budgetName = rs.detail ? `${rs.detail.bgtype_name} (${rs.detail.bgtypesub_name})` : '-';
 
         await this.getBalance();
 
@@ -142,7 +147,8 @@ export class BudgetRemainComponent implements OnInit {
       budgetRemain: this.budgetRemain,
       totalPurchase: this.totalPurchaseAmount,
       remainAfterPurchase: this.budgetRemain - this.totalPurchaseAmount,
-      budgetDetailId: this._budgetDetailId,
+      viewBudgetDetailId: this.viewBgdetailId,
+      budgetDetailId: this.bgdetailId,
       contractRemainAfterPurchase: this.contractRemainAfterPurchase
     }
     this.onCalculated.emit(data);
