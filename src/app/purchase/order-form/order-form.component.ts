@@ -1121,7 +1121,7 @@ export class OrderFormComponent implements OnInit {
   disableSave() {
     // if (this.tempPrice) return this.tempPrice;
 
-    if (!this.labelerId) {
+    if (!this.labelerId || !this.budgetTypeId || !this.viewBudgetDetailId) {
       return true;
     }
     if (this.purchaseOrderItems.length === 0) {
