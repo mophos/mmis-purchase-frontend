@@ -17,6 +17,12 @@
       <span *ngIf="contractId" class="label label-danger">เลขที่สัญญา:
         <strong>{{contractNo}}</strong>
       </span>
+      <span style="font-weight:bold;">ปีงบประมาณ</span>
+      <span (click)="openModalBudgetYear()">
+        <label class="label label-purple  clickable" style="font-size:15px;font-weight:bold;">
+          {{(+budgetYear + 543)}}
+        </label>
+      </span>
       <span>ราคารวมสุทธิ</span>
       <span style="margin:10px;font-size:20px;font-weight:bold;" class="text-success">
         {{totalPrice | number: '1.2-2'}}
@@ -440,7 +446,7 @@
         <clr-tab>
           <button clrTabLink>ประวัติการตัดงบ</button>
           <clr-tab-content *clrIfActive>
-            <po-transaction-history [budgetDetailId]="budgetDetailId"></po-transaction-history>
+            <po-transaction-history [budgetDetailId]="viewBudgetDetailId"></po-transaction-history>
           </clr-tab-content>
         </clr-tab>
       </clr-tabs>
@@ -539,6 +545,22 @@
   </div>
 
 </div>
+<clr-modal [(clrModalOpen)]="modalBudgetYear" [clrModalClosable]="false">
+  <h3 class="modal-title">ปีงบประมาณ</h3>
+  <div class="modal-body">
+    <div class="select">
+      <!-- <label class="required" for="budgetTypeId">ประเภทงบประมาณ</label> -->
+      <select [(ngModel)]="budgetYear" (change)="onYearchange()">
+        <option *ngFor="let item of listBudgetYear" [value]="item.year">{{item.yearText}}</option>
+      </select>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="modalBudgetYear = false">
+      ปิด
+    </button>
+  </div>
+</clr-modal>
 <app-html-preview #htmlPrview></app-html-preview>
 
 <app-modal-loading #modalLoading></app-modal-loading>
