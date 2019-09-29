@@ -81,6 +81,7 @@ export class OrderPointComponent implements OnInit {
   purchaseTypeId: any;
   purchaseMethodId: any;
   bidAmount: any;
+  warehouseId: any;
   showChief = true;
   showBuyer = true;
   constructor(
@@ -96,6 +97,7 @@ export class OrderPointComponent implements OnInit {
     if (decodedToken) {
       this.delivery = decodedToken.PC_SHIPPING_DATE || 30;
       this.vatRate = decodedToken.PC_VAT || 7;
+      this.warehouseId = decodedToken.warehouseId;
       // this.defaultBudgetYear = decodedToken.PC_DEFAULT_BUDGET_YEAR || moment().get('year');
     }
     let year = moment().get('year');
@@ -133,7 +135,55 @@ export class OrderPointComponent implements OnInit {
     this.htmlPreview.showReport(url);
 
     this.printProducts = [];
-    this.selectedReserved = [];
+    // this.selectedReserved = [];
+  }
+
+  printOrdersReserved() {
+    this.selectedOrdersReserved.forEach(v => {
+      const obj = {
+        reserve_id: v.reserve_id
+      }
+      this.printProducts.push(obj);
+    });
+
+    let reserve_id = '';
+    this.printProducts.forEach((v: any) => {
+      reserve_id += `r=${v.reserve_id}&`;
+    });
+
+    const url = `${this.apiUrl}/report/list/purchase-orders-reserved/?token=${this.token}&${reserve_id}`;
+    console.log(url)
+    this.htmlPreview.showReport(url);
+
+    this.printProducts = [];
+    // this.selectedOrdersReserved = [];
+  }
+
+  printOrdersReservedExcel() {
+    this.selectedOrdersReserved.forEach(v => {
+      const obj = {
+        reserve_id: v.reserve_id
+      }
+      this.printProducts.push(obj);
+    });
+
+    let reserve_id = '';
+    this.printProducts.forEach((v: any) => {
+      reserve_id += `r=${v.reserve_id}&`;
+    });
+
+    const url = `${this.apiUrl}/report/list/purchase-orders-reserved/excel?token=${this.token}&${reserve_id}`;
+    console.log(url)
+    // this.htmlPreview.showReport(url);
+    window.open(url, '_blank');
+    this.printProducts = [];
+    // this.selectedOrdersReserved = [];
+  }
+
+  orderpoint() {
+    const url = `${this.apiUrl}/report/list/order-point/?warehouseId=${this.warehouseId}&token=${this.token}`;
+    console.log(url)
+    this.htmlPreview.showReport(url);
   }
 
   onDateStartChanged(event: IMyDateModel) {
