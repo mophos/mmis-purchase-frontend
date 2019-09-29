@@ -91,7 +91,7 @@ export class OrderFormComponent implements OnInit {
   TransectionDetail: any = {};
   defaultBudgetYear: string;
   genericTypeId: string;
-  budgetYear: string;
+  budgetYear: any;
   budgetTypeId: any;
   isReorder: string;
   budgetType: string;
