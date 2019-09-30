@@ -63,6 +63,8 @@ export class SelectSubBudgetComponent implements OnInit {
               this._selectedId = this.items[0].view_bgdetail_id;
               this.onChange.emit(this.items[0]);
             }
+          } else {
+            this.onChange.emit(null);
           }
         } else {
           this.alertService.error(rs.error);
