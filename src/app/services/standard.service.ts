@@ -16,6 +16,12 @@ export class StandardService {
     return rs.json();
   }
 
+  async getGenericUnitsProduct(genericId: any, productId: any) {
+    const url: any = `${this.apiUrl}/std/generic-units/${genericId}/${productId}`;
+    const rs: any = await this.authHttp.get(url).toPromise();
+    return rs.json();
+  }
+
   async getBidType() {
     const url: any = `${this.apiUrl}/std/bid-types`;
     const rs: any = await this.authHttp.get(url).toPromise();
