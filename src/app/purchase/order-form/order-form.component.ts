@@ -275,7 +275,7 @@ export class OrderFormComponent implements OnInit {
 
   productSearchSelected(product: IProductOrderItem) {
     this.selectedProduct = product;
-    this.selectBoxUnit.setGenericId(product.generic_id);
+    this.selectBoxUnit.setGenericId(product.generic_id, product.product_id);
   }
 
   onChangeUnit(event: any) {

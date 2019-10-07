@@ -11,6 +11,7 @@ import * as _ from 'lodash';
 export class SelectBoxUnitsComponent implements OnInit {
 
   @Input() public genericId: any;
+  @Input() public productId: any;
   @Input() public selectedId: any;
   @Input() public disabled: any;
   @Input() public setUnitGenericId: any;
@@ -27,15 +28,17 @@ export class SelectBoxUnitsComponent implements OnInit {
 
   ngOnInit() {
     if (this.genericId) {
-      this.getUnits(this.genericId);
+      this.getUnits();
     }
     if (this.setUnitGenericId) {
       this.setSelectUnit()
     }
   }
+
   setSelectUnit() {
-    this.selectedId = +this.setUnitGenericId 
+    this.selectedId = +this.setUnitGenericId;
   }
+
   setSelect(event: any) {
     const idx = _.findIndex(this.units, { unit_generic_id: +event.target.value });
     if (idx > -1) {
@@ -43,18 +46,24 @@ export class SelectBoxUnitsComponent implements OnInit {
     }
   }
 
-  setGenericId(genericId: any) {
+  setGenericId(genericId: any, productId = null) {
     if (genericId) {
       this.genericId = genericId;
+      this.productId = productId;
       this.selectedId = null;
-      this.getUnits(this.genericId);
+      this.getUnits();
     }
   }
 
-  async getUnits(genericId: any) {
+  async getUnits() {
     this.loading = true;
     try {
-      let rs: any = await this.stdService.getGenericUnits(genericId);
+      let rs: any = [];
+      if (this.productId) {
+        rs = await this.stdService.getGenericUnitsProduct(this.genericId, this.productId)
+      } else {
+        rs = await this.stdService.getGenericUnits(this.genericId);
+      }
       this.loading = false;
       if (rs.ok) {
         this.units = rs.rows;
@@ -67,8 +76,14 @@ export class SelectBoxUnitsComponent implements OnInit {
               this.onChange.emit(this.units[0]);
             }
           } else {
-            this.selectedId = this.units[0].unit_generic_id;
-            this.onChange.emit(this.units[0]);
+            const idx = _.findIndex(this.units, { is_purchase: 'Y' });
+            if (idx > -1) {
+              this.onChange.emit(this.units[idx]);
+              this.selectedId = this.units[idx].unit_generic_id;
+            } else {
+              this.selectedId = this.units[0].unit_generic_id;
+              this.onChange.emit(this.units[0]);
+            }
           }
         }
       } else {
