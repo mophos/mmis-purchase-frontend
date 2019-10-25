@@ -210,7 +210,7 @@ export class OrderPointComponent implements OnInit {
   }
 
   changeTypeReserved() {
-    this.getProductsReserved(this.perPage);
+    this.getProductsReserved(this.perPageReserved);
   }
 
   async getGenerics(limit: number = 20, offset: number = 0, sort: any = {}) {
