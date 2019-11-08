@@ -118,7 +118,8 @@ export class BudgetRemainComponent implements OnInit {
     try {
       if (this._budgetDetailId) {
         const rs: any = await this.budgetTransactionService.getBudgetTransectionBalance(this.purchaseOrderId, this._budgetDetailId);
-
+        console.log(rs.rows);
+        
         if (rs.ok) {
           this.bgdetailId = rs.rows ? rs.rows.bgdetail_id : null;
           this.viewBgdetailId = rs.rows ? rs.rows.view_bgdetail_id : null;
