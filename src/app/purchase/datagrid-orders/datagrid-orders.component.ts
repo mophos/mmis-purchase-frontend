@@ -639,6 +639,8 @@ export class DatagridOrdersComponent implements OnInit {
         this.htmlPrview.showReport(this.url + `${this.urlReportPO}/?token=${this.token}&` + poItems.join('&'));
       } else if (typ === 2) {
         this.htmlPrview.showReport(this.url + `${this.urlReportEGP}/?token=${this.token}&` + poItems.join('&'));
+      } else if (typ === 3) {
+        this.htmlPrview.showReport(this.url + `/report/egp/4/egp3page?token=${this.token}&` + poItems.join('&'));
       }
     } else {
       this.alertService.error('ข้อมูลไม่ครบถ้วน');
