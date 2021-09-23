@@ -266,6 +266,7 @@ export class OrderFormComponent implements OnInit {
 
     if (this.purchaseOrderId) {
       await this.getPurchaseOrderDetail(this.purchaseOrderId);
+      await this.getlistBudgetYear();
     } else {
       // this.viewBudgetDetailId = +localStorage.getItem('budgetDetailId');
       this.newOrder();
@@ -1326,9 +1327,9 @@ export class OrderFormComponent implements OnInit {
     this.modalBudgetYear = true;
   }
 
-  getlistBudgetYear() {
+  async getlistBudgetYear() {
     for (let i = +this.budgetYear - 2; i < +this.budgetYear + 2; i++) {
-      this.listBudgetYear.push(
+      await this.listBudgetYear.push(
         {
           year: i,
           yearText: i + 543
