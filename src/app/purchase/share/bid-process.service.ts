@@ -95,4 +95,16 @@ export class BidProcessService {
     });
   }
 
+  getBuyMethod(){
+    return new Promise((resolve, reject) => {
+      this.authHttp.get(`${this.url}/${this.apiName}/buy-method`)
+        .map(res => res.json())
+        .subscribe(data => {
+          resolve(data);
+        }, error => {
+          reject(error);
+        });
+    });
+  }
+
 }

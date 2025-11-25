@@ -10,12 +10,14 @@ import { BidProcessService } from '../share/bid-process.service';
 export class BidprocessComponent implements OnInit {
 
   bidprocess: any = [];
+  buyMethod: any = [];
 
   isOpen: any = false;
   isEdit: any = false;
 
   bidId: any;
   bidname: any;
+  buyMethodId:any = null;
   f_amount: number = 0;
 
   constructor(
@@ -25,10 +27,11 @@ export class BidprocessComponent implements OnInit {
 
   ngOnInit() {
     this.getBidprocess();
-
+    this.getBuyMethod();
     this.bidname = null;
     this.isEdit = false;
     this.f_amount = 0;
+    this.buyMethodId = null;
   }
 
   async getBidprocess() {
@@ -48,6 +51,7 @@ export class BidprocessComponent implements OnInit {
 
     this.bidname = null;
     this.f_amount = 0;
+    this.buyMethodId = null;
   }
 
   async onClickEdit(row: any) {
@@ -57,6 +61,7 @@ export class BidprocessComponent implements OnInit {
     this.bidname = row.name;
     this.f_amount = row.f_amount;
     this.bidId = row.id;
+    this.buyMethodId = row.buy_method_id;
   }
 
   async onClickDelete(row: any) {
@@ -76,8 +81,9 @@ export class BidprocessComponent implements OnInit {
     try {
       const formInput = {
         name: this.bidname,
-        f_amount: this.f_amount
-      };
+        f_amount: this.f_amount,
+        buy_method_id: this.buyMethodId
+      };      
       if (!this.isEdit) {
         await this.bidService.save(formInput)
       } else {
@@ -90,4 +96,19 @@ export class BidprocessComponent implements OnInit {
       this.alertService.error(JSON.stringify(error))
     }
   }
+
+   async getBuyMethod(){
+    try {
+      const rs :any = await this.bidService.getBuyMethod();
+      if(rs.ok){
+        this.buyMethod = rs.detail;
+      }
+    } catch (error) {
+      this.alertService.error(JSON.stringify(error))
+    }
+   }
+
+   async onChangeBuyMethod(e: any){    
+    this.buyMethodId = e;
+   }
 }
