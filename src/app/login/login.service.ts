@@ -12,7 +12,7 @@ export class LoginService {
 
   doLogin(username: string, password: string, userWarehouseId) {
     return new Promise((resolve, reject) => {
-      this.http.post(`${this.loginUrl}/login`, { username: username, password: password, userWarehouseId: userWarehouseId, supportLoginSteps: true })
+      this.http.post(`${this.loginUrl}/login`, { username: username, password: password, userWarehouseId: userWarehouseId, supportLoginSteps: true }, { withCredentials: true })
         .map(res => res.json())
         .subscribe(data => {
           resolve(data);
@@ -56,7 +56,7 @@ export class LoginService {
     });
 
     return new Promise((resolve, reject) => {
-      this.http.post(`${this.loginUrl}${path}`, body, { headers: headers })
+      this.http.post(`${this.loginUrl}${path}`, body, { headers: headers, withCredentials: true })
         .map(res => res.json())
         .subscribe(data => {
           resolve(data);
@@ -77,11 +77,17 @@ export class LoginService {
     return this.postWithPreAuth('/login/2fa/setup', preAuthToken);
   }
 
-  confirm2fa(preAuthToken: string, code: string) {
-    return this.postWithPreAuth('/login/2fa/confirm', preAuthToken, { code: code });
+  confirm2fa(preAuthToken: string, code: string, rememberDevice: boolean) {
+    return this.postWithPreAuth('/login/2fa/confirm', preAuthToken, {
+      code: code,
+      rememberDevice: rememberDevice === true
+    });
   }
 
-  verify2fa(preAuthToken: string, code: string) {
-    return this.postWithPreAuth('/login/2fa/verify', preAuthToken, { code: code });
+  verify2fa(preAuthToken: string, code: string, rememberDevice: boolean) {
+    return this.postWithPreAuth('/login/2fa/verify', preAuthToken, {
+      code: code,
+      rememberDevice: rememberDevice === true
+    });
   }
 }
